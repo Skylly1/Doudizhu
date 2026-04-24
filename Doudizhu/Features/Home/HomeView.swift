@@ -36,7 +36,7 @@ struct HomeView: View {
                         .font(.system(size: 56))
 
                     Text(L10n.appName)
-                        .font(Theme.fontTitle)
+                        .font(Theme.responsiveTitle())
                         .foregroundStyle(Theme.goldGradient)
 
                     Text(L10n.appSubtitle)
@@ -47,7 +47,7 @@ struct HomeView: View {
                 .scaleEffect(titleScale)
                 .opacity(titleOpacity)
 
-                Spacer().frame(height: Theme.spacingXXL)
+                Spacer().frame(height: Theme.isCompactScreen ? Theme.spacingLG : Theme.spacingXXL)
 
                 // Ascension 等级展示
                 let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
@@ -55,7 +55,7 @@ struct HomeView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "flame.fill")
                             .foregroundColor(Theme.flame)
-                        Text("最高挑战: A\(highestAsc)")
+                        Text(L10n.highestAscLabel(highestAsc))
                             .font(.subheadline.bold().monospacedDigit())
                             .foregroundColor(Theme.flame)
                     }
@@ -72,7 +72,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, 60)
 
-                    SecondaryButton(title: "⚡ 快速开战", icon: "bolt.fill") {
+                    SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
                         onNavigate(.buildSelect)
                     }
                     .padding(.horizontal, 60)
@@ -92,7 +92,7 @@ struct HomeView: View {
                 Spacer()
 
                 // 版本信息
-                Text("v1.0 · 斗破乾坤")
+                Text(L10n.versionString)
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textDisabled)
                     .padding(.bottom, Theme.spacingMD)

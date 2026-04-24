@@ -19,11 +19,11 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: Theme.spacingMD) {
                         // 音效组
-                        settingSection("🔊 音效") {
-                            settingToggle("音效", isOn: $soundEnabled)
+                        settingSection(L10n.settingsSound) {
+                            settingToggle(L10n.settingsSoundEffect, isOn: $soundEnabled)
                             Divider().background(Theme.border)
                             HStack {
-                                Text("音量")
+                                Text(L10n.settingsVolume)
                                     .font(Theme.fontBody)
                                     .foregroundColor(Theme.textPrimary)
                                 Slider(value: $soundVolume, in: 0...1, step: 0.05)
@@ -32,13 +32,13 @@ struct SettingsView: View {
                             }
                             .padding(.vertical, 2)
                             Divider().background(Theme.border)
-                            settingToggle("背景音乐", isOn: $musicEnabled)
+                            settingToggle(L10n.settingsMusic, isOn: $musicEnabled)
                             Divider().background(Theme.border)
-                            settingToggle("震动反馈", isOn: $hapticEnabled)
+                            settingToggle(L10n.settingsHaptic, isOn: $hapticEnabled)
                         }
 
                         // 游戏组
-                        settingSection("🎮 游戏") {
+                        settingSection(L10n.settingsGame) {
                             Button {
                                 hasCompletedTutorial = false
                             } label: {
@@ -54,12 +54,26 @@ struct SettingsView: View {
                         }
 
                         // 关于
-                        settingSection("ℹ️ 关于") {
-                            infoRow("版本", value: "0.9.0 MVP")
+                        settingSection(L10n.settingsAbout) {
+                            infoRow(L10n.settingsVersion, value: "0.9.0 MVP")
                             Divider().background(Theme.border)
-                            infoRow("引擎", value: "SwiftUI + SpriteKit")
+                            infoRow(L10n.settingsEngine, value: "SwiftUI + SpriteKit")
                             Divider().background(Theme.border)
-                            infoRow("灵感", value: "Balatro × 斗地主")
+                            infoRow(L10n.settingsInspiration, value: "Balatro × Doudizhu")
+                        }
+
+                        // 语言
+                        settingSection(L10n.settingsLanguage) {
+                            HStack {
+                                Text(L10n.settingsCurrentLang)
+                                    .foregroundColor(Theme.textPrimary)
+                                Spacer()
+                            }
+                            .font(Theme.fontBody)
+                            .padding(.vertical, 2)
+                            Text(L10n.settingsLanguageHint)
+                                .font(Theme.fontCaption)
+                                .foregroundColor(Theme.textTertiary)
                         }
                     }
                     .padding(.horizontal, Theme.spacingMD)

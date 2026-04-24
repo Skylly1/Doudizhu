@@ -26,7 +26,7 @@ enum L10n {
 
     // MARK: - 地图
     static var adventurePath: String { localized("冒险之路", en: "Adventure Path") }
-    static var mapSubtitle: String { localized("穿越 8 层牌局", en: "Cross 8 floors of card battles") }
+    static var mapSubtitle: String { localized("穿越 15 层牌局", en: "Cross 15 floors of card battles") }
     static var depart: String { localized("出发", en: "Depart") }
     static func playsLabel(_ n: Int) -> String { localized("\(n)次出牌", en: "\(n) Plays") }
     static func discardsLabel(_ n: Int) -> String { localized("\(n)次换牌", en: "\(n) Swaps") }
@@ -173,7 +173,35 @@ enum L10n {
     static func buffCount(_ n: Int) -> String { localized("共 \(n) 种增益道具", en: "\(n) Buffs Total") }
 
     // MARK: - 设置
+    static var settingsSound: String { localized("🔊 音效", en: "🔊 Sound") }
+    static var settingsSoundEffect: String { localized("音效", en: "Sound Effects") }
+    static var settingsVolume: String { localized("音量", en: "Volume") }
+    static var settingsMusic: String { localized("背景音乐", en: "Background Music") }
+    static var settingsHaptic: String { localized("震动反馈", en: "Haptic Feedback") }
+    static var settingsGame: String { localized("🎮 游戏", en: "🎮 Game") }
+    static var settingsAbout: String { localized("ℹ️ 关于", en: "ℹ️ About") }
+    static var settingsVersion: String { localized("版本", en: "Version") }
+    static var settingsEngine: String { localized("引擎", en: "Engine") }
+    static var settingsInspiration: String { localized("灵感", en: "Inspiration") }
+    static var versionString: String { localized("v1.0 · 斗破乾坤", en: "v1.0 · Dou Po Qian Kun") }
     static var resetTutorial: String { localized("重置教程", en: "Reset Tutorial") }
+    static var settingsLanguage: String { localized("🌐 语言", en: "🌐 Language") }
+    static var settingsLanguageHint: String { localized("跟随系统语言设置", en: "Follows system language") }
+    static var settingsCurrentLang: String { localized("当前：中文", en: "Current: English") }
+
+    // MARK: - 首页
+    static func highestAscLabel(_ n: Int) -> String { localized("最高挑战: A\(n)", en: "Highest: A\(n)") }
+
+    // MARK: - 战斗
+    static func bannedPatternLabel(_ name: String) -> String { localized("已禁用: \(name)", en: "Banned: \(name)") }
+    static func ascensionChallenge(_ n: Int) -> String { localized("挑战 A\(n)", en: "Challenge A\(n)") }
+
+    // MARK: - 试玩特权
+    static var featureAllFloors: String { localized("全部 15 层关卡 + 3 大 Boss 挑战", en: "All 15 floors + 3 Boss fights") }
+    static var featureAscension: String { localized("挑战等级系统(Ascension) — 10级难度", en: "Ascension system — 10 difficulty levels") }
+    static var featureJokers: String { localized("20 张规则牌，无限流派搭配", en: "20 Joker cards, unlimited builds") }
+    static var featureLeaderboard: String { localized("排行榜 + 成就系统", en: "Leaderboard + Achievements") }
+    static var featureUpdates: String { localized("持续更新：新牌、新关卡、新模式", en: "Ongoing updates: new cards, floors, modes") }
 
     // MARK: - 辅助
 

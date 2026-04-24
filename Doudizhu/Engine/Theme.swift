@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // MARK: - 统一设计系统
 
@@ -84,6 +85,29 @@ enum Theme {
     static let radiusLG: CGFloat = 20
 
     // MARK: 便捷视图修饰器
+
+    // MARK: - Responsive Helpers
+
+    /// Screen width-based scaling for different devices
+    static var screenScale: CGFloat {
+        let width = UIScreen.main.bounds.width
+        if width <= 375 { return 0.85 }       // iPhone SE/mini
+        if width <= 393 { return 1.0 }         // iPhone 15
+        if width <= 430 { return 1.05 }        // iPhone 15 Plus/Pro Max
+        return 1.2                              // iPad
+    }
+
+    static var isCompactScreen: Bool { UIScreen.main.bounds.width <= 375 }
+    static var isIPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
+    /// Responsive font that scales with Dynamic Type
+    static func responsiveTitle(_ baseSize: CGFloat = 44) -> Font {
+        .system(size: baseSize * screenScale, weight: .black, design: .serif)
+    }
+
+    static func responsiveHeading(_ baseSize: CGFloat = 28) -> Font {
+        .system(size: baseSize * screenScale, weight: .bold, design: .serif)
+    }
 }
 
 // MARK: - 通用卡片样式
