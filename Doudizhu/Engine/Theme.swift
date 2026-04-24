@@ -56,9 +56,9 @@ enum Theme {
 
     // MARK: 字体
 
-    /// 大标题 — 游戏名
+    /// 大标题 — 游戏名（书法衬线）
     static let fontTitle = Font.system(size: 44, weight: .black, design: .serif)
-    /// 页面标题
+    /// 页面标题（书法衬线）
     static let fontHeading = Font.system(size: 28, weight: .bold, design: .serif)
     /// 区块标题
     static let fontSection = Font.system(size: 18, weight: .semibold)
@@ -68,6 +68,23 @@ enum Theme {
     static let fontCaption = Font.system(size: 12, weight: .regular)
     /// 数字
     static let fontMono = Font.system(size: 15, weight: .medium, design: .monospaced)
+
+    // MARK: 中国书法风格字体
+
+    /// 中文标题 — 用于游戏名等大标题
+    static let titleFont: Font = .system(size: 28, weight: .heavy, design: .serif)
+    /// 中文副标题 — 用于关卡名、楼层名
+    static let subtitleFont: Font = .system(size: 20, weight: .bold, design: .serif)
+    /// Joker 王牌标题 — 用于大王/小王
+    static let jokerTitleFont: Font = .system(size: 16, weight: .heavy, design: .serif)
+
+    /// SpriteKit 书法字体名 — 宋体（iOS 内置中文衬线字体），回退到 PingFang
+    static var spriteKitSerifFontName: String {
+        if UIFont(name: "STSongti-SC-Bold", size: 14) != nil {
+            return "STSongti-SC-Bold"
+        }
+        return "PingFangSC-Semibold"
+    }
 
     // MARK: 间距
 

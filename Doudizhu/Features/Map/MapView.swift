@@ -204,7 +204,7 @@ private struct FloorNode: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(floor.name)
-                        .font(Theme.fontSection)
+                        .font(Theme.subtitleFont)
                         .foregroundColor(state == .cleared ? Theme.textTertiary : Theme.textPrimary)
 
                     if state == .frontier {

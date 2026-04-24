@@ -143,9 +143,10 @@ class CardNode: SKSpriteNode {
         let isRed = card.rank == .jokerRed
         let color = cardColor
 
-        // 顶部文字
+        // 顶部文字 — 书法衬线字体
+        let serifFont = Theme.spriteKitSerifFontName
         let topLabel = SKLabelNode(text: isRed ? "大" : "小")
-        topLabel.fontName = "PingFangSC-Bold"
+        topLabel.fontName = serifFont
         topLabel.fontSize = size.width * 0.3
         topLabel.fontColor = color
         topLabel.horizontalAlignmentMode = .left
@@ -155,7 +156,7 @@ class CardNode: SKSpriteNode {
 
         // 右上角 大/小 标识
         let rightLabel = SKLabelNode(text: isRed ? "大" : "小")
-        rightLabel.fontName = "PingFangSC-Bold"
+        rightLabel.fontName = serifFont
         rightLabel.fontSize = size.width * 0.28
         rightLabel.fontColor = color
         rightLabel.horizontalAlignmentMode = .right
@@ -178,9 +179,9 @@ class CardNode: SKSpriteNode {
         jokerGlow.zPosition = -0.5
         addChild(jokerGlow)
 
-        // 底部
+        // 底部 — 书法衬线字体
         let botLabel = SKLabelNode(text: "王")
-        botLabel.fontName = "PingFangSC-Bold"
+        botLabel.fontName = serifFont
         botLabel.fontSize = size.width * 0.26
         botLabel.fontColor = color
         botLabel.verticalAlignmentMode = .center

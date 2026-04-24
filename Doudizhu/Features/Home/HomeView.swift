@@ -113,7 +113,7 @@ struct HomeView: View {
                         .shadow(color: Theme.gold.opacity(0.2), radius: 24, y: 0)
 
                     Text(L10n.appSubtitle)
-                        .font(.subheadline.weight(.medium))
+                        .font(Theme.subtitleFont)
                         .foregroundColor(Theme.textTertiary)
                         .tracking(4)
                 }

@@ -179,7 +179,7 @@ struct BattleView: View {
                         .background(Capsule().fill(Theme.flameDim))
                 }
                 Text(rogueRun.currentFloor.name)
-                    .font(.subheadline.bold())
+                    .font(Theme.subtitleFont)
                     .foregroundColor(rogueRun.currentFloor.isBoss ? Theme.flame : Theme.textPrimary)
                     .lineLimit(1)
             }
@@ -556,7 +556,7 @@ struct BattleView: View {
                     .foregroundColor(Theme.gold)
 
                 Text(rogueRun.currentFloor.name)
-                    .font(.title3)
+                    .font(Theme.subtitleFont)
                     .foregroundColor(Theme.textSecondary)
 
                 VStack(spacing: Theme.spacingSM) {
