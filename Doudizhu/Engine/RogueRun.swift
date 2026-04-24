@@ -43,13 +43,13 @@ struct FloorConfig {
 
     static let allFloors: [FloorConfig] = [
         FloorConfig(floor: 1, name: "乡野牌局", targetScore: 200, maxPlays: 5, maxDiscards: 3, description: "村口老槐树下的牌局", isShop: false),
-        FloorConfig(floor: 2, name: "集市赌坊", targetScore: 350, maxPlays: 5, maxDiscards: 3, description: "赶集路上遇到的牌摊", isShop: false),
-        FloorConfig(floor: 3, name: "茶馆对弈", targetScore: 500, maxPlays: 5, maxDiscards: 2, description: "茶馆里的老牌手", isShop: false),
+        FloorConfig(floor: 2, name: "集市赌坊", targetScore: 300, maxPlays: 5, maxDiscards: 3, description: "赶集路上遇到的牌摊", isShop: false),
+        FloorConfig(floor: 3, name: "茶馆对弈", targetScore: 450, maxPlays: 5, maxDiscards: 2, description: "茶馆里的老牌手", isShop: false),
         FloorConfig(floor: 4, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0, description: "补充装备，再上路", isShop: true),
-        FloorConfig(floor: 5, name: "县城擂台", targetScore: 700, maxPlays: 4, maxDiscards: 2, description: "县城里的斗地主擂台", isShop: false),
-        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 1000, maxPlays: 4, maxDiscards: 2, description: "知府大人设下的暗局", isShop: false),
+        FloorConfig(floor: 5, name: "县城擂台", targetScore: 600, maxPlays: 4, maxDiscards: 2, description: "县城里的斗地主擂台", isShop: false),
+        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 800, maxPlays: 4, maxDiscards: 2, description: "知府大人设下的暗局", isShop: false),
         FloorConfig(floor: 7, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0, description: "最后的准备机会", isShop: true),
-        FloorConfig(floor: 8, name: "地主庄园", targetScore: 1500, maxPlays: 4, maxDiscards: 1, description: "终极Boss：恶霸地主", isShop: false),
+        FloorConfig(floor: 8, name: "地主庄园", targetScore: 1200, maxPlays: 4, maxDiscards: 1, description: "终极Boss：恶霸地主", isShop: false),
     ]
 }
 
@@ -66,9 +66,14 @@ class RogueRun: ObservableObject {
     @Published var gold: Int = 150              // 金币
     @Published var multiplier: Double = 1.0     // 全局倍率
     @Published var activeBuffs: [Buff] = []
+    @Published var activeJokers: [Joker] = []    // 规则牌（最多5张）
     @Published var handCards: [Card] = []
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
+    @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
+
+    /// 剩余牌堆（弃牌后从中补牌）
+    private(set) var drawPile: [Card] = []
 
     var currentFloor: FloorConfig {
         FloorConfig.allFloors[currentFloorIndex]
@@ -81,6 +86,11 @@ class RogueRun: ObservableObject {
 
     var isFloorCleared: Bool {
         floorScore >= currentFloor.targetScore
+    }
+
+    /// 检查是否装备了某种效果的规则牌
+    func hasJoker(_ effect: JokerEffect) -> Bool {
+        activeJokers.contains { $0.effect == effect }
     }
 
     // MARK: - 流程控制
@@ -100,9 +110,20 @@ class RogueRun: ObservableObject {
         combo = 0
         lastPlayResult = nil
 
-        // 发牌
-        let deal = Deck.deal()
-        handCards = deal.player
+        // 规则牌：暗度陈仓 — 每关换牌次数+2
+        if hasJoker(.extraDiscards) {
+            discardsRemaining += 2
+        }
+
+        // 规则牌：回光返照 — 每关额外出牌+1
+        if hasJoker(.secondWind) {
+            playsRemaining += 1
+        }
+
+        // 发牌（Roguelike 模式：10张手牌 + 44张牌堆）
+        let deal = Deck.dealRoguelike(handSize: 10)
+        handCards = deal.hand
+        drawPile = deal.drawPile
         phase = .selecting
     }
 
@@ -127,10 +148,81 @@ class RogueRun: ObservableObject {
             earned = buff.apply(to: earned, pattern: pattern)
         }
 
-        // 连击加成：连续出牌第2次+10%，第3次+20%...
+        // 连击加成：连续出牌第2次+15%，第3次+30%...
         if combo > 1 {
-            let comboBonus = Double(combo - 1) * 0.1
+            let rate = hasJoker(.doubleComboRate) ? 0.30 : 0.15
+            let comboBonus = Double(combo - 1) * rate
             earned = Int(Double(earned) * (1.0 + comboBonus))
+        }
+
+        // 规则牌：一鸣惊人 — 每关第一次出牌×2.5
+        if combo == 1 && hasJoker(.firstPlayBonus) {
+            earned = Int(Double(earned) * 2.5)
+        }
+
+        // 规则牌：破釜沉舟 — 最后1次出牌机会时×3
+        if playsRemaining == 0 && hasJoker(.lastStandBonus) {
+            earned = Int(Double(earned) * 3.0)
+        }
+
+        // 规则牌：空城计 — 手牌≤5张时×1.5（出牌前计算，因为牌还没移除）
+        if handCards.count - cards.count <= 5 && hasJoker(.lowHandBonus) {
+            earned = Int(Double(earned) * 1.5)
+        }
+
+        // 规则牌：火烧连营 — 炸弹/火箭×2
+        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) {
+            earned *= 2
+        }
+
+        // 规则牌：顺势而为 — 顺子/连对×2
+        if hasJoker(.sequenceBonus) && (pattern.type == .straight || pattern.type == .pairStraight) {
+            earned *= 2
+        }
+
+        // 规则牌：四面楚歌 — 手牌中每张2或A +10%
+        if hasJoker(.highCardBonus) {
+            let highCount = handCards.filter { $0.rank == .two || $0.rank == .ace }.count
+            if highCount > 0 {
+                earned = Int(Double(earned) * (1.0 + Double(highCount) * 0.1))
+            }
+        }
+
+        // 规则牌：成双成对 — 对子×2
+        if hasJoker(.pairMastery) && pattern.type == .pair {
+            earned *= 2
+        }
+
+        // 规则牌：三生万物 — 三带类+50%
+        if hasJoker(.tripleThreat) &&
+           (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) {
+            earned = Int(Double(earned) * 1.5)
+        }
+
+        // 规则牌：心算如飞 — 出牌≥5张+40%
+        if hasJoker(.cardCounter) && cards.count >= 5 {
+            earned = Int(Double(earned) * 1.4)
+        }
+
+        // 规则牌：精打细算 — 出3张及以下+60%
+        if hasJoker(.miniHandBonus) && cards.count <= 3 {
+            earned = Int(Double(earned) * 1.6)
+        }
+
+        // 规则牌：厚积薄发 — 当前得分≥目标50%时+30%
+        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 &&
+           floorScore >= currentFloor.targetScore / 2 {
+            earned = Int(Double(earned) * 1.3)
+        }
+
+        // 规则牌：连环杀 — 连击≥3时额外+20%
+        if hasJoker(.multiKill) && combo >= 3 {
+            earned = Int(Double(earned) * 1.2)
+        }
+
+        // 规则牌：破甲 — 上次出牌≥100分时+25%
+        if hasJoker(.shieldBreaker) && lastScoreEarned >= 100 {
+            earned = Int(Double(earned) * 1.25)
         }
 
         // 全局倍率
@@ -138,10 +230,35 @@ class RogueRun: ObservableObject {
 
         floorScore += earned
         totalScore += earned
+        lastScoreEarned = earned
+
+        // 规则牌：点石成金 — 每次出牌+5金币
+        if hasJoker(.goldRush) {
+            gold += 5
+        }
+
+        // 成就检测
+        let tracker = AchievementTracker.shared
+        if earned >= 200 { tracker.tryUnlock("single_200") }
+        if earned >= 500 { tracker.tryUnlock("single_500") }
+        if totalScore >= 500 { tracker.tryUnlock("score_500") }
+        if totalScore >= 2000 { tracker.tryUnlock("score_2000") }
+        if totalScore >= 5000 { tracker.tryUnlock("score_5000") }
+        if combo >= 5 { tracker.tryUnlock("combo_5") }
+        if pattern.type == .bomb { tracker.tryUnlock("bombs_10") }  // 简化：首次炸弹即解锁
+        if pattern.type == .rocket { tracker.tryUnlock("rockets_5") }
+        if activeJokers.count >= 5 { tracker.tryUnlock("jokers_collect_5") }
+        if gold >= 300 { tracker.tryUnlock("gold_300") }
 
         // 从手牌移除
         let playedIds = Set(cards.map(\.id))
         handCards.removeAll { playedIds.contains($0.id) }
+
+        // 规则牌：贪心鬼 — 出牌后额外抽1张
+        if hasJoker(.drawAfterPlay) && !drawPile.isEmpty {
+            handCards.append(drawPile.removeFirst())
+            handCards.sort { $0.rank < $1.rank }
+        }
 
         let result = PlayResult(
             pattern: pattern,
@@ -159,9 +276,15 @@ class RogueRun: ObservableObject {
     /// 得分动画结束后调用
     func onScoringComplete() {
         if isFloorCleared {
-            // 过关奖励金币
             let bonus = currentFloor.targetScore / 10
             gold += bonus
+
+            // 成就检测
+            let tracker = AchievementTracker.shared
+            if currentFloorIndex == 0 { tracker.tryUnlock("first_win") }
+            if currentFloorIndex >= 4 { tracker.tryUnlock("mid_run") }
+            if discardsRemaining == currentFloor.maxDiscards { tracker.tryUnlock("no_discard_win") }
+
             phase = .floorWin
         } else if playsRemaining <= 0 || handCards.isEmpty {
             phase = .floorFail
@@ -170,19 +293,42 @@ class RogueRun: ObservableObject {
         }
     }
 
-    /// 弃牌（丢弃选中的牌，不得分，不消耗出牌次数）
+    /// 换牌（弃掉选中的牌，从牌堆抽等量新牌）
     func discardCards(_ cards: [Card]) -> Bool {
         guard phase == .selecting, discardsRemaining > 0, !cards.isEmpty else {
             return false
         }
 
         discardsRemaining -= 1
-        combo = 0  // 弃牌打断连击
+        combo = max(0, combo - 1)  // 换牌仅减少1点连击，不清零
 
+        // 移除弃牌
         let discardedIds = Set(cards.map(\.id))
         handCards.removeAll { discardedIds.contains($0.id) }
 
-        // 弃牌后如果手牌空了且没达标
+        // 从牌堆补抽等量新牌
+        var drawCount = min(cards.count, drawPile.count)
+
+        // 规则牌：偷梁换柱 — 换牌时多抽1张
+        if hasJoker(.extraDrawOnDiscard) && drawPile.count > drawCount {
+            drawCount += 1
+        }
+
+        if drawCount > 0 {
+            // 规则牌：锦鲤附体 — 从牌堆底部取牌
+            let drawn: [Card]
+            if hasJoker(.luckyDraw) {
+                drawn = Array(drawPile.suffix(drawCount))
+                drawPile.removeLast(drawCount)
+            } else {
+                drawn = Array(drawPile.prefix(drawCount))
+                drawPile.removeFirst(drawCount)
+            }
+            handCards.append(contentsOf: drawn)
+            handCards.sort { $0.rank < $1.rank }
+        }
+
+        // 换牌后如果手牌空了且没达标
         if handCards.isEmpty && !isFloorCleared {
             phase = .floorFail
         }
@@ -194,6 +340,8 @@ class RogueRun: ObservableObject {
     func advanceToNextFloor() {
         currentFloorIndex += 1
         if currentFloorIndex >= FloorConfig.allFloors.count {
+            AchievementTracker.shared.tryUnlock("full_clear")
+            AchievementTracker.shared.tryUnlock("wins_5") // 简化：首次通关即解锁
             phase = .victory
         } else {
             startFloor()
@@ -205,14 +353,46 @@ class RogueRun: ObservableObject {
         advanceToNextFloor()
     }
 
+    /// 使用指定流派重新开始
+    func startWithBuild(_ build: StarterBuild) {
+        currentFloorIndex = 0
+        totalScore = 0
+        gold = 150 + build.goldAdjustment
+        multiplier = 1.0
+        activeBuffs = []
+        activeJokers = []
+        combo = 0
+        drawPile = []
+        lastScoreEarned = 0
+
+        if let joker = build.startingJoker {
+            activeJokers.append(joker)
+        }
+        if let buff = build.startingBuff {
+            activeBuffs.append(buff)
+        }
+
+        startFloor()
+    }
+
     /// 重新开始整个游戏
     func restart() {
+        // 游戏次数成就
+        let gamesKey = "total_games_played"
+        let games = UserDefaults.standard.integer(forKey: gamesKey) + 1
+        UserDefaults.standard.set(games, forKey: gamesKey)
+        if games >= 10 { AchievementTracker.shared.tryUnlock("games_10") }
+        if games >= 50 { AchievementTracker.shared.tryUnlock("games_50") }
+
         currentFloorIndex = 0
         totalScore = 0
         gold = 150
         multiplier = 1.0
         activeBuffs = []
+        activeJokers = []
         combo = 0
+        drawPile = []
+        lastScoreEarned = 0
         startFloor()
     }
 
@@ -221,6 +401,15 @@ class RogueRun: ObservableObject {
         guard gold >= cost else { return false }
         gold -= cost
         activeBuffs.append(buff)
+        return true
+    }
+
+    /// 购买规则牌
+    func buyJoker(_ joker: Joker, cost: Int) -> Bool {
+        guard gold >= cost else { return false }
+        guard activeJokers.count < Joker.maxSlots else { return false }
+        gold -= cost
+        activeJokers.append(joker)
         return true
     }
 }
@@ -285,10 +474,15 @@ enum BuffType: String, Codable, Hashable {
 
 extension Buff {
     static let allBuffs: [Buff] = [
-        Buff(name: "火药桶", description: "炸弹得分 +50", type: .bombBonus, value: 50, icon: "🧨"),
-        Buff(name: "冲天炮", description: "火箭得分 +100", type: .rocketBonus, value: 100, icon: "🚀"),
+        Buff(name: "火药桶", description: "炸弹得分 +60", type: .bombBonus, value: 60, icon: "🧨"),
+        Buff(name: "冲天炮", description: "火箭得分 +120", type: .rocketBonus, value: 120, icon: "🚀"),
         Buff(name: "顺风车", description: "顺子得分 ×2", type: .straightBonus, value: 2.0, icon: "🚗"),
         Buff(name: "大阅兵", description: "飞机得分 ×2.5", type: .planeBonus, value: 2.5, icon: "✈️"),
         Buff(name: "翻倍符", description: "全局得分 ×1.5", type: .globalMultiplier, value: 1.5, icon: "🔮"),
+        Buff(name: "财神爷", description: "全局得分 ×1.3", type: .globalMultiplier, value: 1.3, icon: "💰"),
+        Buff(name: "双响炮", description: "炸弹得分 +100", type: .bombBonus, value: 100, icon: "🎆"),
+        Buff(name: "铁索连舟", description: "顺子得分 ×2.5", type: .straightBonus, value: 2.5, icon: "⛓️"),
+        Buff(name: "空中堡垒", description: "飞机得分 ×3", type: .planeBonus, value: 3.0, icon: "🏰"),
+        Buff(name: "神来之手", description: "全局得分 ×2", type: .globalMultiplier, value: 2.0, icon: "🌟"),
     ]
 }

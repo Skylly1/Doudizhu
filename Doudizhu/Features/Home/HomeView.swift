@@ -2,68 +2,90 @@ import SwiftUI
 
 struct HomeView: View {
     let onNavigate: (AppScreen) -> Void
+    @State private var titleScale: CGFloat = 0.8
+    @State private var titleOpacity: Double = 0
+    @State private var buttonsOffset: CGFloat = 40
+    @State private var buttonsOpacity: Double = 0
 
     var body: some View {
         ZStack {
-            // 水墨背景
-            Color.black.ignoresSafeArea()
+            Theme.bgPrimary.ignoresSafeArea()
 
-            VStack(spacing: 40) {
-                // 标题
-                Text("斗破乾坤")
-                    .font(.system(size: 48, weight: .bold, design: .serif))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.yellow, .orange],
-                            startPoint: .top,
-                            endPoint: .bottom
+            // 装饰背景
+            VStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [Theme.gold.opacity(0.08), Color.clear],
+                            center: .center,
+                            startRadius: 0, endRadius: 250
                         )
                     )
+                    .frame(width: 500, height: 500)
+                    .offset(y: -100)
+                Spacer()
+            }
+            .ignoresSafeArea()
 
-                Text("Roguelike 斗地主")
-                    .font(.title3)
-                    .foregroundColor(.white.opacity(0.6))
+            VStack(spacing: 0) {
+                Spacer()
 
-                Spacer().frame(height: 20)
+                // 标题区
+                VStack(spacing: 12) {
+                    Text("🎴")
+                        .font(.system(size: 56))
+
+                    Text("斗破乾坤")
+                        .font(Theme.fontTitle)
+                        .foregroundStyle(Theme.goldGradient)
+
+                    Text("Roguelike · 斗地主")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(Theme.textTertiary)
+                        .tracking(4)
+                }
+                .scaleEffect(titleScale)
+                .opacity(titleOpacity)
+
+                Spacer().frame(height: Theme.spacingXXL)
 
                 // 菜单按钮
-                VStack(spacing: 16) {
-                    MenuButton(title: "开始冒险", icon: "play.fill") {
+                VStack(spacing: 14) {
+                    PrimaryButton(title: "开始冒险", icon: "play.fill") {
                         onNavigate(.map)
                     }
-                    MenuButton(title: "卡牌收藏", icon: "rectangle.stack.fill") {
-                        onNavigate(.collection)
-                    }
-                    MenuButton(title: "设置", icon: "gearshape.fill") {
-                        onNavigate(.settings)
+                    .padding(.horizontal, 60)
+
+                    HStack(spacing: 12) {
+                        SecondaryButton(title: "收藏", icon: "rectangle.stack.fill") {
+                            onNavigate(.collection)
+                        }
+                        SecondaryButton(title: "设置", icon: "gearshape.fill") {
+                            onNavigate(.settings)
+                        }
                     }
                 }
+                .offset(y: buttonsOffset)
+                .opacity(buttonsOpacity)
+
+                Spacer()
+
+                // 版本信息
+                Text("v0.9 MVP · Made with ❤️")
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textDisabled)
+                    .padding(.bottom, Theme.spacingMD)
             }
-            .padding()
         }
-    }
-}
-
-struct MenuButton: View {
-    let title: String
-    let icon: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title3)
-                Text(title)
-                    .font(.title3.weight(.medium))
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
+                titleScale = 1.0
+                titleOpacity = 1.0
             }
-            .foregroundColor(.white)
-            .frame(width: 240, height: 56)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.white.opacity(0.1))
-                    .stroke(.white.opacity(0.2), lineWidth: 1)
-            )
+            withAnimation(.easeOut(duration: 0.5).delay(0.35)) {
+                buttonsOffset = 0
+                buttonsOpacity = 1.0
+            }
         }
     }
 }

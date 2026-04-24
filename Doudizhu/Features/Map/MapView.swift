@@ -1,85 +1,102 @@
 import SwiftUI
 
-/// Roguelike 地图：冒险入口
+/// Roguelike 地图：冒险入口 — 纵向旅途可视化
 struct MapView: View {
     let onStart: () -> Void
     let onBack: () -> Void
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Theme.bgPrimary.ignoresSafeArea()
 
-            VStack(spacing: 32) {
-                // 顶部
-                HStack {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                    }
-                    Spacer()
-                }
-                .padding()
+            VStack(spacing: 0) {
+                GameNavBar(title: "冒险之路", subtitle: "穿越 8 层牌局", onBack: onBack)
 
-                Spacer()
-
-                // 关卡预览
-                VStack(spacing: 16) {
-                    Text("📜 冒险之路")
-                        .font(.title.bold())
-                        .foregroundColor(.white)
-
-                    Text("穿越8层牌局，击败恶霸地主")
-                        .foregroundColor(.white.opacity(0.6))
-
-                    // 关卡列表
-                    VStack(spacing: 8) {
-                        ForEach(FloorConfig.allFloors, id: \.floor) { floor in
-                            HStack {
-                                Text(floor.isShop ? "🏪" : "⚔️")
-                                Text("第\(floor.floor)层")
-                                    .font(.subheadline)
-                                    .foregroundColor(.white.opacity(0.7))
-                                Text(floor.name)
-                                    .font(.subheadline.bold())
-                                    .foregroundColor(.white)
-                                Spacer()
-                                if !floor.isShop {
-                                    Text("目标 \(floor.targetScore)")
-                                        .font(.caption.monospacedDigit())
-                                        .foregroundColor(.yellow.opacity(0.7))
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(.white.opacity(0.04))
-                            )
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        ForEach(Array(FloorConfig.allFloors.enumerated()), id: \.offset) { index, floor in
+                            FloorNode(floor: floor, index: index, isLast: index == FloorConfig.allFloors.count - 1)
                         }
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.top, Theme.spacingLG)
+                    .padding(.bottom, 100)
                 }
 
-                Spacer()
-
-                // 开始按钮
-                Button(action: onStart) {
-                    HStack {
-                        Image(systemName: "play.fill")
-                        Text("开始冒险")
-                    }
-                    .font(.title3.weight(.semibold))
-                    .foregroundColor(.black)
-                    .frame(width: 220, height: 56)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(.yellow)
-                    )
+                // 出发按钮
+                PrimaryButton(title: "出发", icon: "figure.walk") {
+                    onStart()
                 }
-                .padding(.bottom, 50)
+                .padding(.horizontal, Theme.spacingXL)
+                .padding(.bottom, Theme.spacingLG)
             }
         }
+    }
+}
+
+private struct FloorNode: View {
+    let floor: FloorConfig
+    let index: Int
+    let isLast: Bool
+
+    var body: some View {
+        HStack(spacing: Theme.spacingMD) {
+            // 左侧连线 + 节点
+            VStack(spacing: 0) {
+                if index > 0 {
+                    Rectangle()
+                        .fill(Theme.border)
+                        .frame(width: 2, height: 20)
+                }
+
+                ZStack {
+                    Circle()
+                        .fill(floor.isShop ? Theme.flame.opacity(0.2) : Theme.cyan.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Circle()
+                        .stroke(floor.isShop ? Theme.flame : Theme.cyan, lineWidth: 2)
+                        .frame(width: 44, height: 44)
+                    Text(floor.isShop ? "🏪" : "\(floor.floor)")
+                        .font(floor.isShop ? .title3 : .body.bold().monospacedDigit())
+                        .foregroundColor(floor.isShop ? Theme.flame : Theme.cyan)
+                }
+
+                if !isLast {
+                    Rectangle()
+                        .fill(Theme.border)
+                        .frame(width: 2, height: 20)
+                }
+            }
+
+            // 右侧信息
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(floor.name)
+                        .font(Theme.fontSection)
+                        .foregroundColor(Theme.textPrimary)
+                    Spacer()
+                    if !floor.isShop {
+                        Text("🎯 \(floor.targetScore)")
+                            .font(Theme.fontCaption.monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                }
+
+                Text(floor.description)
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textTertiary)
+
+                if !floor.isShop {
+                    HStack(spacing: Theme.spacingSM) {
+                        Label("\(floor.maxPlays)次出牌", systemImage: "hand.raised.fill")
+                        Label("\(floor.maxDiscards)次换牌", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .font(.caption2)
+                    .foregroundColor(Theme.textTertiary)
+                }
+            }
+            .padding(.vertical, Theme.spacingSM)
+        }
+        .padding(.horizontal, Theme.spacingLG)
     }
 }
 

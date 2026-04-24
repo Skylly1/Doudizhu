@@ -6,100 +6,176 @@ struct ShopView: View {
     let onLeave: () -> Void
 
     @State private var shopItems: [ShopItem] = []
+    @State private var jokerItems: [JokerShopItem] = []
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            VStack(spacing: 24) {
+        ScrollView {
+            VStack(spacing: Theme.spacingLG) {
                 // 标题
-                VStack(spacing: 4) {
-                    Text("🏪 杂货铺")
-                        .font(.title.bold())
-                        .foregroundColor(.white)
-                    Text("选购增益道具，助你一臂之力")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                .padding(.top, 40)
+                GameNavBar(title: "杂货铺", subtitle: "选购规则牌与增益道具")
+                    .padding(.top, Theme.spacingSM)
 
                 // 金币
                 HStack(spacing: 6) {
                     Image(systemName: "dollarsign.circle.fill")
-                        .foregroundColor(.yellow)
+                        .foregroundColor(Theme.gold)
                     Text("\(rogueRun.gold)")
                         .font(.title3.bold().monospacedDigit())
-                        .foregroundColor(.yellow)
+                        .foregroundColor(Theme.gold)
                     Text("金币")
-                        .foregroundColor(.yellow.opacity(0.6))
+                        .font(Theme.fontCaption)
+                        .foregroundColor(Theme.goldDark.opacity(0.7))
                 }
 
-                // 商品列表
-                VStack(spacing: 12) {
-                    ForEach(shopItems) { item in
-                        ShopItemRow(
-                            item: item,
-                            canAfford: rogueRun.gold >= item.cost,
-                            onBuy: {
-                                if rogueRun.buyBuff(item.buff, cost: item.cost) {
-                                    withAnimation {
-                                        shopItems.removeAll { $0.id == item.id }
+                // 规则牌区
+                if !jokerItems.isEmpty {
+                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                        HStack {
+                            Label("规则牌", systemImage: "suit.spade.fill")
+                                .font(Theme.fontSection)
+                                .foregroundColor(Theme.cyan)
+                            Spacer()
+                            Text("\(rogueRun.activeJokers.count)/\(Joker.maxSlots)")
+                                .font(Theme.fontMono)
+                                .foregroundColor(Theme.textTertiary)
+                        }
+                        .padding(.horizontal, Theme.spacingLG)
+
+                        VStack(spacing: 10) {
+                            ForEach(jokerItems) { item in
+                                JokerShopRow(
+                                    item: item,
+                                    canAfford: rogueRun.gold >= item.cost,
+                                    slotsFull: rogueRun.activeJokers.count >= Joker.maxSlots,
+                                    onBuy: {
+                                        if rogueRun.buyJoker(item.joker, cost: item.cost) {
+                                            FeedbackManager.shared.purchase()
+                                            withAnimation(.spring(response: 0.3)) {
+                                                jokerItems.removeAll { $0.id == item.id }
+                                            }
+                                        }
                                     }
-                                }
+                                )
                             }
-                        )
+                        }
+                        .padding(.horizontal, Theme.spacingLG)
                     }
                 }
-                .padding(.horizontal, 24)
 
-                if shopItems.isEmpty {
+                // 增益道具区
+                if !shopItems.isEmpty {
+                    VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                        Label("增益道具", systemImage: "sparkles")
+                            .font(Theme.fontSection)
+                            .foregroundColor(Theme.flame)
+                            .padding(.horizontal, Theme.spacingLG)
+
+                        VStack(spacing: 10) {
+                            ForEach(shopItems) { item in
+                                ShopItemRow(
+                                    item: item,
+                                    canAfford: rogueRun.gold >= item.cost,
+                                    onBuy: {
+                                        if rogueRun.buyBuff(item.buff, cost: item.cost) {
+                                            FeedbackManager.shared.purchase()
+                                            withAnimation(.spring(response: 0.3)) {
+                                                shopItems.removeAll { $0.id == item.id }
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        .padding(.horizontal, Theme.spacingLG)
+                    }
+                }
+
+                if shopItems.isEmpty && jokerItems.isEmpty {
                     Text("已售罄")
-                        .foregroundColor(.white.opacity(0.3))
-                        .padding()
+                        .foregroundColor(Theme.textDisabled)
+                        .padding(Theme.spacingXL)
+                }
+
+                // 已装备的规则牌
+                if !rogueRun.activeJokers.isEmpty {
+                    equippedSection(
+                        title: "已装备规则牌",
+                        color: Theme.cyan
+                    ) {
+                        FlowLayout(spacing: 6) {
+                            ForEach(rogueRun.activeJokers) { joker in
+                                HStack(spacing: 3) {
+                                    Text(joker.icon).font(.caption2)
+                                    Text(joker.name).font(.caption2)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Theme.cyanDim))
+                                .foregroundColor(Theme.cyan)
+                            }
+                        }
+                    }
                 }
 
                 // 已有 Buff
                 if !rogueRun.activeBuffs.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("已装备")
-                            .font(.caption.bold())
-                            .foregroundColor(.white.opacity(0.4))
+                    equippedSection(
+                        title: "已装备增益",
+                        color: Theme.flame
+                    ) {
                         FlowLayout(spacing: 6) {
                             ForEach(rogueRun.activeBuffs) { buff in
-                                Text("\(buff.icon) \(buff.name)")
-                                    .font(.caption)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(Capsule().fill(.orange.opacity(0.15)))
-                                    .foregroundColor(.orange)
+                                HStack(spacing: 3) {
+                                    Text(buff.icon).font(.caption2)
+                                    Text(buff.name).font(.caption2)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Theme.flameDim))
+                                .foregroundColor(Theme.flame)
                             }
                         }
                     }
-                    .padding(.horizontal, 24)
                 }
 
-                Spacer()
+                Spacer(minLength: Theme.spacingMD)
 
-                // 离开按钮
-                Button("继续前进 →") {
+                PrimaryButton(title: "继续前进 →", icon: "arrow.right") {
                     onLeave()
                 }
-                .font(.headline)
-                .foregroundColor(.black)
-                .frame(width: 200, height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.yellow))
-                .padding(.bottom, 40)
+                .padding(.horizontal, Theme.spacingXXL)
+                .padding(.bottom, Theme.spacingXL)
             }
         }
-        .onAppear {
-            generateShopItems()
+        .gameBackground()
+        .onAppear { generateShopItems() }
+    }
+
+    private func equippedSection<Content: View>(title: String, color: Color, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: Theme.spacingSM) {
+            Text(title)
+                .font(Theme.fontCaption)
+                .foregroundColor(color.opacity(0.6))
+            content()
         }
+        .padding(.horizontal, Theme.spacingLG)
     }
 
     private func generateShopItems() {
-        // 随机挑选 3 个 Buff 出售
+        let ownedEffects = Set(rogueRun.activeJokers.map(\.effect))
+        let availableJokers = Joker.allJokers.filter { !ownedEffects.contains($0.effect) }.shuffled()
+        jokerItems = availableJokers.prefix(2).map { joker in
+            let baseCost: Int
+            switch joker.rarity {
+            case .common:    baseCost = 40
+            case .rare:      baseCost = 70
+            case .legendary: baseCost = 120
+            }
+            return JokerShopItem(joker: joker, cost: baseCost + Int.random(in: 0...20))
+        }
+
         let available = Buff.allBuffs.shuffled()
-        shopItems = available.prefix(3).enumerated().map { index, buff in
+        shopItems = available.prefix(2).enumerated().map { index, buff in
             ShopItem(buff: buff, cost: (index + 1) * 30 + Int.random(in: 0...20))
         }
     }
@@ -109,6 +185,76 @@ struct ShopItem: Identifiable {
     let id = UUID()
     let buff: Buff
     let cost: Int
+}
+
+struct JokerShopItem: Identifiable {
+    let id = UUID()
+    let joker: Joker
+    let cost: Int
+}
+
+struct JokerShopRow: View {
+    let item: JokerShopItem
+    let canAfford: Bool
+    let slotsFull: Bool
+    let onBuy: () -> Void
+
+    private var rarityColor: Color {
+        switch item.joker.rarity {
+        case .common:    return Theme.success
+        case .rare:      return Theme.cyan
+        case .legendary: return Theme.legendary
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(item.joker.icon)
+                .font(.title)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(item.joker.name)
+                        .font(.headline)
+                        .foregroundColor(Theme.textPrimary)
+                    Text(item.joker.rarity.rawValue)
+                        .font(.caption2.bold())
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(rarityColor.opacity(0.25)))
+                        .foregroundColor(rarityColor)
+                }
+                Text(item.joker.description)
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textSecondary)
+            }
+
+            Spacer()
+
+            Button(action: onBuy) {
+                HStack(spacing: 4) {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .font(.caption)
+                    Text("\(item.cost)")
+                        .font(Theme.fontMono)
+                }
+                .foregroundColor(canAfford && !slotsFull ? .black : Theme.textDisabled)
+                .padding(.horizontal, Theme.spacingMD)
+                .padding(.vertical, Theme.spacingSM)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(canAfford && !slotsFull ? Theme.cyan : Theme.bgInset)
+                )
+            }
+            .disabled(!canAfford || slotsFull)
+        }
+        .padding(Theme.spacingMD)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .fill(Theme.bgCard)
+                .stroke(rarityColor.opacity(0.3), lineWidth: 1)
+        )
+    }
 }
 
 struct ShopItemRow: View {
@@ -124,10 +270,10 @@ struct ShopItemRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.buff.name)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Theme.textPrimary)
                 Text(item.buff.description)
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textSecondary)
             }
 
             Spacer()
@@ -137,23 +283,23 @@ struct ShopItemRow: View {
                     Image(systemName: "dollarsign.circle.fill")
                         .font(.caption)
                     Text("\(item.cost)")
-                        .font(.body.bold().monospacedDigit())
+                        .font(Theme.fontMono)
                 }
-                .foregroundColor(canAfford ? .black : .gray)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .foregroundColor(canAfford ? .black : Theme.textDisabled)
+                .padding(.horizontal, Theme.spacingMD)
+                .padding(.vertical, Theme.spacingSM)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(canAfford ? .yellow : .gray.opacity(0.2))
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(canAfford ? Theme.gold : Theme.bgInset)
                 )
             }
             .disabled(!canAfford)
         }
-        .padding(16)
+        .padding(Theme.spacingMD)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.white.opacity(0.05))
-                .stroke(.white.opacity(0.1))
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .fill(Theme.bgCard)
+                .stroke(Theme.border)
         )
     }
 }
