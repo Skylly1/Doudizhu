@@ -6,6 +6,7 @@ struct BattleView: View {
     @ObservedObject var rogueRun: RogueRun
     let onShop: () -> Void
     @State private var battleScene: BattleScene?
+    @State private var showPatternGuide = false
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -94,6 +95,18 @@ struct BattleView: View {
                 Text("\(rogueRun.gold)")
                     .font(.headline.monospacedDigit())
                     .foregroundColor(.yellow)
+            }
+
+            // 牌型参考按钮
+            Button {
+                showPatternGuide = true
+            } label: {
+                Image(systemName: "questionmark.circle.fill")
+                    .font(.title3)
+                    .foregroundColor(.white.opacity(0.5))
+            }
+            .sheet(isPresented: $showPatternGuide) {
+                PatternGuideView()
             }
         }
         .padding(.horizontal)
@@ -213,8 +226,41 @@ struct BattleView: View {
 
     // MARK: - 操作按钮
 
+    /// 实时识别选中牌的牌型
+    private var selectedPattern: CardPattern? {
+        guard let scene = battleScene else { return nil }
+        let selected = scene.getSelectedCards()
+        guard !selected.isEmpty else { return nil }
+        return PatternRecognizer.recognize(selected)
+    }
+
     private var actionButtons: some View {
-        HStack(spacing: 16) {
+        VStack(spacing: 8) {
+            // 牌型提示 — 告诉玩家选中的牌能组成什么
+            if let pattern = selectedPattern {
+                HStack(spacing: 6) {
+                    Text(pattern.type.displayName)
+                        .font(.subheadline.bold())
+                        .foregroundColor(.cyan)
+                    Text("基础 \(pattern.baseScore) 分")
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule().fill(.cyan.opacity(0.15))
+                        .stroke(.cyan.opacity(0.3))
+                )
+                .transition(.scale.combined(with: .opacity))
+            } else if battleScene?.getSelectedCards().isEmpty == false {
+                Text("❌ 无效牌型")
+                    .font(.caption)
+                    .foregroundColor(.red.opacity(0.7))
+                    .transition(.opacity)
+            }
+
+            HStack(spacing: 16) {
             // 弃牌按钮
             Button {
                 guard let scene = battleScene else { return }
@@ -260,6 +306,7 @@ struct BattleView: View {
                 )
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
+            }
         }
     }
 

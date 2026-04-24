@@ -9,9 +9,9 @@ class BattleScene: SKScene {
     private var playedAreaNode: SKNode = SKNode()
 
     // 布局常量
-    private let cardWidth: CGFloat = 60
-    private let cardHeight: CGFloat = 90
-    private let cardOverlap: CGFloat = 30
+    private let cardWidth: CGFloat = 56
+    private let cardHeight: CGFloat = 80
+    private let cardOverlap: CGFloat = 26
 
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.05, green: 0.08, blue: 0.12, alpha: 1.0)
@@ -44,7 +44,7 @@ class BattleScene: SKScene {
         addChild(hint)
     }
 
-    /// 排列手牌
+    /// 排列手牌 — 扇形布局
     func layoutHand() {
         cardNodes.forEach { $0.removeFromParent() }
         cardNodes.removeAll()
@@ -52,27 +52,53 @@ class BattleScene: SKScene {
 
         guard let cards = rogueRun?.handCards, !cards.isEmpty else { return }
 
-        let overlap = min(cardOverlap, (size.width - 40 - cardWidth) / CGFloat(cards.count - 1))
-        let totalWidth = CGFloat(cards.count - 1) * overlap + cardWidth
+        let count = cards.count
+        // 动态计算 overlap 确保不超出屏幕
+        let maxWidth = size.width - 32
+        let overlap = min(cardOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
+        let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
+        let baseY = cardHeight / 2 + 100
+
+        // 扇形弧度参数
+        let maxAngle: CGFloat = count > 5 ? 0.035 : 0.02  // 每张牌的最大旋转角
+        let arcHeight: CGFloat = count > 5 ? 12 : 6        // 弧线高度
 
         for (index, card) in cards.enumerated() {
             let node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))
+
+            let progress = count > 1 ? CGFloat(index) / CGFloat(count - 1) : 0.5
+            let centered = progress - 0.5  // -0.5 到 0.5
+
+            // 扇形弧线 Y 偏移
+            let arcY = -arcHeight * (centered * centered * 4)  // 抛物线
+            let rotation = -centered * maxAngle * CGFloat(count)
+
             node.position = CGPoint(
                 x: startX + CGFloat(index) * overlap,
-                y: cardHeight / 2 + 120
+                y: baseY + arcY
             )
+            node.zRotation = rotation
             node.zPosition = CGFloat(index)
 
-            // 入场动画：从底部弹入
-            let finalY = node.position.y
+            // 入场动画
+            let finalPos = node.position
+            let finalRot = node.zRotation
             node.position.y = -cardHeight
             node.alpha = 0
-            let delay = SKAction.wait(forDuration: Double(index) * 0.03)
-            let moveUp = SKAction.moveTo(y: finalY, duration: 0.3)
+            node.zRotation = 0
+
+            let delay = SKAction.wait(forDuration: Double(index) * 0.04)
+            let moveUp = SKAction.move(to: finalPos, duration: 0.35)
             moveUp.timingMode = .easeOut
             let fadeIn = SKAction.fadeIn(withDuration: 0.2)
-            node.run(SKAction.sequence([delay, SKAction.group([moveUp, fadeIn])]))
+            let rotate = SKAction.rotate(toAngle: finalRot, duration: 0.35)
+            rotate.timingMode = .easeOut
+
+            node.run(SKAction.sequence([
+                delay,
+                SKAction.group([moveUp, fadeIn, rotate])
+            ]))
 
             addChild(node)
             cardNodes.append(node)
