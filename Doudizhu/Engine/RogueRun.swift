@@ -117,6 +117,7 @@ class RogueRun: ObservableObject {
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
     var phoenixUsed: Bool = false               // 浴火凤凰复活是否已使用
+    var dailyChallenge: DailyChallenge?         // 每日挑战（非nil表示当前为每日挑战模式）
 
     /// Run start time for play-time tracking
     private var runStartTime: Date?
@@ -210,7 +211,23 @@ class RogueRun: ObservableObject {
         if hasJoker(.secondWind) {
             playsRemaining += 1
         }
-        
+
+        // Daily challenge modifier adjustments
+        if let dc = dailyChallenge {
+            for mod in dc.modifiers {
+                switch mod {
+                case .extraPlays:
+                    playsRemaining += 2
+                case .noDiscards:
+                    discardsRemaining = 0
+                case .speedRun:
+                    playsRemaining = min(playsRemaining, 3)
+                default:
+                    break
+                }
+            }
+        }
+
         // 发牌
         let deal = Deck.dealRoguelike(handSize: 10)
         handCards = deal.hand
@@ -226,6 +243,12 @@ class RogueRun: ObservableObject {
 
         guard let pattern = PatternRecognizer.recognize(cards) else {
             return nil  // 无效牌型
+        }
+
+        // Daily challenge: noBombs — reject bomb and rocket patterns
+        if let dc = dailyChallenge, dc.modifiers.contains(.noBombs),
+           pattern.type == .bomb || pattern.type == .rocket {
+            return nil
         }
 
         // 消耗出牌次数
@@ -479,6 +502,10 @@ class RogueRun: ObservableObject {
                 PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
                 runStartTime = nil
             }
+            // Record daily challenge score on fail
+            if dailyChallenge != nil {
+                DailyChallenge.recordScore(totalScore)
+            }
             phase = .floorFail
         } else {
             phase = .selecting
@@ -487,6 +514,10 @@ class RogueRun: ObservableObject {
 
     /// 换牌（弃掉选中的牌，从牌堆抽等量新牌）
     func discardCards(_ cards: [Card]) -> Bool {
+        // Daily challenge: noDiscards — always reject
+        if let dc = dailyChallenge, dc.modifiers.contains(.noDiscards) {
+            return false
+        }
         guard phase == .selecting, discardsRemaining > 0, !cards.isEmpty else {
             return false
         }
@@ -550,6 +581,10 @@ class RogueRun: ObservableObject {
                 runStartTime = nil
             }
             PlayerStats.shared.save()
+            // Record daily challenge score
+            if dailyChallenge != nil {
+                DailyChallenge.recordScore(totalScore)
+            }
             phase = .victory
         } else {
             startFloor()
@@ -577,6 +612,7 @@ class RogueRun: ObservableObject {
         drawPile = []
         lastScoreEarned = 0
         phoenixUsed = false
+        dailyChallenge = nil
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
@@ -594,6 +630,44 @@ class RogueRun: ObservableObject {
             activeBuffs.append(buff)
         }
 
+        startFloor()
+    }
+
+    /// Start a daily challenge run
+    func startDailyChallenge(_ challenge: DailyChallenge) {
+        currentFloorIndex = 0
+        totalScore = 0
+        gold = 150 + challenge.bonusGold
+        multiplier = 1.0
+        activeBuffs = []
+        activeJokers = []
+        combo = 0
+        drawPile = []
+        lastScoreEarned = 0
+        phoenixUsed = false
+        dailyChallenge = challenge
+
+        // Apply daily challenge modifiers
+        for modifier in challenge.modifiers {
+            switch modifier {
+            case .halfGold:
+                gold = gold / 2
+            case .doubleScore:
+                multiplier = 2.0
+            default:
+                break
+            }
+        }
+
+        // PlayerStats
+        if let start = runStartTime {
+            PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
+        }
+        runStartTime = Date()
+        currentBuildId = "daily"
+        PlayerStats.shared.totalRuns += 1
+
+        DailyChallenge.markPlayed()
         startFloor()
     }
 
@@ -616,6 +690,7 @@ class RogueRun: ObservableObject {
         drawPile = []
         lastScoreEarned = 0
         phoenixUsed = false
+        dailyChallenge = nil
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {

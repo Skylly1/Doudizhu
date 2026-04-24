@@ -20,6 +20,14 @@ struct ContentView: View {
                     }, onBack: {
                         currentScreen = .map
                     })
+                case .dailyChallenge:
+                    DailyChallengeView(
+                        onStart: { challenge in
+                            rogueRun.startDailyChallenge(challenge)
+                            currentScreen = .battle
+                        },
+                        onBack: { currentScreen = .home }
+                    )
                 case .battle:
                     BattleView(
                         rogueRun: rogueRun,
@@ -74,6 +82,7 @@ struct ContentView: View {
 enum AppScreen: Hashable {
     case home
     case buildSelect
+    case dailyChallenge
     case battle
     case shop
     case demoGate

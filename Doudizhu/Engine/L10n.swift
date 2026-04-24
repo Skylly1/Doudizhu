@@ -341,6 +341,18 @@ enum L10n {
     static var buffDivineTouchName: String { localized("神来之手", en: "Divine Touch") }
     static var buffDivineTouchDesc: String { localized("全局得分 ×2", en: "All scores ×2") }
 
+    // MARK: - 每日挑战
+    static var dailyChallengeTitle: String { localized("每日挑战", en: "Daily Challenge") }
+    static var dailyChallengeSubtitle: String { localized("每日限定规则，全服同种子", en: "Daily rules, same seed for all") }
+    static var todayModifiers: String { localized("今日规则", en: "Today's Rules") }
+    static var rewardMultiplier: String { localized("奖励倍率", en: "Reward Multiplier") }
+    static var bonusGoldLabel: String { localized("额外金币", en: "Bonus Gold") }
+    static var startDailyChallenge: String { localized("开始每日挑战", en: "Start Daily Challenge") }
+    static var dailyChallengeCompleted: String { localized("今日已完成", en: "Completed Today") }
+    static func dailyBestScore(_ n: Int) -> String { localized("今日最高分: \(n)", en: "Today's Best: \(n)") }
+    static var dailyChallengeNoBombs: String { localized("禁止使用炸弹和火箭", en: "Bombs and Rockets are banned") }
+    static var dailyChallengeNoDiscards: String { localized("禁止换牌", en: "Discards are disabled") }
+
     // MARK: - 辅助
 
     private static func localized(_ zh: String, en: String) -> String {
