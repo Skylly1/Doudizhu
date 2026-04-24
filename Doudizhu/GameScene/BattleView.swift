@@ -104,6 +104,29 @@ struct BattleView: View {
 
     private var scoreTargetBar: some View {
         VStack(spacing: 6) {
+            // 规则牌标签
+            if !rogueRun.activeJokers.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(rogueRun.activeJokers) { joker in
+                            HStack(spacing: 3) {
+                                Text(joker.icon)
+                                    .font(.caption2)
+                                Text(joker.name)
+                                    .font(.caption2)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule().fill(.cyan.opacity(0.2))
+                            )
+                            .foregroundColor(.cyan)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+
             // Buff 标签
             if !rogueRun.activeBuffs.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {

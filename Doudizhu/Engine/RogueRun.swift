@@ -66,6 +66,7 @@ class RogueRun: ObservableObject {
     @Published var gold: Int = 150              // 金币
     @Published var multiplier: Double = 1.0     // 全局倍率
     @Published var activeBuffs: [Buff] = []
+    @Published var activeJokers: [Joker] = []    // 规则牌（最多5张）
     @Published var handCards: [Card] = []
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
@@ -86,6 +87,11 @@ class RogueRun: ObservableObject {
         floorScore >= currentFloor.targetScore
     }
 
+    /// 检查是否装备了某种效果的规则牌
+    func hasJoker(_ effect: JokerEffect) -> Bool {
+        activeJokers.contains { $0.effect == effect }
+    }
+
     // MARK: - 流程控制
 
     /// 开始当前层
@@ -102,6 +108,11 @@ class RogueRun: ObservableObject {
         discardsRemaining = floor.maxDiscards
         combo = 0
         lastPlayResult = nil
+
+        // 规则牌：暗度陈仓 — 每关换牌次数+2
+        if hasJoker(.extraDiscards) {
+            discardsRemaining += 2
+        }
 
         // 发牌（Roguelike 模式：10张手牌 + 44张牌堆）
         let deal = Deck.dealRoguelike(handSize: 10)
@@ -133,8 +144,42 @@ class RogueRun: ObservableObject {
 
         // 连击加成：连续出牌第2次+15%，第3次+30%...
         if combo > 1 {
-            let comboBonus = Double(combo - 1) * 0.15
+            let rate = hasJoker(.doubleComboRate) ? 0.30 : 0.15
+            let comboBonus = Double(combo - 1) * rate
             earned = Int(Double(earned) * (1.0 + comboBonus))
+        }
+
+        // 规则牌：一鸣惊人 — 每关第一次出牌×2.5
+        if combo == 1 && hasJoker(.firstPlayBonus) {
+            earned = Int(Double(earned) * 2.5)
+        }
+
+        // 规则牌：破釜沉舟 — 最后1次出牌机会时×3
+        if playsRemaining == 0 && hasJoker(.lastStandBonus) {
+            earned = Int(Double(earned) * 3.0)
+        }
+
+        // 规则牌：空城计 — 手牌≤5张时×1.5（出牌前计算，因为牌还没移除）
+        if handCards.count - cards.count <= 5 && hasJoker(.lowHandBonus) {
+            earned = Int(Double(earned) * 1.5)
+        }
+
+        // 规则牌：火烧连营 — 炸弹/火箭×2
+        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) {
+            earned *= 2
+        }
+
+        // 规则牌：顺势而为 — 顺子/连对×2
+        if hasJoker(.sequenceBonus) && (pattern.type == .straight || pattern.type == .pairStraight) {
+            earned *= 2
+        }
+
+        // 规则牌：四面楚歌 — 手牌中每张2或A +10%
+        if hasJoker(.highCardBonus) {
+            let highCount = handCards.filter { $0.rank == .two || $0.rank == .ace }.count
+            if highCount > 0 {
+                earned = Int(Double(earned) * (1.0 + Double(highCount) * 0.1))
+            }
         }
 
         // 全局倍率
@@ -146,6 +191,12 @@ class RogueRun: ObservableObject {
         // 从手牌移除
         let playedIds = Set(cards.map(\.id))
         handCards.removeAll { playedIds.contains($0.id) }
+
+        // 规则牌：贪心鬼 — 出牌后额外抽1张
+        if hasJoker(.drawAfterPlay) && !drawPile.isEmpty {
+            handCards.append(drawPile.removeFirst())
+            handCards.sort { $0.rank < $1.rank }
+        }
 
         let result = PlayResult(
             pattern: pattern,
@@ -188,7 +239,13 @@ class RogueRun: ObservableObject {
         handCards.removeAll { discardedIds.contains($0.id) }
 
         // 从牌堆补抽等量新牌
-        let drawCount = min(cards.count, drawPile.count)
+        var drawCount = min(cards.count, drawPile.count)
+
+        // 规则牌：偷梁换柱 — 换牌时多抽1张
+        if hasJoker(.extraDrawOnDiscard) && drawPile.count > drawCount {
+            drawCount += 1
+        }
+
         if drawCount > 0 {
             let drawn = Array(drawPile.prefix(drawCount))
             drawPile.removeFirst(drawCount)
@@ -226,6 +283,7 @@ class RogueRun: ObservableObject {
         gold = 150
         multiplier = 1.0
         activeBuffs = []
+        activeJokers = []
         combo = 0
         drawPile = []
         startFloor()
@@ -236,6 +294,15 @@ class RogueRun: ObservableObject {
         guard gold >= cost else { return false }
         gold -= cost
         activeBuffs.append(buff)
+        return true
+    }
+
+    /// 购买规则牌
+    func buyJoker(_ joker: Joker, cost: Int) -> Bool {
+        guard gold >= cost else { return false }
+        guard activeJokers.count < Joker.maxSlots else { return false }
+        gold -= cost
+        activeJokers.append(joker)
         return true
     }
 }
