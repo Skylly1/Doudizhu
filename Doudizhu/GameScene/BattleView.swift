@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import Combine
 
 struct BattleView: View {
     let onBack: () -> Void
@@ -8,6 +9,8 @@ struct BattleView: View {
     @State private var battleScene: BattleScene?
     @State private var showPatternGuide = false
     @StateObject private var achievementTracker = AchievementTracker.shared
+    /// Bumped by BattleScene.selectionChanged to force SwiftUI re-evaluation
+    @State private var selectionVersion = 0
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -108,6 +111,12 @@ struct BattleView: View {
                     battleScene?.refreshHand()
                 }
             }
+        }
+        .onReceive(
+            battleScene?.selectionChanged.eraseToAnyPublisher()
+                ?? Empty<Void, Never>().eraseToAnyPublisher()
+        ) { _ in
+            selectionVersion += 1
         }
     }
 
@@ -267,8 +276,9 @@ struct BattleView: View {
 
     // MARK: - 操作按钮
 
-    /// 实时识别选中牌的牌型
+    /// 实时识别选中牌的牌型（selectionVersion 触发 SwiftUI 重算）
     private var selectedPattern: CardPattern? {
+        _ = selectionVersion // read to create SwiftUI dependency
         guard let scene = battleScene else { return nil }
         let selected = scene.getSelectedCards()
         guard !selected.isEmpty else { return nil }
