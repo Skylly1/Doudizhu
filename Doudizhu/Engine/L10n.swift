@@ -81,30 +81,46 @@ enum L10n {
     static var skipTutorial: String { localized("跳过教程", en: "Skip Tutorial") }
     static var nextStep: String { localized("下一步 →", en: "Next →") }
     static var startGame: String { localized("开始游戏！", en: "Start!") }
-    static var tutorialWelcomeTitle: String { localized("欢迎来到斗破乾坤！", en: "Welcome to Dou Po Qian Kun!") }
-    static var tutorialSelectTitle: String { localized("选牌", en: "Select Cards") }
-    static var tutorialPlayTitle: String { localized("出牌", en: "Play Cards") }
-    static var tutorialDiscardTitle: String { localized("换牌", en: "Swap Cards") }
-    static var tutorialComboTitle: String { localized("连击", en: "Combo") }
-    static var tutorialShopTitle: String { localized("商店", en: "Shop") }
+
+    static var tutorialWelcomeTitle: String { localized("🎴 欢迎来到斗破乾坤！", en: "🎴 Welcome to Dou Po Qian Kun!") }
     static var tutorialWelcomeMsg: String { localized(
-        "在这个 Roguelike 斗地主中，你需要在有限的出牌次数内凑够目标分数。\n\n点击任意位置继续。",
-        en: "In this Roguelike Dou Di Zhu, you must reach the target score within limited plays.\n\nTap anywhere to continue.") }
+        "欢迎来到斗破乾坤！这是一款结合斗地主出牌规则的 Roguelike 卡牌冒险。\n\n点击任意位置继续。",
+        en: "Welcome to Dou Po Qian Kun! A Roguelike card adventure using Chinese Doudizhu card patterns.\n\nTap anywhere to continue.") }
+
+    static var tutorialGoalTitle: String { localized("🎯 关卡目标", en: "🎯 Floor Goal") }
+    static var tutorialGoalMsg: String { localized(
+        "每一层有一个目标分数，在有限的出牌次数内达到目标即可过关。",
+        en: "Each floor has a target score. Reach it within limited plays to advance.") }
+
+    static var tutorialPatternTitle: String { localized("🃏 牌型基础", en: "🃏 Pattern Basics") }
+    static var tutorialPatternMsg: String { localized(
+        "出牌规则与斗地主相同：单张、对子、三条、顺子、炸弹等都是合法牌型。不同牌型有不同的基础分。",
+        en: "Card patterns follow Doudizhu rules: Single, Pair, Triple, Straight, Bomb, etc. Each pattern has a base score.") }
+
+    static var tutorialBigPatternTitle: String { localized("💡 大牌型得分", en: "💡 Big Patterns") }
+    static var tutorialBigPatternMsg: String { localized(
+        "💡 大牌型得分更高！炸弹(4张同点) 240分，火箭(双王) 400分，飞机和连对也有丰厚分数。善用大牌型是过关关键！",
+        en: "💡 Bigger patterns score more! Bomb (4-of-a-kind) = 240 pts, Rocket (both Jokers) = 400 pts. Using big patterns is key to clearing floors!") }
+
+    static var tutorialSelectTitle: String { localized("👆 选牌与出牌", en: "👆 Select & Play") }
     static var tutorialSelectMsg: String { localized(
-        "点击手中的卡牌来选中它们。\n组成合法的斗地主牌型（对子、顺子、炸弹等）可以得分。",
-        en: "Tap cards in your hand to select them.\nForm valid patterns (pairs, straights, bombs, etc.) to score.") }
-    static var tutorialPlayMsg: String { localized(
-        "选好牌后，点击「出牌」按钮打出。\n牌型越复杂、牌越多，得分越高！",
-        en: "After selecting, tap \"Play\" to play them.\nMore complex patterns score higher!") }
+        "点击选牌，上方会实时显示牌型和分数。点「出牌」打出。如果选的牌不构成合法牌型，会提示无效。",
+        en: "Tap cards to select. The pattern and score appear above. Hit Play to submit. Invalid patterns are flagged.") }
+
+    static var tutorialDiscardTitle: String { localized("♻️ 换牌策略", en: "♻️ Swap Strategy") }
     static var tutorialDiscardMsg: String { localized(
-        "手牌不好？选中不需要的牌，点击「换牌」抽新牌。\n换牌次数有限，要省着用。",
-        en: "Bad hand? Select unwanted cards and tap \"Swap\" to draw new ones.\nSwaps are limited, use wisely.") }
+        "不想要的牌可以「换牌」——选中后点换牌按钮，它们会被丢弃并补充新牌。换牌次数有限，请谨慎使用。",
+        en: "Use Swap to discard unwanted cards and draw new ones. Swap uses are limited — use wisely.") }
+
+    static var tutorialComboTitle: String { localized("🔥 连击加成", en: "🔥 Combo Bonus") }
     static var tutorialComboMsg: String { localized(
-        "连续出牌会触发连击加分！\n每次连击 +15%，不要中断。",
-        en: "Consecutive plays trigger combo bonuses!\n+15% per combo, don't break the chain.") }
+        "连续出牌会形成连击（Combo），每次连击加成 +15%。弃牌会降低连击，所以尽量连续出牌！",
+        en: "Consecutive plays build Combo, +15% per level. Discarding reduces combo. Chain plays for max score!") }
+
+    static var tutorialShopTitle: String { localized("🛒 商店与强化", en: "🛒 Shop & Upgrades") }
     static var tutorialShopMsg: String { localized(
-        "每隔几关会进入商店。\n购买规则牌和增益道具，打造你的流派！",
-        en: "A shop appears every few floors.\nBuy jokers and buffs to build your strategy!") }
+        "过关后可以进入商店，用金币购买规则牌和增益道具来强化后续关卡。准备好了吗？开始冒险！",
+        en: "After clearing a floor, visit the shop to buy Jokers and Buffs. Ready? Let's go!") }
 
     // MARK: - 牌型名称
     static var patternSingle: String { localized("单张", en: "Single") }
