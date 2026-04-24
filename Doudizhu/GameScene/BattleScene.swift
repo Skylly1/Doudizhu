@@ -13,9 +13,9 @@ class BattleScene: SKScene {
     let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量
-    private let cardWidth: CGFloat = 56
-    private let cardHeight: CGFloat = 80
-    private let cardOverlap: CGFloat = 26
+    private let cardWidth: CGFloat = 64
+    private let cardHeight: CGFloat = 96
+    private let cardOverlap: CGFloat = 30
 
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.02, green: 0.06, blue: 0.10, alpha: 1.0)
@@ -95,7 +95,7 @@ class BattleScene: SKScene {
         let overlap = min(cardOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        let baseY = cardHeight / 2 + 100
+        let baseY = cardHeight / 2 + 190
 
         // 扇形弧度参数
         let maxAngle: CGFloat = count > 5 ? 0.035 : 0.02  // 每张牌的最大旋转角

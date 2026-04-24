@@ -36,6 +36,15 @@ struct BattleView: View {
                     .padding(.bottom, 8)
                 actionButtons
                     .padding(.bottom, 30)
+                    .background(
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.6), .black.opacity(0.85)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .padding(.top, -60)
+                        .ignoresSafeArea(edges: .bottom)
+                    )
             }
 
             // 过关/失败弹窗
