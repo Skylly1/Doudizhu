@@ -82,6 +82,25 @@ class CardNode: SKSpriteNode {
         topSuit.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - size.width * 0.33)
         addChild(topSuit)
 
+        // 右上角：点数（确保被叠时仍可见）
+        let rightRank = SKLabelNode(text: rankText)
+        rightRank.fontName = "Helvetica-Bold"
+        rightRank.fontSize = size.width * 0.28
+        rightRank.fontColor = color
+        rightRank.horizontalAlignmentMode = .right
+        rightRank.verticalAlignmentMode = .top
+        rightRank.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - 5)
+        addChild(rightRank)
+
+        // 右上角花色
+        let rightSuit = SKLabelNode(text: suitText)
+        rightSuit.fontSize = size.width * 0.20
+        rightSuit.fontColor = color
+        rightSuit.horizontalAlignmentMode = .right
+        rightSuit.verticalAlignmentMode = .top
+        rightSuit.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - size.width * 0.31)
+        addChild(rightSuit)
+
         // 中央大花色
         let centerSuit = SKLabelNode(text: suitText)
         centerSuit.fontSize = size.width * 0.5
@@ -124,6 +143,16 @@ class CardNode: SKSpriteNode {
         topLabel.verticalAlignmentMode = .top
         topLabel.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 5)
         addChild(topLabel)
+
+        // 右上角 大/小 标识
+        let rightLabel = SKLabelNode(text: isRed ? "大" : "小")
+        rightLabel.fontName = "PingFangSC-Bold"
+        rightLabel.fontSize = size.width * 0.28
+        rightLabel.fontColor = color
+        rightLabel.horizontalAlignmentMode = .right
+        rightLabel.verticalAlignmentMode = .top
+        rightLabel.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - 5)
+        addChild(rightLabel)
 
         // 中央大王/小王 emoji
         let emoji = SKLabelNode(text: isRed ? "👑" : "🃏")

@@ -42,14 +42,40 @@ struct FloorConfig {
     let isShop: Bool
 
     static let allFloors: [FloorConfig] = [
-        FloorConfig(floor: 1, name: "乡野牌局", targetScore: 200, maxPlays: 5, maxDiscards: 3, description: "村口老槐树下的牌局", isShop: false),
-        FloorConfig(floor: 2, name: "集市赌坊", targetScore: 300, maxPlays: 5, maxDiscards: 3, description: "赶集路上遇到的牌摊", isShop: false),
-        FloorConfig(floor: 3, name: "茶馆对弈", targetScore: 450, maxPlays: 5, maxDiscards: 2, description: "茶馆里的老牌手", isShop: false),
-        FloorConfig(floor: 4, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0, description: "补充装备，再上路", isShop: true),
-        FloorConfig(floor: 5, name: "县城擂台", targetScore: 600, maxPlays: 4, maxDiscards: 2, description: "县城里的斗地主擂台", isShop: false),
-        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 800, maxPlays: 4, maxDiscards: 2, description: "知府大人设下的暗局", isShop: false),
-        FloorConfig(floor: 7, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0, description: "最后的准备机会", isShop: true),
-        FloorConfig(floor: 8, name: "地主庄园", targetScore: 1200, maxPlays: 4, maxDiscards: 1, description: "终极Boss：恶霸地主", isShop: false),
+        // === 第一章：乡野篇 ===
+        FloorConfig(floor: 1, name: "乡野牌局", targetScore: 200, maxPlays: 5, maxDiscards: 3,
+                    description: "村口老槐树下的牌局", isShop: false),
+        FloorConfig(floor: 2, name: "集市赌坊", targetScore: 320, maxPlays: 5, maxDiscards: 3,
+                    description: "赶集路上遇到的牌摊", isShop: false),
+        FloorConfig(floor: 3, name: "茶馆对弈", targetScore: 450, maxPlays: 5, maxDiscards: 2,
+                    description: "茶馆里的老牌手", isShop: false),
+        FloorConfig(floor: 4, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: "补充装备，继续上路", isShop: true),
+        // === 第二章：府城篇 ===
+        FloorConfig(floor: 5, name: "县城擂台", targetScore: 600, maxPlays: 5, maxDiscards: 2,
+                    description: "县城里的斗地主擂台", isShop: false),
+        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 800, maxPlays: 4, maxDiscards: 2,
+                    description: "知府大人设下的暗局", isShop: false),
+        FloorConfig(floor: 7, name: "赌神酒楼", targetScore: 1000, maxPlays: 4, maxDiscards: 2,
+                    description: "江湖传说中的赌神地盘", isShop: false),
+        FloorConfig(floor: 8, name: "兵器铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: "精良的装备等着你", isShop: true),
+        // === 第三章：江湖篇 ===
+        FloorConfig(floor: 9, name: "镖局较量", targetScore: 1300, maxPlays: 4, maxDiscards: 1,
+                    description: "押镖路上遇到的高手", isShop: false),
+        FloorConfig(floor: 10, name: "武林大会", targetScore: 1600, maxPlays: 4, maxDiscards: 1,
+                    description: "各路英雄齐聚一堂", isShop: false),
+        FloorConfig(floor: 11, name: "皇城暗影", targetScore: 2000, maxPlays: 4, maxDiscards: 1,
+                    description: "京城地下赌场", isShop: false),
+        FloorConfig(floor: 12, name: "藏宝阁", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: "最后的准备机会", isShop: true),
+        // === 终章：登顶 ===
+        FloorConfig(floor: 13, name: "王府密室", targetScore: 2500, maxPlays: 3, maxDiscards: 1,
+                    description: "王爷的私人牌局", isShop: false),
+        FloorConfig(floor: 14, name: "天牢赌命", targetScore: 3200, maxPlays: 3, maxDiscards: 1,
+                    description: "以命相搏的最终对决", isShop: false),
+        FloorConfig(floor: 15, name: "斗破乾坤", targetScore: 4000, maxPlays: 3, maxDiscards: 0,
+                    description: "最终Boss：地主之王——无弃牌机会！", isShop: false),
     ]
 }
 

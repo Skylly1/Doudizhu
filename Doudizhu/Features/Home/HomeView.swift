@@ -56,6 +56,11 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, 60)
 
+                    SecondaryButton(title: "⚡ 快速开战", icon: "bolt.fill") {
+                        onNavigate(.buildSelect)
+                    }
+                    .padding(.horizontal, 60)
+
                     HStack(spacing: 12) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)

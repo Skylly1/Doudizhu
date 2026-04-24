@@ -132,6 +132,10 @@ struct TutorialOverlay: View {
                         .lineSpacing(5)
                         .fixedSize(horizontal: false, vertical: true)
 
+                    if step == .patternBasics || step == .bigPatterns {
+                        patternExamplesView(for: step)
+                    }
+
                     // Progress label
                     Text("\(step.stepNumber) / \(TutorialStep.displayableCount)")
                         .font(.caption.monospacedDigit())
@@ -165,6 +169,42 @@ struct TutorialOverlay: View {
                 .padding(.horizontal, Theme.spacingLG)
             }
             .transition(.opacity)
+        }
+    }
+
+    @ViewBuilder
+    private func patternExamplesView(for step: TutorialStep) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Divider().background(Theme.border)
+            if step == .patternBasics {
+                patternRow("单张", "🂡", "10分")
+                patternRow("对子", "🂡🂱", "20分")
+                patternRow("三条", "🂡🂱🃁", "40分")
+                patternRow("顺子", "🂣🂤🂥🂦🂧", "80分")
+                patternRow("连对", "🂣🂳🂤🂴", "60分")
+            } else {
+                patternRow("炸弹", "🂡🂱🃁🃑", "240分")
+                patternRow("火箭", "🃟🃏", "400分")
+                patternRow("飞机", "🂣🂳🃃🂤🂴🃄", "160分")
+                patternRow("三带一", "🂡🂱🃁+🂣", "50分")
+            }
+        }
+        .padding(.horizontal, 8)
+    }
+
+    private func patternRow(_ name: String, _ example: String, _ score: String) -> some View {
+        HStack {
+            Text(name)
+                .font(.caption.bold())
+                .foregroundColor(Theme.cyan)
+                .frame(width: 50, alignment: .leading)
+            Text(example)
+                .font(.caption)
+                .foregroundColor(Theme.textSecondary)
+            Spacer()
+            Text(score)
+                .font(.caption.bold().monospacedDigit())
+                .foregroundColor(Theme.gold)
         }
     }
 }
