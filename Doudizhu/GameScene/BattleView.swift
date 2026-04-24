@@ -7,6 +7,7 @@ struct BattleView: View {
     let onShop: () -> Void
     @State private var battleScene: BattleScene?
     @State private var showPatternGuide = false
+    @StateObject private var achievementTracker = AchievementTracker.shared
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -44,6 +45,41 @@ struct BattleView: View {
             } else if rogueRun.phase == .victory {
                 victoryOverlay
                     .onAppear { FeedbackManager.shared.victory() }
+            }
+
+            // 成就解锁提示
+            if let ach = achievementTracker.latestUnlock {
+                VStack {
+                    HStack(spacing: Theme.spacingSM) {
+                        Text(ach.icon)
+                            .font(.title2)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("🎉 成就解锁")
+                                .font(Theme.fontCaption)
+                                .foregroundColor(Theme.gold)
+                            Text(ach.name)
+                                .font(.headline)
+                                .foregroundColor(Theme.textPrimary)
+                        }
+                    }
+                    .padding(.horizontal, Theme.spacingLG)
+                    .padding(.vertical, Theme.spacingSM)
+                    .background(
+                        Capsule()
+                            .fill(Theme.bgPrimary.opacity(0.95))
+                            .stroke(Theme.gold.opacity(0.4))
+                    )
+                    .shadow(color: Theme.gold.opacity(0.3), radius: 12, y: 4)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+
+                    Spacer()
+                }
+                .padding(.top, 60)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        withAnimation { achievementTracker.dismissLatest() }
+                    }
+                }
             }
         }
         .onAppear {

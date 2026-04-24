@@ -237,6 +237,19 @@ class RogueRun: ObservableObject {
             gold += 5
         }
 
+        // 成就检测
+        let tracker = AchievementTracker.shared
+        if earned >= 200 { tracker.tryUnlock("single_200") }
+        if earned >= 500 { tracker.tryUnlock("single_500") }
+        if totalScore >= 500 { tracker.tryUnlock("score_500") }
+        if totalScore >= 2000 { tracker.tryUnlock("score_2000") }
+        if totalScore >= 5000 { tracker.tryUnlock("score_5000") }
+        if combo >= 5 { tracker.tryUnlock("combo_5") }
+        if pattern.type == .bomb { tracker.tryUnlock("bombs_10") }  // 简化：首次炸弹即解锁
+        if pattern.type == .rocket { tracker.tryUnlock("rockets_5") }
+        if activeJokers.count >= 5 { tracker.tryUnlock("jokers_collect_5") }
+        if gold >= 300 { tracker.tryUnlock("gold_300") }
+
         // 从手牌移除
         let playedIds = Set(cards.map(\.id))
         handCards.removeAll { playedIds.contains($0.id) }
@@ -263,9 +276,15 @@ class RogueRun: ObservableObject {
     /// 得分动画结束后调用
     func onScoringComplete() {
         if isFloorCleared {
-            // 过关奖励金币
             let bonus = currentFloor.targetScore / 10
             gold += bonus
+
+            // 成就检测
+            let tracker = AchievementTracker.shared
+            if currentFloorIndex == 0 { tracker.tryUnlock("first_win") }
+            if currentFloorIndex >= 4 { tracker.tryUnlock("mid_run") }
+            if discardsRemaining == currentFloor.maxDiscards { tracker.tryUnlock("no_discard_win") }
+
             phase = .floorWin
         } else if playsRemaining <= 0 || handCards.isEmpty {
             phase = .floorFail
@@ -321,6 +340,8 @@ class RogueRun: ObservableObject {
     func advanceToNextFloor() {
         currentFloorIndex += 1
         if currentFloorIndex >= FloorConfig.allFloors.count {
+            AchievementTracker.shared.tryUnlock("full_clear")
+            AchievementTracker.shared.tryUnlock("wins_5") // 简化：首次通关即解锁
             phase = .victory
         } else {
             startFloor()
@@ -356,6 +377,13 @@ class RogueRun: ObservableObject {
 
     /// 重新开始整个游戏
     func restart() {
+        // 游戏次数成就
+        let gamesKey = "total_games_played"
+        let games = UserDefaults.standard.integer(forKey: gamesKey) + 1
+        UserDefaults.standard.set(games, forKey: gamesKey)
+        if games >= 10 { AchievementTracker.shared.tryUnlock("games_10") }
+        if games >= 50 { AchievementTracker.shared.tryUnlock("games_50") }
+
         currentFloorIndex = 0
         totalScore = 0
         gold = 150

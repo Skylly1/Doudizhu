@@ -17,12 +17,14 @@
 		4BF8E0B52AC2757A0EA6FF29 /* CardNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B75669125C466EC3ED7729 /* CardNode.swift */; };
 		56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781A117C670FF3910C3321E7 /* PurchaseManager.swift */; };
 		636E86EB24B2D1C9868EC148 /* StarterBuild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */; };
+		657C4179C084F17B3B48CC9F /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA4F448DB514BC1590E8F0C /* Achievement.swift */; };
 		7345ED8687782BC41DB12B28 /* DoudizhuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FB06006D744656FBD92B31 /* DoudizhuApp.swift */; };
 		74EC37E1AD74CA502CB8945F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14BE9E13D0A099C22FA5966 /* Theme.swift */; };
 		93137D53FB0CE4ADB514AE39 /* DemoGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232ADF14AB20320A193DA2C6 /* DemoGateView.swift */; };
 		96049DD3D9B82908F3FBFA4D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9CEF7465746B1D689967584 /* MapView.swift */; };
 		9CCA2395E431F87235395BAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C71732CBF8E870978027D3B /* Assets.xcassets */; };
 		9EEAA91E297F94FA9D3FC0E8 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AE5DC94BF072C61043362C /* CollectionView.swift */; };
+		A1897647E95DEA2924D0664B /* AchievementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D465F6AC2C63574A53FDFB8F /* AchievementView.swift */; };
 		B7B34C7047639B55A805790C /* TutorialOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCABC68FC662C3EAB5225D88 /* TutorialOverlay.swift */; };
 		C690EB0921830D590C271739 /* floors.json in Resources */ = {isa = PBXBuildFile; fileRef = 6ED88E607C3BDA32ED8E9F0D /* floors.json */; };
 		CAA94D910C1AD9B029E38CB7 /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF0BC12630F84C9C30B17C /* ShopView.swift */; };
@@ -43,6 +45,7 @@
 		232ADF14AB20320A193DA2C6 /* DemoGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoGateView.swift; sourceTree = "<group>"; };
 		26DB65F89B1EDAFA7672D20B /* AIPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPlayer.swift; sourceTree = "<group>"; };
 		3C71732CBF8E870978027D3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3FA4F448DB514BC1590E8F0C /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		49100FC89A7738CB2596A2F9 /* GameSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSave.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -58,6 +61,7 @@
 		BF62D06D635A1BDDFA6F2D58 /* Joker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joker.swift; sourceTree = "<group>"; };
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
+		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		D6CF0BC12630F84C9C30B17C /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
 		DDCF1F17CE6C4B3B041FDFE8 /* PatternGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGuideView.swift; sourceTree = "<group>"; };
@@ -156,6 +160,7 @@
 		9AEE1B374110DFF24D84D407 /* Collection */ = {
 			isa = PBXGroup;
 			children = (
+				D465F6AC2C63574A53FDFB8F /* AchievementView.swift */,
 				D6AE5DC94BF072C61043362C /* CollectionView.swift */,
 				DDCF1F17CE6C4B3B041FDFE8 /* PatternGuideView.swift */,
 			);
@@ -191,6 +196,7 @@
 		D5FAABC6ABAEBB845578CBBB /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				3FA4F448DB514BC1590E8F0C /* Achievement.swift */,
 				1AF923141EB84CEE723619A6 /* Card.swift */,
 				F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */,
 				ADFCDD0745535597D03CEACF /* FeedbackManager.swift */,
@@ -307,6 +313,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E15A1351F689EE760E3EBC5B /* AIPlayer.swift in Sources */,
+				657C4179C084F17B3B48CC9F /* Achievement.swift in Sources */,
+				A1897647E95DEA2924D0664B /* AchievementView.swift in Sources */,
 				32FEF27B31D06089225DB60E /* BattleScene.swift in Sources */,
 				E8B74F36D4E9ACD38A0F615A /* BattleView.swift in Sources */,
 				EBBEDC2B28B5607E93CBDF03 /* BuildSelectView.swift in Sources */,

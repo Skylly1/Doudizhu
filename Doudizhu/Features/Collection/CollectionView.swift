@@ -17,6 +17,7 @@ struct CollectionView: View {
                     tabButton("规则牌", icon: "🃏", index: 0)
                     tabButton("增益", icon: "✨", index: 1)
                     tabButton("牌型", icon: "📖", index: 2)
+                    tabButton("成就", icon: "🏆", index: 3)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -25,6 +26,7 @@ struct CollectionView: View {
                     jokerCollection.tag(0)
                     buffCollection.tag(1)
                     patternCollection.tag(2)
+                    AchievementView().tag(3)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
