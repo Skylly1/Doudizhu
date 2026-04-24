@@ -118,6 +118,11 @@ class RogueRun: ObservableObject {
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
     var phoenixUsed: Bool = false               // 浴火凤凰复活是否已使用
 
+    /// Run start time for play-time tracking
+    private var runStartTime: Date?
+    /// Current build ID for stats
+    private var currentBuildId: String = ""
+
     /// 剩余牌堆（弃牌后从中补牌）
     private(set) var drawPile: [Card] = []
 
@@ -391,6 +396,7 @@ class RogueRun: ObservableObject {
         // 规则牌：点石成金 — 每次出牌+5金币
         if hasJoker(.goldRush) {
             gold += 5
+            PlayerStats.shared.totalGoldEarned += 5
         }
 
         // 成就检测
@@ -426,6 +432,13 @@ class RogueRun: ObservableObject {
         lastPlayResult = result
         phase = .scoring(result)
 
+        // PlayerStats tracking
+        let stats = PlayerStats.shared
+        stats.totalCardsPlayed += cards.count
+        if combo > stats.highestCombo { stats.highestCombo = combo }
+        if earned > stats.highestSingleScore { stats.highestSingleScore = earned }
+        stats.save()
+
         return result
     }
 
@@ -434,6 +447,11 @@ class RogueRun: ObservableObject {
         if isFloorCleared {
             let bonus = currentFloor.targetScore / 10
             gold += bonus
+
+            // PlayerStats: floor cleared
+            PlayerStats.shared.totalFloors += 1
+            PlayerStats.shared.totalGoldEarned += bonus
+            PlayerStats.shared.save()
 
             // 成就检测
             let tracker = AchievementTracker.shared
@@ -456,6 +474,11 @@ class RogueRun: ObservableObject {
                 return
             }
             Analytics.shared.track(.levelFail, level: currentFloor.floor)
+            // PlayerStats: record play time for failed run
+            if let start = runStartTime {
+                PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
+                runStartTime = nil
+            }
             phase = .floorFail
         } else {
             phase = .selecting
@@ -520,6 +543,13 @@ class RogueRun: ObservableObject {
             if ascensionLevel >= 1 { AchievementTracker.shared.tryUnlock("ascension_1") }
             if ascensionLevel >= 5 { AchievementTracker.shared.tryUnlock("ascension_5") }
             if ascensionLevel >= 10 { AchievementTracker.shared.tryUnlock("ascension_10") }
+            // PlayerStats: record win and play time
+            PlayerStats.shared.totalWins += 1
+            if let start = runStartTime {
+                PlayerStats.shared.totalPlayTime += Date().timeIntervalSince(start)
+                runStartTime = nil
+            }
+            PlayerStats.shared.save()
             phase = .victory
         } else {
             startFloor()
@@ -547,6 +577,15 @@ class RogueRun: ObservableObject {
         drawPile = []
         lastScoreEarned = 0
         phoenixUsed = false
+
+        // PlayerStats: end previous run timer & start new run
+        if let start = runStartTime {
+            PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
+        }
+        runStartTime = Date()
+        currentBuildId = build.id
+        PlayerStats.shared.totalRuns += 1
+        PlayerStats.shared.recordBuildUsage(build.id)
 
         if let joker = build.startingJoker {
             activeJokers.append(joker)
@@ -577,6 +616,15 @@ class RogueRun: ObservableObject {
         drawPile = []
         lastScoreEarned = 0
         phoenixUsed = false
+
+        // PlayerStats: end previous run timer & start new run
+        if let start = runStartTime {
+            PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
+        }
+        runStartTime = Date()
+        PlayerStats.shared.totalRuns += 1
+        PlayerStats.shared.save()
+
         startFloor()
     }
 
