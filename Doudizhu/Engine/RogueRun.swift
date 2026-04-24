@@ -451,5 +451,10 @@ extension Buff {
         Buff(name: "顺风车", description: "顺子得分 ×2", type: .straightBonus, value: 2.0, icon: "🚗"),
         Buff(name: "大阅兵", description: "飞机得分 ×2.5", type: .planeBonus, value: 2.5, icon: "✈️"),
         Buff(name: "翻倍符", description: "全局得分 ×1.5", type: .globalMultiplier, value: 1.5, icon: "🔮"),
+        Buff(name: "财神爷", description: "全局得分 ×1.3", type: .globalMultiplier, value: 1.3, icon: "💰"),
+        Buff(name: "双响炮", description: "炸弹得分 +100", type: .bombBonus, value: 100, icon: "🎆"),
+        Buff(name: "铁索连舟", description: "顺子得分 ×2.5", type: .straightBonus, value: 2.5, icon: "⛓️"),
+        Buff(name: "空中堡垒", description: "飞机得分 ×3", type: .planeBonus, value: 3.0, icon: "🏰"),
+        Buff(name: "神来之手", description: "全局得分 ×2", type: .globalMultiplier, value: 2.0, icon: "🌟"),
     ]
 }

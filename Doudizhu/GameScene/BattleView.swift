@@ -37,10 +37,13 @@ struct BattleView: View {
             // 过关/失败弹窗
             if rogueRun.phase == .floorWin {
                 floorWinOverlay
+                    .onAppear { FeedbackManager.shared.floorWin() }
             } else if rogueRun.phase == .floorFail {
                 floorFailOverlay
+                    .onAppear { FeedbackManager.shared.floorFail() }
             } else if rogueRun.phase == .victory {
                 victoryOverlay
+                    .onAppear { FeedbackManager.shared.victory() }
             }
         }
         .onAppear {
@@ -54,7 +57,15 @@ struct BattleView: View {
             battleScene?.refreshHand()
         }
         .onChange(of: rogueRun.phase) { _, newPhase in
-            if case .scoring = newPhase {
+            if case .scoring(let result) = newPhase {
+                // 触觉反馈
+                FeedbackManager.shared.playCards(score: result.score)
+                if result.pattern.type == .bomb || result.pattern.type == .rocket {
+                    FeedbackManager.shared.explosion()
+                }
+                if result.combo > 1 {
+                    FeedbackManager.shared.comboHit(level: result.combo)
+                }
                 // 得分动画：延迟后切回选牌
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     rogueRun.onScoringComplete()
@@ -71,7 +82,8 @@ struct BattleView: View {
             Button(action: onBack) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundStyle(.ultraThinMaterial)
+                    .symbolRenderingMode(.hierarchical)
             }
 
             Spacer()
@@ -79,11 +91,11 @@ struct BattleView: View {
             // 关卡信息
             VStack(spacing: 2) {
                 Text("第 \(rogueRun.currentFloorIndex + 1) 层")
-                    .font(.caption)
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textTertiary)
                 Text(rogueRun.currentFloor.name)
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(Theme.textPrimary)
             }
 
             Spacer()
@@ -91,10 +103,10 @@ struct BattleView: View {
             // 金币
             HStack(spacing: 4) {
                 Image(systemName: "dollarsign.circle.fill")
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Theme.gold)
                 Text("\(rogueRun.gold)")
                     .font(.headline.monospacedDigit())
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Theme.gold)
             }
 
             // 牌型参考按钮
@@ -103,7 +115,8 @@ struct BattleView: View {
             } label: {
                 Image(systemName: "questionmark.circle.fill")
                     .font(.title3)
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundStyle(.ultraThinMaterial)
+                    .symbolRenderingMode(.hierarchical)
             }
             .sheet(isPresented: $showPatternGuide) {
                 PatternGuideView()
@@ -123,17 +136,13 @@ struct BattleView: View {
                     HStack(spacing: 6) {
                         ForEach(rogueRun.activeJokers) { joker in
                             HStack(spacing: 3) {
-                                Text(joker.icon)
-                                    .font(.caption2)
-                                Text(joker.name)
-                                    .font(.caption2)
+                                Text(joker.icon).font(.caption2)
+                                Text(joker.name).font(.caption2)
                             }
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background(
-                                Capsule().fill(.cyan.opacity(0.2))
-                            )
-                            .foregroundColor(.cyan)
+                            .background(Capsule().fill(Theme.cyanDim))
+                            .foregroundColor(Theme.cyan)
                         }
                     }
                 }
@@ -146,17 +155,13 @@ struct BattleView: View {
                     HStack(spacing: 6) {
                         ForEach(rogueRun.activeBuffs) { buff in
                             HStack(spacing: 3) {
-                                Text(buff.icon)
-                                    .font(.caption2)
-                                Text(buff.name)
-                                    .font(.caption2)
+                                Text(buff.icon).font(.caption2)
+                                Text(buff.name).font(.caption2)
                             }
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background(
-                                Capsule().fill(.orange.opacity(0.2))
-                            )
-                            .foregroundColor(.orange)
+                            .background(Capsule().fill(Theme.flameDim))
+                            .foregroundColor(Theme.flame)
                         }
                     }
                 }
@@ -168,22 +173,22 @@ struct BattleView: View {
                 // 出牌次数
                 Label("\(rogueRun.playsRemaining)", systemImage: "hand.raised.fill")
                     .font(.caption.monospacedDigit())
-                    .foregroundColor(rogueRun.playsRemaining <= 1 ? .red : .cyan)
+                    .foregroundColor(rogueRun.playsRemaining <= 1 ? Theme.danger : Theme.cyan)
 
                 // 换牌次数
                 Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.triangle.2.circlepath")
                     .font(.caption.monospacedDigit())
-                    .foregroundColor(rogueRun.discardsRemaining == 0 ? .gray : .green)
+                    .foregroundColor(rogueRun.discardsRemaining == 0 ? Theme.textDisabled : Theme.success)
 
                 Spacer()
 
                 // 分数
                 Text("\(rogueRun.floorScore)")
                     .font(.title2.bold().monospacedDigit())
-                    .foregroundColor(.white)
+                    .foregroundColor(Theme.textPrimary)
                 Text("/ \(rogueRun.currentFloor.targetScore)")
                     .font(.caption.monospacedDigit())
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(Theme.textTertiary)
             }
             .padding(.horizontal)
 
@@ -191,7 +196,7 @@ struct BattleView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(.white.opacity(0.1))
+                        .fill(Theme.bgCard)
                         .frame(height: 8)
 
                     RoundedRectangle(cornerRadius: 4)
@@ -207,7 +212,7 @@ struct BattleView: View {
             if rogueRun.combo > 1 {
                 Text("🔥 \(rogueRun.combo) 连击！加成 +\(Int(Double(rogueRun.combo - 1) * 15))%")
                     .font(.caption.bold())
-                    .foregroundColor(.orange)
+                    .foregroundColor(Theme.flame)
                     .transition(.scale.combined(with: .opacity))
             }
         }
@@ -236,36 +241,37 @@ struct BattleView: View {
 
     private var actionButtons: some View {
         VStack(spacing: 8) {
-            // 牌型提示 — 告诉玩家选中的牌能组成什么
+            // 牌型提示
             if let pattern = selectedPattern {
                 HStack(spacing: 6) {
                     Text(pattern.type.displayName)
                         .font(.subheadline.bold())
-                        .foregroundColor(.cyan)
+                        .foregroundColor(Theme.cyan)
                     Text("基础 \(pattern.baseScore) 分")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(Theme.fontCaption)
+                        .foregroundColor(Theme.textTertiary)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, Theme.spacingMD)
                 .padding(.vertical, 6)
                 .background(
-                    Capsule().fill(.cyan.opacity(0.15))
-                        .stroke(.cyan.opacity(0.3))
+                    Capsule().fill(Theme.cyanDim)
+                        .stroke(Theme.cyan.opacity(0.3))
                 )
                 .transition(.scale.combined(with: .opacity))
             } else if battleScene?.getSelectedCards().isEmpty == false {
                 Text("❌ 无效牌型")
-                    .font(.caption)
-                    .foregroundColor(.red.opacity(0.7))
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.danger.opacity(0.8))
                     .transition(.opacity)
             }
 
-            HStack(spacing: 16) {
+            HStack(spacing: Theme.spacingMD) {
             // 弃牌按钮
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
                 if rogueRun.discardCards(selected) {
+                    FeedbackManager.shared.discard()
                     scene.clearSelection()
                     scene.refreshHand()
                 }
@@ -277,12 +283,12 @@ struct BattleView: View {
                         .font(.caption)
                 }
                 .font(.body.weight(.medium))
-                .foregroundColor(rogueRun.discardsRemaining > 0 ? .white : .gray)
+                .foregroundColor(rogueRun.discardsRemaining > 0 ? Theme.textPrimary : Theme.textDisabled)
                 .frame(width: 120, height: 46)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(rogueRun.discardsRemaining > 0 ? .red.opacity(0.3) : .gray.opacity(0.1))
-                        .stroke(rogueRun.discardsRemaining > 0 ? .red.opacity(0.5) : .gray.opacity(0.2))
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(rogueRun.discardsRemaining > 0 ? Theme.dangerDim : Theme.bgInset)
+                        .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight)
                 )
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -298,11 +304,11 @@ struct BattleView: View {
                         .font(.caption)
                 }
                 .font(.body.weight(.semibold))
-                .foregroundColor(rogueRun.playsRemaining > 0 ? .black : .gray)
+                .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
                 .frame(width: 140, height: 46)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(rogueRun.playsRemaining > 0 ? .yellow : .gray.opacity(0.2))
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(rogueRun.playsRemaining > 0 ? Theme.gold : Theme.bgInset)
                 )
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -314,52 +320,49 @@ struct BattleView: View {
 
     private var floorWinOverlay: some View {
         overlayBase {
-            VStack(spacing: 20) {
+            VStack(spacing: Theme.spacingLG) {
                 Text("✨ 过关！")
                     .font(.largeTitle.bold())
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Theme.gold)
 
                 Text(rogueRun.currentFloor.name)
                     .font(.title3)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Theme.textSecondary)
 
-                VStack(spacing: 8) {
+                VStack(spacing: Theme.spacingSM) {
                     statRow("本层得分", value: "\(rogueRun.floorScore)")
                     statRow("总得分", value: "\(rogueRun.totalScore)")
                     statRow("获得金币", value: "+\(rogueRun.currentFloor.targetScore / 10)")
                 }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.05)))
+                .padding(Theme.spacingMD)
+                .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
 
-                Button("继续前进 →") {
+                PrimaryButton(title: "继续前进 →", icon: "arrow.right") {
                     rogueRun.advanceToNextFloor()
                     battleScene?.refreshHand()
                 }
-                .font(.headline)
-                .foregroundColor(.black)
-                .frame(width: 200, height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.yellow))
+                .frame(width: 220)
             }
         }
     }
 
     private var floorFailOverlay: some View {
         overlayBase {
-            VStack(spacing: 20) {
+            VStack(spacing: Theme.spacingLG) {
                 Text("💀 失败")
                     .font(.largeTitle.bold())
-                    .foregroundColor(.red)
+                    .foregroundColor(Theme.danger)
 
                 Text("未达到目标分数")
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Theme.textSecondary)
 
-                VStack(spacing: 8) {
+                VStack(spacing: Theme.spacingSM) {
                     statRow("本层得分", value: "\(rogueRun.floorScore)")
                     statRow("目标分数", value: "\(rogueRun.currentFloor.targetScore)")
                     statRow("总得分", value: "\(rogueRun.totalScore)")
                 }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.05)))
+                .padding(Theme.spacingMD)
+                .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
 
                 Button("重新开始") {
                     rogueRun.restart()
@@ -367,39 +370,36 @@ struct BattleView: View {
                 }
                 .font(.headline)
                 .foregroundColor(.white)
-                .frame(width: 200, height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.red))
+                .frame(width: 220, height: 50)
+                .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
             }
         }
     }
 
     private var victoryOverlay: some View {
         overlayBase {
-            VStack(spacing: 20) {
+            VStack(spacing: Theme.spacingLG) {
                 Text("🏆 通关！")
                     .font(.largeTitle.bold())
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Theme.gold)
 
                 Text("你击败了恶霸地主！")
                     .font(.title3)
-                    .foregroundColor(.white)
+                    .foregroundColor(Theme.textPrimary)
 
                 Text("总分：\(rogueRun.totalScore)")
                     .font(.title.bold().monospacedDigit())
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Theme.gold)
 
-                Button("再来一局") {
+                PrimaryButton(title: "再来一局", icon: "arrow.clockwise") {
                     rogueRun.restart()
                     battleScene?.refreshHand()
                 }
-                .font(.headline)
-                .foregroundColor(.black)
-                .frame(width: 200, height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.yellow))
+                .frame(width: 220)
 
-                Button("返回主菜单", action: onBack)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.6))
+                SecondaryButton(title: "返回主菜单", icon: "house") {
+                    onBack()
+                }
             }
         }
     }
@@ -408,28 +408,28 @@ struct BattleView: View {
 
     private func overlayBase<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         ZStack {
-            Color.black.opacity(0.7).ignoresSafeArea()
+            Color.black.opacity(0.75).ignoresSafeArea()
             VStack {
                 content()
             }
-            .padding(32)
+            .padding(Theme.spacingXL)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.black.opacity(0.9))
-                    .stroke(.white.opacity(0.1))
+                RoundedRectangle(cornerRadius: Theme.radiusLG)
+                    .fill(Theme.bgPrimary.opacity(0.95))
+                    .stroke(Theme.gold.opacity(0.2))
             )
-            .padding(40)
+            .padding(Theme.spacingXL)
         }
     }
 
     private func statRow(_ label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(Theme.textSecondary)
             Spacer()
             Text(value)
-                .font(.body.bold().monospacedDigit())
-                .foregroundColor(.white)
+                .font(Theme.fontMono)
+                .foregroundColor(Theme.textPrimary)
         }
     }
 }
