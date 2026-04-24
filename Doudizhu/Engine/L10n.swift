@@ -81,6 +81,30 @@ enum L10n {
     static var skipTutorial: String { localized("跳过教程", en: "Skip Tutorial") }
     static var nextStep: String { localized("下一步 →", en: "Next →") }
     static var startGame: String { localized("开始游戏！", en: "Start!") }
+    static var tutorialWelcomeTitle: String { localized("欢迎来到斗破乾坤！", en: "Welcome to Dou Po Qian Kun!") }
+    static var tutorialSelectTitle: String { localized("选牌", en: "Select Cards") }
+    static var tutorialPlayTitle: String { localized("出牌", en: "Play Cards") }
+    static var tutorialDiscardTitle: String { localized("换牌", en: "Swap Cards") }
+    static var tutorialComboTitle: String { localized("连击", en: "Combo") }
+    static var tutorialShopTitle: String { localized("商店", en: "Shop") }
+    static var tutorialWelcomeMsg: String { localized(
+        "在这个 Roguelike 斗地主中，你需要在有限的出牌次数内凑够目标分数。\n\n点击任意位置继续。",
+        en: "In this Roguelike Dou Di Zhu, you must reach the target score within limited plays.\n\nTap anywhere to continue.") }
+    static var tutorialSelectMsg: String { localized(
+        "点击手中的卡牌来选中它们。\n组成合法的斗地主牌型（对子、顺子、炸弹等）可以得分。",
+        en: "Tap cards in your hand to select them.\nForm valid patterns (pairs, straights, bombs, etc.) to score.") }
+    static var tutorialPlayMsg: String { localized(
+        "选好牌后，点击「出牌」按钮打出。\n牌型越复杂、牌越多，得分越高！",
+        en: "After selecting, tap \"Play\" to play them.\nMore complex patterns score higher!") }
+    static var tutorialDiscardMsg: String { localized(
+        "手牌不好？选中不需要的牌，点击「换牌」抽新牌。\n换牌次数有限，要省着用。",
+        en: "Bad hand? Select unwanted cards and tap \"Swap\" to draw new ones.\nSwaps are limited, use wisely.") }
+    static var tutorialComboMsg: String { localized(
+        "连续出牌会触发连击加分！\n每次连击 +15%，不要中断。",
+        en: "Consecutive plays trigger combo bonuses!\n+15% per combo, don't break the chain.") }
+    static var tutorialShopMsg: String { localized(
+        "每隔几关会进入商店。\n购买规则牌和增益道具，打造你的流派！",
+        en: "A shop appears every few floors.\nBuy jokers and buffs to build your strategy!") }
 
     static var tutorialWelcomeTitle: String { localized("🎴 欢迎来到斗破乾坤！", en: "🎴 Welcome to Dou Po Qian Kun!") }
     static var tutorialWelcomeMsg: String { localized(
