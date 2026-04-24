@@ -16,6 +16,23 @@ enum PatternType: String, Codable, Hashable {
     case bomb            // 炸弹（四张相同）
     case rocket          // 火箭（大小王）
     case fourWithTwo     // 四带二
+
+    var displayName: String {
+        switch self {
+        case .single:         return "单张"
+        case .pair:           return "对子"
+        case .triple:         return "三条"
+        case .tripleWithOne:  return "三带一"
+        case .tripleWithPair: return "三带二"
+        case .straight:       return "顺子"
+        case .pairStraight:   return "连对"
+        case .plane:          return "飞机"
+        case .planeWithWings: return "飞机带翅膀"
+        case .bomb:           return "💣 炸弹"
+        case .rocket:         return "🚀 火箭"
+        case .fourWithTwo:    return "四带二"
+        }
+    }
 }
 
 /// 已识别的牌型
