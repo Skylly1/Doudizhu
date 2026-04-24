@@ -13,7 +13,7 @@ struct SettingsView: View {
             Theme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                GameNavBar(title: "设置", onBack: onBack)
+                GameNavBar(title: L10n.settings, onBack: onBack)
 
                 ScrollView {
                     VStack(spacing: Theme.spacingMD) {
@@ -32,7 +32,7 @@ struct SettingsView: View {
                                 hasCompletedTutorial = false
                             } label: {
                                 HStack {
-                                    Text("重置教程")
+                                    Text(L10n.resetTutorial)
                                         .foregroundColor(Theme.textPrimary)
                                     Spacer()
                                     Image(systemName: "arrow.counterclockwise")

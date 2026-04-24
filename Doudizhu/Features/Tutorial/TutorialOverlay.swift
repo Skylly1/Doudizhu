@@ -12,32 +12,25 @@ enum TutorialStep: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .welcome:     return "欢迎来到斗破乾坤！"
-        case .selectCards: return "选牌"
-        case .playCards:   return "出牌"
-        case .discardTip:  return "换牌"
-        case .comboTip:    return "连击"
-        case .shopTip:     return "商店"
+        case .welcome:     return L10n.tutorialWelcomeTitle
+        case .selectCards: return L10n.tutorialSelectTitle
+        case .playCards:   return L10n.tutorialPlayTitle
+        case .discardTip:  return L10n.tutorialDiscardTitle
+        case .comboTip:    return L10n.tutorialComboTitle
+        case .shopTip:     return L10n.tutorialShopTitle
         case .done:        return ""
         }
     }
 
     var message: String {
         switch self {
-        case .welcome:
-            return "在这个 Roguelike 斗地主中，你需要在有限的出牌次数内凑够目标分数。\n\n点击任意位置继续。"
-        case .selectCards:
-            return "点击手中的卡牌来选中它们。\n组成合法的斗地主牌型（对子、顺子、炸弹等）可以得分。"
-        case .playCards:
-            return "选好牌后，点击「出牌」按钮打出。\n牌型越复杂、牌越多，得分越高！"
-        case .discardTip:
-            return "手牌不好？选中不需要的牌，点击「换牌」抽新牌。\n换牌次数有限，要省着用。"
-        case .comboTip:
-            return "连续出牌会触发连击加分！\n每次连击 +15%，不要中断。"
-        case .shopTip:
-            return "每隔几关会进入商店。\n购买规则牌和增益道具，打造你的流派！"
-        case .done:
-            return ""
+        case .welcome:     return L10n.tutorialWelcomeMsg
+        case .selectCards: return L10n.tutorialSelectMsg
+        case .playCards:   return L10n.tutorialPlayMsg
+        case .discardTip:  return L10n.tutorialDiscardMsg
+        case .comboTip:    return L10n.tutorialComboMsg
+        case .shopTip:     return L10n.tutorialShopMsg
+        case .done:        return ""
         }
     }
 
@@ -112,13 +105,13 @@ struct TutorialOverlay: View {
                         .lineSpacing(4)
 
                     HStack(spacing: Theme.spacingLG) {
-                        Button("跳过教程") {
+                        Button(L10n.skipTutorial) {
                             manager.skip()
                         }
                         .font(.subheadline)
                         .foregroundColor(Theme.textDisabled)
 
-                        Button(step.next != nil ? "下一步 →" : "开始游戏！") {
+                        Button(step.next != nil ? L10n.nextStep : L10n.startGame) {
                             manager.advance()
                         }
                         .font(.headline)

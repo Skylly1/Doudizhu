@@ -10,7 +10,7 @@ struct MapView: View {
             Theme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                GameNavBar(title: "冒险之路", subtitle: "穿越 8 层牌局", onBack: onBack)
+                GameNavBar(title: L10n.adventurePath, subtitle: L10n.mapSubtitle, onBack: onBack)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -23,7 +23,7 @@ struct MapView: View {
                 }
 
                 // 出发按钮
-                PrimaryButton(title: "出发", icon: "figure.walk") {
+                PrimaryButton(title: L10n.depart, icon: "figure.walk") {
                     onStart()
                 }
                 .padding(.horizontal, Theme.spacingXL)
@@ -87,8 +87,8 @@ private struct FloorNode: View {
 
                 if !floor.isShop {
                     HStack(spacing: Theme.spacingSM) {
-                        Label("\(floor.maxPlays)次出牌", systemImage: "hand.raised.fill")
-                        Label("\(floor.maxDiscards)次换牌", systemImage: "arrow.triangle.2.circlepath")
+                        Label(L10n.playsLabel(floor.maxPlays), systemImage: "hand.raised.fill")
+                        Label(L10n.discardsLabel(floor.maxDiscards), systemImage: "arrow.triangle.2.circlepath")
                     }
                     .font(.caption2)
                     .foregroundColor(Theme.textTertiary)

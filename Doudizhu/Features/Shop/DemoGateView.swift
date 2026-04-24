@@ -23,11 +23,11 @@ struct DemoGateView: View {
                 Text("🎴")
                     .font(.system(size: 72))
 
-                Text("试玩结束")
+                Text(L10n.demoOver)
                     .font(Theme.fontHeading)
                     .foregroundStyle(Theme.goldGradient)
 
-                Text("你已体验了斗破乾坤的核心玩法！\n解锁完整版，继续挑战更高层数。")
+                Text(L10n.demoDescription)
                     .font(Theme.fontBody)
                     .foregroundColor(Theme.textSecondary)
                     .multilineTextAlignment(.center)
@@ -58,7 +58,7 @@ struct DemoGateView: View {
                 } label: {
                     HStack {
                         Image(systemName: "crown.fill")
-                        Text("解锁完整版 — ¥18")
+                        Text(L10n.unlockFullPrice("¥18"))
                     }
                     .font(.headline)
                     .foregroundColor(.black)
@@ -72,13 +72,13 @@ struct DemoGateView: View {
                 }
                 .padding(.horizontal, Theme.spacingXL)
 
-                Button("恢复购买") {
+                Button(L10n.restorePurchase) {
                     Task { await purchaseManager.restorePurchases() }
                 }
                 .font(Theme.fontCaption)
                 .foregroundColor(Theme.textDisabled)
 
-                Button("返回主菜单", action: onBack)
+                Button(L10n.backToMenu, action: onBack)
                     .font(.subheadline)
                     .foregroundColor(Theme.textTertiary)
                     .padding(.bottom, Theme.spacingMD)
