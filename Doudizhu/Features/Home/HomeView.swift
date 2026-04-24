@@ -7,6 +7,45 @@ struct HomeView: View {
     @State private var buttonsOffset: CGFloat = 40
     @State private var buttonsOpacity: Double = 0
 
+    private var dailyChallengeButton: some View {
+        let daily = DailyChallenge.today
+        let played = DailyChallenge.hasPlayedToday
+        return Button {
+            if !played { onNavigate(.buildSelect) }
+        } label: {
+            HStack(spacing: 8) {
+                Text(daily.modifiers.first?.icon ?? "📅")
+                    .font(.body)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(played
+                         ? (L10n.isEnglish ? "Completed" : "已完成")
+                         : L10n.dailyChallenge)
+                        .font(.subheadline.bold())
+                    Text(played
+                         ? (L10n.isEnglish ? "Best: \(DailyChallenge.todayBest)" : "最高: \(DailyChallenge.todayBest)")
+                         : (daily.modifiers.first?.name ?? ""))
+                        .font(.caption2)
+                        .foregroundColor(Theme.textTertiary)
+                }
+                Spacer()
+                if !played {
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundColor(Theme.textTertiary)
+                }
+            }
+            .foregroundColor(played ? Theme.textDisabled : Theme.textPrimary)
+            .padding(.horizontal, Theme.spacingMD)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                    .fill(played ? Theme.bgInset : Theme.bgCard)
+                    .stroke(played ? Theme.borderLight : Theme.border)
+            )
+        }
+        .disabled(played)
+    }
+
     var body: some View {
         ZStack {
             Theme.bgPrimary.ignoresSafeArea()
@@ -76,6 +115,10 @@ struct HomeView: View {
                         onNavigate(.buildSelect)
                     }
                     .padding(.horizontal, 60)
+
+                    // Daily Challenge
+                    dailyChallengeButton
+                        .padding(.horizontal, 60)
 
                     HStack(spacing: 12) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {

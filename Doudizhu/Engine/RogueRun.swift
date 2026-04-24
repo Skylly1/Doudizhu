@@ -56,6 +56,8 @@ struct FloorConfig {
     
     var isBoss: Bool { !bossModifiers.isEmpty }
 
+    // TODO: [L10N] Floor names and descriptions need String Catalog migration
+    // Current: Chinese-only. EN translations deferred to String Catalog phase.
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
         FloorConfig(floor: 1, name: "乡野牌局", targetScore: 200, maxPlays: 5, maxDiscards: 3,
@@ -116,6 +118,7 @@ class RogueRun: ObservableObject {
     @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
+    var phoenixUsed: Bool = false               // 浴火凤凰复活是否已使用
 
     /// 剩余牌堆（弃牌后从中补牌）
     private(set) var drawPile: [Card] = []
@@ -311,6 +314,52 @@ class RogueRun: ObservableObject {
             earned = Int(Double(earned) * 1.25)
         }
 
+        // ── 第三批规则牌效果 ──
+
+        // 规则牌：暴击之手 — 10%概率双倍得分
+        if hasJoker(.criticalHit) && Int.random(in: 0..<10) == 0 {
+            earned *= 2
+        }
+
+        // 规则牌：同花顺缘 — 同花色出5张以上+50分
+        if hasJoker(.collector) && cards.count >= 5 {
+            let suits = Set(cards.compactMap { $0.suit })
+            if suits.count == 1 { earned += 50 }
+        }
+
+        // 规则牌：夜枭 — 后半程(8-15关)得分+20%
+        if hasJoker(.nightOwl) && currentFloor.floor >= 8 {
+            earned = Int(Double(earned) * 1.2)
+        }
+
+        // 规则牌：先声夺人 — 每关第一手出牌+100分
+        if hasJoker(.earlyBird) && combo == 1 {
+            earned += 100
+        }
+
+        // 规则牌：守财奴 — 每持有50金币+5%
+        if hasJoker(.miser) && gold >= 50 {
+            let bonus = Double(gold / 50) * 0.05
+            earned = Int(Double(earned) * (1.0 + bonus))
+        }
+
+        // 规则牌：赌徒之心 — 随机±30%得分（期望+5%）
+        if hasJoker(.gambler) {
+            let roll = Double.random(in: -0.30...0.40)  // avg +5%
+            earned = max(1, Int(Double(earned) * (1.0 + roll)))
+        }
+
+        // 规则牌：神龙摆尾 — 连击达到5时下一手3倍
+        if hasJoker(.dragon) && combo == 6 {
+            earned *= 3
+        }
+
+        // 规则牌：逆转乾坤 — 得分<目标30%时+50%
+        if hasJoker(.tideTurner) && effectiveTargetScore > 0 &&
+           floorScore < effectiveTargetScore * 3 / 10 {
+            earned = Int(Double(earned) * 1.5)
+        }
+
         // === Boss 修改器 ===
         if let boss = bossState {
             // bannedPattern: 如果出了被禁的牌型，得分为0
@@ -397,6 +446,17 @@ class RogueRun: ObservableObject {
             Analytics.shared.track(.levelComplete, level: currentFloor.floor)
             phase = .floorWin
         } else if playsRemaining <= 0 || handCards.isEmpty {
+            // 规则牌：保险单 — 失败时保留50%分数到下一次
+            if hasJoker(.insurance) {
+                totalScore = max(totalScore, floorScore / 2)
+            }
+            // 规则牌：浴火凤凰 — 每局可复活一次
+            if hasJoker(.phoenix) && !phoenixUsed {
+                phoenixUsed = true
+                playsRemaining = 1
+                phase = .selecting
+                return
+            }
             Analytics.shared.track(.levelFail, level: currentFloor.floor)
             phase = .floorFail
         } else {
@@ -488,6 +548,7 @@ class RogueRun: ObservableObject {
         combo = 0
         drawPile = []
         lastScoreEarned = 0
+        phoenixUsed = false
 
         if let joker = build.startingJoker {
             activeJokers.append(joker)
@@ -517,6 +578,7 @@ class RogueRun: ObservableObject {
         combo = 0
         drawPile = []
         lastScoreEarned = 0
+        phoenixUsed = false
         startFloor()
     }
 
@@ -597,6 +659,7 @@ enum BuffType: String, Codable, Hashable {
 // MARK: - 预设 Buff
 
 extension Buff {
+    // TODO: [L10N] Buff names and descriptions need String Catalog migration
     static let allBuffs: [Buff] = [
         Buff(name: "火药桶", description: "炸弹得分 +60", type: .bombBonus, value: 60, icon: "🧨"),
         Buff(name: "冲天炮", description: "火箭得分 +120", type: .rocketBonus, value: 120, icon: "🚀"),

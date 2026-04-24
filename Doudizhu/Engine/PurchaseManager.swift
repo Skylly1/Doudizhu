@@ -10,7 +10,7 @@ final class PurchaseManager: ObservableObject {
     @Published var isFullVersion: Bool
 
     /// 免费试玩可到达的最高层数（含）
-    static let demoMaxFloor = 3
+    static let demoMaxFloor = 4
 
     /// 完整版产品 ID（App Store Connect 配置后填入）
     static let fullVersionProductID = "com.hongzeng.doudizhu.fullversion"

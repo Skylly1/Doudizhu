@@ -10,46 +10,26 @@ enum BossModifier: String, CaseIterable, Codable {
     case noDiscard          // 禁止换牌（已由floor config的0弃牌实现，这里作为显示标记）
     
     var name: String {
+        let isEn = L10n.isEnglish
         switch self {
-        case .bannedPattern: return "📜 官府禁令"
-        case .escalating:    return "👑 皇家特权"
-        case .scoringDecay:  return "🔥 双重压制"
-        case .timeLimit:     return "⏳ 时不我待"
-        case .greedyTax:     return "💰 贪婪税"
-        case .noDiscard:     return "🚫 背水一战"
+        case .bannedPattern: return isEn ? "📜 Imperial Ban" : "📜 官府禁令"
+        case .escalating:    return isEn ? "👑 Royal Privilege" : "👑 皇家特权"
+        case .scoringDecay:  return isEn ? "🔥 Double Suppression" : "🔥 双重压制"
+        case .timeLimit:     return isEn ? "⏳ Time Pressure" : "⏳ 时不我待"
+        case .greedyTax:     return isEn ? "💰 Greed Tax" : "💰 贪婪税"
+        case .noDiscard:     return isEn ? "🚫 No Retreat" : "🚫 背水一战"
         }
     }
     
     var description: String {
+        let isEn = L10n.isEnglish
         switch self {
-        case .bannedPattern: return "禁用一种随机牌型（顺子/炸弹/飞机三选一）"
-        case .escalating:    return "目标分数每次出牌后增加5%"
-        case .scoringDecay:  return "每次出牌后，下次出牌得分-10%"
-        case .timeLimit:     return "出牌次数比正常少1次"
-        case .greedyTax:     return "每次出牌扣10金币"
-        case .noDiscard:     return "本关无法换牌"
-        }
-    }
-    
-    var nameEN: String {
-        switch self {
-        case .bannedPattern: return "📜 Imperial Ban"
-        case .escalating:    return "👑 Royal Privilege"
-        case .scoringDecay:  return "🔥 Double Suppression"
-        case .timeLimit:     return "⏳ Time Pressure"
-        case .greedyTax:     return "💰 Greed Tax"
-        case .noDiscard:     return "🚫 No Retreat"
-        }
-    }
-    
-    var descriptionEN: String {
-        switch self {
-        case .bannedPattern: return "One random pattern type is banned"
-        case .escalating:    return "Target score increases 5% after each play"
-        case .scoringDecay:  return "Each play scores 10% less than the previous"
-        case .timeLimit:     return "1 fewer play than normal"
-        case .greedyTax:     return "Each play costs 10 gold"
-        case .noDiscard:     return "Cannot swap cards this floor"
+        case .bannedPattern: return isEn ? "One random pattern type is banned" : "禁用一种随机牌型（顺子/炸弹/飞机三选一）"
+        case .escalating:    return isEn ? "Target score increases 5% after each play" : "目标分数每次出牌后增加5%"
+        case .scoringDecay:  return isEn ? "Each play scores 10% less than the previous" : "每次出牌后，下次出牌得分-10%"
+        case .timeLimit:     return isEn ? "1 fewer play than normal" : "出牌次数比正常少1次"
+        case .greedyTax:     return isEn ? "Each play costs 10 gold" : "每次出牌扣10金币"
+        case .noDiscard:     return isEn ? "Cannot swap cards this floor" : "本关无法换牌"
         }
     }
 }
