@@ -12,9 +12,9 @@ class BattleScene: SKScene {
     /// Incremented on every selection change so SwiftUI can react
     let selectionChanged = PassthroughSubject<Void, Never>()
 
-    // 布局常量
-    private let cardWidth: CGFloat = 64
-    private let cardHeight: CGFloat = 96
+    // 布局常量（基准值，实际会根据手牌数动态缩放）
+    private let baseCardWidth: CGFloat = 64
+    private let baseCardHeight: CGFloat = 96
     private let cardOverlap: CGFloat = 30
 
     override func didMove(to view: SKView) {
@@ -81,7 +81,7 @@ class BattleScene: SKScene {
         }
     }
 
-    /// 排列手牌 — 扇形布局
+    /// 排列手牌 — 扇形布局，动态缩放卡牌尺寸
     func layoutHand() {
         cardNodes.forEach { $0.removeFromParent() }
         cardNodes.removeAll()
@@ -90,12 +90,20 @@ class BattleScene: SKScene {
         guard let cards = rogueRun?.handCards, !cards.isEmpty else { return }
 
         let count = cards.count
+
+        // Dynamic card sizing: shrink cards when hand is large
+        let scaleFactor: CGFloat = count <= 8 ? 1.0 : max(0.72, 1.0 - CGFloat(count - 8) * 0.04)
+        let cardWidth = baseCardWidth * scaleFactor
+        let cardHeight = baseCardHeight * scaleFactor
+
         // 动态计算 overlap 确保不超出屏幕
-        let maxWidth = size.width - 32
-        let overlap = min(cardOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
+        let maxWidth = size.width - 24
+        let idealOverlap = cardOverlap * scaleFactor
+        let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        let baseY = cardHeight / 2 + 190
+        // Lower baseY to reclaim space from compacted header (was 190)
+        let baseY = cardHeight / 2 + 140
 
         // 扇形弧度参数
         let maxAngle: CGFloat = count > 5 ? 0.035 : 0.02  // 每张牌的最大旋转角

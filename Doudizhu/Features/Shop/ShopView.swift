@@ -246,7 +246,7 @@ struct JokerShopRow: View {
                     Text(item.joker.name)
                         .font(.headline)
                         .foregroundColor(Theme.textPrimary)
-                    Text(item.joker.rarity.rawValue)
+                    Text(item.joker.rarity.displayName)
                         .font(.caption2.bold())
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)

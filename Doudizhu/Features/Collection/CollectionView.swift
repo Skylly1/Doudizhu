@@ -87,7 +87,7 @@ struct CollectionView: View {
                     Text(joker.name)
                         .font(.subheadline.bold())
                         .foregroundColor(Theme.textPrimary)
-                    Text(joker.rarity.rawValue)
+                    Text(joker.rarity.displayName)
                         .font(.caption2.bold())
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)

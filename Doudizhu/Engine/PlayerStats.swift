@@ -57,6 +57,24 @@ class PlayerStats: ObservableObject {
         save()
     }
 
+    func recordBuildUsage(_ buildId: String) {
+        let key = "stats_buildCount_\(buildId)"
+        let count = defaults.integer(forKey: key) + 1
+        defaults.set(count, forKey: key)
+        // Determine the most-used build as favorite
+        var bestBuild = buildId
+        var bestCount = count
+        for build in StarterBuild.allBuilds {
+            let c = defaults.integer(forKey: "stats_buildCount_\(build.id)")
+            if c > bestCount {
+                bestCount = c
+                bestBuild = build.id
+            }
+        }
+        favoriteBuild = bestBuild
+        save()
+    }
+
     var winRate: Double {
         totalRuns > 0 ? Double(totalWins) / Double(totalRuns) : 0
     }
@@ -70,7 +88,7 @@ class PlayerStats: ObservableObject {
         return L10n.isEnglish ? "\(minutes)m" : "\(minutes)分钟"
     }
 
-    private func save() {
+    func save() {
         defaults.set(totalRuns, forKey: "stats_totalRuns")
         defaults.set(totalWins, forKey: "stats_totalWins")
         defaults.set(totalFloors, forKey: "stats_totalFloors")

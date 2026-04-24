@@ -11,7 +11,7 @@ struct HomeView: View {
         let daily = DailyChallenge.today
         let played = DailyChallenge.hasPlayedToday
         return Button {
-            if !played { onNavigate(.buildSelect) }
+            if !played { onNavigate(.dailyChallenge) }
         } label: {
             HStack(spacing: 8) {
                 Text(daily.modifiers.first?.icon ?? "📅")
