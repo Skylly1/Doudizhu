@@ -3,7 +3,7 @@ import Foundation
 // MARK: - 牌型
 
 /// 斗地主所有合法牌型
-enum PatternType: String, Codable, Hashable {
+enum PatternType: String, Codable, Hashable, CaseIterable {
     case single          // 单张
     case pair            // 对子
     case triple          // 三条
@@ -242,5 +242,63 @@ struct PatternRecognizer {
             return nil
         }
         return CardPattern(type: .fourWithTwo, cards: cards, mainRank: fourRank)
+    }
+}
+
+// MARK: - 武功秘籍（Pattern Upgrade System）
+
+@MainActor
+class PatternUpgradeManager: ObservableObject {
+    static let shared = PatternUpgradeManager()
+
+    private let storageKey = "pattern_upgrades"
+    @Published var upgrades: [PatternType: Int] = [:]
+
+    private init() {
+        if let data = UserDefaults.standard.data(forKey: storageKey),
+           let saved = try? JSONDecoder().decode([String: Int].self, from: data) {
+            self.upgrades = Dictionary(uniqueKeysWithValues: saved.compactMap { key, value in
+                guard let type = PatternType(rawValue: key) else { return nil }
+                return (type, value)
+            })
+        }
+    }
+
+    static let maxLevel = 3
+    static let chipPerLevel = 5
+    static let multPerLevel = 0.2
+
+    func level(for type: PatternType) -> Int {
+        upgrades[type] ?? 0
+    }
+
+    func chipBonus(for type: PatternType) -> Int {
+        level(for: type) * Self.chipPerLevel
+    }
+
+    func multBonus(for type: PatternType) -> Double {
+        Double(level(for: type)) * Self.multPerLevel
+    }
+
+    func canUpgrade(_ type: PatternType) -> Bool {
+        level(for: type) < Self.maxLevel
+    }
+
+    func upgradeCost(for type: PatternType) -> Int {
+        let lvl = level(for: type)
+        return (lvl + 1) * 30  // 30, 60, 90
+    }
+
+    func upgrade(_ type: PatternType) {
+        guard canUpgrade(type) else { return }
+        upgrades[type, default: 0] += 1
+        save()
+    }
+
+    private func save() {
+        let dict = Dictionary(uniqueKeysWithValues: upgrades.map { ($0.key.rawValue, $0.value) })
+        if let data = try? JSONEncoder().encode(dict) {
+            UserDefaults.standard.set(data, forKey: storageKey)
+        }
     }
 }

@@ -119,6 +119,30 @@ struct ShopView: View {
                     }
                 }
 
+                // 武功秘籍区
+                VStack(alignment: .leading, spacing: Theme.spacingSM) {
+                    Text(L10n.isEnglish ? "🥋 Martial Arts Manuals" : "🥋 武功秘籍")
+                        .font(Theme.fontSection)
+                        .foregroundColor(Theme.gold)
+                        .padding(.horizontal, Theme.spacingLG)
+
+                    VStack(spacing: 6) {
+                        ForEach(PatternType.allCases, id: \.self) { type in
+                            PatternUpgradeRow(
+                                type: type,
+                                gold: rogueRun.gold,
+                                onBuy: { cost in
+                                    rogueRun.gold -= cost
+                                    PatternUpgradeManager.shared.upgrade(type)
+                                    FeedbackManager.shared.purchase()
+                                    SoundManager.shared.play(.shopBuy)
+                                }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, Theme.spacingLG)
+                }
+
                 if shopItems.isEmpty && jokerItems.isEmpty {
                     VStack(spacing: Theme.spacingMD) {
                         Text("🏪")
@@ -379,6 +403,73 @@ struct FlowLayout: Layout {
         }
 
         return (CGSize(width: maxWidth, height: y + rowHeight), positions)
+    }
+}
+
+// MARK: - Pattern Upgrade Row
+
+struct PatternUpgradeRow: View {
+    let type: PatternType
+    let gold: Int
+    let onBuy: (Int) -> Void
+
+    @ObservedObject private var mgr = PatternUpgradeManager.shared
+
+    var body: some View {
+        let level = mgr.level(for: type)
+        let canUpgrade = mgr.canUpgrade(type)
+        let cost = mgr.upgradeCost(for: type)
+
+        HStack {
+            Text(type.displayName)
+                .font(.caption.bold())
+                .foregroundColor(Theme.textPrimary)
+                .frame(width: 80, alignment: .leading)
+
+            HStack(spacing: 2) {
+                ForEach(0..<3, id: \.self) { i in
+                    Image(systemName: i < level ? "star.fill" : "star")
+                        .font(.caption2)
+                        .foregroundColor(i < level ? Theme.gold : Theme.textSecondary)
+                }
+            }
+
+            if level > 0 {
+                Text("+\(level * PatternUpgradeManager.chipPerLevel)🔵 +\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))×")
+                    .font(.caption2)
+                    .foregroundColor(Theme.textSecondary)
+            }
+
+            Spacer()
+
+            if canUpgrade {
+                Button {
+                    if gold >= cost {
+                        onBuy(cost)
+                    }
+                } label: {
+                    Text("🪙\(cost)")
+                        .font(.caption.bold())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().fill(gold >= cost ? Theme.gold : Theme.textSecondary.opacity(0.3))
+                        )
+                        .foregroundColor(Theme.bgPrimary)
+                }
+                .disabled(gold < cost)
+            } else {
+                Text("MAX")
+                    .font(.caption2.bold())
+                    .foregroundColor(Theme.gold)
+            }
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, Theme.spacingMD)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                .fill(Theme.bgCard)
+        )
     }
 }
 

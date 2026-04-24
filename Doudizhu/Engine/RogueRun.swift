@@ -231,7 +231,8 @@ struct FloorConfig {
         }
 
         // 发牌
-        let deal = Deck.dealRoguelike(handSize: 10)
+        let dealSize = hasJoker(.bloodPact) ? 9 : 10
+        let deal = Deck.dealRoguelike(handSize: dealSize)
         handCards = deal.hand
         drawPile = deal.drawPile
 
@@ -272,11 +273,13 @@ struct FloorConfig {
 
         // 消耗出牌次数
         playsRemaining -= 1
-        combo += 1
+        combo += hasJoker(.shadowClone) ? 2 : 1
 
         // === chips × mult scoring system ===
         var chips = Double(pattern.baseChips)
+        chips += Double(PatternUpgradeManager.shared.chipBonus(for: pattern.type))
         var mult = pattern.baseMult
+        mult += PatternUpgradeManager.shared.multBonus(for: pattern.type)
 
         // Buff bonuses → chips & mult
         for buff in activeBuffs {
@@ -327,6 +330,15 @@ struct FloorConfig {
         }
         if hasJoker(.dragon) && combo == 6 { mult += 2.0 }
         if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 3 / 10 { mult += 0.5 }
+
+        // Engine Jokers
+        if hasJoker(.bloodPact) { mult += 3.0 }
+        if hasJoker(.fortuneWheel) { mult += Double(activeJokers.count) * 0.5 }
+        if hasJoker(.cosmicShift) {
+            let tempChips = chips
+            chips = mult * 10.0
+            mult = tempChips / 10.0
+        }
 
         // Calculate final score
         var earned = Int(chips * mult)
@@ -391,6 +403,14 @@ struct FloorConfig {
         // 从手牌移除
         let playedIds = Set(cards.map(\.id))
         handCards.removeAll { playedIds.contains($0.id) }
+
+        // Engine Joker: Infinite Loop — if hand is empty, refill from draw pile
+        if hasJoker(.infiniteLoop) && handCards.isEmpty && !drawPile.isEmpty {
+            let refillCount = min(10, drawPile.count)
+            handCards = Array(drawPile.prefix(refillCount))
+            drawPile.removeFirst(refillCount)
+            handCards.sort { $0.rank < $1.rank }
+        }
 
         // 规则牌：贪心鬼 — 出牌后额外抽1张
         if hasJoker(.drawAfterPlay) && !drawPile.isEmpty {

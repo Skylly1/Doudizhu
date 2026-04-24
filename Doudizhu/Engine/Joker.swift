@@ -60,6 +60,12 @@ enum JokerEffect: String, Codable, Hashable {
     case phoenix            // 浴火凤凰: 每局可复活一次
     case dragon             // 神龙摆尾: 连击达到5时下一手3倍
     case tideTurner         // 逆转乾坤: 得分<目标30%时+50%
+    // 引擎 Jokers (Legendary)
+    case shadowClone        // 影分身: Every play counts as 2 combos
+    case cosmicShift        // 乾坤大挪移: Swap chips and mult values
+    case infiniteLoop       // 无限循环: If exactly 0 cards left after play, refill hand from draw pile
+    case bloodPact          // 血契: +3.0 mult but hand size permanently -1
+    case fortuneWheel       // 命运之轮: Each Joker slot adds +0.5 mult
 }
 
 /// 规则牌
@@ -303,6 +309,42 @@ extension Joker {
             effect: .tideTurner,
             icon: "🌀",
             rarity: .rare
+        ),
+        // ── Engine Jokers (Legendary) ──
+        Joker(
+            name: L10n.isEnglish ? "Shadow Clone" : "影分身",
+            description: L10n.isEnglish ? "Every play counts as 2 combos" : "每次出牌视为连击×2",
+            effect: .shadowClone,
+            icon: "👥",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Cosmic Shift" : "乾坤大挪移",
+            description: L10n.isEnglish ? "Swap chips and mult" : "交换筹码与倍率",
+            effect: .cosmicShift,
+            icon: "🌀",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Infinite Loop" : "无限循环",
+            description: L10n.isEnglish ? "Empty hand? Refill from discard" : "手牌打完自动补满",
+            effect: .infiniteLoop,
+            icon: "♾️",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Blood Pact" : "血契",
+            description: L10n.isEnglish ? "+3.0 mult, but hand size -1" : "+3.0倍率，但手牌-1",
+            effect: .bloodPact,
+            icon: "🩸",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Fortune Wheel" : "命运之轮",
+            description: L10n.isEnglish ? "Each Joker slot adds +0.5 mult" : "每个规则牌槽+0.5倍率",
+            effect: .fortuneWheel,
+            icon: "🎡",
+            rarity: .legendary
         ),
     ]
 }
