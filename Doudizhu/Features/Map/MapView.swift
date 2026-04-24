@@ -1,55 +1,105 @@
 import SwiftUI
 
-/// Roguelike 地图：层层递进的关卡选择
+/// Roguelike 地图：冒险入口 — 纵向旅途可视化
 struct MapView: View {
-    let onNavigate: (AppScreen) -> Void
+    let onStart: () -> Void
     let onBack: () -> Void
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Theme.bgPrimary.ignoresSafeArea()
 
-            VStack {
-                // 顶部导航
-                HStack {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left")
-                            .font(.title2)
-                            .foregroundColor(.white)
+            VStack(spacing: 0) {
+                GameNavBar(title: "冒险之路", subtitle: "穿越 8 层牌局", onBack: onBack)
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        ForEach(Array(FloorConfig.allFloors.enumerated()), id: \.offset) { index, floor in
+                            FloorNode(floor: floor, index: index, isLast: index == FloorConfig.allFloors.count - 1)
+                        }
                     }
-                    Spacer()
-                    Text("第一章 · 乡野牌局")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Spacer()
+                    .padding(.top, Theme.spacingLG)
+                    .padding(.bottom, 100)
                 }
-                .padding()
 
-                // TODO: Roguelike 路径地图（类杀戮尖塔的分支路径）
-                Spacer()
-
-                Text("🗺️ 地图开发中...")
-                    .foregroundColor(.white.opacity(0.5))
-
-                Spacer()
-
-                // 进入战斗（临时按钮）
-                Button("进入牌局") {
-                    onNavigate(.battle)
+                // 出发按钮
+                PrimaryButton(title: "出发", icon: "figure.walk") {
+                    onStart()
                 }
-                .font(.title3.weight(.medium))
-                .foregroundColor(.black)
-                .frame(width: 200, height: 50)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.yellow)
-                )
-                .padding(.bottom, 40)
+                .padding(.horizontal, Theme.spacingXL)
+                .padding(.bottom, Theme.spacingLG)
             }
         }
     }
 }
 
+private struct FloorNode: View {
+    let floor: FloorConfig
+    let index: Int
+    let isLast: Bool
+
+    var body: some View {
+        HStack(spacing: Theme.spacingMD) {
+            // 左侧连线 + 节点
+            VStack(spacing: 0) {
+                if index > 0 {
+                    Rectangle()
+                        .fill(Theme.border)
+                        .frame(width: 2, height: 20)
+                }
+
+                ZStack {
+                    Circle()
+                        .fill(floor.isShop ? Theme.flame.opacity(0.2) : Theme.cyan.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Circle()
+                        .stroke(floor.isShop ? Theme.flame : Theme.cyan, lineWidth: 2)
+                        .frame(width: 44, height: 44)
+                    Text(floor.isShop ? "🏪" : "\(floor.floor)")
+                        .font(floor.isShop ? .title3 : .body.bold().monospacedDigit())
+                        .foregroundColor(floor.isShop ? Theme.flame : Theme.cyan)
+                }
+
+                if !isLast {
+                    Rectangle()
+                        .fill(Theme.border)
+                        .frame(width: 2, height: 20)
+                }
+            }
+
+            // 右侧信息
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(floor.name)
+                        .font(Theme.fontSection)
+                        .foregroundColor(Theme.textPrimary)
+                    Spacer()
+                    if !floor.isShop {
+                        Text("🎯 \(floor.targetScore)")
+                            .font(Theme.fontCaption.monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                }
+
+                Text(floor.description)
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.textTertiary)
+
+                if !floor.isShop {
+                    HStack(spacing: Theme.spacingSM) {
+                        Label("\(floor.maxPlays)次出牌", systemImage: "hand.raised.fill")
+                        Label("\(floor.maxDiscards)次换牌", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .font(.caption2)
+                    .foregroundColor(Theme.textTertiary)
+                }
+            }
+            .padding(.vertical, Theme.spacingSM)
+        }
+        .padding(.horizontal, Theme.spacingLG)
+    }
+}
+
 #Preview {
-    MapView(onNavigate: { _ in }, onBack: {})
+    MapView(onStart: {}, onBack: {})
 }

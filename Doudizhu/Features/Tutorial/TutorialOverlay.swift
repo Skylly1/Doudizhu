@@ -94,47 +94,47 @@ struct TutorialOverlay: View {
     var body: some View {
         if let step = manager.currentStep {
             ZStack {
-                Color.black.opacity(0.6)
+                Color.black.opacity(0.65)
                     .ignoresSafeArea()
                     .onTapGesture {
                         manager.advance()
                     }
 
-                VStack(spacing: 20) {
+                VStack(spacing: Theme.spacingLG) {
                     Text(step.title)
-                        .font(.title2.bold())
-                        .foregroundColor(.yellow)
+                        .font(Theme.fontHeading)
+                        .foregroundColor(Theme.gold)
 
                     Text(step.message)
-                        .font(.body)
-                        .foregroundColor(.white.opacity(0.9))
+                        .font(Theme.fontBody)
+                        .foregroundColor(Theme.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
 
-                    HStack(spacing: 24) {
+                    HStack(spacing: Theme.spacingLG) {
                         Button("跳过教程") {
                             manager.skip()
                         }
                         .font(.subheadline)
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(Theme.textDisabled)
 
                         Button(step.next != nil ? "下一步 →" : "开始游戏！") {
                             manager.advance()
                         }
                         .font(.headline)
                         .foregroundColor(.black)
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, Theme.spacingLG)
                         .padding(.vertical, 10)
-                        .background(Capsule().fill(.yellow))
+                        .background(Capsule().fill(Theme.gold))
                     }
                 }
-                .padding(32)
+                .padding(Theme.spacingXL)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(.black.opacity(0.9))
-                        .stroke(.yellow.opacity(0.3))
+                    RoundedRectangle(cornerRadius: Theme.radiusLG)
+                        .fill(Theme.bgPrimary.opacity(0.95))
+                        .stroke(Theme.gold.opacity(0.3))
                 )
-                .padding(32)
+                .padding(Theme.spacingXL)
             }
             .transition(.opacity)
         }

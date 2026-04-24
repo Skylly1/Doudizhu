@@ -19,6 +19,7 @@ enum JokerRarity: String, Codable, Hashable {
 
 /// 规则牌效果类型
 enum JokerEffect: String, Codable, Hashable {
+    // 原始 10 种
     case drawAfterPlay      // 贪心鬼: 出牌后从牌堆抽1张
     case doubleComboRate    // 连环计: 连击加成翻倍 (15%→30%/级)
     case lowHandBonus       // 空城计: 手牌≤5张时得分×1.5
@@ -29,6 +30,17 @@ enum JokerEffect: String, Codable, Hashable {
     case firstPlayBonus     // 一鸣惊人: 每关第一次出牌得分×2.5
     case extraDrawOnDiscard // 偷梁换柱: 换牌时多抽1张
     case lastStandBonus     // 破釜沉舟: 最后1次出牌机会时得分×3
+    // 新增 10 种
+    case pairMastery        // 成双成对: 对子得分×2
+    case tripleThreat       // 三生万物: 三带类牌型+50%
+    case goldRush           // 点石成金: 每次出牌额外获得 5 金币
+    case secondWind         // 回光返照: 每关获得 1 次额外出牌机会
+    case cardCounter        // 心算如飞: 出牌张数≥5时+40%
+    case luckyDraw          // 锦鲤附体: 换牌后从牌堆最后取（底牌更好）
+    case scoreSurge         // 厚积薄发: 当前层得分≥目标50%时+30%
+    case miniHandBonus      // 精打细算: 出3张以下的牌型+60%
+    case multiKill          // 连环杀: 连击≥3时额外+20%
+    case shieldBreaker      // 破甲: 单次出牌≥100分时，下次出牌+25%
 }
 
 /// 规则牌
@@ -60,6 +72,7 @@ extension Joker {
 
 extension Joker {
     static let allJokers: [Joker] = [
+        // ── 原始 10 张 ──
         Joker(
             name: "贪心鬼",
             description: "出牌后从牌堆额外抽1张牌",
@@ -128,6 +141,77 @@ extension Joker {
             description: "最后1次出牌机会时得分×3",
             effect: .lastStandBonus,
             icon: "⛵",
+            rarity: .legendary
+        ),
+        // ── 新增 10 张 ──
+        Joker(
+            name: "成双成对",
+            description: "对子得分×2",
+            effect: .pairMastery,
+            icon: "💕",
+            rarity: .common
+        ),
+        Joker(
+            name: "三生万物",
+            description: "三带类牌型得分+50%",
+            effect: .tripleThreat,
+            icon: "🌀",
+            rarity: .rare
+        ),
+        Joker(
+            name: "点石成金",
+            description: "每次出牌额外获得 5 金币",
+            effect: .goldRush,
+            icon: "💰",
+            rarity: .rare
+        ),
+        Joker(
+            name: "回光返照",
+            description: "每关额外获得 1 次出牌机会",
+            effect: .secondWind,
+            icon: "💫",
+            rarity: .legendary
+        ),
+        Joker(
+            name: "心算如飞",
+            description: "出牌≥5张时得分+40%",
+            effect: .cardCounter,
+            icon: "🧠",
+            rarity: .rare
+        ),
+        Joker(
+            name: "锦鲤附体",
+            description: "换牌改从牌堆底部取（底牌运气更好）",
+            effect: .luckyDraw,
+            icon: "🐟",
+            rarity: .common
+        ),
+        Joker(
+            name: "厚积薄发",
+            description: "当前层得分≥目标50%时，出牌+30%",
+            effect: .scoreSurge,
+            icon: "📈",
+            rarity: .rare
+        ),
+        Joker(
+            name: "精打细算",
+            description: "出3张及以下的牌型+60%",
+            effect: .miniHandBonus,
+            icon: "🎯",
+            rarity: .common
+        ),
+        Joker(
+            name: "连环杀",
+            description: "连击≥3时额外+20%加成",
+            effect: .multiKill,
+            icon: "⚡",
+            rarity: .rare
+        ),
+        Joker(
+            name: "破甲",
+            description: "上次出牌≥100分时，本次+25%",
+            effect: .shieldBreaker,
+            icon: "🗡️",
             rarity: .legendary
         ),
     ]

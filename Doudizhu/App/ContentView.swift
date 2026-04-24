@@ -61,7 +61,8 @@ struct ContentView: View {
                     SettingsView(onBack: { currentScreen = .home })
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: currentScreen)
+            .animation(.easeInOut(duration: 0.35), value: currentScreen)
+            .transition(.opacity.combined(with: .scale(scale: 0.97)))
 
             // 教程覆盖层
             TutorialOverlay(manager: tutorialManager)

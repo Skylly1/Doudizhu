@@ -7,34 +7,27 @@ struct BuildSelectView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Theme.bgPrimary.ignoresSafeArea()
 
-            VStack(spacing: 24) {
-                Text("选择流派")
-                    .font(.system(size: 32, weight: .bold, design: .serif))
-                    .foregroundStyle(
-                        LinearGradient(colors: [.yellow, .orange],
-                                       startPoint: .top, endPoint: .bottom)
-                    )
+            VStack(spacing: 0) {
+                GameNavBar(title: "选择流派", subtitle: "影响起始装备和金币", onBack: onBack)
 
-                Text("不同流派影响你的起始装备和金币")
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.5))
-
-                ForEach(StarterBuild.allBuilds) { build in
-                    BuildCard(build: build) {
-                        onSelect(build)
+                ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible(), spacing: 12),
+                        GridItem(.flexible(), spacing: 12)
+                    ], spacing: 12) {
+                        ForEach(StarterBuild.allBuilds) { build in
+                            BuildCard(build: build) {
+                                onSelect(build)
+                            }
+                        }
                     }
+                    .padding(.horizontal, Theme.spacingMD)
+                    .padding(.top, Theme.spacingMD)
+                    .padding(.bottom, Theme.spacingXXL)
                 }
-
-                Spacer()
-
-                Button("返回", action: onBack)
-                    .foregroundColor(.white.opacity(0.5))
-                    .padding(.bottom)
             }
-            .padding(.top, 60)
-            .padding(.horizontal)
         }
     }
 }
@@ -45,50 +38,53 @@ private struct BuildCard: View {
 
     var body: some View {
         Button(action: onSelect) {
-            HStack(spacing: 16) {
+            VStack(spacing: 10) {
                 Text(build.icon)
-                    .font(.system(size: 40))
+                    .font(.system(size: 36))
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(build.name)
-                        .font(.headline)
-                        .foregroundColor(.white)
+                Text(build.name)
+                    .font(.headline)
+                    .foregroundColor(Theme.textPrimary)
 
-                    Text(build.description)
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
-                        .lineLimit(2)
+                Text(build.description)
+                    .font(.caption)
+                    .foregroundColor(Theme.textTertiary)
+                    .lineLimit(3)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                    HStack(spacing: 12) {
-                        if let joker = build.startingJoker {
-                            Label(joker.name, systemImage: "sparkles")
-                                .font(.caption2)
-                                .foregroundColor(.cyan)
+                Divider().background(Theme.border)
+
+                // 起始装备标签
+                VStack(spacing: 4) {
+                    if let joker = build.startingJoker {
+                        HStack(spacing: 3) {
+                            Text(joker.icon).font(.caption2)
+                            Text(joker.name).font(.caption2)
                         }
-                        if let buff = build.startingBuff {
-                            Label(buff.name, systemImage: "bolt.fill")
-                                .font(.caption2)
-                                .foregroundColor(.orange)
+                        .foregroundColor(Theme.cyan)
+                    }
+                    if let buff = build.startingBuff {
+                        HStack(spacing: 3) {
+                            Text(buff.icon).font(.caption2)
+                            Text(buff.name).font(.caption2)
                         }
-                        if build.goldAdjustment != 0 {
-                            let sign = build.goldAdjustment > 0 ? "+" : ""
-                            Label("\(sign)\(build.goldAdjustment)", systemImage: "dollarsign.circle")
-                                .font(.caption2)
-                                .foregroundColor(.yellow)
-                        }
+                        .foregroundColor(Theme.flame)
+                    }
+                    if build.goldAdjustment != 0 {
+                        let sign = build.goldAdjustment > 0 ? "+" : ""
+                        Text("💰 \(sign)\(build.goldAdjustment)")
+                            .font(.caption2)
+                            .foregroundColor(Theme.gold)
                     }
                 }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.white.opacity(0.3))
             }
-            .padding(16)
+            .padding(Theme.spacingMD)
+            .frame(maxWidth: .infinity)
             .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(.white.opacity(0.06))
-                    .stroke(.white.opacity(0.12))
+                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                    .fill(Theme.bgCard)
+                    .stroke(Theme.border)
             )
         }
     }

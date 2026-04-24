@@ -10,7 +10,7 @@ struct StarterBuild: Identifiable {
     let startingBuff: Buff?
     let goldAdjustment: Int   // 相对于基础 150 金币的调整
 
-    /// 3 种预设流派
+    /// 6 种预设流派
     static let allBuilds: [StarterBuild] = [
         StarterBuild(
             id: "balanced",
@@ -38,6 +38,33 @@ struct StarterBuild: Identifiable {
             startingJoker: Joker.allJokers.first { $0.effect == .doubleComboRate },
             startingBuff: nil,
             goldAdjustment: 0
+        ),
+        StarterBuild(
+            id: "precision",
+            name: "精打细算",
+            icon: "🎯",
+            description: "小牌精准路线。携带「精打细算」+ 额外换牌。",
+            startingJoker: Joker.allJokers.first { $0.effect == .miniHandBonus },
+            startingBuff: nil,
+            goldAdjustment: 20
+        ),
+        StarterBuild(
+            id: "greed",
+            name: "贪婪商人",
+            icon: "💰",
+            description: "经济路线。携带「点石成金」，但初始金币减少。",
+            startingJoker: Joker.allJokers.first { $0.effect == .goldRush },
+            startingBuff: Buff.allBuffs.first { $0.type == .globalMultiplier },
+            goldAdjustment: -50
+        ),
+        StarterBuild(
+            id: "allIn",
+            name: "背水一战",
+            icon: "⚡",
+            description: "高风险高回报。「破釜沉舟」+「一鸣惊人」，但只有 80 金币。",
+            startingJoker: Joker.allJokers.first { $0.effect == .lastStandBonus },
+            startingBuff: nil,
+            goldAdjustment: -70
         ),
     ]
 }

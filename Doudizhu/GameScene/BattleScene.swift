@@ -14,7 +14,7 @@ class BattleScene: SKScene {
     private let cardOverlap: CGFloat = 26
 
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor(red: 0.05, green: 0.08, blue: 0.12, alpha: 1.0)
+        backgroundColor = SKColor(red: 0.02, green: 0.06, blue: 0.10, alpha: 1.0)
 
         // 出牌区域
         playedAreaNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -27,21 +27,54 @@ class BattleScene: SKScene {
     }
 
     private func drawTableDecor() {
-        // 中央出牌区域提示
-        let circle = SKShapeNode(circleOfRadius: 80)
-        circle.fillColor = SKColor.white.withAlphaComponent(0.03)
-        circle.strokeColor = SKColor.white.withAlphaComponent(0.08)
-        circle.lineWidth = 1
+        // 毡布底纹 — 微妙的椭圆渐变
+        let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.85, height: size.height * 0.45))
+        table.fillColor = SKColor(red: 0.06, green: 0.12, blue: 0.18, alpha: 0.6)
+        table.strokeColor = SKColor.cyan.withAlphaComponent(0.06)
+        table.lineWidth = 1
+        table.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        table.zPosition = -10
+        addChild(table)
+
+        // 中央出牌区域
+        let circle = SKShapeNode(circleOfRadius: 70)
+        circle.fillColor = SKColor.white.withAlphaComponent(0.02)
+        circle.strokeColor = SKColor.white.withAlphaComponent(0.06)
+        circle.lineWidth = 1.5
         circle.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        circle.zPosition = -5
         addChild(circle)
+
+        // 虚线圈装饰
+        let dashCircle = SKShapeNode(circleOfRadius: 90)
+        dashCircle.fillColor = .clear
+        dashCircle.strokeColor = SKColor.white.withAlphaComponent(0.04)
+        dashCircle.lineWidth = 1
+        dashCircle.position = circle.position
+        dashCircle.zPosition = -5
+        addChild(dashCircle)
 
         let hint = SKLabelNode(text: "出牌区")
         hint.fontName = "PingFangSC-Light"
-        hint.fontSize = 14
-        hint.fontColor = SKColor.white.withAlphaComponent(0.15)
-        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.5 - 6)
+        hint.fontSize = 13
+        hint.fontColor = SKColor.white.withAlphaComponent(0.10)
+        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.5 - 5)
         hint.name = "hint"
+        hint.zPosition = -4
         addChild(hint)
+
+        // 四角装饰
+        for (dx, dy) in [(-1.0, 1.0), (1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)] {
+            let dot = SKShapeNode(circleOfRadius: 3)
+            dot.fillColor = SKColor.cyan.withAlphaComponent(0.08)
+            dot.strokeColor = .clear
+            dot.position = CGPoint(
+                x: size.width / 2 + dx * size.width * 0.42,
+                y: size.height / 2 + dy * size.height * 0.22
+            )
+            dot.zPosition = -10
+            addChild(dot)
+        }
     }
 
     /// 排列手牌 — 扇形布局

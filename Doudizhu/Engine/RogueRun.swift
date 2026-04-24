@@ -70,6 +70,7 @@ class RogueRun: ObservableObject {
     @Published var handCards: [Card] = []
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
+    @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
 
     /// 剩余牌堆（弃牌后从中补牌）
     private(set) var drawPile: [Card] = []
@@ -112,6 +113,11 @@ class RogueRun: ObservableObject {
         // 规则牌：暗度陈仓 — 每关换牌次数+2
         if hasJoker(.extraDiscards) {
             discardsRemaining += 2
+        }
+
+        // 规则牌：回光返照 — 每关额外出牌+1
+        if hasJoker(.secondWind) {
+            playsRemaining += 1
         }
 
         // 发牌（Roguelike 模式：10张手牌 + 44张牌堆）
@@ -182,11 +188,54 @@ class RogueRun: ObservableObject {
             }
         }
 
+        // 规则牌：成双成对 — 对子×2
+        if hasJoker(.pairMastery) && pattern.type == .pair {
+            earned *= 2
+        }
+
+        // 规则牌：三生万物 — 三带类+50%
+        if hasJoker(.tripleThreat) &&
+           (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) {
+            earned = Int(Double(earned) * 1.5)
+        }
+
+        // 规则牌：心算如飞 — 出牌≥5张+40%
+        if hasJoker(.cardCounter) && cards.count >= 5 {
+            earned = Int(Double(earned) * 1.4)
+        }
+
+        // 规则牌：精打细算 — 出3张及以下+60%
+        if hasJoker(.miniHandBonus) && cards.count <= 3 {
+            earned = Int(Double(earned) * 1.6)
+        }
+
+        // 规则牌：厚积薄发 — 当前得分≥目标50%时+30%
+        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 &&
+           floorScore >= currentFloor.targetScore / 2 {
+            earned = Int(Double(earned) * 1.3)
+        }
+
+        // 规则牌：连环杀 — 连击≥3时额外+20%
+        if hasJoker(.multiKill) && combo >= 3 {
+            earned = Int(Double(earned) * 1.2)
+        }
+
+        // 规则牌：破甲 — 上次出牌≥100分时+25%
+        if hasJoker(.shieldBreaker) && lastScoreEarned >= 100 {
+            earned = Int(Double(earned) * 1.25)
+        }
+
         // 全局倍率
         earned = Int(Double(earned) * multiplier)
 
         floorScore += earned
         totalScore += earned
+        lastScoreEarned = earned
+
+        // 规则牌：点石成金 — 每次出牌+5金币
+        if hasJoker(.goldRush) {
+            gold += 5
+        }
 
         // 从手牌移除
         let playedIds = Set(cards.map(\.id))
@@ -247,8 +296,15 @@ class RogueRun: ObservableObject {
         }
 
         if drawCount > 0 {
-            let drawn = Array(drawPile.prefix(drawCount))
-            drawPile.removeFirst(drawCount)
+            // 规则牌：锦鲤附体 — 从牌堆底部取牌
+            let drawn: [Card]
+            if hasJoker(.luckyDraw) {
+                drawn = Array(drawPile.suffix(drawCount))
+                drawPile.removeLast(drawCount)
+            } else {
+                drawn = Array(drawPile.prefix(drawCount))
+                drawPile.removeFirst(drawCount)
+            }
             handCards.append(contentsOf: drawn)
             handCards.sort { $0.rank < $1.rank }
         }
@@ -286,6 +342,7 @@ class RogueRun: ObservableObject {
         activeJokers = []
         combo = 0
         drawPile = []
+        lastScoreEarned = 0
 
         if let joker = build.startingJoker {
             activeJokers.append(joker)
@@ -307,6 +364,7 @@ class RogueRun: ObservableObject {
         activeJokers = []
         combo = 0
         drawPile = []
+        lastScoreEarned = 0
         startFloor()
     }
 

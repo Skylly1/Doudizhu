@@ -12,8 +12,8 @@ class GameSave {
     init(rogueRun: RogueRun) {
         self.id = UUID()
         self.createdAt = Date()
-        self.currentFloor = rogueRun.currentFloor
-        self.totalScore = rogueRun.score
+        self.currentFloor = rogueRun.currentFloorIndex
+        self.totalScore = rogueRun.totalScore
         self.buffIds = rogueRun.activeBuffs.map { $0.id.uuidString }
     }
 }
