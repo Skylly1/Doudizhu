@@ -174,14 +174,17 @@ class BattleScene: SKScene {
             return
         }
 
-        // 触觉反馈
+        // 触觉 + 音效反馈
         Task { @MainActor in
             FeedbackManager.shared.playCards(score: result.score)
+            SoundManager.shared.play(.cardPlay)
             if result.pattern.type == .bomb || result.pattern.type == .rocket {
                 FeedbackManager.shared.explosion()
+                SoundManager.shared.play(.bombExplosion)
             }
             if result.combo > 1 {
                 FeedbackManager.shared.comboHit(level: result.combo)
+                SoundManager.shared.play(.comboHit(level: result.combo))
             }
         }
 
@@ -222,7 +225,10 @@ class BattleScene: SKScene {
     private func toggleSelection(_ node: CardNode) {
         let cardId = node.card.id
 
-        Task { @MainActor in FeedbackManager.shared.cardTap() }
+        Task { @MainActor in
+            FeedbackManager.shared.cardTap()
+            SoundManager.shared.play(.cardTap)
+        }
 
         if selectedCards.contains(cardId) {
             selectedCards.remove(cardId)

@@ -41,13 +41,22 @@ struct BattleView: View {
             // 过关/失败弹窗
             if rogueRun.phase == .floorWin {
                 floorWinOverlay
-                    .onAppear { FeedbackManager.shared.floorWin() }
+                    .onAppear {
+                        FeedbackManager.shared.floorWin()
+                        SoundManager.shared.play(.floorClear)
+                    }
             } else if rogueRun.phase == .floorFail {
                 floorFailOverlay
-                    .onAppear { FeedbackManager.shared.floorFail() }
+                    .onAppear {
+                        FeedbackManager.shared.floorFail()
+                        SoundManager.shared.play(.floorFail)
+                    }
             } else if rogueRun.phase == .victory {
                 victoryOverlay
-                    .onAppear { FeedbackManager.shared.victory() }
+                    .onAppear {
+                        FeedbackManager.shared.victory()
+                        SoundManager.shared.play(.victory)
+                    }
             }
 
             // 成就解锁提示
@@ -79,6 +88,7 @@ struct BattleView: View {
                 }
                 .padding(.top, 60)
                 .onAppear {
+                    SoundManager.shared.play(.achievementUnlock)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                         withAnimation { achievementTracker.dismissLatest() }
                     }
@@ -99,12 +109,16 @@ struct BattleView: View {
             if case .scoring(let result) = newPhase {
                 // 触觉反馈
                 FeedbackManager.shared.playCards(score: result.score)
+                SoundManager.shared.play(.cardPlay)
                 if result.pattern.type == .bomb || result.pattern.type == .rocket {
                     FeedbackManager.shared.explosion()
+                    SoundManager.shared.play(.bombExplosion)
                 }
                 if result.combo > 1 {
                     FeedbackManager.shared.comboHit(level: result.combo)
+                    SoundManager.shared.play(.comboHit(level: result.combo))
                 }
+                SoundManager.shared.play(.scoreUp)
                 // 得分动画：延迟后切回选牌
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     rogueRun.onScoringComplete()
@@ -318,6 +332,7 @@ struct BattleView: View {
                 let selected = scene.getSelectedCards()
                 if rogueRun.discardCards(selected) {
                     FeedbackManager.shared.discard()
+                    SoundManager.shared.play(.cardDiscard)
                     scene.clearSelection()
                     scene.refreshHand()
                 }
