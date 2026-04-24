@@ -4,6 +4,7 @@ struct ContentView: View {
     @State private var currentScreen: AppScreen = .home
     @StateObject private var rogueRun = RogueRun()
     @StateObject private var tutorialManager = TutorialManager()
+    @StateObject private var purchaseManager = PurchaseManager.shared
 
     var body: some View {
         ZStack {
@@ -29,12 +30,27 @@ struct ContentView: View {
                         if newPhase == .shopping {
                             currentScreen = .shop
                         }
+                        // Demo 门禁：过关后检查是否超出试玩范围
+                        if newPhase == .floorWin,
+                           !purchaseManager.canAccessFloor(rogueRun.currentFloorIndex + 1) {
+                            currentScreen = .demoGate
+                        }
                     }
                 case .shop:
                     ShopView(rogueRun: rogueRun) {
                         rogueRun.leaveShop()
                         currentScreen = .battle
                     }
+                case .demoGate:
+                    DemoGateView(
+                        purchaseManager: purchaseManager,
+                        onContinue: {
+                            // 购买成功后继续
+                            rogueRun.advanceToNextFloor()
+                            currentScreen = .battle
+                        },
+                        onBack: { currentScreen = .home }
+                    )
                 case .map:
                     MapView(onStart: {
                         currentScreen = .buildSelect
@@ -59,6 +75,7 @@ enum AppScreen: Hashable {
     case buildSelect
     case battle
     case shop
+    case demoGate
     case map
     case collection
     case settings
