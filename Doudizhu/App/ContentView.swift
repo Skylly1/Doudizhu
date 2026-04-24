@@ -11,7 +11,16 @@ struct ContentView: View {
             Group {
                 switch currentScreen {
                 case .home:
-                    HomeView(onNavigate: { currentScreen = $0 })
+                    HomeView(onNavigate: { screen in
+                        if screen == .map && PlayerStats.shared.totalRuns == 0 {
+                            // New user: skip Map/BuildSelect, use default build
+                            rogueRun.startWithBuild(StarterBuild.allBuilds.first!)
+                            currentScreen = .battle
+                            tutorialManager.startIfNeeded()
+                        } else {
+                            currentScreen = screen
+                        }
+                    })
                 case .buildSelect:
                     BuildSelectView(onSelect: { build in
                         rogueRun.startWithBuild(build)

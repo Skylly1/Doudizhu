@@ -51,6 +51,7 @@ struct BattleView: View {
                     .onAppear {
                         FeedbackManager.shared.floorWin()
                         SoundManager.shared.play(.floorClear)
+                        ReviewManager.recordFloorWin()
                     }
             } else if rogueRun.phase == .floorFail {
                 floorFailOverlay
@@ -576,6 +577,34 @@ struct BattleView: View {
                                 .stroke(Theme.flame.opacity(0.4))
                         )
                     }
+                }
+
+                // Share button
+                Button {
+                    let image = ShareManager.generateShareImage(
+                        title: L10n.isEnglish ? "Victory!" : "斗破乾坤",
+                        score: rogueRun.totalScore,
+                        floor: rogueRun.currentFloorIndex + 1,
+                        jokerCount: rogueRun.activeJokers.count,
+                        ascension: rogueRun.ascensionLevel
+                    )
+                    let text = L10n.isEnglish
+                        ? "I scored \(rogueRun.totalScore) in Dou Po Qian Kun! 🏆"
+                        : "我在斗破乾坤中取得了 \(rogueRun.totalScore) 分！🏆"
+                    ShareManager.share(image: image, text: text)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "square.and.arrow.up")
+                        Text(L10n.isEnglish ? "Share" : "分享战绩")
+                    }
+                    .font(.subheadline.bold())
+                    .foregroundColor(Theme.cyan)
+                    .frame(width: 220, height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(Theme.cyanDim)
+                            .stroke(Theme.cyan.opacity(0.3))
+                    )
                 }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
