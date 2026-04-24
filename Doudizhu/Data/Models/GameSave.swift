@@ -17,15 +17,3 @@ class GameSave {
         self.buffIds = rogueRun.activeBuffs.map { $0.id.uuidString }
     }
 }
-
-@Model
-class PlayerStats {
-    var totalGamesPlayed: Int = 0
-    var totalWins: Int = 0
-    var highestScore: Int = 0
-    var highestFloor: Int = 0
-    var bombsPlayed: Int = 0
-    var rocketsPlayed: Int = 0
-
-    init() {}
-}
