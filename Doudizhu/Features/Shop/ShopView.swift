@@ -40,9 +40,7 @@ struct ShopView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.clockwise")
-                        Text("刷新")
-                        Text("(-15💰)")
-                            .font(.caption2)
+                        Text(L10n.refreshShop)
                     }
                     .font(.subheadline.bold())
                     .foregroundColor(rogueRun.gold >= 15 ? Theme.cyan : Theme.textDisabled)

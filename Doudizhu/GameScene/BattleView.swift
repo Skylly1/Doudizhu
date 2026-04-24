@@ -224,7 +224,7 @@ struct BattleView: View {
                     if let banned = boss.bannedPatternType {
                         HStack(spacing: 4) {
                             Text("⛔")
-                            Text("已禁用: \(banned.displayName)")
+                            Text(L10n.bannedPatternLabel(banned.displayName))
                                 .font(.caption.bold())
                                 .foregroundColor(Theme.danger)
                         }
@@ -518,7 +518,7 @@ struct BattleView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "flame.fill")
-                            Text("挑战 A\(rogueRun.ascensionLevel + 1)")
+                            Text(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
                         }
                         .font(.headline)
                         .foregroundColor(Theme.flame)
