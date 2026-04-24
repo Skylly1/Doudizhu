@@ -177,16 +177,16 @@ struct TutorialOverlay: View {
         VStack(alignment: .leading, spacing: 6) {
             Divider().background(Theme.border)
             if step == .patternBasics {
-                patternRow("单张", "🂡", "10分")
-                patternRow("对子", "🂡🂱", "20分")
-                patternRow("三条", "🂡🂱🃁", "40分")
-                patternRow("顺子", "🂣🂤🂥🂦🂧", "80分")
-                patternRow("连对", "🂣🂳🂤🂴", "60分")
+                patternRow(L10n.patternSingle, "🂡", L10n.pts(10))
+                patternRow(L10n.patternPair, "🂡🂱", L10n.pts(20))
+                patternRow(L10n.patternTriple, "🂡🂱🃁", L10n.pts(40))
+                patternRow(L10n.patternStraight, "🂣🂤🂥🂦🂧", L10n.pts(80))
+                patternRow(L10n.patternPairStraight, "🂣🂳🂤🂴", L10n.pts(60))
             } else {
-                patternRow("炸弹", "🂡🂱🃁🃑", "240分")
-                patternRow("火箭", "🃟🃏", "400分")
-                patternRow("飞机", "🂣🂳🃃🂤🂴🃄", "160分")
-                patternRow("三带一", "🂡🂱🃁+🂣", "50分")
+                patternRow(L10n.patternBomb, "🂡🂱🃁🃑", L10n.pts(240))
+                patternRow(L10n.patternRocket, "🃟🃏", L10n.pts(400))
+                patternRow(L10n.patternPlane, "🂣🂳🃃🂤🂴🃄", L10n.pts(160))
+                patternRow(L10n.patternTripleOne, "🂡🂱🃁+🂣", L10n.pts(50))
             }
         }
         .padding(.horizontal, 8)

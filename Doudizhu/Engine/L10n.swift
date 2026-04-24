@@ -158,6 +158,59 @@ enum L10n {
     static var patternRocket: String { localized("火箭", en: "Rocket") }
     static var patternFourTwo: String { localized("四带二", en: "Four+2") }
 
+    // MARK: - Card Pattern Guide
+    static func pts(_ n: Int) -> String { localized("\(n) 分", en: "\(n) pts") }
+    static func ptsPlus(_ n: Int) -> String { localized("\(n)+ 分", en: "\(n)+ pts") }
+
+    // Section headers
+    static var sectionBasicPatterns: String { localized("基础牌型", en: "Basic Patterns") }
+    static var sectionComboPatterns: String { localized("组合牌型", en: "Combo Patterns") }
+    static var sectionSequencePatterns: String { localized("顺序牌型", en: "Sequence Patterns") }
+    static var sectionBombs: String { localized("炸弹类 💥", en: "Bombs 💥") }
+    static var sectionStrategy: String { localized("策略要点", en: "Strategy Tips") }
+
+    // Pattern examples
+    static var exampleSingle: String { localized("任意一张牌", en: "Any single card") }
+    static var examplePair: String { localized("两张相同点数", en: "Two cards of same rank") }
+    static var exampleTriple: String { localized("三张相同点数", en: "Three cards of same rank") }
+    static var exampleTripleOne: String { localized("三条 + 一张单牌", en: "Triple + one single") }
+    static var exampleTriplePair: String { localized("三条 + 一对", en: "Triple + one pair") }
+    static var exampleFourTwo: String { localized("四张同点 + 两张单牌", en: "Four of a kind + two singles") }
+    static var exampleStraight: String { localized("5+ 张连续单牌 (3-7, 8-Q-K-A 等)", en: "5+ consecutive singles (3-7, 8-Q-K-A etc.)") }
+    static var examplePairStraight: String { localized("3+ 连续对子 (33-44-55 等)", en: "3+ consecutive pairs (33-44-55 etc.)") }
+    static var examplePlane: String { localized("2+ 连续三条 (333-444 等)", en: "2+ consecutive triples (333-444 etc.)") }
+    static var examplePlaneWings: String { localized("飞机 + 等量单牌或对子", en: "Airplane + equal singles or pairs") }
+    static var exampleBomb: String { localized("四张相同点数", en: "Four cards of same rank") }
+    static var exampleRocket: String { localized("大王 + 小王", en: "Red Joker + Black Joker") }
+
+    // Pattern tips
+    static var tipSingle: String { localized("效率最低，尽量避免", en: "Least efficient, avoid if possible") }
+    static var tipPair: String { localized("6 分/张", en: "6 pts/card") }
+    static var tipTriple: String { localized("6.7 分/张", en: "6.7 pts/card") }
+    static var tipTripleOne: String { localized("⭐ 8.75 分/张，性价比高", en: "⭐ 8.75 pts/card, great value") }
+    static var tipTriplePair: String { localized("⭐⭐ 10 分/张，推荐！", en: "⭐⭐ 10 pts/card, recommended!") }
+    static var tipFourTwo: String { localized("⭐⭐ 25 分/张", en: "⭐⭐ 25 pts/card") }
+    static var tipStraight: String { localized("越长越值！不含 2 和王", en: "Longer = more points! No 2s or Jokers") }
+    static var tipPairStraight: String { localized("长度奖励", en: "Length bonus") }
+    static var tipPlane: String { localized("强力！18.3 分/张", en: "Powerful! 18.3 pts/card") }
+    static var tipPlaneWings: String { localized("出完大量牌", en: "Play many cards at once") }
+    static var tipBomb: String { localized("⭐⭐⭐ 30 分/张！", en: "⭐⭐⭐ 30 pts/card!") }
+    static var tipRocket: String { localized("⭐⭐⭐ 最强！125 分/张", en: "⭐⭐⭐ Strongest! 125 pts/card") }
+
+    // Strategy tips
+    static var strategyComboTitle: String { localized("连击加分", en: "Combo Bonus") }
+    static var strategyComboDesc: String { localized("连续出牌每次 +15%。换牌会减 1 点连击，不会归零。",
+                                                      en: "Consecutive plays +15% each. Discarding reduces combo by 1, doesn't reset.") }
+    static var strategyBigTitle: String { localized("出大牌", en: "Play Big") }
+    static var strategyBigDesc: String { localized("三带二 > 三带一 > 三条。组合越复杂越值。",
+                                                    en: "Full House > Triple+1 > Triple. More complex = more points.") }
+    static var strategySaveBombsTitle: String { localized("攒炸弹", en: "Save Bombs") }
+    static var strategySaveBombsDesc: String { localized("炸弹 120 分是普通出牌的 10 倍+，值得等！",
+                                                          en: "Bomb 120 pts is 10x+ a normal play. Worth saving!") }
+    static var strategyJokersTitle: String { localized("规则牌", en: "Joker Cards") }
+    static var strategyJokersDesc: String { localized("商店的规则牌能改变玩法规则，不只是加分。",
+                                                       en: "Shop Jokers change game rules, not just add points.") }
+
     // MARK: - 起始流派
     static var buildBalanced: String { localized("稳扎稳打", en: "Balanced") }
     static var buildExplosive: String { localized("炸弹狂人", en: "Bomb Maniac") }
