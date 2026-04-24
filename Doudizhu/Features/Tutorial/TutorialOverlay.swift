@@ -72,6 +72,7 @@ class TutorialManager: ObservableObject {
     func startIfNeeded() {
         guard !hasCompletedTutorial else { return }
         currentStep = .welcome
+        Analytics.shared.track(.tutorialStart)
     }
 
     func advance() {
@@ -79,11 +80,13 @@ class TutorialManager: ObservableObject {
         if let nextStep = step.next {
             currentStep = nextStep
         } else {
+            Analytics.shared.track(.tutorialComplete)
             complete()
         }
     }
 
     func skip() {
+        Analytics.shared.track(.tutorialSkip)
         complete()
     }
 

@@ -174,6 +174,8 @@ class BattleScene: SKScene {
             return
         }
 
+        Analytics.shared.track(.cardPlay, params: ["pattern": result.pattern.type.displayName, "score": "\(result.score)"])
+
         // 触觉 + 音效反馈
         Task { @MainActor in
             FeedbackManager.shared.playCards(score: result.score)

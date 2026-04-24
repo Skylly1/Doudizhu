@@ -125,6 +125,7 @@ class RogueRun: ObservableObject {
         handCards = deal.hand
         drawPile = deal.drawPile
         phase = .selecting
+        Analytics.shared.track(.levelStart, level: currentFloor.floor)
     }
 
     /// 出牌
@@ -285,8 +286,10 @@ class RogueRun: ObservableObject {
             if currentFloorIndex >= 4 { tracker.tryUnlock("mid_run") }
             if discardsRemaining == currentFloor.maxDiscards { tracker.tryUnlock("no_discard_win") }
 
+            Analytics.shared.track(.levelComplete, level: currentFloor.floor)
             phase = .floorWin
         } else if playsRemaining <= 0 || handCards.isEmpty {
+            Analytics.shared.track(.levelFail, level: currentFloor.floor)
             phase = .floorFail
         } else {
             phase = .selecting
