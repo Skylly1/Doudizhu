@@ -4,9 +4,17 @@ import Foundation
 
 /// 规则牌稀有度
 enum JokerRarity: String, Codable, Hashable {
-    case common    = "普通"
-    case rare      = "稀有"
-    case legendary = "传说"
+    case common    = "common"
+    case rare      = "rare"
+    case legendary = "legendary"
+
+    var displayName: String {
+        switch self {
+        case .common:    return L10n.rarityCommon
+        case .rare:      return L10n.rarityRare
+        case .legendary: return L10n.rarityLegendary
+        }
+    }
 
     var color: String {
         switch self {
@@ -82,218 +90,216 @@ extension Joker {
 // MARK: - 预设规则牌库
 
 extension Joker {
-    // TODO: [L10N] Joker names and descriptions need String Catalog migration
-    // Current: Chinese-only. EN translations deferred to String Catalog phase.
     static let allJokers: [Joker] = [
         // ── 原始 10 张 ──
         Joker(
-            name: "贪心鬼",
-            description: "出牌后从牌堆额外抽1张牌",
+            name: L10n.jokerGreedyName,
+            description: L10n.jokerGreedyDesc,
             effect: .drawAfterPlay,
             icon: "👻",
             rarity: .common
         ),
         Joker(
-            name: "连环计",
-            description: "连击加成翻倍（15%→30%/级）",
+            name: L10n.jokerChainPlotName,
+            description: L10n.jokerChainPlotDesc,
             effect: .doubleComboRate,
             icon: "🔗",
             rarity: .rare
         ),
         Joker(
-            name: "空城计",
-            description: "手牌≤5张时，所有得分×1.5",
+            name: L10n.jokerEmptyFortName,
+            description: L10n.jokerEmptyFortDesc,
             effect: .lowHandBonus,
             icon: "🏯",
             rarity: .rare
         ),
         Joker(
-            name: "火烧连营",
-            description: "炸弹和火箭得分×2",
+            name: L10n.jokerFireBlazeName,
+            description: L10n.jokerFireBlazeDesc,
             effect: .explosiveBonus,
             icon: "🔥",
             rarity: .common
         ),
         Joker(
-            name: "顺势而为",
-            description: "顺子和连对得分×2",
+            name: L10n.jokerRideWaveName,
+            description: L10n.jokerRideWaveDesc,
             effect: .sequenceBonus,
             icon: "🌊",
             rarity: .common
         ),
         Joker(
-            name: "四面楚歌",
-            description: "手牌中每张2或A，得分+10%",
+            name: L10n.jokerSiegeName,
+            description: L10n.jokerSiegeDesc,
             effect: .highCardBonus,
             icon: "⚔️",
             rarity: .rare
         ),
         Joker(
-            name: "暗度陈仓",
-            description: "每关换牌次数+2",
+            name: L10n.jokerSecretPathName,
+            description: L10n.jokerSecretPathDesc,
             effect: .extraDiscards,
             icon: "🌙",
             rarity: .common
         ),
         Joker(
-            name: "一鸣惊人",
-            description: "每关第一次出牌得分×2.5",
+            name: L10n.jokerThunderStrikeName,
+            description: L10n.jokerThunderStrikeDesc,
             effect: .firstPlayBonus,
             icon: "⚡",
             rarity: .rare
         ),
         Joker(
-            name: "偷梁换柱",
-            description: "换牌时多抽1张牌",
+            name: L10n.jokerSwitcherooName,
+            description: L10n.jokerSwitcherooDesc,
             effect: .extraDrawOnDiscard,
             icon: "🎭",
             rarity: .common
         ),
         Joker(
-            name: "破釜沉舟",
-            description: "最后1次出牌机会时得分×3",
+            name: L10n.jokerLastStandName,
+            description: L10n.jokerLastStandDesc,
             effect: .lastStandBonus,
             icon: "⛵",
             rarity: .legendary
         ),
         // ── 新增 10 张 ──
         Joker(
-            name: "成双成对",
-            description: "对子得分×2",
+            name: L10n.jokerPairMasteryName,
+            description: L10n.jokerPairMasteryDesc,
             effect: .pairMastery,
             icon: "💕",
             rarity: .common
         ),
         Joker(
-            name: "三生万物",
-            description: "三带类牌型得分+50%",
+            name: L10n.jokerTripleThreatName,
+            description: L10n.jokerTripleThreatDesc,
             effect: .tripleThreat,
             icon: "🌀",
             rarity: .rare
         ),
         Joker(
-            name: "点石成金",
-            description: "每次出牌额外获得 5 金币",
+            name: L10n.jokerGoldRushName,
+            description: L10n.jokerGoldRushDesc,
             effect: .goldRush,
             icon: "💰",
             rarity: .rare
         ),
         Joker(
-            name: "回光返照",
-            description: "每关额外获得 1 次出牌机会",
+            name: L10n.jokerSecondWindName,
+            description: L10n.jokerSecondWindDesc,
             effect: .secondWind,
             icon: "💫",
             rarity: .legendary
         ),
         Joker(
-            name: "心算如飞",
-            description: "出牌≥5张时得分+40%",
+            name: L10n.jokerCardCounterName,
+            description: L10n.jokerCardCounterDesc,
             effect: .cardCounter,
             icon: "🧠",
             rarity: .rare
         ),
         Joker(
-            name: "锦鲤附体",
-            description: "换牌改从牌堆底部取（底牌运气更好）",
+            name: L10n.jokerLuckyDrawName,
+            description: L10n.jokerLuckyDrawDesc,
             effect: .luckyDraw,
             icon: "🐟",
             rarity: .common
         ),
         Joker(
-            name: "厚积薄发",
-            description: "当前层得分≥目标50%时，出牌+30%",
+            name: L10n.jokerScoreSurgeName,
+            description: L10n.jokerScoreSurgeDesc,
             effect: .scoreSurge,
             icon: "📈",
             rarity: .rare
         ),
         Joker(
-            name: "精打细算",
-            description: "出3张及以下的牌型+60%",
+            name: L10n.jokerMiniHandName,
+            description: L10n.jokerMiniHandDesc,
             effect: .miniHandBonus,
             icon: "🎯",
             rarity: .common
         ),
         Joker(
-            name: "连环杀",
-            description: "连击≥3时额外+20%加成",
+            name: L10n.jokerMultiKillName,
+            description: L10n.jokerMultiKillDesc,
             effect: .multiKill,
             icon: "⚡",
             rarity: .rare
         ),
         Joker(
-            name: "破甲",
-            description: "上次出牌≥100分时，本次+25%",
+            name: L10n.jokerShieldBreakerName,
+            description: L10n.jokerShieldBreakerDesc,
             effect: .shieldBreaker,
             icon: "🗡️",
             rarity: .legendary
         ),
         // ── 第三批 10 张 ──
         Joker(
-            name: "暴击之手",
-            description: "10%概率双倍得分",
+            name: L10n.jokerCriticalHitName,
+            description: L10n.jokerCriticalHitDesc,
             effect: .criticalHit,
             icon: "🎲",
             rarity: .rare
         ),
         Joker(
-            name: "保险单",
-            description: "失败时保留50%分数",
+            name: L10n.jokerInsuranceName,
+            description: L10n.jokerInsuranceDesc,
             effect: .insurance,
             icon: "🛡️",
             rarity: .rare
         ),
         Joker(
-            name: "同花顺缘",
-            description: "同花色出5张以上+50分",
+            name: L10n.jokerCollectorName,
+            description: L10n.jokerCollectorDesc,
             effect: .collector,
             icon: "🎴",
             rarity: .common
         ),
         Joker(
-            name: "夜枭",
-            description: "后半程(8-15关)得分+20%",
+            name: L10n.jokerNightOwlName,
+            description: L10n.jokerNightOwlDesc,
             effect: .nightOwl,
             icon: "🦉",
             rarity: .common
         ),
         Joker(
-            name: "先声夺人",
-            description: "每关第一手出牌+100分",
+            name: L10n.jokerEarlyBirdName,
+            description: L10n.jokerEarlyBirdDesc,
             effect: .earlyBird,
             icon: "🐦",
             rarity: .common
         ),
         Joker(
-            name: "守财奴",
-            description: "每持有50金币，得分+5%",
+            name: L10n.jokerMiserName,
+            description: L10n.jokerMiserDesc,
             effect: .miser,
             icon: "🏦",
             rarity: .rare
         ),
         Joker(
-            name: "赌徒之心",
-            description: "随机±30%得分（期望+5%）",
+            name: L10n.jokerGamblerName,
+            description: L10n.jokerGamblerDesc,
             effect: .gambler,
             icon: "🎰",
             rarity: .legendary
         ),
         Joker(
-            name: "浴火凤凰",
-            description: "每局游戏可复活一次",
+            name: L10n.jokerPhoenixName,
+            description: L10n.jokerPhoenixDesc,
             effect: .phoenix,
             icon: "🔥",
             rarity: .legendary
         ),
         Joker(
-            name: "神龙摆尾",
-            description: "连击达到5时，下一手3倍得分",
+            name: L10n.jokerDragonName,
+            description: L10n.jokerDragonDesc,
             effect: .dragon,
             icon: "🐉",
             rarity: .legendary
         ),
         Joker(
-            name: "逆转乾坤",
-            description: "得分低于目标30%时，出牌+50%",
+            name: L10n.jokerTideTurnerName,
+            description: L10n.jokerTideTurnerDesc,
             effect: .tideTurner,
             icon: "🌀",
             rarity: .rare

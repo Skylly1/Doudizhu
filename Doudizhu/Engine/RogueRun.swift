@@ -56,44 +56,42 @@ struct FloorConfig {
     
     var isBoss: Bool { !bossModifiers.isEmpty }
 
-    // TODO: [L10N] Floor names and descriptions need String Catalog migration
-    // Current: Chinese-only. EN translations deferred to String Catalog phase.
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
-        FloorConfig(floor: 1, name: "乡野牌局", targetScore: 200, maxPlays: 5, maxDiscards: 3,
-                    description: "村口老槐树下的牌局", isShop: false),
-        FloorConfig(floor: 2, name: "集市赌坊", targetScore: 320, maxPlays: 5, maxDiscards: 3,
-                    description: "赶集路上遇到的牌摊", isShop: false),
-        FloorConfig(floor: 3, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
-                    description: "补充装备，继续上路", isShop: true),
-        FloorConfig(floor: 4, name: "茶馆对弈", targetScore: 500, maxPlays: 5, maxDiscards: 2,
-                    description: "茶馆里的老牌手", isShop: false),
+        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 200, maxPlays: 5, maxDiscards: 3,
+                    description: L10n.floor1Desc, isShop: false),
+        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 320, maxPlays: 5, maxDiscards: 3,
+                    description: L10n.floor2Desc, isShop: false),
+        FloorConfig(floor: 3, name: L10n.floor3Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: L10n.floor3Desc, isShop: true),
+        FloorConfig(floor: 4, name: L10n.floor4Name, targetScore: 500, maxPlays: 5, maxDiscards: 2,
+                    description: L10n.floor4Desc, isShop: false),
         // === 第二章：府城篇 ===
-        FloorConfig(floor: 5, name: "县城擂台", targetScore: 650, maxPlays: 5, maxDiscards: 2,
-                    description: "县城里的斗地主擂台", isShop: false),
-        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 850, maxPlays: 4, maxDiscards: 2,
-                    description: "知府大人设下的暗局", isShop: false),
-        FloorConfig(floor: 7, name: "兵器铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
-                    description: "精良的装备等着你", isShop: true),
-        FloorConfig(floor: 8, name: "⚔️ 县令挑战", targetScore: 1100, maxPlays: 4, maxDiscards: 2,
-                    description: "县令大人的赌局——禁用一种牌型！", isShop: false,
+        FloorConfig(floor: 5, name: L10n.floor5Name, targetScore: 650, maxPlays: 5, maxDiscards: 2,
+                    description: L10n.floor5Desc, isShop: false),
+        FloorConfig(floor: 6, name: L10n.floor6Name, targetScore: 850, maxPlays: 4, maxDiscards: 2,
+                    description: L10n.floor6Desc, isShop: false),
+        FloorConfig(floor: 7, name: L10n.floor7Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: L10n.floor7Desc, isShop: true),
+        FloorConfig(floor: 8, name: L10n.floor8Name, targetScore: 1100, maxPlays: 4, maxDiscards: 2,
+                    description: L10n.floor8Desc, isShop: false,
                     bossModifiers: [.bannedPattern]),
         // === 第三章：江湖篇 ===
-        FloorConfig(floor: 9, name: "镖局较量", targetScore: 1400, maxPlays: 4, maxDiscards: 1,
-                    description: "押镖路上遇到的高手", isShop: false),
-        FloorConfig(floor: 10, name: "武林大会", targetScore: 1800, maxPlays: 4, maxDiscards: 1,
-                    description: "各路英雄齐聚一堂", isShop: false),
-        FloorConfig(floor: 11, name: "藏宝阁", targetScore: 0, maxPlays: 0, maxDiscards: 0,
-                    description: "最后的准备机会", isShop: true),
-        FloorConfig(floor: 12, name: "皇城暗影", targetScore: 2200, maxPlays: 4, maxDiscards: 1,
-                    description: "京城地下赌场", isShop: false),
-        FloorConfig(floor: 13, name: "⚔️ 太子赌局", targetScore: 2800, maxPlays: 3, maxDiscards: 1,
-                    description: "太子的赌局——分数越打越高！", isShop: false,
+        FloorConfig(floor: 9, name: L10n.floor9Name, targetScore: 1400, maxPlays: 4, maxDiscards: 1,
+                    description: L10n.floor9Desc, isShop: false),
+        FloorConfig(floor: 10, name: L10n.floor10Name, targetScore: 1800, maxPlays: 4, maxDiscards: 1,
+                    description: L10n.floor10Desc, isShop: false),
+        FloorConfig(floor: 11, name: L10n.floor11Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: L10n.floor11Desc, isShop: true),
+        FloorConfig(floor: 12, name: L10n.floor12Name, targetScore: 2200, maxPlays: 4, maxDiscards: 1,
+                    description: L10n.floor12Desc, isShop: false),
+        FloorConfig(floor: 13, name: L10n.floor13Name, targetScore: 2800, maxPlays: 3, maxDiscards: 1,
+                    description: L10n.floor13Desc, isShop: false,
                     bossModifiers: [.escalating]),
-        FloorConfig(floor: 14, name: "藏宝阁·终", targetScore: 0, maxPlays: 0, maxDiscards: 0,
-                    description: "最后一次强化机会", isShop: true),
-        FloorConfig(floor: 15, name: "⚔️ 斗破乾坤", targetScore: 4000, maxPlays: 3, maxDiscards: 0,
-                    description: "最终Boss——得分递减+无弃牌！", isShop: false,
+        FloorConfig(floor: 14, name: L10n.floor14Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: L10n.floor14Desc, isShop: true),
+        FloorConfig(floor: 15, name: L10n.floor15Name, targetScore: 4000, maxPlays: 3, maxDiscards: 0,
+                    description: L10n.floor15Desc, isShop: false,
                     bossModifiers: [.scoringDecay, .noDiscard]),
     ]
 }
@@ -659,17 +657,16 @@ enum BuffType: String, Codable, Hashable {
 // MARK: - 预设 Buff
 
 extension Buff {
-    // TODO: [L10N] Buff names and descriptions need String Catalog migration
     static let allBuffs: [Buff] = [
-        Buff(name: "火药桶", description: "炸弹得分 +60", type: .bombBonus, value: 60, icon: "🧨"),
-        Buff(name: "冲天炮", description: "火箭得分 +120", type: .rocketBonus, value: 120, icon: "🚀"),
-        Buff(name: "顺风车", description: "顺子得分 ×2", type: .straightBonus, value: 2.0, icon: "🚗"),
-        Buff(name: "大阅兵", description: "飞机得分 ×2.5", type: .planeBonus, value: 2.5, icon: "✈️"),
-        Buff(name: "翻倍符", description: "全局得分 ×1.5", type: .globalMultiplier, value: 1.5, icon: "🔮"),
-        Buff(name: "财神爷", description: "全局得分 ×1.3", type: .globalMultiplier, value: 1.3, icon: "💰"),
-        Buff(name: "双响炮", description: "炸弹得分 +100", type: .bombBonus, value: 100, icon: "🎆"),
-        Buff(name: "铁索连舟", description: "顺子得分 ×2.5", type: .straightBonus, value: 2.5, icon: "⛓️"),
-        Buff(name: "空中堡垒", description: "飞机得分 ×3", type: .planeBonus, value: 3.0, icon: "🏰"),
-        Buff(name: "神来之手", description: "全局得分 ×2", type: .globalMultiplier, value: 2.0, icon: "🌟"),
+        Buff(name: L10n.buffPowderKegName, description: L10n.buffPowderKegDesc, type: .bombBonus, value: 60, icon: "🧨"),
+        Buff(name: L10n.buffSkyRocketName, description: L10n.buffSkyRocketDesc, type: .rocketBonus, value: 120, icon: "🚀"),
+        Buff(name: L10n.buffTailwindName, description: L10n.buffTailwindDesc, type: .straightBonus, value: 2.0, icon: "🚗"),
+        Buff(name: L10n.buffAirParadeName, description: L10n.buffAirParadeDesc, type: .planeBonus, value: 2.5, icon: "✈️"),
+        Buff(name: L10n.buffDoubleCharmName, description: L10n.buffDoubleCharmDesc, type: .globalMultiplier, value: 1.5, icon: "🔮"),
+        Buff(name: L10n.buffFortuneGodName, description: L10n.buffFortuneGodDesc, type: .globalMultiplier, value: 1.3, icon: "💰"),
+        Buff(name: L10n.buffDoubleBlastName, description: L10n.buffDoubleBlastDesc, type: .bombBonus, value: 100, icon: "🎆"),
+        Buff(name: L10n.buffIronChainName, description: L10n.buffIronChainDesc, type: .straightBonus, value: 2.5, icon: "⛓️"),
+        Buff(name: L10n.buffSkyFortressName, description: L10n.buffSkyFortressDesc, type: .planeBonus, value: 3.0, icon: "🏰"),
+        Buff(name: L10n.buffDivineTouchName, description: L10n.buffDivineTouchDesc, type: .globalMultiplier, value: 2.0, icon: "🌟"),
     ]
 }
