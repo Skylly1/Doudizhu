@@ -50,6 +50,7 @@ struct ShopView: View {
                                     onBuy: {
                                         if rogueRun.buyJoker(item.joker, cost: item.cost) {
                                             FeedbackManager.shared.purchase()
+                                            SoundManager.shared.play(.shopBuy)
                                             withAnimation(.spring(response: 0.3)) {
                                                 jokerItems.removeAll { $0.id == item.id }
                                             }
@@ -78,6 +79,7 @@ struct ShopView: View {
                                     onBuy: {
                                         if rogueRun.buyBuff(item.buff, cost: item.cost) {
                                             FeedbackManager.shared.purchase()
+                                            SoundManager.shared.play(.shopBuy)
                                             withAnimation(.spring(response: 0.3)) {
                                                 shopItems.removeAll { $0.id == item.id }
                                             }

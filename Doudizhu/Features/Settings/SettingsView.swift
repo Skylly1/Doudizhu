@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("musicEnabled") private var musicEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
+    @AppStorage("soundVolume") private var soundVolume: Double = 0.5
     @AppStorage("hasCompletedTutorial") private var hasCompletedTutorial = false
 
     var body: some View {
@@ -20,6 +21,16 @@ struct SettingsView: View {
                         // 音效组
                         settingSection("🔊 音效") {
                             settingToggle("音效", isOn: $soundEnabled)
+                            Divider().background(Theme.border)
+                            HStack {
+                                Text("音量")
+                                    .font(Theme.fontBody)
+                                    .foregroundColor(Theme.textPrimary)
+                                Slider(value: $soundVolume, in: 0...1, step: 0.05)
+                                    .tint(Theme.gold)
+                                    .disabled(!soundEnabled)
+                            }
+                            .padding(.vertical, 2)
                             Divider().background(Theme.border)
                             settingToggle("背景音乐", isOn: $musicEnabled)
                             Divider().background(Theme.border)
@@ -56,6 +67,12 @@ struct SettingsView: View {
                     .padding(.bottom, Theme.spacingXXL)
                 }
             }
+        }
+        .onChange(of: soundEnabled) { _, newValue in
+            SoundManager.shared.isEnabled = newValue
+        }
+        .onChange(of: soundVolume) { _, newValue in
+            SoundManager.shared.volume = Float(newValue)
         }
     }
 
