@@ -21,7 +21,7 @@ class BattleScene: SKScene {
         backgroundColor = SKColor(red: 0.02, green: 0.06, blue: 0.10, alpha: 1.0)
 
         // 出牌区域
-        playedAreaNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        playedAreaNode.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
         addChild(playedAreaNode)
 
         // 桌面装饰
@@ -31,26 +31,26 @@ class BattleScene: SKScene {
     }
 
     private func drawTableDecor() {
-        // 毡布底纹 — 微妙的椭圆渐变
-        let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.85, height: size.height * 0.45))
+        // 毡布底纹 — 更紧凑的椭圆
+        let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.75, height: size.height * 0.32))
         table.fillColor = SKColor(red: 0.06, green: 0.12, blue: 0.18, alpha: 0.6)
         table.strokeColor = SKColor.cyan.withAlphaComponent(0.06)
         table.lineWidth = 1
-        table.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        table.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
         table.zPosition = -10
         addChild(table)
 
         // 中央出牌区域
-        let circle = SKShapeNode(circleOfRadius: 70)
+        let circle = SKShapeNode(circleOfRadius: 55)
         circle.fillColor = SKColor.white.withAlphaComponent(0.02)
         circle.strokeColor = SKColor.white.withAlphaComponent(0.06)
         circle.lineWidth = 1.5
-        circle.position = CGPoint(x: size.width / 2, y: size.height * 0.5)
+        circle.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
         circle.zPosition = -5
         addChild(circle)
 
         // 虚线圈装饰
-        let dashCircle = SKShapeNode(circleOfRadius: 90)
+        let dashCircle = SKShapeNode(circleOfRadius: 72)
         dashCircle.fillColor = .clear
         dashCircle.strokeColor = SKColor.white.withAlphaComponent(0.04)
         dashCircle.lineWidth = 1
@@ -62,7 +62,7 @@ class BattleScene: SKScene {
         hint.fontName = "PingFangSC-Light"
         hint.fontSize = 13
         hint.fontColor = SKColor.white.withAlphaComponent(0.10)
-        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.5 - 5)
+        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.52 - 5)
         hint.name = "hint"
         hint.zPosition = -4
         addChild(hint)
@@ -73,8 +73,8 @@ class BattleScene: SKScene {
             dot.fillColor = SKColor.cyan.withAlphaComponent(0.08)
             dot.strokeColor = .clear
             dot.position = CGPoint(
-                x: size.width / 2 + dx * size.width * 0.42,
-                y: size.height / 2 + dy * size.height * 0.22
+                x: size.width / 2 + dx * size.width * 0.38,
+                y: size.height * 0.52 + dy * size.height * 0.16
             )
             dot.zPosition = -10
             addChild(dot)
@@ -102,8 +102,8 @@ class BattleScene: SKScene {
         let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        // Lower baseY to reclaim space from compacted header (was 190)
-        let baseY = cardHeight / 2 + 140
+        // Leave room for SwiftUI bottom panel (~180pt for buttons + score bar + safe area)
+        let baseY = cardHeight / 2 + 210
 
         // 扇形弧度参数
         let maxAngle: CGFloat = count > 5 ? 0.035 : 0.02  // 每张牌的最大旋转角
@@ -210,7 +210,7 @@ class BattleScene: SKScene {
             // Remove highlight immediately
             node.childNode(withName: "highlight")?.removeFromParent()
             
-            let flyTo = CGPoint(x: size.width / 2, y: size.height * 0.5)
+            let flyTo = CGPoint(x: size.width / 2, y: size.height * 0.52)
             let move = SKAction.move(to: flyTo, duration: 0.22)
             move.timingMode = .easeIn
             let scale = SKAction.scale(to: 0.6, duration: 0.22)
@@ -303,7 +303,7 @@ class BattleScene: SKScene {
     }
 
     private func showScorePopup(_ result: PlayResult) {
-        let y = size.height * 0.5 + 110
+        let y = size.height * 0.52 + 100
 
         // 分数 — 根据大小动态调整
         let scoreText = "+\(result.score)"

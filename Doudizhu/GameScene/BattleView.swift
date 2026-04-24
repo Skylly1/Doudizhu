@@ -11,6 +11,10 @@ struct BattleView: View {
     @StateObject private var achievementTracker = AchievementTracker.shared
     /// Bumped by BattleScene.selectionChanged to force SwiftUI re-evaluation
     @State private var selectionVersion = 0
+    @State private var showNoSelectionHint = false
+    /// Progressive hint system
+    @State private var contextHint: String? = nil
+    @State private var playsUsedThisFloor: Int = 0
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -33,19 +37,12 @@ struct BattleView: View {
                 topBar
                 Spacer()
                 scoreTargetBar
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 6)
                 actionButtons
-                    .padding(.bottom, 30)
-                    .background(
-                        LinearGradient(
-                            colors: [.clear, .black.opacity(0.6), .black.opacity(0.85)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .padding(.top, -60)
-                        .ignoresSafeArea(edges: .bottom)
-                    )
+                    .padding(.bottom, 16)
             }
+            .padding(.bottom, 0)
+            .ignoresSafeArea(edges: .bottom)
 
             // 过关/失败弹窗
             if rogueRun.phase == .floorWin {
@@ -113,6 +110,11 @@ struct BattleView: View {
             }
             // Refresh hand when returning from shop
             battleScene?.refreshHand()
+            playsUsedThisFloor = 0
+            // Show initial hint for new players
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                showInitialHint()
+            }
         }
         .onChange(of: rogueRun.phase) { _, newPhase in
             if case .scoring(let result) = newPhase {
@@ -149,10 +151,11 @@ struct BattleView: View {
         HStack(spacing: 8) {
             Button(action: onBack) {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.title3)
-                    .foregroundStyle(.ultraThinMaterial)
-                    .symbolRenderingMode(.hierarchical)
+                    .font(.title2)
+                    .foregroundColor(.white.opacity(0.7))
             }
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
 
             // 关卡名 + 目标分，合并为一行
             HStack(spacing: 4) {
@@ -190,10 +193,11 @@ struct BattleView: View {
                 showPatternGuide = true
             } label: {
                 Image(systemName: "questionmark.circle.fill")
-                    .font(.body)
-                    .foregroundStyle(.ultraThinMaterial)
-                    .symbolRenderingMode(.hierarchical)
+                    .font(.title3)
+                    .foregroundColor(.white.opacity(0.7))
             }
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
             .sheet(isPresented: $showPatternGuide) {
                 PatternGuideView()
             }
@@ -337,8 +341,18 @@ struct BattleView: View {
 
     private var actionButtons: some View {
         VStack(spacing: 8) {
-            // 牌型提示
-            if let pattern = selectedPattern {
+            // 牌型提示 / 操作提示
+            if showNoSelectionHint {
+                Text("👆 \(L10n.selectCardsFirst)")
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.gold.opacity(0.9))
+                    .transition(.scale.combined(with: .opacity))
+            } else if let hint = contextHint {
+                Text(hint)
+                    .font(Theme.fontCaption)
+                    .foregroundColor(Theme.gold.opacity(0.8))
+                    .transition(.opacity)
+            } else if let pattern = selectedPattern {
                 HStack(spacing: 6) {
                     Text(pattern.type.displayName)
                         .font(.subheadline.bold())
@@ -366,6 +380,15 @@ struct BattleView: View {
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
+                if selected.isEmpty {
+                    // Show hint: select cards first
+                    withAnimation { showNoSelectionHint = true }
+                    FeedbackManager.shared.cardTap()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation { showNoSelectionHint = false }
+                    }
+                    return
+                }
                 if rogueRun.discardCards(selected) {
                     FeedbackManager.shared.discard()
                     SoundManager.shared.play(.cardDiscard)
@@ -381,18 +404,32 @@ struct BattleView: View {
                 }
                 .font(.body.weight(.medium))
                 .foregroundColor(rogueRun.discardsRemaining > 0 ? Theme.textPrimary : Theme.textDisabled)
-                .frame(width: 120, height: 46)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(rogueRun.discardsRemaining > 0 ? Theme.dangerDim : Theme.bgInset)
                         .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight)
                 )
+                .contentShape(Rectangle())
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
 
             // 出牌按钮
             Button {
-                battleScene?.playSelectedCards()
+                guard let scene = battleScene else { return }
+                let selected = scene.getSelectedCards()
+                if selected.isEmpty {
+                    withAnimation { showNoSelectionHint = true }
+                    FeedbackManager.shared.cardTap()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation { showNoSelectionHint = false }
+                    }
+                    return
+                }
+                scene.playSelectedCards()
+                playsUsedThisFloor += 1
+                showProgressiveHint()
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "play.fill")
@@ -402,14 +439,17 @@ struct BattleView: View {
                 }
                 .font(.body.weight(.semibold))
                 .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
-                .frame(width: 140, height: 46)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(rogueRun.playsRemaining > 0 ? Theme.gold : Theme.bgInset)
                 )
+                .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
             }
+            .padding(.horizontal, Theme.spacingMD)
         }
     }
 
@@ -549,6 +589,41 @@ struct BattleView: View {
             Text(value)
                 .font(Theme.fontMono)
                 .foregroundColor(Theme.textPrimary)
+        }
+    }
+
+    // MARK: - Progressive Hints
+
+    private func showInitialHint() {
+        guard contextHint == nil else { return }
+        withAnimation {
+            contextHint = L10n.hintSelectCards
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            withAnimation {
+                if contextHint == L10n.hintSelectCards { contextHint = nil }
+            }
+        }
+    }
+
+    private func showProgressiveHint() {
+        let hint: String?
+        switch playsUsedThisFloor {
+        case 1:
+            hint = rogueRun.discardsRemaining > 0 ? L10n.hintTrySwap : nil
+        case 2:
+            hint = L10n.hintPairsWorthMore
+        case 3:
+            hint = rogueRun.combo >= 2 ? L10n.hintComboBonus : nil
+        default:
+            hint = nil
+        }
+        guard let hint else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            withAnimation { contextHint = hint }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            withAnimation { contextHint = nil }
         }
     }
 }
