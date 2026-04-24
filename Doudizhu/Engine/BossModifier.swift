@@ -35,9 +35,9 @@ enum BossModifier: String, CaseIterable, Codable {
 }
 
 /// 某一局Boss关的活跃修改器状态
-class BossState: @unchecked Sendable {
-    var modifiers: [BossModifier]
-    var bannedPatternType: PatternType?   // 被禁用的牌型（如果有bannedPattern修改器）
+struct BossState {
+    let modifiers: [BossModifier]
+    let bannedPatternType: PatternType?
     var escalationCount: Int = 0           // 已出牌次数（用于escalating计算）
     var decayCount: Int = 0                // 已出牌次数（用于scoringDecay计算）
     
@@ -47,6 +47,8 @@ class BossState: @unchecked Sendable {
         if modifiers.contains(.bannedPattern) {
             let bannable: [PatternType] = [.straight, .bomb, .plane]
             bannedPatternType = bannable.randomElement()
+        } else {
+            bannedPatternType = nil
         }
     }
     

@@ -58,9 +58,9 @@ struct FloorConfig {
 
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
-        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 200, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 150, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor1Desc, isShop: false),
-        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 320, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 250, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor2Desc, isShop: false),
         FloorConfig(floor: 3, name: L10n.floor3Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor3Desc, isShop: true),
@@ -98,7 +98,7 @@ struct FloorConfig {
 
 // MARK: - Roguelike 核心
 
-class RogueRun: ObservableObject {
+@MainActor class RogueRun: ObservableObject {
     // 状态
     @Published var phase: GamePhase = .dealing
     @Published var currentFloorIndex: Int = 0
@@ -387,7 +387,7 @@ class RogueRun: ObservableObject {
         }
 
         // === Boss 修改器 ===
-        if let boss = bossState {
+        if var boss = bossState {
             // bannedPattern: 如果出了被禁的牌型，得分为0
             if let banned = boss.bannedPatternType, pattern.type == banned {
                 earned = 0  // 被禁牌型无分
@@ -407,6 +407,7 @@ class RogueRun: ObservableObject {
             if boss.hasGreedyTax {
                 gold = max(0, gold - 10)
             }
+            bossState = boss
         }
 
         // 全局倍率

@@ -40,7 +40,6 @@
 		C690EB0921830D590C271739 /* floors.json in Resources */ = {isa = PBXBuildFile; fileRef = 6ED88E607C3BDA32ED8E9F0D /* floors.json */; };
 		CAA94D910C1AD9B029E38CB7 /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CF0BC12630F84C9C30B17C /* ShopView.swift */; };
 		CDF561F4B6CA7271CDECFD87 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D933644042A8A7F300A933 /* GameCenterManager.swift */; };
-		D37FA4C2704FA28B50205584 /* GameSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49100FC89A7738CB2596A2F9 /* GameSave.swift */; };
 		D5D494E5383E074FF405DA24 /* FeedbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCDD0745535597D03CEACF /* FeedbackManager.swift */; };
 		D77E24283D4AAF816DB04D22 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2330474EDBC2A259C1F91353 /* CrashReporter.swift */; };
 		E15A1351F689EE760E3EBC5B /* AIPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DB65F89B1EDAFA7672D20B /* AIPlayer.swift */; };
@@ -66,7 +65,6 @@
 		3F78DD5F2D0AB4C6C79C9A15 /* BossModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossModifier.swift; sourceTree = "<group>"; };
 		3FA4F448DB514BC1590E8F0C /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		49100FC89A7738CB2596A2F9 /* GameSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSave.swift; sourceTree = "<group>"; };
 		60D933644042A8A7F300A933 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -256,7 +254,6 @@
 		D745FAAD764EBD43D0BA1E2C /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				49100FC89A7738CB2596A2F9 /* GameSave.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -379,7 +376,6 @@
 				7345ED8687782BC41DB12B28 /* DoudizhuApp.swift in Sources */,
 				D5D494E5383E074FF405DA24 /* FeedbackManager.swift in Sources */,
 				CDF561F4B6CA7271CDECFD87 /* GameCenterManager.swift in Sources */,
-				D37FA4C2704FA28B50205584 /* GameSave.swift in Sources */,
 				ED300C39A3FAEF6F7DEA8D9F /* HomeView.swift in Sources */,
 				2303E48D108C2A3324BD857C /* Joker.swift in Sources */,
 				F41A8BE2818E4F9F2A1F431C /* L10n.swift in Sources */,

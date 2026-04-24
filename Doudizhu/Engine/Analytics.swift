@@ -28,8 +28,8 @@ enum AnalyticsEvent: String {
 
 /// 轻量级 Analytics 引擎 — os_log + UserDefaults 持久化
 /// MVP 阶段零依赖；上线后可对接 Firebase/Amplitude
-final class Analytics {
-    nonisolated(unsafe) static let shared = Analytics()
+@MainActor final class Analytics {
+    static let shared = Analytics()
 
     private let logger = Logger(subsystem: "com.hongzeng.doudizhu", category: "analytics")
     private let sessionCountKey = "analytics_session_count"

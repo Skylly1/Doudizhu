@@ -3,8 +3,8 @@ import os.log
 
 /// 轻量级崩溃/错误报告 — os_log + 本地文件持久化
 /// MVP 阶段零依赖；上线后可对接 Sentry/Crashlytics
-final class CrashReporter {
-    nonisolated(unsafe) static let shared = CrashReporter()
+@MainActor final class CrashReporter {
+    static let shared = CrashReporter()
 
     private let logger = Logger(subsystem: "com.hongzeng.doudizhu", category: "crash")
     private let logFile: URL

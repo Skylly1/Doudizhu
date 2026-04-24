@@ -1,8 +1,8 @@
 import Foundation
 
 /// Persistent player statistics
-class PlayerStats: ObservableObject {
-    nonisolated(unsafe) static let shared = PlayerStats()
+@MainActor class PlayerStats: ObservableObject {
+    static let shared = PlayerStats()
 
     @Published var totalRuns: Int
     @Published var totalWins: Int

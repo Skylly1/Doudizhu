@@ -15,6 +15,7 @@ struct BattleView: View {
     /// Progressive hint system
     @State private var contextHint: String? = nil
     @State private var playsUsedThisFloor: Int = 0
+    @State private var showExitConfirm = false
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -117,18 +118,8 @@ struct BattleView: View {
             }
         }
         .onChange(of: rogueRun.phase) { _, newPhase in
-            if case .scoring(let result) = newPhase {
-                // 触觉反馈
-                FeedbackManager.shared.playCards(score: result.score)
-                SoundManager.shared.play(.cardPlay)
-                if result.pattern.type == .bomb || result.pattern.type == .rocket {
-                    FeedbackManager.shared.explosion()
-                    SoundManager.shared.play(.bombExplosion)
-                }
-                if result.combo > 1 {
-                    FeedbackManager.shared.comboHit(level: result.combo)
-                    SoundManager.shared.play(.comboHit(level: result.combo))
-                }
+            if case .scoring(_) = newPhase {
+                // Score-up sound (card-play/bomb/combo feedback already in BattleScene)
                 SoundManager.shared.play(.scoreUp)
                 // 得分动画：延迟后切回选牌
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -149,13 +140,19 @@ struct BattleView: View {
 
     private var topBar: some View {
         HStack(spacing: 8) {
-            Button(action: onBack) {
+            Button { showExitConfirm = true } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
                     .foregroundColor(.white.opacity(0.7))
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
+            .alert(L10n.exitConfirmTitle, isPresented: $showExitConfirm) {
+                Button(L10n.exitConfirmContinue, role: .cancel) { }
+                Button(L10n.exitConfirmQuit, role: .destructive) { onBack() }
+            } message: {
+                Text(L10n.exitConfirmMessage)
+            }
 
             // 关卡名 + 目标分，合并为一行
             HStack(spacing: 4) {
@@ -216,16 +213,16 @@ struct BattleView: View {
                     HStack(spacing: 6) {
                         ForEach(boss.modifiers, id: \.rawValue) { mod in
                             HStack(spacing: 3) {
-                                Text(mod.name).font(.caption2.bold())
-                                Text(mod.description).font(.caption2)
+                                Text(mod.name).font(.caption.bold())
+                                Text(mod.description).font(.caption)
                             }
                             .foregroundColor(Theme.flame)
                         }
                         if let banned = boss.bannedPatternType {
                             HStack(spacing: 2) {
-                                Text("⛔").font(.caption2)
+                                Text("⛔").font(.caption)
                                 Text(L10n.bannedPatternLabel(banned.displayName))
-                                    .font(.caption2.bold())
+                                    .font(.caption.bold())
                                     .foregroundColor(Theme.danger)
                             }
                         }
@@ -273,11 +270,11 @@ struct BattleView: View {
             // Score row: plays / discards / score + progress bar inline
             HStack(spacing: 8) {
                 Label("\(rogueRun.playsRemaining)", systemImage: "hand.raised.fill")
-                    .font(.caption2.monospacedDigit())
+                    .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.playsRemaining <= 1 ? Theme.danger : Theme.cyan)
 
                 Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.caption2.monospacedDigit())
+                    .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.discardsRemaining == 0 ? Theme.textDisabled : Theme.success)
 
                 // Inline progress bar
@@ -341,6 +338,20 @@ struct BattleView: View {
 
     private var actionButtons: some View {
         VStack(spacing: 8) {
+            // Last-play warning
+            if rogueRun.playsRemaining == 1 && rogueRun.floorScore < rogueRun.effectiveTargetScore && rogueRun.phase == .selecting {
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text(L10n.isEnglish ? "Last play! Need \(rogueRun.effectiveTargetScore - rogueRun.floorScore) more" : "最后一次出牌！还差 \(rogueRun.effectiveTargetScore - rogueRun.floorScore) 分")
+                }
+                .font(.caption.bold())
+                .foregroundColor(Theme.danger)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(Theme.danger.opacity(0.15)))
+                .transition(.scale.combined(with: .opacity))
+            }
+
             // 牌型提示 / 操作提示
             if showNoSelectionHint {
                 Text("👆 \(L10n.selectCardsFirst)")
@@ -368,10 +379,21 @@ struct BattleView: View {
                         .stroke(Theme.cyan.opacity(0.3))
                 )
                 .transition(.scale.combined(with: .opacity))
-            } else if battleScene?.getSelectedCards().isEmpty == false {
-                Text("❌ \(L10n.invalidPattern)")
+            } else if let selected = battleScene?.getSelectedCards(), !selected.isEmpty {
+                let count = selected.count
+                let hint: String = {
+                    switch count {
+                    case 1: return L10n.isEnglish ? "Play single cards" : "单张可以直接出"
+                    case 2: return L10n.isEnglish ? "Need a pair (same rank)" : "需要两张相同点数组成对子"
+                    case 3: return L10n.isEnglish ? "Need three of a kind" : "需要三张相同点数"
+                    case 4: return L10n.isEnglish ? "Try 3+1, bomb, or extend to straight" : "试试三带一、炸弹，或凑顺子"
+                    case 5...: return L10n.isEnglish ? "Try a straight (5+ consecutive)" : "试试顺子（5张以上连续）"
+                    default: return L10n.invalidPattern
+                    }
+                }()
+                Text("💡 \(hint)")
                     .font(Theme.fontCaption)
-                    .foregroundColor(Theme.danger.opacity(0.8))
+                    .foregroundColor(Theme.gold.opacity(0.8))
                     .transition(.opacity)
             }
 

@@ -51,6 +51,10 @@ enum L10n {
     static var playAgain: String { localized("再来一局", en: "Play Again") }
     static var achievementUnlocked: String { localized("成就解锁", en: "Achievement Unlocked") }
     static var invalidPattern: String { localized("无效牌型", en: "Invalid Pattern") }
+    static var exitConfirmTitle: String { localized("确认退出?", en: "Quit Battle?") }
+    static var exitConfirmMessage: String { localized("当前进度将丢失", en: "Current progress will be lost") }
+    static var exitConfirmContinue: String { localized("继续游戏", en: "Continue") }
+    static var exitConfirmQuit: String { localized("退出", en: "Quit") }
     static var selectCardsFirst: String { localized("先点选牌再操作", en: "Select cards first") }
     static var hintSelectCards: String { localized("💡 点选手牌，组成牌型后出牌得分", en: "💡 Tap cards to select, then play to score") }
     static var hintTrySwap: String { localized("💡 不满意手牌？选中后点「换牌」换新牌", en: "💡 Don't like your hand? Select & tap Swap") }

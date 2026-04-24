@@ -53,9 +53,9 @@ extension Achievement {
 
 // MARK: - 成就追踪器
 
-/// 成就追踪器 — 使用 nonisolated(unsafe) 以兼容 Engine 层调用
-final class AchievementTracker: ObservableObject {
-    nonisolated(unsafe) static let shared = AchievementTracker()
+/// 成就追踪器
+@MainActor final class AchievementTracker: ObservableObject {
+    static let shared = AchievementTracker()
 
     @Published var unlockedIds: Set<String> = []
     @Published var latestUnlock: Achievement? = nil
