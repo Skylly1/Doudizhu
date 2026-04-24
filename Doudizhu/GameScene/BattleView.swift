@@ -33,7 +33,7 @@ struct BattleView: View {
                 topBar
                 Spacer()
                 scoreTargetBar
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
                 actionButtons
                     .padding(.bottom, 30)
                     .background(
@@ -143,47 +143,45 @@ struct BattleView: View {
         }
     }
 
-    // MARK: - 顶部信息栏
+    // MARK: - 顶部信息栏（紧凑单行）
 
     private var topBar: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button(action: onBack) {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.title2)
+                    .font(.title3)
                     .foregroundStyle(.ultraThinMaterial)
                     .symbolRenderingMode(.hierarchical)
             }
 
-            Spacer()
-
-            // 关卡信息
-            VStack(spacing: 2) {
-                HStack(spacing: 4) {
-                    Text(L10n.floorNumber(rogueRun.currentFloorIndex + 1))
-                        .font(Theme.fontCaption)
-                        .foregroundColor(Theme.textTertiary)
-                    if rogueRun.ascensionLevel > 0 {
-                        Text("A\(rogueRun.ascensionLevel)")
-                            .font(.caption2.bold())
-                            .foregroundColor(Theme.flame)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 1)
-                            .background(Capsule().fill(Theme.flameDim))
-                    }
+            // 关卡名 + 目标分，合并为一行
+            HStack(spacing: 4) {
+                Text(L10n.floorNumber(rogueRun.currentFloorIndex + 1))
+                    .font(.caption2)
+                    .foregroundColor(Theme.textTertiary)
+                if rogueRun.ascensionLevel > 0 {
+                    Text("A\(rogueRun.ascensionLevel)")
+                        .font(.caption2.bold())
+                        .foregroundColor(Theme.flame)
+                        .padding(.horizontal, 3)
+                        .padding(.vertical, 1)
+                        .background(Capsule().fill(Theme.flameDim))
                 }
                 Text(rogueRun.currentFloor.name)
-                    .font(.headline)
+                    .font(.subheadline.bold())
                     .foregroundColor(rogueRun.currentFloor.isBoss ? Theme.flame : Theme.textPrimary)
+                    .lineLimit(1)
             }
 
             Spacer()
 
             // 金币
-            HStack(spacing: 4) {
+            HStack(spacing: 3) {
                 Image(systemName: "dollarsign.circle.fill")
+                    .font(.caption)
                     .foregroundColor(Theme.gold)
                 Text("\(rogueRun.gold)")
-                    .font(.headline.monospacedDigit())
+                    .font(.subheadline.monospacedDigit())
                     .foregroundColor(Theme.gold)
             }
 
@@ -192,7 +190,7 @@ struct BattleView: View {
                 showPatternGuide = true
             } label: {
                 Image(systemName: "questionmark.circle.fill")
-                    .font(.title3)
+                    .font(.body)
                     .foregroundStyle(.ultraThinMaterial)
                     .symbolRenderingMode(.hierarchical)
             }
@@ -200,76 +198,66 @@ struct BattleView: View {
                 PatternGuideView()
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 8)
+        .padding(.horizontal, Theme.spacingSM)
+        .padding(.top, 4)
     }
 
     // MARK: - 分数进度条
 
     private var scoreTargetBar: some View {
-        VStack(spacing: 6) {
-            // Boss 修改器警告
+        VStack(spacing: 3) {
+            // Boss 修改器警告（compact inline）
             if let boss = rogueRun.bossState {
-                VStack(spacing: 4) {
-                    ForEach(boss.modifiers, id: \.rawValue) { mod in
-                        HStack(spacing: 6) {
-                            Text(mod.name)
-                                .font(.caption.bold())
-                                .foregroundColor(Theme.flame)
-                            Text(mod.description)
-                                .font(.caption2)
-                                .foregroundColor(Theme.textSecondary)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(boss.modifiers, id: \.rawValue) { mod in
+                            HStack(spacing: 3) {
+                                Text(mod.name).font(.caption2.bold())
+                                Text(mod.description).font(.caption2)
+                            }
+                            .foregroundColor(Theme.flame)
+                        }
+                        if let banned = boss.bannedPatternType {
+                            HStack(spacing: 2) {
+                                Text("⛔").font(.caption2)
+                                Text(L10n.bannedPatternLabel(banned.displayName))
+                                    .font(.caption2.bold())
+                                    .foregroundColor(Theme.danger)
+                            }
                         }
                     }
-                    if let banned = boss.bannedPatternType {
-                        HStack(spacing: 4) {
-                            Text("⛔")
-                            Text(L10n.bannedPatternLabel(banned.displayName))
-                                .font(.caption.bold())
-                                .foregroundColor(Theme.danger)
-                        }
-                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 6)
                         .fill(Theme.flameDim)
                         .stroke(Theme.flame.opacity(0.3))
                 )
                 .padding(.horizontal)
             }
 
-            // 规则牌标签
-            if !rogueRun.activeJokers.isEmpty {
+            // Jokers + Buffs merged into one scrollable row
+            if !rogueRun.activeJokers.isEmpty || !rogueRun.activeBuffs.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         ForEach(rogueRun.activeJokers) { joker in
-                            HStack(spacing: 3) {
+                            HStack(spacing: 2) {
                                 Text(joker.icon).font(.caption2)
                                 Text(joker.name).font(.caption2)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
                             .background(Capsule().fill(Theme.cyanDim))
                             .foregroundColor(Theme.cyan)
                         }
-                    }
-                }
-                .padding(.horizontal)
-            }
-
-            // Buff 标签
-            if !rogueRun.activeBuffs.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
                         ForEach(rogueRun.activeBuffs) { buff in
-                            HStack(spacing: 3) {
+                            HStack(spacing: 2) {
                                 Text(buff.icon).font(.caption2)
                                 Text(buff.name).font(.caption2)
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
                             .background(Capsule().fill(Theme.flameDim))
                             .foregroundColor(Theme.flame)
                         }
@@ -278,53 +266,50 @@ struct BattleView: View {
                 .padding(.horizontal)
             }
 
-            // 分数 + 进度条
-            HStack(spacing: 12) {
-                // 出牌次数
+            // Score row: plays / discards / score + progress bar inline
+            HStack(spacing: 8) {
                 Label("\(rogueRun.playsRemaining)", systemImage: "hand.raised.fill")
-                    .font(.caption.monospacedDigit())
+                    .font(.caption2.monospacedDigit())
                     .foregroundColor(rogueRun.playsRemaining <= 1 ? Theme.danger : Theme.cyan)
 
-                // 换牌次数
                 Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.caption.monospacedDigit())
+                    .font(.caption2.monospacedDigit())
                     .foregroundColor(rogueRun.discardsRemaining == 0 ? Theme.textDisabled : Theme.success)
 
-                Spacer()
+                // Inline progress bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Theme.bgCard)
+                            .frame(height: 6)
 
-                // 分数
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(progressColor)
+                            .frame(width: geo.size.width * rogueRun.floorProgress, height: 6)
+                            .animation(.spring(response: 0.4), value: rogueRun.floorProgress)
+                    }
+                    .frame(height: 6)
+                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                }
+                .frame(height: 14)
+
+                // Score
                 Text("\(rogueRun.floorScore)")
-                    .font(.title2.bold().monospacedDigit())
+                    .font(.headline.bold().monospacedDigit())
                     .foregroundColor(Theme.textPrimary)
                 Text("/ \(rogueRun.effectiveTargetScore)")
-                    .font(.caption.monospacedDigit())
+                    .font(.caption2.monospacedDigit())
                     .foregroundColor(Theme.textTertiary)
-            }
-            .padding(.horizontal)
 
-            // 进度条
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Theme.bgCard)
-                        .frame(height: 8)
-
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(progressColor)
-                        .frame(width: geo.size.width * rogueRun.floorProgress, height: 8)
-                        .animation(.spring(response: 0.4), value: rogueRun.floorProgress)
+                // Combo inline
+                if rogueRun.combo > 1 {
+                    Text("🔥×\(rogueRun.combo)")
+                        .font(.caption2.bold())
+                        .foregroundColor(Theme.flame)
+                        .transition(.scale.combined(with: .opacity))
                 }
             }
-            .frame(height: 8)
             .padding(.horizontal)
-
-            // 连击提示
-            if rogueRun.combo > 1 {
-                Text("🔥 \(L10n.comboText(rogueRun.combo, bonus: Int(Double(rogueRun.combo - 1) * 15)))")
-                    .font(.caption.bold())
-                    .foregroundColor(Theme.flame)
-                    .transition(.scale.combined(with: .opacity))
-            }
         }
     }
 
