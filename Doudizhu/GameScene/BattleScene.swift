@@ -204,14 +204,27 @@ class BattleScene: SKScene {
         // 显示得分
         showScorePopup(result)
 
-        // 移除已出的牌节点
+        // 移除已出的牌节点 — 增强飞行动画
         let playedIds = selectedCards
         cardNodes.filter { playedIds.contains($0.card.id) }.forEach { node in
+            // Remove highlight immediately
+            node.childNode(withName: "highlight")?.removeFromParent()
+            
             let flyTo = CGPoint(x: size.width / 2, y: size.height * 0.5)
-            let move = SKAction.move(to: flyTo, duration: 0.25)
+            let move = SKAction.move(to: flyTo, duration: 0.22)
             move.timingMode = .easeIn
-            let scale = SKAction.scale(to: 0.7, duration: 0.25)
-            node.run(SKAction.group([move, scale]))
+            let scale = SKAction.scale(to: 0.6, duration: 0.22)
+            let spin = SKAction.rotate(byAngle: .pi * 0.15, duration: 0.22)
+            let fadeHalf = SKAction.fadeAlpha(to: 0.7, duration: 0.22)
+            
+            node.run(SKAction.sequence([
+                SKAction.group([move, scale, spin, fadeHalf]),
+                SKAction.group([
+                    SKAction.scale(to: 0.1, duration: 0.1),
+                    SKAction.fadeOut(withDuration: 0.1)
+                ]),
+                .removeFromParent()
+            ]))
         }
         cardNodes.removeAll { playedIds.contains($0.card.id) }
         selectedCards.removeAll()
@@ -338,26 +351,34 @@ class BattleScene: SKScene {
 
         // 炸弹/火箭 — 屏幕震动 + 闪白
         if result.pattern.type == .bomb || result.pattern.type == .rocket {
-            screenShake()
+            screenShake(intensity: result.pattern.type == .rocket ? 1.5 : 1.0)
             screenFlash(color: result.pattern.type == .rocket ? .red : .orange)
         }
 
-        // 高分粒子爆发
-        if result.score >= 150 {
-            emitScoreParticles(at: CGPoint(x: size.width / 2, y: y))
+        // 高连击也震一下
+        if result.combo >= 3 {
+            screenShake(intensity: min(1.5, 0.3 + Double(result.combo) * 0.2))
+        }
+
+        // 分数粒子爆发 — 分层级
+        if result.score >= 80 {
+            let count = result.score >= 300 ? 24 : (result.score >= 150 ? 16 : 8)
+            emitScoreParticles(at: CGPoint(x: size.width / 2, y: y), count: count)
         }
     }
 
     // MARK: - 特效
 
-    private func screenShake() {
-        let dx: CGFloat = 8
+    private func screenShake(intensity: CGFloat = 1.0) {
+        let dx: CGFloat = 8 * intensity
+        let dy: CGFloat = 4 * intensity
+        let t: TimeInterval = 0.03
         let shake = SKAction.sequence([
-            .moveBy(x: dx, y: 0, duration: 0.03),
-            .moveBy(x: -dx * 2, y: 0, duration: 0.03),
-            .moveBy(x: dx * 2, y: dx, duration: 0.03),
-            .moveBy(x: -dx, y: -dx, duration: 0.03),
-            .moveBy(x: 0, y: 0, duration: 0.02),
+            .moveBy(x: dx, y: dy, duration: t),
+            .moveBy(x: -dx * 2, y: -dy, duration: t),
+            .moveBy(x: dx * 2, y: dy, duration: t),
+            .moveBy(x: -dx, y: -dy, duration: t),
+            .moveBy(x: 0, y: 0, duration: t * 0.5),
         ])
         let cam = childNode(withName: "//") ?? self
         cam.run(shake)
@@ -379,9 +400,9 @@ class BattleScene: SKScene {
         ]))
     }
 
-    private func emitScoreParticles(at pos: CGPoint) {
+    private func emitScoreParticles(at pos: CGPoint, count: Int = 12) {
         let colors: [SKColor] = [.yellow, .orange, .cyan, .systemPink]
-        for _ in 0..<12 {
+        for _ in 0..<count {
             let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
             particle.fillColor = colors.randomElement()!
             particle.strokeColor = .clear

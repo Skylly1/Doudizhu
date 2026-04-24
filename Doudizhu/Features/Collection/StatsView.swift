@@ -16,6 +16,20 @@ struct StatsView: View {
                 }
                 .padding(.top, Theme.spacingLG)
 
+                if stats.totalRuns == 0 {
+                    // Empty state for new users
+                    VStack(spacing: Theme.spacingMD) {
+                        Text("🎯")
+                            .font(.system(size: 56))
+                        Text(L10n.emptyStats)
+                            .font(Theme.fontBody)
+                            .foregroundColor(Theme.textTertiary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Theme.spacingXXL)
+                }
+
                 // Overview cards
                 LazyVGrid(columns: [
                     GridItem(.flexible()),

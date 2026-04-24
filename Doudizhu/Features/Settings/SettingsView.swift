@@ -11,8 +11,6 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
-
             VStack(spacing: 0) {
                 GameNavBar(title: L10n.settings, onBack: onBack)
 
@@ -78,10 +76,18 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, Theme.spacingMD)
                     .padding(.top, Theme.spacingMD)
-                    .padding(.bottom, Theme.spacingXXL)
+                    .padding(.bottom, Theme.spacingMD)
+
+                    // Version info
+                    Text(L10n.versionString)
+                        .font(Theme.fontCaption)
+                        .foregroundColor(Theme.textTertiary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.bottom, Theme.spacingXXL)
                 }
             }
         }
+        .gameBackground()
         .onChange(of: soundEnabled) { _, newValue in
             SoundManager.shared.isEnabled = newValue
         }

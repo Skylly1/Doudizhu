@@ -141,7 +141,10 @@ struct PrimaryButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            Task { @MainActor in FeedbackManager.shared.buttonTap() }
+            action()
+        }) {
             HStack(spacing: 8) {
                 if let icon {
                     Image(systemName: icon)
@@ -159,6 +162,7 @@ struct PrimaryButton: View {
             )
             .shadow(color: Theme.gold.opacity(0.3), radius: 8, y: 4)
         }
+        .buttonStyle(GameButtonStyle(pressScale: 0.93))
     }
 }
 
@@ -171,7 +175,10 @@ struct SecondaryButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            Task { @MainActor in FeedbackManager.shared.buttonTap() }
+            action()
+        }) {
             HStack(spacing: 6) {
                 if let icon {
                     Image(systemName: icon)
@@ -188,6 +195,26 @@ struct SecondaryButton: View {
                     .stroke(color.opacity(0.2))
             )
         }
+        .buttonStyle(GameButtonStyle(pressScale: 0.96))
+    }
+}
+
+// MARK: - Button Press Animation
+
+struct GameButtonStyle: ButtonStyle {
+    var pressScale: CGFloat = 0.95
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? pressScale : 1.0)
+            .opacity(configuration.isPressed ? 0.85 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
+    }
+}
+
+extension View {
+    func gameButtonStyle(pressScale: CGFloat = 0.95) -> some View {
+        self.buttonStyle(GameButtonStyle(pressScale: pressScale))
     }
 }
 
@@ -232,7 +259,10 @@ struct GameNavBar: View {
     var body: some View {
         HStack {
             if let onBack {
-                Button(action: onBack) {
+                Button(action: {
+                    FeedbackManager.shared.buttonTap()
+                    onBack()
+                }) {
                     Image(systemName: "chevron.left.circle.fill")
                         .font(.title2)
                         .foregroundStyle(.ultraThinMaterial)

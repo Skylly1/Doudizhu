@@ -1,11 +1,39 @@
 import SwiftUI
 
+struct FloatingParticles: View {
+    let count: Int = 18
+
+    var body: some View {
+        TimelineView(.animation) { timeline in
+            Canvas { context, size in
+                let time = timeline.date.timeIntervalSinceReferenceDate
+                for i in 0..<count {
+                    let seed = Double(i) * 137.5
+                    let x = (sin(seed + time * 0.3) * 0.5 + 0.5) * size.width
+                    let progress = fmod(seed * 0.01 + time * (0.02 + Double(i) * 0.002), 1.0)
+                    let y = size.height * (1.0 - progress)
+                    let opacity = sin(progress * .pi) * 0.3
+                    let radius = 1.5 + sin(seed) * 1.0
+
+                    context.opacity = opacity
+                    context.fill(
+                        Circle().path(in: CGRect(x: x - radius, y: y - radius,
+                                                  width: radius * 2, height: radius * 2)),
+                        with: .color(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    )
+                }
+            }
+        }
+        .allowsHitTesting(false)
+    }
+}
+
 struct HomeView: View {
     let onNavigate: (AppScreen) -> Void
     @State private var titleScale: CGFloat = 0.8
     @State private var titleOpacity: Double = 0
-    @State private var buttonsOffset: CGFloat = 40
-    @State private var buttonsOpacity: Double = 0
+    @State private var showButtons = [false, false, false, false]
+    @State private var dailyPulse = false
 
     private var dailyChallengeButton: some View {
         let daily = DailyChallenge.today
@@ -40,7 +68,8 @@ struct HomeView: View {
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
                     .fill(played ? Theme.bgInset : Theme.bgCard)
-                    .stroke(played ? Theme.borderLight : Theme.border)
+                    .stroke(played ? Theme.borderLight : (dailyPulse ? Theme.gold : Theme.border),
+                            lineWidth: played ? 1 : (dailyPulse ? 1.5 : 0.5))
             )
         }
         .disabled(played)
@@ -66,6 +95,9 @@ struct HomeView: View {
             }
             .ignoresSafeArea()
 
+            FloatingParticles()
+                .ignoresSafeArea()
+
             VStack(spacing: 0) {
                 Spacer()
 
@@ -77,6 +109,8 @@ struct HomeView: View {
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
                         .foregroundStyle(Theme.goldGradient)
+                        .shadow(color: Theme.gold.opacity(0.4), radius: 12, y: 0)
+                        .shadow(color: Theme.gold.opacity(0.2), radius: 24, y: 0)
 
                     Text(L10n.appSubtitle)
                         .font(.subheadline.weight(.medium))
@@ -110,15 +144,21 @@ struct HomeView: View {
                         onNavigate(.map)
                     }
                     .padding(.horizontal, 60)
+                    .offset(y: showButtons[0] ? 0 : 40)
+                    .opacity(showButtons[0] ? 1.0 : 0)
 
                     SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
                         onNavigate(.buildSelect)
                     }
                     .padding(.horizontal, 60)
+                    .offset(y: showButtons[1] ? 0 : 40)
+                    .opacity(showButtons[1] ? 1.0 : 0)
 
                     // Daily Challenge
                     dailyChallengeButton
                         .padding(.horizontal, 60)
+                        .offset(y: showButtons[2] ? 0 : 40)
+                        .opacity(showButtons[2] ? 1.0 : 0)
 
                     HStack(spacing: 12) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
@@ -128,16 +168,20 @@ struct HomeView: View {
                             onNavigate(.settings)
                         }
                     }
+                    .offset(y: showButtons[3] ? 0 : 40)
+                    .opacity(showButtons[3] ? 1.0 : 0)
                 }
-                .offset(y: buttonsOffset)
-                .opacity(buttonsOpacity)
 
                 Spacer()
 
                 // 版本信息
+                Divider()
+                    .frame(width: 40)
+                    .background(Theme.border)
+                    .padding(.bottom, 4)
                 Text(L10n.versionString)
-                    .font(Theme.fontCaption)
-                    .foregroundColor(Theme.textDisabled)
+                    .font(.system(size: 10, weight: .light, design: .monospaced))
+                    .foregroundColor(Theme.textDisabled.opacity(0.5))
                     .padding(.bottom, Theme.spacingMD)
             }
         }
@@ -147,8 +191,19 @@ struct HomeView: View {
                 titleOpacity = 1.0
             }
             withAnimation(.easeOut(duration: 0.5).delay(0.35)) {
-                buttonsOffset = 0
-                buttonsOpacity = 1.0
+                showButtons[0] = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(0.45)) {
+                showButtons[1] = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(0.55)) {
+                showButtons[2] = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(0.65)) {
+                showButtons[3] = true
+            }
+            withAnimation(.easeInOut(duration: 1.5).repeatForever().delay(0.8)) {
+                dailyPulse = true
             }
         }
     }

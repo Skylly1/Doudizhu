@@ -120,9 +120,15 @@ struct ShopView: View {
                 }
 
                 if shopItems.isEmpty && jokerItems.isEmpty {
-                    Text(L10n.soldOut)
-                        .foregroundColor(Theme.textDisabled)
-                        .padding(Theme.spacingXL)
+                    VStack(spacing: Theme.spacingMD) {
+                        Text("🏪")
+                            .font(.system(size: 48))
+                        Text(L10n.shopRestocking)
+                            .font(Theme.fontBody)
+                            .foregroundColor(Theme.textTertiary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Theme.spacingXL)
                 }
 
                 // 已装备的规则牌

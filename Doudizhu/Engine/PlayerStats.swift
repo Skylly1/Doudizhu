@@ -11,6 +11,7 @@ class PlayerStats: ObservableObject {
     @Published var highestCombo: Int
     @Published var highestSingleScore: Int
     @Published var totalGoldEarned: Int
+    @Published var highestFloor: Int
     @Published var favoriteBuild: String
     @Published var totalPlayTime: TimeInterval  // seconds
 
@@ -24,6 +25,7 @@ class PlayerStats: ObservableObject {
         highestCombo = defaults.integer(forKey: "stats_highestCombo")
         highestSingleScore = defaults.integer(forKey: "stats_highestSingleScore")
         totalGoldEarned = defaults.integer(forKey: "stats_totalGoldEarned")
+        highestFloor = defaults.integer(forKey: "stats_highestFloor")
         favoriteBuild = defaults.string(forKey: "stats_favoriteBuild") ?? ""
         totalPlayTime = defaults.double(forKey: "stats_totalPlayTime")
     }
@@ -41,6 +43,13 @@ class PlayerStats: ObservableObject {
     func recordCombo(_ combo: Int) {
         if combo > highestCombo {
             highestCombo = combo
+            save()
+        }
+    }
+
+    func recordHighestFloor(_ floor: Int) {
+        if floor > highestFloor {
+            highestFloor = floor
             save()
         }
     }
@@ -96,6 +105,7 @@ class PlayerStats: ObservableObject {
         defaults.set(highestCombo, forKey: "stats_highestCombo")
         defaults.set(highestSingleScore, forKey: "stats_highestSingleScore")
         defaults.set(totalGoldEarned, forKey: "stats_totalGoldEarned")
+        defaults.set(highestFloor, forKey: "stats_highestFloor")
         defaults.set(favoriteBuild, forKey: "stats_favoriteBuild")
         defaults.set(totalPlayTime, forKey: "stats_totalPlayTime")
     }

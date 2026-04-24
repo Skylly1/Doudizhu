@@ -6,6 +6,10 @@ options:
   xcodeVersion: "16.0"
   createIntermediateGroups: true
   generateEmptyDirectories: true
+  developmentLanguage: zh-Hans
+  knownRegions:
+    - zh-Hans
+    - en
 
 settings:
   base:

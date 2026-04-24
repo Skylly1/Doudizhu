@@ -17,6 +17,7 @@
 		36328BC68873189A9D6DF6CB /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
 		446DD01D4220769F7DCFB9A1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
 		4BF8E0B52AC2757A0EA6FF29 /* CardNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B75669125C466EC3ED7729 /* CardNode.swift */; };
+		4C7E3B89F18BCA0B77490A1B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378DC5F776349B16C1FA4FA8 /* Localizable.strings */; };
 		56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781A117C670FF3910C3321E7 /* PurchaseManager.swift */; };
 		636E86EB24B2D1C9868EC148 /* StarterBuild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */; };
 		657C4179C084F17B3B48CC9F /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA4F448DB514BC1590E8F0C /* Achievement.swift */; };
@@ -49,7 +50,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02B7561C354AAEBCFCF1A20E /* Doudizhu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Doudizhu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "斗破乾坤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		146704F64E5700B454564B2A /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		1AC3C87E0E4B3888A6207525 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 		1AF923141EB84CEE723619A6 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
 		C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicy.md; sourceTree = "<group>"; };
+		C679C44488D1A397CF510FCE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		D6CF0BC12630F84C9C30B17C /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 		F14BE9E13D0A099C22FA5966 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPattern.swift; sourceTree = "<group>"; };
 		F9CEF7465746B1D689967584 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		FA0839D8A6E8A560D49EC0BA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		FCABC68FC662C3EAB5225D88 /* TutorialOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -113,6 +116,7 @@
 			children = (
 				3C71732CBF8E870978027D3B /* Assets.xcassets */,
 				C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */,
+				378DC5F776349B16C1FA4FA8 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -251,7 +255,7 @@
 		DF3626A1158A267437FA23AC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02B7561C354AAEBCFCF1A20E /* Doudizhu.app */,
+				02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -292,7 +296,7 @@
 			packageProductDependencies = (
 			);
 			productName = Doudizhu;
-			productReference = 02B7561C354AAEBCFCF1A20E /* Doudizhu.app */;
+			productReference = 02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -303,15 +307,14 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 4D0A6D61F1041C44F1306D61 /* Build configuration list for PBXProject "Doudizhu" */;
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 9AB7757CD2486DB0261D5AD3;
 			minimizedProjectReferenceProxies = 1;
@@ -331,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9CCA2395E431F87235395BAB /* Assets.xcassets in Resources */,
+				4C7E3B89F18BCA0B77490A1B /* Localizable.strings in Resources */,
 				67112B78B881C0B234CDFA7F /* PrivacyPolicy.md in Resources */,
 				C690EB0921830D590C271739 /* floors.json in Resources */,
 			);
@@ -384,6 +388,18 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		378DC5F776349B16C1FA4FA8 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C679C44488D1A397CF510FCE /* en */,
+				FA0839D8A6E8A560D49EC0BA /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		114016A5E2784000D0C774D4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -391,6 +407,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -480,6 +497,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

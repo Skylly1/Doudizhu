@@ -30,6 +30,10 @@ enum L10n {
     static var depart: String { localized("出发", en: "Depart") }
     static func playsLabel(_ n: Int) -> String { localized("\(n)次出牌", en: "\(n) Plays") }
     static func discardsLabel(_ n: Int) -> String { localized("\(n)次换牌", en: "\(n) Swaps") }
+    static var mapHighestProgress: String { localized("最高进度", en: "Highest") }
+    static func mapHighestFloor(_ n: Int) -> String { localized("最高第\(n)层", en: "Floor \(n)") }
+    static func mapTotalRuns(_ n: Int) -> String { localized("\(n)次冒险", en: "\(n) Runs") }
+    static func mapHighestScore(_ n: Int) -> String { localized("最高分\(n)", en: "Best \(n)") }
 
     // MARK: - 战斗
     static var play: String { localized("出牌", en: "Play") }
@@ -405,6 +409,11 @@ enum L10n {
     static func dailyBestScore(_ n: Int) -> String { localized("今日最高分: \(n)", en: "Today's Best: \(n)") }
     static var dailyChallengeNoBombs: String { localized("禁止使用炸弹和火箭", en: "Bombs and Rockets are banned") }
     static var dailyChallengeNoDiscards: String { localized("禁止换牌", en: "Discards are disabled") }
+
+    // MARK: - 空状态
+    static var emptyStats: String { localized("开始你的第一次冒险吧！", en: "Start your first adventure!") }
+    static var emptyAchievements: String { localized("还没有解锁成就，继续冒险吧！", en: "No achievements yet. Keep adventuring!") }
+    static var shopRestocking: String { localized("商店正在补货...", en: "Shop is restocking...") }
 
     // MARK: - 辅助
 

@@ -177,19 +177,32 @@ class CardNode: SKSpriteNode {
         guard !isSelected else { return }
         isSelected = true
 
+        // Move up + slight scale
         let moveUp = SKAction.moveBy(x: 0, y: selectedOffset, duration: 0.12)
         moveUp.timingMode = .easeOut
-        run(moveUp)
+        let scaleUp = SKAction.scale(to: 1.08, duration: 0.12)
+        scaleUp.timingMode = .easeOut
+        run(SKAction.group([moveUp, scaleUp]))
 
-        // 选中高亮边框
+        // Glowing highlight border
         let highlight = SKShapeNode(rectOf: CGSize(width: size.width + 4, height: size.height + 4),
                                      cornerRadius: 10)
         highlight.fillColor = .clear
         highlight.strokeColor = .cyan
         highlight.lineWidth = 2.5
-        highlight.glowWidth = 3
+        highlight.glowWidth = 5
         highlight.name = "highlight"
+        highlight.alpha = 0.8
         addChild(highlight)
+
+        // Pulsing glow
+        let pulse = SKAction.repeatForever(
+            SKAction.sequence([
+                SKAction.fadeAlpha(to: 0.4, duration: 0.6),
+                SKAction.fadeAlpha(to: 1.0, duration: 0.6)
+            ])
+        )
+        highlight.run(pulse, withKey: "pulse")
     }
 
     func deselect() {
@@ -198,7 +211,9 @@ class CardNode: SKSpriteNode {
 
         let moveDown = SKAction.moveBy(x: 0, y: -selectedOffset, duration: 0.12)
         moveDown.timingMode = .easeOut
-        run(moveDown)
+        let scaleDown = SKAction.scale(to: 1.0, duration: 0.12)
+        scaleDown.timingMode = .easeOut
+        run(SKAction.group([moveDown, scaleDown]))
 
         childNode(withName: "highlight")?.removeFromParent()
     }

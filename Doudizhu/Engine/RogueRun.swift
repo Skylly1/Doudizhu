@@ -562,6 +562,7 @@ class RogueRun: ObservableObject {
     /// 进入下一层
     func advanceToNextFloor() {
         currentFloorIndex += 1
+        PlayerStats.shared.recordHighestFloor(currentFloorIndex)
         if currentFloorIndex >= FloorConfig.allFloors.count {
             AchievementTracker.shared.tryUnlock("full_clear")
             AchievementTracker.shared.tryUnlock("wins_5")

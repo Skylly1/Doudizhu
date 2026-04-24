@@ -7,8 +7,6 @@ struct CollectionView: View {
 
     var body: some View {
         ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
-
             VStack(spacing: 0) {
                 GameNavBar(title: L10n.collection, onBack: onBack)
 
@@ -33,6 +31,7 @@ struct CollectionView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
+        .gameBackground()
     }
 
     private func tabButton(_ title: String, icon: String, index: Int) -> some View {

@@ -31,6 +31,20 @@ struct AchievementView: View {
                 }
                 .padding(.horizontal, Theme.spacingLG)
 
+                if prog.unlocked == 0 {
+                    // Empty state
+                    VStack(spacing: Theme.spacingMD) {
+                        Text("🏆")
+                            .font(.system(size: 56))
+                        Text(L10n.emptyAchievements)
+                            .font(Theme.fontBody)
+                            .foregroundColor(Theme.textTertiary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Theme.spacingLG)
+                }
+
                 // 按分类展示
                 ForEach(Achievement.Category.allCases, id: \.self) { category in
                     let items = Achievement.all.filter { $0.category == category }

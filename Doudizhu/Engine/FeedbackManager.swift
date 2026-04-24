@@ -63,6 +63,11 @@ final class FeedbackManager {
         notification.notificationOccurred(.error)
     }
 
+    /// 通用按钮点击
+    func buttonTap() {
+        lightImpact.impactOccurred(intensity: 0.5)
+    }
+
     /// 购买物品
     func purchase() {
         notification.notificationOccurred(.success)
