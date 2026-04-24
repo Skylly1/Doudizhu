@@ -16,7 +16,7 @@ final class PurchaseManager: ObservableObject {
     }
 
     /// 免费试玩可到达的最高层数（含）
-    static let demoMaxFloor = 4
+    static let demoMaxFloor = 5
 
     /// 完整版产品 ID — 需在 App Store Connect 配置
     static let fullVersionProductID = "com.hongzeng.doudizhu.fullversion"
@@ -140,7 +140,7 @@ final class PurchaseManager: ObservableObject {
 
     /// 格式化价格
     var formattedPrice: String {
-        product?.displayPrice ?? (L10n.isEnglish ? "$2.99" : "¥18")
+        product?.displayPrice ?? (L10n.isEnglish ? "$1.99" : "¥12")
     }
 
     // MARK: - Private

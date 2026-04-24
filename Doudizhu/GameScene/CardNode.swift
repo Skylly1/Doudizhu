@@ -30,29 +30,38 @@ class CardNode: SKSpriteNode {
 
     private var cardColor: SKColor {
         if isJoker {
-            return card.rank == .jokerRed ? SKColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1)
-                : SKColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1)
+            return card.rank == .jokerRed ? SKColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 1)
+                : SKColor(red: 0.7, green: 0.8, blue: 0.9, alpha: 1)
         }
-        return isRed ? SKColor(red: 0.85, green: 0.15, blue: 0.15, alpha: 1)
-            : SKColor(red: 0.1, green: 0.1, blue: 0.2, alpha: 1)
+        return isRed ? SKColor(red: 1.0, green: 0.35, blue: 0.35, alpha: 1)
+            : SKColor(red: 0.75, green: 0.85, blue: 1.0, alpha: 1)
     }
 
     private func drawCard() {
         // 阴影
         let shadow = SKShapeNode(rectOf: CGSize(width: size.width - 2, height: size.height - 2),
                                   cornerRadius: 8)
-        shadow.fillColor = SKColor.black.withAlphaComponent(0.3)
+        shadow.fillColor = SKColor.black.withAlphaComponent(0.5)
         shadow.strokeColor = .clear
-        shadow.position = CGPoint(x: 2, y: -2)
+        shadow.position = CGPoint(x: 2, y: -3)
         shadow.zPosition = -1
         addChild(shadow)
 
-        // 卡牌背景 — 圆角白色底
+        // 卡牌背景 — 暗色主题
         let bg = SKShapeNode(rectOf: size, cornerRadius: 8)
-        bg.fillColor = .white
-        bg.strokeColor = SKColor(white: 0.85, alpha: 1.0)
-        bg.lineWidth = 1.5
+        bg.fillColor = SKColor(red: 0.12, green: 0.12, blue: 0.18, alpha: 1.0)
+        bg.strokeColor = SKColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 0.35)
+        bg.lineWidth = 1.0
         addChild(bg)
+
+        // Inner subtle gradient effect (lighter at top, darker at bottom)
+        let innerGlow = SKShapeNode(rectOf: CGSize(width: size.width - 4, height: size.height - 4),
+                                     cornerRadius: 6)
+        innerGlow.fillColor = SKColor(red: 0.18, green: 0.18, blue: 0.25, alpha: 0.5)
+        innerGlow.strokeColor = .clear
+        innerGlow.position = CGPoint(x: 0, y: size.height * 0.05)
+        innerGlow.alpha = 0.6
+        addChild(innerGlow)
 
         // Joker 特殊处理
         if isJoker {
@@ -104,7 +113,7 @@ class CardNode: SKSpriteNode {
         // 中央大花色
         let centerSuit = SKLabelNode(text: suitText)
         centerSuit.fontSize = size.width * 0.5
-        centerSuit.fontColor = color.withAlphaComponent(0.8)
+        centerSuit.fontColor = color.withAlphaComponent(0.4)
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: 0)
         addChild(centerSuit)
@@ -161,6 +170,14 @@ class CardNode: SKSpriteNode {
         emoji.position = CGPoint(x: 0, y: 2)
         addChild(emoji)
 
+        // Joker special glow
+        let jokerGlow = SKShapeNode(circleOfRadius: size.width * 0.35)
+        jokerGlow.fillColor = (isRed ? SKColor.red : SKColor.purple).withAlphaComponent(0.08)
+        jokerGlow.strokeColor = .clear
+        jokerGlow.position = CGPoint(x: 0, y: 2)
+        jokerGlow.zPosition = -0.5
+        addChild(jokerGlow)
+
         // 底部
         let botLabel = SKLabelNode(text: "王")
         botLabel.fontName = "PingFangSC-Bold"
@@ -188,7 +205,7 @@ class CardNode: SKSpriteNode {
         let highlight = SKShapeNode(rectOf: CGSize(width: size.width + 4, height: size.height + 4),
                                      cornerRadius: 10)
         highlight.fillColor = .clear
-        highlight.strokeColor = .cyan
+        highlight.strokeColor = SKColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
         highlight.lineWidth = 2.5
         highlight.glowWidth = 5
         highlight.name = "highlight"
