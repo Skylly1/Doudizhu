@@ -49,6 +49,22 @@ struct HomeView: View {
 
                 Spacer().frame(height: Theme.spacingXXL)
 
+                // Ascension 等级展示
+                let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
+                if highestAsc > 0 {
+                    HStack(spacing: 8) {
+                        Image(systemName: "flame.fill")
+                            .foregroundColor(Theme.flame)
+                        Text("最高挑战: A\(highestAsc)")
+                            .font(.subheadline.bold().monospacedDigit())
+                            .foregroundColor(Theme.flame)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(Theme.flameDim))
+                    .padding(.bottom, 8)
+                }
+
                 // 菜单按钮
                 VStack(spacing: 14) {
                     PrimaryButton(title: L10n.startAdventure, icon: "play.fill") {
@@ -76,7 +92,7 @@ struct HomeView: View {
                 Spacer()
 
                 // 版本信息
-                Text("v0.9 MVP · Made with ❤️")
+                Text("v1.0 · 斗破乾坤")
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textDisabled)
                     .padding(.bottom, Theme.spacingMD)

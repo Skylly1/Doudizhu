@@ -27,6 +27,35 @@ struct ShopView: View {
                         .foregroundColor(Theme.goldDark.opacity(0.7))
                 }
 
+                // 刷新按钮
+                Button {
+                    if rogueRun.gold >= 15 {
+                        rogueRun.gold -= 15
+                        FeedbackManager.shared.purchase()
+                        SoundManager.shared.play(.shopBuy)
+                        withAnimation(.spring(response: 0.3)) {
+                            generateShopItems()
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.clockwise")
+                        Text("刷新")
+                        Text("(-15💰)")
+                            .font(.caption2)
+                    }
+                    .font(.subheadline.bold())
+                    .foregroundColor(rogueRun.gold >= 15 ? Theme.cyan : Theme.textDisabled)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(rogueRun.gold >= 15 ? Theme.cyanDim : Theme.bgInset)
+                            .stroke(rogueRun.gold >= 15 ? Theme.cyan.opacity(0.3) : Theme.borderLight)
+                    )
+                }
+                .disabled(rogueRun.gold < 15)
+
                 // 规则牌区
                 if !jokerItems.isEmpty {
                     VStack(alignment: .leading, spacing: Theme.spacingSM) {

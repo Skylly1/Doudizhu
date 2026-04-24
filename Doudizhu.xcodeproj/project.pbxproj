@@ -11,6 +11,7 @@
 		14667930FF82DF75F427E36B /* PatternGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCF1F17CE6C4B3B041FDFE8 /* PatternGuideView.swift */; };
 		2303E48D108C2A3324BD857C /* Joker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF62D06D635A1BDDFA6F2D58 /* Joker.swift */; };
 		28174BF5C639F3B8DE4DDF6A /* RogueRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DAC6F80E11117AD93A5763 /* RogueRun.swift */; };
+		44A2F714B561200F3F623AA6 /* BossModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D12F7DD8C65FFD46D67E6B /* BossModifier.swift */; };
 		32FEF27B31D06089225DB60E /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC3C87E0E4B3888A6207525 /* BattleScene.swift */; };
 		36328BC68873189A9D6DF6CB /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
 		446DD01D4220769F7DCFB9A1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
@@ -70,6 +71,7 @@
 		BF62D06D635A1BDDFA6F2D58 /* Joker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joker.swift; sourceTree = "<group>"; };
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
+		64D12F7DD8C65FFD46D67E6B /* BossModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossModifier.swift; sourceTree = "<group>"; };
 		C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicy.md; sourceTree = "<group>"; };
 		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				BF62D06D635A1BDDFA6F2D58 /* Joker.swift */,
 				C004536BF49C1AC16F07AF1E /* L10n.swift */,
 				781A117C670FF3910C3321E7 /* PurchaseManager.swift */,
+				64D12F7DD8C65FFD46D67E6B /* BossModifier.swift */,
 				C0DAC6F80E11117AD93A5763 /* RogueRun.swift */,
 				3AA013CA84673129FD536088 /* SoundManager.swift */,
 				6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */,
@@ -352,6 +355,7 @@
 				96049DD3D9B82908F3FBFA4D /* MapView.swift in Sources */,
 				14667930FF82DF75F427E36B /* PatternGuideView.swift in Sources */,
 				56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */,
+				44A2F714B561200F3F623AA6 /* BossModifier.swift in Sources */,
 				28174BF5C639F3B8DE4DDF6A /* RogueRun.swift in Sources */,
 				0952FD7ADF42F48BFD66A78D /* SettingsView.swift in Sources */,
 				CAA94D910C1AD9B029E38CB7 /* ShopView.swift in Sources */,

@@ -56,6 +56,27 @@ enum L10n {
     static func totalScoreValue(_ score: Int) -> String { localized("总分：\(score)", en: "Total: \(score)") }
     static func baseScore(_ score: Int) -> String { localized("基础 \(score) 分", en: "Base \(score) pts") }
 
+    // MARK: - Ascension
+    static var ascension: String { localized("挑战等级", en: "Ascension") }
+    static func ascensionLevel(_ n: Int) -> String { localized("挑战等级 \(n)", en: "Ascension \(n)") }
+    static var ascensionHint: String { localized("通关后解锁更高挑战等级", en: "Clear to unlock higher Ascension") }
+    static var highestAscension: String { localized("最高挑战", en: "Highest") }
+    
+    // MARK: - Boss
+    static var bossWarning: String { localized("⚔️ Boss 关", en: "⚔️ Boss Floor") }
+    static var bossModifierLabel: String { localized("特殊规则", en: "Special Rules") }
+    static var bannedPatternWarning: String { localized("⛔ 已禁用", en: "⛔ Banned") }
+    
+    // MARK: - 商店刷新
+    static var refreshShop: String { localized("🔄 刷新 (-15💰)", en: "🔄 Refresh (-15💰)") }
+    static var refreshCost: String { localized("花费15金币刷新商品", en: "Spend 15 gold to refresh items") }
+    
+    // MARK: - 首屏
+    static var quickStart: String { localized("⚡ 快速开战", en: "⚡ Quick Start") }
+    static var continueRun: String { localized("▶ 继续冒险", en: "▶ Continue Run") }
+    static var dailyChallenge: String { localized("📅 每日挑战", en: "📅 Daily Challenge") }
+    static var comingSoon: String { localized("即将推出", en: "Coming Soon") }
+
     // MARK: - 商店
     static var shop: String { localized("商店", en: "Shop") }
     static var jokerSection: String { localized("规则牌", en: "Jokers") }

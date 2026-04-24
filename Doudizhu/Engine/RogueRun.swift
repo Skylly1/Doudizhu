@@ -36,10 +36,25 @@ struct FloorConfig {
     let floor: Int
     let name: String
     let targetScore: Int
-    let maxPlays: Int        // 出牌次数上限
-    let maxDiscards: Int     // 弃牌次数上限
+    let maxPlays: Int
+    let maxDiscards: Int
     let description: String
     let isShop: Bool
+    let bossModifiers: [BossModifier]
+    
+    init(floor: Int, name: String, targetScore: Int, maxPlays: Int, maxDiscards: Int,
+         description: String, isShop: Bool, bossModifiers: [BossModifier] = []) {
+        self.floor = floor
+        self.name = name
+        self.targetScore = targetScore
+        self.maxPlays = maxPlays
+        self.maxDiscards = maxDiscards
+        self.description = description
+        self.isShop = isShop
+        self.bossModifiers = bossModifiers
+    }
+    
+    var isBoss: Bool { !bossModifiers.isEmpty }
 
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
@@ -47,35 +62,37 @@ struct FloorConfig {
                     description: "村口老槐树下的牌局", isShop: false),
         FloorConfig(floor: 2, name: "集市赌坊", targetScore: 320, maxPlays: 5, maxDiscards: 3,
                     description: "赶集路上遇到的牌摊", isShop: false),
-        FloorConfig(floor: 3, name: "茶馆对弈", targetScore: 450, maxPlays: 5, maxDiscards: 2,
-                    description: "茶馆里的老牌手", isShop: false),
-        FloorConfig(floor: 4, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+        FloorConfig(floor: 3, name: "杂货铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: "补充装备，继续上路", isShop: true),
+        FloorConfig(floor: 4, name: "茶馆对弈", targetScore: 500, maxPlays: 5, maxDiscards: 2,
+                    description: "茶馆里的老牌手", isShop: false),
         // === 第二章：府城篇 ===
-        FloorConfig(floor: 5, name: "县城擂台", targetScore: 600, maxPlays: 5, maxDiscards: 2,
+        FloorConfig(floor: 5, name: "县城擂台", targetScore: 650, maxPlays: 5, maxDiscards: 2,
                     description: "县城里的斗地主擂台", isShop: false),
-        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 800, maxPlays: 4, maxDiscards: 2,
+        FloorConfig(floor: 6, name: "府衙暗局", targetScore: 850, maxPlays: 4, maxDiscards: 2,
                     description: "知府大人设下的暗局", isShop: false),
-        FloorConfig(floor: 7, name: "赌神酒楼", targetScore: 1000, maxPlays: 4, maxDiscards: 2,
-                    description: "江湖传说中的赌神地盘", isShop: false),
-        FloorConfig(floor: 8, name: "兵器铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+        FloorConfig(floor: 7, name: "兵器铺", targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: "精良的装备等着你", isShop: true),
+        FloorConfig(floor: 8, name: "⚔️ 县令挑战", targetScore: 1100, maxPlays: 4, maxDiscards: 2,
+                    description: "县令大人的赌局——禁用一种牌型！", isShop: false,
+                    bossModifiers: [.bannedPattern]),
         // === 第三章：江湖篇 ===
-        FloorConfig(floor: 9, name: "镖局较量", targetScore: 1300, maxPlays: 4, maxDiscards: 1,
+        FloorConfig(floor: 9, name: "镖局较量", targetScore: 1400, maxPlays: 4, maxDiscards: 1,
                     description: "押镖路上遇到的高手", isShop: false),
-        FloorConfig(floor: 10, name: "武林大会", targetScore: 1600, maxPlays: 4, maxDiscards: 1,
+        FloorConfig(floor: 10, name: "武林大会", targetScore: 1800, maxPlays: 4, maxDiscards: 1,
                     description: "各路英雄齐聚一堂", isShop: false),
-        FloorConfig(floor: 11, name: "皇城暗影", targetScore: 2000, maxPlays: 4, maxDiscards: 1,
-                    description: "京城地下赌场", isShop: false),
-        FloorConfig(floor: 12, name: "藏宝阁", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+        FloorConfig(floor: 11, name: "藏宝阁", targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: "最后的准备机会", isShop: true),
-        // === 终章：登顶 ===
-        FloorConfig(floor: 13, name: "王府密室", targetScore: 2500, maxPlays: 3, maxDiscards: 1,
-                    description: "王爷的私人牌局", isShop: false),
-        FloorConfig(floor: 14, name: "天牢赌命", targetScore: 3200, maxPlays: 3, maxDiscards: 1,
-                    description: "以命相搏的最终对决", isShop: false),
-        FloorConfig(floor: 15, name: "斗破乾坤", targetScore: 4000, maxPlays: 3, maxDiscards: 0,
-                    description: "最终Boss：地主之王——无弃牌机会！", isShop: false),
+        FloorConfig(floor: 12, name: "皇城暗影", targetScore: 2200, maxPlays: 4, maxDiscards: 1,
+                    description: "京城地下赌场", isShop: false),
+        FloorConfig(floor: 13, name: "⚔️ 太子赌局", targetScore: 2800, maxPlays: 3, maxDiscards: 1,
+                    description: "太子的赌局——分数越打越高！", isShop: false,
+                    bossModifiers: [.escalating]),
+        FloorConfig(floor: 14, name: "藏宝阁·终", targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: "最后一次强化机会", isShop: true),
+        FloorConfig(floor: 15, name: "⚔️ 斗破乾坤", targetScore: 4000, maxPlays: 3, maxDiscards: 0,
+                    description: "最终Boss——得分递减+无弃牌！", isShop: false,
+                    bossModifiers: [.scoringDecay, .noDiscard]),
     ]
 }
 
@@ -97,6 +114,8 @@ class RogueRun: ObservableObject {
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
     @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
+    @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
+    var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
 
     /// 剩余牌堆（弃牌后从中补牌）
     private(set) var drawPile: [Card] = []
@@ -106,12 +125,26 @@ class RogueRun: ObservableObject {
     }
 
     var floorProgress: Double {
-        guard currentFloor.targetScore > 0 else { return 1.0 }
-        return min(1.0, Double(floorScore) / Double(currentFloor.targetScore))
+        guard effectiveTargetScore > 0 else { return 1.0 }
+        return min(1.0, Double(floorScore) / Double(effectiveTargetScore))
     }
 
     var isFloorCleared: Bool {
-        floorScore >= currentFloor.targetScore
+        floorScore >= effectiveTargetScore
+    }
+    
+    /// 考虑Ascension和Boss修改器后的实际目标分数
+    var effectiveTargetScore: Int {
+        var target = currentFloor.targetScore
+        // Ascension 加成
+        if ascensionLevel >= 1 {
+            target = Int(Double(target) * (1.0 + Double(ascensionLevel) * 0.08))
+        }
+        // Boss escalating: 每次出牌后+5%
+        if let boss = bossState, boss.hasEscalating {
+            target = Int(Double(target) * (1.0 + Double(boss.escalationCount) * 0.05))
+        }
+        return target
     }
 
     /// 检查是否装备了某种效果的规则牌
@@ -124,29 +157,55 @@ class RogueRun: ObservableObject {
     /// 开始当前层
     func startFloor() {
         let floor = currentFloor
-
+        
         if floor.isShop {
             phase = .shopping
             return
         }
-
+        
         floorScore = 0
         playsRemaining = floor.maxPlays
         discardsRemaining = floor.maxDiscards
         combo = 0
         lastPlayResult = nil
-
+        bossState = nil
+        
+        // Ascension 调整
+        if ascensionLevel >= 1 {
+            // A1+: 目标分数+15%（通过减少容错实现）
+        }
+        if ascensionLevel >= 3 {
+            // A3+: 出牌次数-1
+            playsRemaining = max(2, playsRemaining - 1)
+        }
+        if ascensionLevel >= 5 {
+            // A5+: 换牌次数-1
+            discardsRemaining = max(0, discardsRemaining - 1)
+        }
+        if ascensionLevel >= 7 {
+            // A7+: 起始金币更少（在startWithBuild中处理）
+        }
+        
+        // Boss 关初始化
+        if floor.isBoss {
+            bossState = BossState(modifiers: floor.bossModifiers)
+            // timeLimit修改器: 出牌次数-1
+            if floor.bossModifiers.contains(.timeLimit) {
+                playsRemaining = max(2, playsRemaining - 1)
+            }
+        }
+        
         // 规则牌：暗度陈仓 — 每关换牌次数+2
         if hasJoker(.extraDiscards) {
             discardsRemaining += 2
         }
-
+        
         // 规则牌：回光返照 — 每关额外出牌+1
         if hasJoker(.secondWind) {
             playsRemaining += 1
         }
-
-        // 发牌（Roguelike 模式：10张手牌 + 44张牌堆）
+        
+        // 发牌
         let deal = Deck.dealRoguelike(handSize: 10)
         handCards = deal.hand
         drawPile = deal.drawPile
@@ -250,6 +309,29 @@ class RogueRun: ObservableObject {
         // 规则牌：破甲 — 上次出牌≥100分时+25%
         if hasJoker(.shieldBreaker) && lastScoreEarned >= 100 {
             earned = Int(Double(earned) * 1.25)
+        }
+
+        // === Boss 修改器 ===
+        if let boss = bossState {
+            // bannedPattern: 如果出了被禁的牌型，得分为0
+            if let banned = boss.bannedPatternType, pattern.type == banned {
+                earned = 0  // 被禁牌型无分
+            }
+            
+            // scoringDecay: 每次出牌得分递减10%
+            if boss.hasScoringDecay && boss.decayCount > 0 {
+                let decayRate = 1.0 - Double(boss.decayCount) * 0.10
+                earned = Int(Double(earned) * max(0.3, decayRate))
+            }
+            boss.decayCount += 1
+            
+            // escalating: 每次出牌后目标+5%（在onScoringComplete中不需要，因为target是固定的，但我们记录）
+            boss.escalationCount += 1
+            
+            // greedyTax: 每次出牌扣10金币
+            if boss.hasGreedyTax {
+                gold = max(0, gold - 10)
+            }
         }
 
         // 全局倍率
@@ -370,7 +452,16 @@ class RogueRun: ObservableObject {
         currentFloorIndex += 1
         if currentFloorIndex >= FloorConfig.allFloors.count {
             AchievementTracker.shared.tryUnlock("full_clear")
-            AchievementTracker.shared.tryUnlock("wins_5") // 简化：首次通关即解锁
+            AchievementTracker.shared.tryUnlock("wins_5")
+            // 保存最高Ascension记录
+            let key = "highestAscensionCleared"
+            let current = UserDefaults.standard.integer(forKey: key)
+            if ascensionLevel > current {
+                UserDefaults.standard.set(ascensionLevel, forKey: key)
+            }
+            if ascensionLevel >= 1 { AchievementTracker.shared.tryUnlock("ascension_1") }
+            if ascensionLevel >= 5 { AchievementTracker.shared.tryUnlock("ascension_5") }
+            if ascensionLevel >= 10 { AchievementTracker.shared.tryUnlock("ascension_10") }
             phase = .victory
         } else {
             startFloor()
@@ -387,6 +478,10 @@ class RogueRun: ObservableObject {
         currentFloorIndex = 0
         totalScore = 0
         gold = 150 + build.goldAdjustment
+        // Ascension 7+: 起始金币-30
+        if ascensionLevel >= 7 {
+            gold = max(50, gold - 30)
+        }
         multiplier = 1.0
         activeBuffs = []
         activeJokers = []
