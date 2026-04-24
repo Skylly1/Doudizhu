@@ -1,4 +1,5 @@
 import SpriteKit
+import Combine
 
 /// 牌桌 SpriteKit 场景
 class BattleScene: SKScene {
@@ -7,6 +8,9 @@ class BattleScene: SKScene {
     private var cardNodes: [CardNode] = []
     private var selectedCards: Set<UUID> = []
     private var playedAreaNode: SKNode = SKNode()
+
+    /// Incremented on every selection change so SwiftUI can react
+    let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量
     private let cardWidth: CGFloat = 56
@@ -157,6 +161,7 @@ class BattleScene: SKScene {
             node.deselect()
         }
         selectedCards.removeAll()
+        selectionChanged.send()
     }
 
     /// 出牌
@@ -226,6 +231,7 @@ class BattleScene: SKScene {
             selectedCards.insert(cardId)
             node.select()
         }
+        selectionChanged.send()
     }
 
     // MARK: - 动画
