@@ -16,6 +16,23 @@ enum PatternType: String, Codable, Hashable {
     case bomb            // 炸弹（四张相同）
     case rocket          // 火箭（大小王）
     case fourWithTwo     // 四带二
+
+    var displayName: String {
+        switch self {
+        case .single:         return "单张"
+        case .pair:           return "对子"
+        case .triple:         return "三条"
+        case .tripleWithOne:  return "三带一"
+        case .tripleWithPair: return "三带二"
+        case .straight:       return "顺子"
+        case .pairStraight:   return "连对"
+        case .plane:          return "飞机"
+        case .planeWithWings: return "飞机带翅膀"
+        case .bomb:           return "💣 炸弹"
+        case .rocket:         return "🚀 火箭"
+        case .fourWithTwo:    return "四带二"
+        }
+    }
 }
 
 /// 已识别的牌型
@@ -28,17 +45,24 @@ struct CardPattern: Hashable {
     var baseScore: Int {
         switch type {
         case .single:         return 5
-        case .pair:           return 10
+        case .pair:           return 12
         case .triple:         return 20
-        case .tripleWithOne:  return 25
-        case .tripleWithPair: return 30
-        case .straight:       return 15 * cards.count
-        case .pairStraight:   return 20 * (cards.count / 2)
-        case .plane:          return 50 * (cards.count / 3)
-        case .planeWithWings: return 60 * (cards.count / 4)
-        case .bomb:           return 100
-        case .rocket:         return 200
-        case .fourWithTwo:    return 80
+        case .tripleWithOne:  return 35      // 奖励组合：比 triple+single 之和(25) 高
+        case .tripleWithPair: return 50      // 奖励复杂组合：比 triple+pair(32) 高
+        case .straight:
+            // 长度奖励：5张75, 6张95, 8张135, 12张215
+            return 15 * cards.count + 5 * max(0, cards.count - 5)
+        case .pairStraight:
+            // 长度奖励：3对66, 4对96, 5对126
+            let pairs = cards.count / 2
+            return 22 * pairs + 8 * max(0, pairs - 3)
+        case .plane:
+            return 55 * (cards.count / 3)    // 2连三110, 3连三165
+        case .planeWithWings:
+            return cards.count * 14 + 10     // 8张122, 10张150, 12张178
+        case .bomb:           return 120
+        case .rocket:         return 250
+        case .fourWithTwo:    return 150      // 接近炸弹效率，值得使用
         }
     }
 }

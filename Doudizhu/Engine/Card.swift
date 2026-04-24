@@ -94,7 +94,7 @@ struct Deck {
         return cards
     }
 
-    /// 洗牌并发牌：3人各17张 + 3张底牌
+    /// 洗牌并发牌：3人各17张 + 3张底牌（经典模式，保留兼容）
     static func deal() -> (player: [Card], bot1: [Card], bot2: [Card], landlordCards: [Card]) {
         var cards = standard().shuffled()
         let landlordCards = Array(cards.suffix(3))
@@ -105,5 +105,13 @@ struct Deck {
         let bot2 = Array(cards[34..<51]).sorted { $0.rank < $1.rank }
 
         return (player, bot1, bot2, landlordCards)
+    }
+
+    /// Roguelike 模式发牌：发指定数量手牌，剩余作为牌堆
+    static func dealRoguelike(handSize: Int = 10) -> (hand: [Card], drawPile: [Card]) {
+        let cards = standard().shuffled()
+        let hand = Array(cards.prefix(handSize)).sorted { $0.rank < $1.rank }
+        let drawPile = Array(cards.dropFirst(handSize))
+        return (hand, drawPile)
     }
 }
