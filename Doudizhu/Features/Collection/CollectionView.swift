@@ -18,6 +18,7 @@ struct CollectionView: View {
                     tabButton(L10n.buffSection, icon: "✨", index: 1)
                     tabButton(L10n.patternTab, icon: "📖", index: 2)
                     tabButton(L10n.achievements, icon: "🏆", index: 3)
+                    tabButton(L10n.statsTab, icon: "📊", index: 4)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -27,6 +28,7 @@ struct CollectionView: View {
                     buffCollection.tag(1)
                     patternCollection.tag(2)
                     AchievementView().tag(3)
+                    StatsView().tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }

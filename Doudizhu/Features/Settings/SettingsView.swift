@@ -55,7 +55,7 @@ struct SettingsView: View {
 
                         // 关于
                         settingSection(L10n.settingsAbout) {
-                            infoRow(L10n.settingsVersion, value: "0.9.0 MVP")
+                            infoRow(L10n.settingsVersion, value: "1.0.0")
                             Divider().background(Theme.border)
                             infoRow(L10n.settingsEngine, value: "SwiftUI + SpriteKit")
                             Divider().background(Theme.border)

@@ -162,11 +162,28 @@ enum L10n {
     static var buildBalanced: String { localized("稳扎稳打", en: "Balanced") }
     static var buildExplosive: String { localized("炸弹狂人", en: "Bomb Maniac") }
     static var buildCombo: String { localized("连环套", en: "Combo Chain") }
+    static var buildPrecision: String { localized("精打细算", en: "Precision") }
+    static var buildGreed: String { localized("贪婪商人", en: "Greedy Merchant") }
+    static var buildAllIn: String { localized("背水一战", en: "All In") }
+    static var buildStraightMaster: String { localized("顺子专家", en: "Straight Master") }
+    static var buildDefensive: String { localized("防御大师", en: "Defensive") }
+    static var buildGambler: String { localized("赌徒", en: "Gambler") }
+    // Descriptions
+    static var buildBalancedDesc: String { localized("均衡开局，适合新手。起始多 50 金币。", en: "Balanced start for beginners. +50 gold.") }
+    static var buildExplosiveDesc: String { localized("炸弹路线。携带「火烧连营」和「火药桶」。", en: "Bomb build. Starts with Explosive Bonus + Bomb Buff.") }
+    static var buildComboDesc: String { localized("连击路线。携带「连环计」（连击翻倍）。", en: "Combo build. Starts with Double Combo Rate.") }
+    static var buildPrecisionDesc: String { localized("小牌精准路线。携带「精打细算」。", en: "Small-hand precision with Mini Hand Bonus.") }
+    static var buildGreedDesc: String { localized("经济路线。携带「点石成金」，初始金币少。", en: "Economy build. Gold Rush Joker, less starting gold.") }
+    static var buildAllInDesc: String { localized("高风险高回报。「破釜沉舟」，只有 80 金币。", en: "High risk. Last Stand Joker, only 80 gold.") }
+    static var buildStraightMasterDesc: String { localized("顺子路线。携带「顺势而为」。", en: "Straight build with Sequence Bonus Joker.") }
+    static var buildDefensiveDesc: String { localized("防守反击。「暗度陈仓」换牌+2，200金币。", en: "Defensive. Extra Discards +2, 200 gold.") }
+    static var buildGamblerDesc: String { localized("命运由天。「赌徒之心」随机±30%，100金币。", en: "Fate decides. Gambler (±30%), 100 gold.") }
 
     // MARK: - 图鉴
     static var collection: String { localized("图鉴", en: "Collection") }
     static var patternTab: String { localized("牌型", en: "Patterns") }
     static var achievements: String { localized("成就", en: "Achievements") }
+    static var statsTab: String { localized("统计", en: "Stats") }
     static var patternGuide: String { localized("牌型参考", en: "Pattern Guide") }
     static var achievementsUnlocked: String { localized("已解锁成就", en: "Achievements Unlocked") }
     static func jokerCount(_ n: Int) -> String { localized("共 \(n) 张规则牌", en: "\(n) Jokers Total") }

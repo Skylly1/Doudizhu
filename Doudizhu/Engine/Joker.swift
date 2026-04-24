@@ -82,6 +82,8 @@ extension Joker {
 // MARK: - 预设规则牌库
 
 extension Joker {
+    // TODO: [L10N] Joker names and descriptions need String Catalog migration
+    // Current: Chinese-only. EN translations deferred to String Catalog phase.
     static let allJokers: [Joker] = [
         // ── 原始 10 张 ──
         Joker(

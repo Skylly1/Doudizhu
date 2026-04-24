@@ -59,7 +59,7 @@ struct DemoGateView: View {
                 } label: {
                     HStack {
                         Image(systemName: "crown.fill")
-                        Text(L10n.unlockFullPrice("¥18"))
+                        Text(L10n.unlockFullPrice(L10n.isEnglish ? "$2.99" : "¥18"))
                     }
                     .font(.headline)
                     .foregroundColor(.black)
