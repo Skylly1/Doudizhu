@@ -35,11 +35,11 @@ struct HomeView: View {
                     Text("🎴")
                         .font(.system(size: 56))
 
-                    Text("斗破乾坤")
+                    Text(L10n.appName)
                         .font(Theme.fontTitle)
                         .foregroundStyle(Theme.goldGradient)
 
-                    Text("Roguelike · 斗地主")
+                    Text(L10n.appSubtitle)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(Theme.textTertiary)
                         .tracking(4)
@@ -51,16 +51,16 @@ struct HomeView: View {
 
                 // 菜单按钮
                 VStack(spacing: 14) {
-                    PrimaryButton(title: "开始冒险", icon: "play.fill") {
+                    PrimaryButton(title: L10n.startAdventure, icon: "play.fill") {
                         onNavigate(.map)
                     }
                     .padding(.horizontal, 60)
 
                     HStack(spacing: 12) {
-                        SecondaryButton(title: "收藏", icon: "rectangle.stack.fill") {
+                        SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)
                         }
-                        SecondaryButton(title: "设置", icon: "gearshape.fill") {
+                        SecondaryButton(title: L10n.settings, icon: "gearshape.fill") {
                             onNavigate(.settings)
                         }
                     }

@@ -10,7 +10,7 @@ struct BuildSelectView: View {
             Theme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                GameNavBar(title: "选择流派", subtitle: "影响起始装备和金币", onBack: onBack)
+                GameNavBar(title: L10n.chooseBuild, subtitle: L10n.buildHint, onBack: onBack)
 
                 ScrollView(showsIndicators: false) {
                     LazyVGrid(columns: [

@@ -57,7 +57,7 @@ struct BattleView: View {
                         Text(ach.icon)
                             .font(.title2)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("🎉 成就解锁")
+                            Text("🎉 \(L10n.achievementUnlocked)")
                                 .font(Theme.fontCaption)
                                 .foregroundColor(Theme.gold)
                             Text(ach.name)
@@ -135,7 +135,7 @@ struct BattleView: View {
 
             // 关卡信息
             VStack(spacing: 2) {
-                Text("第 \(rogueRun.currentFloorIndex + 1) 层")
+                Text(L10n.floorNumber(rogueRun.currentFloorIndex + 1))
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textTertiary)
                 Text(rogueRun.currentFloor.name)
@@ -255,7 +255,7 @@ struct BattleView: View {
 
             // 连击提示
             if rogueRun.combo > 1 {
-                Text("🔥 \(rogueRun.combo) 连击！加成 +\(Int(Double(rogueRun.combo - 1) * 15))%")
+                Text("🔥 \(L10n.comboText(rogueRun.combo, bonus: Int(Double(rogueRun.combo - 1) * 15)))")
                     .font(.caption.bold())
                     .foregroundColor(Theme.flame)
                     .transition(.scale.combined(with: .opacity))
@@ -293,7 +293,7 @@ struct BattleView: View {
                     Text(pattern.type.displayName)
                         .font(.subheadline.bold())
                         .foregroundColor(Theme.cyan)
-                    Text("基础 \(pattern.baseScore) 分")
+                    Text(L10n.baseScore(pattern.baseScore))
                         .font(Theme.fontCaption)
                         .foregroundColor(Theme.textTertiary)
                 }
@@ -305,7 +305,7 @@ struct BattleView: View {
                 )
                 .transition(.scale.combined(with: .opacity))
             } else if battleScene?.getSelectedCards().isEmpty == false {
-                Text("❌ 无效牌型")
+                Text("❌ \(L10n.invalidPattern)")
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.danger.opacity(0.8))
                     .transition(.opacity)
@@ -324,7 +324,7 @@ struct BattleView: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.triangle.2.circlepath")
-                    Text("换牌")
+                    Text(L10n.swap)
                     Text("(\(rogueRun.discardsRemaining))")
                         .font(.caption)
                 }
@@ -345,7 +345,7 @@ struct BattleView: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "play.fill")
-                    Text("出牌")
+                    Text(L10n.play)
                     Text("(\(rogueRun.playsRemaining))")
                         .font(.caption)
                 }
@@ -367,7 +367,7 @@ struct BattleView: View {
     private var floorWinOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("✨ 过关！")
+                Text("✨ \(L10n.cleared)")
                     .font(.largeTitle.bold())
                     .foregroundColor(Theme.gold)
 
@@ -376,14 +376,14 @@ struct BattleView: View {
                     .foregroundColor(Theme.textSecondary)
 
                 VStack(spacing: Theme.spacingSM) {
-                    statRow("本层得分", value: "\(rogueRun.floorScore)")
-                    statRow("总得分", value: "\(rogueRun.totalScore)")
-                    statRow("获得金币", value: "+\(rogueRun.currentFloor.targetScore / 10)")
+                    statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
+                    statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
+                    statRow(L10n.goldEarned, value: "+\(rogueRun.currentFloor.targetScore / 10)")
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
 
-                PrimaryButton(title: "继续前进 →", icon: "arrow.right") {
+                PrimaryButton(title: L10n.continueForward, icon: "arrow.right") {
                     rogueRun.advanceToNextFloor()
                     battleScene?.refreshHand()
                 }
@@ -395,22 +395,22 @@ struct BattleView: View {
     private var floorFailOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("💀 失败")
+                Text("💀 \(L10n.failed)")
                     .font(.largeTitle.bold())
                     .foregroundColor(Theme.danger)
 
-                Text("未达到目标分数")
+                Text(L10n.targetNotReached)
                     .foregroundColor(Theme.textSecondary)
 
                 VStack(spacing: Theme.spacingSM) {
-                    statRow("本层得分", value: "\(rogueRun.floorScore)")
-                    statRow("目标分数", value: "\(rogueRun.currentFloor.targetScore)")
-                    statRow("总得分", value: "\(rogueRun.totalScore)")
+                    statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
+                    statRow(L10n.targetScoreLabel, value: "\(rogueRun.currentFloor.targetScore)")
+                    statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
 
-                Button("重新开始") {
+                Button(L10n.restart) {
                     rogueRun.restart()
                     battleScene?.refreshHand()
                 }
@@ -425,25 +425,25 @@ struct BattleView: View {
     private var victoryOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("🏆 通关！")
+                Text("🏆 \(L10n.victory)")
                     .font(.largeTitle.bold())
                     .foregroundColor(Theme.gold)
 
-                Text("你击败了恶霸地主！")
+                Text(L10n.bossDefeated)
                     .font(.title3)
                     .foregroundColor(Theme.textPrimary)
 
-                Text("总分：\(rogueRun.totalScore)")
+                Text(L10n.totalScoreValue(rogueRun.totalScore))
                     .font(.title.bold().monospacedDigit())
                     .foregroundColor(Theme.gold)
 
-                PrimaryButton(title: "再来一局", icon: "arrow.clockwise") {
+                PrimaryButton(title: L10n.playAgain, icon: "arrow.clockwise") {
                     rogueRun.restart()
                     battleScene?.refreshHand()
                 }
                 .frame(width: 220)
 
-                SecondaryButton(title: "返回主菜单", icon: "house") {
+                SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     onBack()
                 }
             }

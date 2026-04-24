@@ -13,7 +13,7 @@ struct AchievementView: View {
                     Text("\(prog.unlocked) / \(prog.total)")
                         .font(.title.bold().monospacedDigit())
                         .foregroundColor(Theme.gold)
-                    Text("已解锁成就")
+                    Text(L10n.achievementsUnlocked)
                         .font(Theme.fontCaption)
                         .foregroundColor(Theme.textTertiary)
 

@@ -12,7 +12,7 @@ struct ShopView: View {
         ScrollView {
             VStack(spacing: Theme.spacingLG) {
                 // 标题
-                GameNavBar(title: "杂货铺", subtitle: "选购规则牌与增益道具")
+                GameNavBar(title: L10n.shop, subtitle: L10n.shopSubtitle)
                     .padding(.top, Theme.spacingSM)
 
                 // 金币
@@ -22,7 +22,7 @@ struct ShopView: View {
                     Text("\(rogueRun.gold)")
                         .font(.title3.bold().monospacedDigit())
                         .foregroundColor(Theme.gold)
-                    Text("金币")
+                    Text(L10n.gold)
                         .font(Theme.fontCaption)
                         .foregroundColor(Theme.goldDark.opacity(0.7))
                 }
@@ -31,7 +31,7 @@ struct ShopView: View {
                 if !jokerItems.isEmpty {
                     VStack(alignment: .leading, spacing: Theme.spacingSM) {
                         HStack {
-                            Label("规则牌", systemImage: "suit.spade.fill")
+                            Label(L10n.jokerSection, systemImage: "suit.spade.fill")
                                 .font(Theme.fontSection)
                                 .foregroundColor(Theme.cyan)
                             Spacer()
@@ -65,7 +65,7 @@ struct ShopView: View {
                 // 增益道具区
                 if !shopItems.isEmpty {
                     VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Label("增益道具", systemImage: "sparkles")
+                        Label(L10n.buffSection, systemImage: "sparkles")
                             .font(Theme.fontSection)
                             .foregroundColor(Theme.flame)
                             .padding(.horizontal, Theme.spacingLG)
@@ -91,7 +91,7 @@ struct ShopView: View {
                 }
 
                 if shopItems.isEmpty && jokerItems.isEmpty {
-                    Text("已售罄")
+                    Text(L10n.soldOut)
                         .foregroundColor(Theme.textDisabled)
                         .padding(Theme.spacingXL)
                 }
@@ -99,7 +99,7 @@ struct ShopView: View {
                 // 已装备的规则牌
                 if !rogueRun.activeJokers.isEmpty {
                     equippedSection(
-                        title: "已装备规则牌",
+                        title: L10n.equippedJokers,
                         color: Theme.cyan
                     ) {
                         FlowLayout(spacing: 6) {
@@ -120,7 +120,7 @@ struct ShopView: View {
                 // 已有 Buff
                 if !rogueRun.activeBuffs.isEmpty {
                     equippedSection(
-                        title: "已装备增益",
+                        title: L10n.equippedBuffs,
                         color: Theme.flame
                     ) {
                         FlowLayout(spacing: 6) {
@@ -140,7 +140,7 @@ struct ShopView: View {
 
                 Spacer(minLength: Theme.spacingMD)
 
-                PrimaryButton(title: "继续前进 →", icon: "arrow.right") {
+                PrimaryButton(title: L10n.continueForward, icon: "arrow.right") {
                     onLeave()
                 }
                 .padding(.horizontal, Theme.spacingXXL)

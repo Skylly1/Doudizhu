@@ -10,14 +10,14 @@ struct CollectionView: View {
             Theme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                GameNavBar(title: "图鉴", onBack: onBack)
+                GameNavBar(title: L10n.collection, onBack: onBack)
 
                 // Tab 切换
                 HStack(spacing: 0) {
-                    tabButton("规则牌", icon: "🃏", index: 0)
-                    tabButton("增益", icon: "✨", index: 1)
-                    tabButton("牌型", icon: "📖", index: 2)
-                    tabButton("成就", icon: "🏆", index: 3)
+                    tabButton(L10n.jokerSection, icon: "🃏", index: 0)
+                    tabButton(L10n.buffSection, icon: "✨", index: 1)
+                    tabButton(L10n.patternTab, icon: "📖", index: 2)
+                    tabButton(L10n.achievements, icon: "🏆", index: 3)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -54,7 +54,7 @@ struct CollectionView: View {
     private var jokerCollection: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
-                Text("共 \(Joker.allJokers.count) 张规则牌")
+                Text(L10n.jokerCount(Joker.allJokers.count))
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textTertiary)
                     .padding(.top, Theme.spacingSM)
@@ -112,7 +112,7 @@ struct CollectionView: View {
     private var buffCollection: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
-                Text("共 \(Buff.allBuffs.count) 种增益道具")
+                Text(L10n.buffCount(Buff.allBuffs.count))
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textTertiary)
                     .padding(.top, Theme.spacingSM)

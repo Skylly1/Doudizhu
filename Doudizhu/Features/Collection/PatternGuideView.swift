@@ -9,7 +9,7 @@ struct PatternGuideView: View {
             VStack(spacing: Theme.spacingMD) {
                 // 标题
                 HStack {
-                    Text("🃏 牌型参考")
+                    Text("🃏 \(L10n.patternGuide)")
                         .font(Theme.fontHeading)
                         .foregroundColor(Theme.textPrimary)
                     Spacer()
