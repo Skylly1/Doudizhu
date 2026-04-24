@@ -276,6 +276,27 @@ class RogueRun: ObservableObject {
         advanceToNextFloor()
     }
 
+    /// 使用指定流派重新开始
+    func startWithBuild(_ build: StarterBuild) {
+        currentFloorIndex = 0
+        totalScore = 0
+        gold = 150 + build.goldAdjustment
+        multiplier = 1.0
+        activeBuffs = []
+        activeJokers = []
+        combo = 0
+        drawPile = []
+
+        if let joker = build.startingJoker {
+            activeJokers.append(joker)
+        }
+        if let buff = build.startingBuff {
+            activeBuffs.append(buff)
+        }
+
+        startFloor()
+    }
+
     /// 重新开始整个游戏
     func restart() {
         currentFloorIndex = 0
