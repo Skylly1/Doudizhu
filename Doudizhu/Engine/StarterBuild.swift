@@ -66,5 +66,32 @@ struct StarterBuild: Identifiable {
             startingBuff: nil,
             goldAdjustment: -70
         ),
+        StarterBuild(
+            id: "straightMaster",
+            name: "顺子专家",
+            icon: "🌊",
+            description: "顺子路线。携带「顺势而为」（顺子×2）+ 顺风车 Buff，180金币。",
+            startingJoker: Joker.allJokers.first { $0.effect == .sequenceBonus },
+            startingBuff: Buff.allBuffs.first { $0.type == .straightBonus },
+            goldAdjustment: 30
+        ),
+        StarterBuild(
+            id: "defensive",
+            name: "防御大师",
+            icon: "🛡️",
+            description: "防守反击。携带「暗度陈仓」（换牌+2），200金币，稳中求胜。",
+            startingJoker: Joker.allJokers.first { $0.effect == .extraDiscards },
+            startingBuff: Buff.allBuffs.first { $0.type == .globalMultiplier },
+            goldAdjustment: 50
+        ),
+        StarterBuild(
+            id: "gambler",
+            name: "赌徒",
+            icon: "🎰",
+            description: "命运由天。携带「赌徒之心」（随机±30%），100金币，搏一搏单车变摩托。",
+            startingJoker: Joker.allJokers.first { $0.effect == .gambler },
+            startingBuff: nil,
+            goldAdjustment: -50
+        ),
     ]
 }

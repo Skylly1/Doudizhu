@@ -41,6 +41,17 @@ enum JokerEffect: String, Codable, Hashable {
     case miniHandBonus      // 精打细算: 出3张以下的牌型+60%
     case multiKill          // 连环杀: 连击≥3时额外+20%
     case shieldBreaker      // 破甲: 单次出牌≥100分时，下次出牌+25%
+    // 第三批 10 种
+    case criticalHit        // 暴击之手: 10%概率双倍得分
+    case insurance          // 保险单: 失败时保留50%分数
+    case collector          // 同花顺缘: 同花色5张+50分
+    case nightOwl           // 夜枭: 后半程(8-15关)得分+20%
+    case earlyBird          // 先声夺人: 每关第一手+100分
+    case miser              // 守财奴: 每持有50金币+5%得分
+    case gambler            // 赌徒之心: 随机±30%得分(期望+5%)
+    case phoenix            // 浴火凤凰: 每局可复活一次
+    case dragon             // 神龙摆尾: 连击达到5时下一手3倍
+    case tideTurner         // 逆转乾坤: 得分<目标30%时+50%
 }
 
 /// 规则牌
@@ -213,6 +224,77 @@ extension Joker {
             effect: .shieldBreaker,
             icon: "🗡️",
             rarity: .legendary
+        ),
+        // ── 第三批 10 张 ──
+        Joker(
+            name: "暴击之手",
+            description: "10%概率双倍得分",
+            effect: .criticalHit,
+            icon: "🎲",
+            rarity: .rare
+        ),
+        Joker(
+            name: "保险单",
+            description: "失败时保留50%分数",
+            effect: .insurance,
+            icon: "🛡️",
+            rarity: .rare
+        ),
+        Joker(
+            name: "同花顺缘",
+            description: "同花色出5张以上+50分",
+            effect: .collector,
+            icon: "🎴",
+            rarity: .common
+        ),
+        Joker(
+            name: "夜枭",
+            description: "后半程(8-15关)得分+20%",
+            effect: .nightOwl,
+            icon: "🦉",
+            rarity: .common
+        ),
+        Joker(
+            name: "先声夺人",
+            description: "每关第一手出牌+100分",
+            effect: .earlyBird,
+            icon: "🐦",
+            rarity: .common
+        ),
+        Joker(
+            name: "守财奴",
+            description: "每持有50金币，得分+5%",
+            effect: .miser,
+            icon: "🏦",
+            rarity: .rare
+        ),
+        Joker(
+            name: "赌徒之心",
+            description: "随机±30%得分（期望+5%）",
+            effect: .gambler,
+            icon: "🎰",
+            rarity: .legendary
+        ),
+        Joker(
+            name: "浴火凤凰",
+            description: "每局游戏可复活一次",
+            effect: .phoenix,
+            icon: "🔥",
+            rarity: .legendary
+        ),
+        Joker(
+            name: "神龙摆尾",
+            description: "连击达到5时，下一手3倍得分",
+            effect: .dragon,
+            icon: "🐉",
+            rarity: .legendary
+        ),
+        Joker(
+            name: "逆转乾坤",
+            description: "得分低于目标30%时，出牌+50%",
+            effect: .tideTurner,
+            icon: "🌀",
+            rarity: .rare
         ),
     ]
 }
