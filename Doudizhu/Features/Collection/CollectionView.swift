@@ -70,6 +70,7 @@ struct CollectionView: View {
     }
 
     private func jokerCard(_ joker: Joker) -> some View {
+        let isLocked = !JokerUnlockManager.isUnlocked(joker)
         let rarityColor: Color = switch joker.rarity {
         case .common: Theme.success
         case .rare: Theme.cyan
@@ -77,25 +78,25 @@ struct CollectionView: View {
         }
 
         return HStack(spacing: 12) {
-            Text(joker.icon)
+            Text(isLocked ? "🔒" : joker.icon)
                 .font(.title)
                 .frame(width: 44)
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(joker.name)
+                    Text(isLocked ? "???" : joker.name)
                         .font(.subheadline.bold())
-                        .foregroundColor(Theme.textPrimary)
+                        .foregroundColor(isLocked ? Theme.textTertiary : Theme.textPrimary)
                     Text(joker.rarity.displayName)
                         .font(.caption2.bold())
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Capsule().fill(rarityColor.opacity(0.2)))
-                        .foregroundColor(rarityColor)
+                        .background(Capsule().fill(rarityColor.opacity(isLocked ? 0.1 : 0.2)))
+                        .foregroundColor(isLocked ? rarityColor.opacity(0.4) : rarityColor)
                 }
-                Text(joker.description)
+                Text(isLocked ? L10n.rarityCommon == joker.rarity.displayName ? "" : "Unlock via achievements" : joker.description)
                     .font(Theme.fontCaption)
-                    .foregroundColor(Theme.textSecondary)
+                    .foregroundColor(isLocked ? Theme.textTertiary : Theme.textSecondary)
             }
 
             Spacer()
@@ -103,9 +104,10 @@ struct CollectionView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusSM)
-                .fill(Theme.bgCard)
-                .stroke(rarityColor.opacity(0.2))
+                .fill(isLocked ? Theme.bgCard.opacity(0.5) : Theme.bgCard)
+                .stroke(rarityColor.opacity(isLocked ? 0.08 : 0.2))
         )
+        .opacity(isLocked ? 0.6 : 1.0)
     }
 
     // MARK: - 增益收藏

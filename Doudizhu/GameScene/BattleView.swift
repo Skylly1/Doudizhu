@@ -67,6 +67,16 @@ struct BattleView: View {
                     }
             }
 
+            // Score breakdown popup during scoring phase
+            if case .scoring = rogueRun.phase {
+                VStack {
+                    Spacer()
+                    scoreBreakdownView
+                        .padding(.bottom, 120)
+                }
+                .animation(.spring(response: 0.3), value: rogueRun.phase == .selecting)
+            }
+
             // 成就解锁提示
             if let ach = achievementTracker.latestUnlock {
                 VStack {
@@ -473,6 +483,66 @@ struct BattleView: View {
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
             }
             .padding(.horizontal, Theme.spacingMD)
+        }
+    }
+
+    // MARK: - Score Breakdown Popup
+
+    @ViewBuilder
+    private var scoreBreakdownView: some View {
+        if case .scoring(let result) = rogueRun.phase {
+            VStack(spacing: 2) {
+                HStack {
+                    Text(result.pattern.type.displayName)
+                        .font(.caption.bold())
+                        .foregroundColor(Theme.cyan)
+                    Spacer()
+                    Text("+\(result.pattern.baseScore)")
+                        .font(.caption.monospacedDigit())
+                        .foregroundColor(Theme.textSecondary)
+                }
+                let bonus = result.score - result.pattern.baseScore
+                if bonus > 0 {
+                    HStack {
+                        Text(L10n.isEnglish ? "Bonus" : "加成")
+                            .font(.caption)
+                            .foregroundColor(Theme.gold.opacity(0.8))
+                        Spacer()
+                        Text("+\(bonus)")
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                } else if bonus < 0 {
+                    HStack {
+                        Text(L10n.isEnglish ? "Penalty" : "减益")
+                            .font(.caption)
+                            .foregroundColor(Theme.danger.opacity(0.8))
+                        Spacer()
+                        Text("\(bonus)")
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(Theme.danger)
+                    }
+                }
+                Divider().background(Theme.border)
+                HStack {
+                    Text(L10n.isEnglish ? "Earned" : "得分")
+                        .font(.caption.bold())
+                        .foregroundColor(Theme.textPrimary)
+                    Spacer()
+                    Text("+\(result.score)")
+                        .font(.subheadline.bold().monospacedDigit())
+                        .foregroundColor(Theme.gold)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .frame(maxWidth: 200)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Theme.bgPrimary.opacity(0.9))
+                    .stroke(Theme.gold.opacity(0.3))
+            )
+            .transition(.scale.combined(with: .opacity))
         }
     }
 

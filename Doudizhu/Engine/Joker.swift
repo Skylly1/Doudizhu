@@ -306,3 +306,58 @@ extension Joker {
         ),
     ]
 }
+
+// MARK: - Joker Unlock Manager
+
+@MainActor
+enum JokerUnlockManager {
+    private static let unlockedKey = "unlocked_joker_effects"
+
+    /// Effects that are unlocked by default (all common)
+    static let defaultUnlocked: Set<JokerEffect> = {
+        Set(Joker.allJokers.filter { $0.rarity == .common }.map { $0.effect })
+    }()
+
+    /// Get all currently unlocked effects
+    static var unlockedEffects: Set<JokerEffect> {
+        if let data = UserDefaults.standard.data(forKey: unlockedKey),
+           let saved = try? JSONDecoder().decode(Set<JokerEffect>.self, from: data) {
+            return defaultUnlocked.union(saved)
+        }
+        return defaultUnlocked
+    }
+
+    /// Unlock a specific Joker effect
+    static func unlock(_ effect: JokerEffect) {
+        var current = unlockedEffects
+        current.insert(effect)
+        let extra = current.subtracting(defaultUnlocked)
+        if let data = try? JSONEncoder().encode(extra) {
+            UserDefaults.standard.set(data, forKey: unlockedKey)
+        }
+    }
+
+    /// Check if a Joker is unlocked
+    static func isUnlocked(_ joker: Joker) -> Bool {
+        unlockedEffects.contains(joker.effect)
+    }
+
+    /// Get available Jokers for shop (only unlocked ones)
+    static var availableJokers: [Joker] {
+        Joker.allJokers.filter { isUnlocked($0) }
+    }
+
+    /// Unlock all rare Jokers
+    static func unlockAllRare() {
+        for joker in Joker.allJokers where joker.rarity == .rare {
+            unlock(joker.effect)
+        }
+    }
+
+    /// Unlock all legendary Jokers
+    static func unlockAllLegendary() {
+        for joker in Joker.allJokers where joker.rarity == .legendary {
+            unlock(joker.effect)
+        }
+    }
+}

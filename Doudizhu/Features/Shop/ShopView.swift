@@ -198,7 +198,7 @@ struct ShopView: View {
 
     private func generateShopItems() {
         let ownedEffects = Set(rogueRun.activeJokers.map(\.effect))
-        let availableJokers = Joker.allJokers.filter { !ownedEffects.contains($0.effect) }.shuffled()
+        let availableJokers = JokerUnlockManager.availableJokers.filter { !ownedEffects.contains($0.effect) }.shuffled()
         jokerItems = availableJokers.prefix(2).map { joker in
             let baseCost: Int
             switch joker.rarity {

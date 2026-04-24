@@ -7,7 +7,7 @@ struct SettingsView: View {
     @AppStorage("musicEnabled") private var musicEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
     @AppStorage("soundVolume") private var soundVolume: Double = 0.5
-    @AppStorage("hasCompletedTutorial") private var hasCompletedTutorial = false
+    @AppStorage("tutorialPhase") private var tutorialPhase: Int = 0
 
     var body: some View {
         ZStack {
@@ -38,7 +38,7 @@ struct SettingsView: View {
                         // 游戏组
                         settingSection(L10n.settingsGame) {
                             Button {
-                                hasCompletedTutorial = false
+                                tutorialPhase = 0
                             } label: {
                                 HStack {
                                     Text(L10n.resetTutorial)

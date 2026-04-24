@@ -41,29 +41,45 @@ struct CardPattern: Hashable {
     let cards: [Card]
     let mainRank: Rank   // 用于比较大小的主要点数
 
-    /// 基础得分（Roguelike 模式下的计分基础）
-    var baseScore: Int {
+    /// 基础筹码（chips×mult 计分系统）
+    var baseChips: Int {
         switch type {
         case .single:         return 5
-        case .pair:           return 12
+        case .pair:           return 10
         case .triple:         return 20
-        case .tripleWithOne:  return 35      // 奖励组合：比 triple+single 之和(25) 高
-        case .tripleWithPair: return 50      // 奖励复杂组合：比 triple+pair(32) 高
-        case .straight:
-            // 长度奖励：5张75, 6张95, 8张135, 12张215
-            return 15 * cards.count + 5 * max(0, cards.count - 5)
-        case .pairStraight:
-            // 长度奖励：3对66, 4对96, 5对126
-            let pairs = cards.count / 2
-            return 22 * pairs + 8 * max(0, pairs - 3)
-        case .plane:
-            return 55 * (cards.count / 3)    // 2连三110, 3连三165
-        case .planeWithWings:
-            return cards.count * 14 + 10     // 8张122, 10张150, 12张178
-        case .bomb:           return 120
-        case .rocket:         return 250
-        case .fourWithTwo:    return 150      // 接近炸弹效率，值得使用
+        case .tripleWithOne:  return 30
+        case .tripleWithPair: return 40
+        case .straight:       return 12 * cards.count
+        case .pairStraight:   return 18 * (cards.count / 2)
+        case .plane:          return 45 * (cards.count / 3)
+        case .planeWithWings: return cards.count * 12
+        case .bomb:           return 60
+        case .rocket:         return 100
+        case .fourWithTwo:    return 70
         }
+    }
+
+    /// 基础倍率（chips×mult 计分系统）
+    var baseMult: Double {
+        switch type {
+        case .single:         return 1.0
+        case .pair:           return 1.5
+        case .triple:         return 2.0
+        case .tripleWithOne:  return 2.0
+        case .tripleWithPair: return 2.5
+        case .straight:       return 2.0 + Double(max(0, cards.count - 5)) * 0.3
+        case .pairStraight:   return 2.0 + Double(max(0, cards.count / 2 - 3)) * 0.4
+        case .plane:          return 3.0
+        case .planeWithWings: return 3.0
+        case .bomb:           return 4.0
+        case .rocket:         return 8.0
+        case .fourWithTwo:    return 3.5
+        }
+    }
+
+    /// Legacy compatibility — returns chips × mult as int
+    var baseScore: Int {
+        Int(Double(baseChips) * baseMult)
     }
 }
 

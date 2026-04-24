@@ -82,6 +82,15 @@ extension Achievement {
         if let ach = Achievement.all.first(where: { $0.id == id }) {
             latestUnlock = ach
         }
+
+        // Joker tier unlocks
+        if id == "full_clear" || id == "mid_run" {
+            JokerUnlockManager.unlockAllRare()
+        }
+        if id == "full_clear" {
+            JokerUnlockManager.unlockAllLegendary()
+        }
+
         return true
     }
 

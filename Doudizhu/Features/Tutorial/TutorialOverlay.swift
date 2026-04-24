@@ -10,7 +10,6 @@ enum TutorialStep: Int, CaseIterable {
     case discardTip
     case comboTip
     case shopTip
-    case done
 
     var title: String {
         switch self {
@@ -22,7 +21,6 @@ enum TutorialStep: Int, CaseIterable {
         case .discardTip:    return L10n.tutorialDiscardTitle
         case .comboTip:      return L10n.tutorialComboTitle
         case .shopTip:       return L10n.tutorialShopTitle
-        case .done:          return ""
         }
     }
 
@@ -36,64 +34,103 @@ enum TutorialStep: Int, CaseIterable {
         case .discardTip:    return L10n.tutorialDiscardMsg
         case .comboTip:      return L10n.tutorialComboMsg
         case .shopTip:       return L10n.tutorialShopMsg
-        case .done:          return ""
         }
     }
 
-    /// Total displayable steps (excludes .done)
-    static var displayableCount: Int {
-        allCases.filter { $0 != .done }.count
-    }
+    /// Steps grouped by tutorial phase
+    static let phase1: [TutorialStep] = [.welcome, .patternBasics, .selectAndPlay]
+    static let phase2: [TutorialStep] = [.discardTip, .comboTip, .bigPatterns]
+    static let phase3: [TutorialStep] = [.shopTip, .goalExplain]
 
-    /// 1-based step number for display
-    var stepNumber: Int { rawValue + 1 }
-
-    var next: TutorialStep? {
-        let allCases = TutorialStep.allCases
-        guard let idx = allCases.firstIndex(of: self),
-              idx + 1 < allCases.count else { return nil }
-        let nextStep = allCases[idx + 1]
-        return nextStep == .done ? nil : nextStep
+    static func stepsForPhase(_ phase: Int) -> [TutorialStep] {
+        switch phase {
+        case 0: return phase1
+        case 1: return phase2
+        case 2: return phase3
+        default: return []
+        }
     }
 }
 
-/// 教程管理器
+/// 教程管理器（三阶段渐进式教学）
 @MainActor
 class TutorialManager: ObservableObject {
     @Published var currentStep: TutorialStep? = nil
-    @Published var hasCompletedTutorial: Bool
+    @Published var tutorialPhase: Int
 
-    private let completedKey = "hasCompletedTutorial"
+    private let phaseKey = "tutorialPhase"
+    private let legacyKey = "hasCompletedTutorial"
+
+    var hasCompletedTutorial: Bool {
+        tutorialPhase >= 3
+    }
+
+    /// Steps for the currently active phase
+    var currentPhaseSteps: [TutorialStep] {
+        TutorialStep.stepsForPhase(tutorialPhase)
+    }
 
     init() {
-        self.hasCompletedTutorial = UserDefaults.standard.bool(forKey: "hasCompletedTutorial")
+        // Migrate from legacy single-bool storage
+        if UserDefaults.standard.bool(forKey: "hasCompletedTutorial") {
+            let stored = UserDefaults.standard.integer(forKey: "tutorialPhase")
+            if stored < 3 {
+                UserDefaults.standard.set(3, forKey: "tutorialPhase")
+            }
+        }
+        self.tutorialPhase = UserDefaults.standard.integer(forKey: "tutorialPhase")
     }
 
     func startIfNeeded() {
-        guard !hasCompletedTutorial else { return }
-        currentStep = .welcome
-        Analytics.shared.track(.tutorialStart)
+        switch tutorialPhase {
+        case 0:
+            currentStep = .welcome
+        case 1:
+            currentStep = .discardTip
+        case 2:
+            currentStep = .shopTip
+        default:
+            break
+        }
+        if currentStep != nil {
+            Analytics.shared.track(.tutorialStart)
+        }
     }
 
     func advance() {
         guard let step = currentStep else { return }
-        if let nextStep = step.next {
-            currentStep = nextStep
+        if let next = nextStepInCurrentPhase(after: step) {
+            currentStep = next
         } else {
-            Analytics.shared.track(.tutorialComplete)
-            complete()
+            completePhase()
         }
     }
 
     func skip() {
         Analytics.shared.track(.tutorialSkip)
-        complete()
+        completePhase()
     }
 
-    private func complete() {
+    /// Check whether the current step is the last one in its phase
+    var isLastStepInPhase: Bool {
+        guard let step = currentStep else { return true }
+        return nextStepInCurrentPhase(after: step) == nil
+    }
+
+    private func completePhase() {
         currentStep = nil
-        hasCompletedTutorial = true
-        UserDefaults.standard.set(true, forKey: completedKey)
+        tutorialPhase += 1
+        UserDefaults.standard.set(tutorialPhase, forKey: phaseKey)
+        if tutorialPhase >= 3 {
+            Analytics.shared.track(.tutorialComplete)
+        }
+    }
+
+    private func nextStepInCurrentPhase(after step: TutorialStep) -> TutorialStep? {
+        let steps = currentPhaseSteps
+        guard let idx = steps.firstIndex(of: step),
+              idx + 1 < steps.count else { return nil }
+        return steps[idx + 1]
     }
 }
 
@@ -103,6 +140,9 @@ struct TutorialOverlay: View {
 
     var body: some View {
         if let step = manager.currentStep {
+            let phaseSteps = manager.currentPhaseSteps
+            let stepIndex = phaseSteps.firstIndex(of: step) ?? 0
+
             ZStack {
                 Color.black.opacity(0.65)
                     .ignoresSafeArea()
@@ -111,11 +151,11 @@ struct TutorialOverlay: View {
                     }
 
                 VStack(spacing: Theme.spacingLG) {
-                    // Step indicator
+                    // Step indicator (dots for current phase only)
                     HStack(spacing: 6) {
-                        ForEach(0..<TutorialStep.displayableCount, id: \.self) { i in
+                        ForEach(0..<phaseSteps.count, id: \.self) { i in
                             Circle()
-                                .fill(i == step.rawValue ? Theme.gold : Theme.gold.opacity(0.25))
+                                .fill(i == stepIndex ? Theme.gold : Theme.gold.opacity(0.25))
                                 .frame(width: 8, height: 8)
                         }
                     }
@@ -137,7 +177,7 @@ struct TutorialOverlay: View {
                     }
 
                     // Progress label
-                    Text("\(step.stepNumber) / \(TutorialStep.displayableCount)")
+                    Text("\(stepIndex + 1) / \(phaseSteps.count)")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(Theme.textTertiary)
 
@@ -148,7 +188,7 @@ struct TutorialOverlay: View {
                         .font(.subheadline)
                         .foregroundColor(Theme.textDisabled)
 
-                        Button(step.next != nil ? L10n.nextStep : L10n.startGame) {
+                        Button(manager.isLastStepInPhase ? L10n.startGame : L10n.nextStep) {
                             manager.advance()
                         }
                         .font(.headline)

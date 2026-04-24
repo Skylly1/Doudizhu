@@ -8,6 +8,9 @@ enum BossModifier: String, CaseIterable, Codable {
     case timeLimit          // 无实际计时，但出牌次数-1
     case greedyTax          // 每次出牌扣10金币
     case noDiscard          // 禁止换牌（已由floor config的0弃牌实现，这里作为显示标记）
+    case scoreCap           // 封顶令 — 单次出牌得分上限为目标分60%
+    case handShrink         // 缩手缩脚 — 手牌减少2张（发8张而非10张）
+    case jokerSilence       // 封印术 — 随机封印一张规则牌
     
     var name: String {
         let isEn = L10n.isEnglish
@@ -18,6 +21,9 @@ enum BossModifier: String, CaseIterable, Codable {
         case .timeLimit:     return isEn ? "⏳ Time Pressure" : "⏳ 时不我待"
         case .greedyTax:     return isEn ? "💰 Greed Tax" : "💰 贪婪税"
         case .noDiscard:     return isEn ? "🚫 No Retreat" : "🚫 背水一战"
+        case .scoreCap:      return isEn ? "🔒 Score Cap" : "🔒 封顶令"
+        case .handShrink:    return isEn ? "✋ Hand Shrink" : "✋ 缩手缩脚"
+        case .jokerSilence:  return isEn ? "🔇 Joker Silence" : "🔇 封印术"
         }
     }
     
@@ -30,6 +36,9 @@ enum BossModifier: String, CaseIterable, Codable {
         case .timeLimit:     return isEn ? "1 fewer play than normal" : "出牌次数比正常少1次"
         case .greedyTax:     return isEn ? "Each play costs 10 gold" : "每次出牌扣10金币"
         case .noDiscard:     return isEn ? "Cannot swap cards this floor" : "本关无法换牌"
+        case .scoreCap:      return isEn ? "Single play score capped at 60% of target" : "单次出牌得分上限为目标分的60%"
+        case .handShrink:    return isEn ? "Hand size reduced by 2 cards" : "手牌减少2张（发8张）"
+        case .jokerSilence:  return isEn ? "One random Joker is silenced this floor" : "随机封印一张规则牌本关无效"
         }
     }
 }
@@ -40,6 +49,7 @@ struct BossState {
     let bannedPatternType: PatternType?
     var escalationCount: Int = 0           // 已出牌次数（用于escalating计算）
     var decayCount: Int = 0                // 已出牌次数（用于scoringDecay计算）
+    var silencedJokerIndex: Int?           // 被封印的规则牌索引（用于jokerSilence）
     
     init(modifiers: [BossModifier]) {
         self.modifiers = modifiers
