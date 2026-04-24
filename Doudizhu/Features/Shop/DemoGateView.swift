@@ -35,9 +35,10 @@ struct DemoGateView: View {
 
                 // 完整版特权
                 VStack(alignment: .leading, spacing: 14) {
-                    featureRow(icon: "🏔️", text: "全部 8 层关卡 + 终极 Boss")
+                    featureRow(icon: "🏔️", text: "全部 15 层关卡 + 3 大 Boss 挑战")
+                    featureRow(icon: "🔥", text: "挑战等级系统(Ascension) — 10级难度")
                     featureRow(icon: "🃏", text: "20 张规则牌，无限流派搭配")
-                    featureRow(icon: "🏆", text: "排行榜 + 成就系统（即将推出）")
+                    featureRow(icon: "🏆", text: "排行榜 + 成就系统")
                     featureRow(icon: "🔄", text: "持续更新：新牌、新关卡、新模式")
                 }
                 .padding(Theme.spacingLG)

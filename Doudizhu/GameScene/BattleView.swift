@@ -158,12 +158,22 @@ struct BattleView: View {
 
             // 关卡信息
             VStack(spacing: 2) {
-                Text(L10n.floorNumber(rogueRun.currentFloorIndex + 1))
-                    .font(Theme.fontCaption)
-                    .foregroundColor(Theme.textTertiary)
+                HStack(spacing: 4) {
+                    Text(L10n.floorNumber(rogueRun.currentFloorIndex + 1))
+                        .font(Theme.fontCaption)
+                        .foregroundColor(Theme.textTertiary)
+                    if rogueRun.ascensionLevel > 0 {
+                        Text("A\(rogueRun.ascensionLevel)")
+                            .font(.caption2.bold())
+                            .foregroundColor(Theme.flame)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(Capsule().fill(Theme.flameDim))
+                    }
+                }
                 Text(rogueRun.currentFloor.name)
                     .font(.headline)
-                    .foregroundColor(Theme.textPrimary)
+                    .foregroundColor(rogueRun.currentFloor.isBoss ? Theme.flame : Theme.textPrimary)
             }
 
             Spacer()
@@ -198,6 +208,38 @@ struct BattleView: View {
 
     private var scoreTargetBar: some View {
         VStack(spacing: 6) {
+            // Boss 修改器警告
+            if let boss = rogueRun.bossState {
+                VStack(spacing: 4) {
+                    ForEach(boss.modifiers, id: \.rawValue) { mod in
+                        HStack(spacing: 6) {
+                            Text(mod.name)
+                                .font(.caption.bold())
+                                .foregroundColor(Theme.flame)
+                            Text(mod.description)
+                                .font(.caption2)
+                                .foregroundColor(Theme.textSecondary)
+                        }
+                    }
+                    if let banned = boss.bannedPatternType {
+                        HStack(spacing: 4) {
+                            Text("⛔")
+                            Text("已禁用: \(banned.displayName)")
+                                .font(.caption.bold())
+                                .foregroundColor(Theme.danger)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Theme.flameDim)
+                        .stroke(Theme.flame.opacity(0.3))
+                )
+                .padding(.horizontal)
+            }
+
             // 规则牌标签
             if !rogueRun.activeJokers.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -254,7 +296,7 @@ struct BattleView: View {
                 Text("\(rogueRun.floorScore)")
                     .font(.title2.bold().monospacedDigit())
                     .foregroundColor(Theme.textPrimary)
-                Text("/ \(rogueRun.currentFloor.targetScore)")
+                Text("/ \(rogueRun.effectiveTargetScore)")
                     .font(.caption.monospacedDigit())
                     .foregroundColor(Theme.textTertiary)
             }
@@ -466,6 +508,28 @@ struct BattleView: View {
                     battleScene?.refreshHand()
                 }
                 .frame(width: 220)
+
+                // Ascension 升级提示
+                if rogueRun.ascensionLevel < 10 {
+                    Button {
+                        rogueRun.ascensionLevel += 1
+                        rogueRun.restart()
+                        battleScene?.refreshHand()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "flame.fill")
+                            Text("挑战 A\(rogueRun.ascensionLevel + 1)")
+                        }
+                        .font(.headline)
+                        .foregroundColor(Theme.flame)
+                        .frame(width: 220, height: 46)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                .fill(Theme.flameDim)
+                                .stroke(Theme.flame.opacity(0.4))
+                        )
+                    }
+                }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     onBack()
