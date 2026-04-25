@@ -142,6 +142,7 @@ enum HandSortMode: String, CaseIterable {
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
     @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
+    @Published var playHistory: [PlayResult] = []   // 本层出牌记录
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
     @Published var handSortMode: HandSortMode = .byRank  // 手牌排序模式
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
@@ -206,6 +207,7 @@ enum HandSortMode: String, CaseIterable {
         discardsRemaining = floor.maxDiscards
         combo = 0
         lastPlayResult = nil
+        playHistory = []
         bossState = nil
         
         // Ascension 调整
@@ -370,6 +372,8 @@ enum HandSortMode: String, CaseIterable {
         }
 
         // Calculate final score
+        let finalChips = Int(chips)
+        let finalMult = mult
         var earned = Int(chips * mult)
 
         // === Boss 修改器 ===
@@ -449,14 +453,51 @@ enum HandSortMode: String, CaseIterable {
 
         // Build score breakdown for display
         var breakdown: [ScoreComponent] = []
-        breakdown.append(ScoreComponent(label: pattern.type.displayName, value: pattern.baseScore, isMultiplier: false))
-        let bonus = earned - pattern.baseScore
-        if bonus > 0 {
-            breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Bonus" : "加成", value: bonus, isMultiplier: false))
-        } else if bonus < 0 {
-            breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Penalty" : "减益", value: bonus, isMultiplier: false))
+
+        // 1. Base pattern
+        breakdown.append(ScoreComponent(
+            label: pattern.type.displayName,
+            value: Int(Double(pattern.baseChips) * pattern.baseMult),
+            isMultiplier: false
+        ))
+
+        // 2. Buff contributions
+        let buffChips = activeBuffs.reduce(0) { $0 + $1.chipBonus(pattern: pattern) }
+        let buffMult = activeBuffs.reduce(0.0) { $0 + $1.multBonus(pattern: pattern) }
+        if buffChips > 0 || buffMult > 0 {
+            breakdown.append(ScoreComponent(
+                label: L10n.isEnglish ? "Buff" : "增益",
+                value: Int(Double(buffChips) + buffMult * Double(pattern.baseChips)),
+                isMultiplier: false
+            ))
         }
-        breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Total" : "总计", value: earned, isMultiplier: false))
+
+        // 3. Joker count
+        let jokerContrib = earned - Int(Double(pattern.baseChips + buffChips) * (pattern.baseMult + buffMult) * multiplier)
+        if jokerContrib > 0 && !activeJokers.isEmpty {
+            breakdown.append(ScoreComponent(
+                label: L10n.isEnglish ? "Jokers ×\(activeJokers.count)" : "规则牌 ×\(activeJokers.count)",
+                value: jokerContrib,
+                isMultiplier: false
+            ))
+        }
+
+        // 4. Combo
+        if combo > 1 {
+            let comboValue = Int(Double(pattern.baseChips) * Double(combo - 1) * (hasJoker(.doubleComboRate) ? 0.30 : 0.15))
+            breakdown.append(ScoreComponent(
+                label: "Combo ×\(combo)",
+                value: comboValue,
+                isMultiplier: false
+            ))
+        }
+
+        // 5. Total
+        breakdown.append(ScoreComponent(
+            label: L10n.isEnglish ? "Total" : "总计",
+            value: earned,
+            isMultiplier: false
+        ))
 
         let result = PlayResult(
             pattern: pattern,
@@ -464,9 +505,12 @@ enum HandSortMode: String, CaseIterable {
             totalScore: floorScore,
             combo: combo,
             isFloorCleared: isFloorCleared,
-            breakdown: breakdown
+            breakdown: breakdown,
+            chips: finalChips,
+            mult: finalMult
         )
         lastPlayResult = result
+        playHistory.append(result)
         phase = .scoring(result)
 
         // PlayerStats tracking
@@ -696,6 +740,7 @@ enum HandSortMode: String, CaseIterable {
         combo = 0
         lastPlayResult = nil
         lastScoreEarned = 0
+        playHistory = []
         let deal = Deck.dealRoguelike(handSize: 10)
         handCards = deal.hand
         drawPile = deal.drawPile
@@ -787,6 +832,8 @@ struct PlayResult: Equatable {
     let combo: Int
     let isFloorCleared: Bool
     var breakdown: [ScoreComponent] = []
+    var chips: Int = 0
+    var mult: Double = 1.0
 
     static func == (lhs: PlayResult, rhs: PlayResult) -> Bool {
         lhs.score == rhs.score && lhs.totalScore == rhs.totalScore && lhs.combo == rhs.combo

@@ -36,6 +36,10 @@ struct BattleView: View {
             // SwiftUI 覆盖层
             VStack(spacing: 0) {
                 topBar
+                // 本层出牌记录
+                if !rogueRun.playHistory.isEmpty {
+                    playHistoryBar
+                }
                 Spacer()
                 scoreTargetBar
                     .padding(.bottom, 6)
@@ -212,6 +216,34 @@ struct BattleView: View {
         }
         .padding(.horizontal, Theme.spacingSM)
         .padding(.top, 4)
+    }
+
+    // MARK: - 出牌记录
+
+    private var playHistoryBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(Array(rogueRun.playHistory.enumerated()), id: \.offset) { idx, play in
+                    VStack(spacing: 1) {
+                        Text(play.pattern.type.displayName)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(Theme.cyan)
+                        Text("+\(play.score)")
+                            .font(.system(size: 10, weight: .semibold).monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Theme.bgInset)
+                            .stroke(play.isFloorCleared ? Theme.gold.opacity(0.4) : Theme.borderLight)
+                    )
+                }
+            }
+            .padding(.horizontal, Theme.spacingSM)
+        }
+        .frame(height: 32)
     }
 
     // MARK: - 分数进度条
@@ -515,9 +547,9 @@ struct BattleView: View {
                         .foregroundColor(Theme.cyan)
                     Spacer()
                 }
-                // chips × mult 核心展示（Balatro 风格）
+                // chips × mult 核心展示（Balatro 风格）— 使用实际最终值
                 HStack(spacing: 4) {
-                    Text("\(result.pattern.baseChips)")
+                    Text("\(result.chips)")
                         .font(.caption.bold().monospacedDigit())
                         .foregroundColor(Theme.cyan)
                         .padding(.horizontal, 6)
@@ -526,7 +558,7 @@ struct BattleView: View {
                     Text("×")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
-                    Text(String(format: "%.1f", result.pattern.baseMult))
+                    Text(String(format: "%.1f", result.mult))
                         .font(.caption.bold().monospacedDigit())
                         .foregroundColor(Theme.flame)
                         .padding(.horizontal, 6)
@@ -535,7 +567,7 @@ struct BattleView: View {
                     Text("=")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
-                    Text("\(result.pattern.baseScore)")
+                    Text("\(Int(Double(result.chips) * result.mult))")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(Theme.textSecondary)
                 }
