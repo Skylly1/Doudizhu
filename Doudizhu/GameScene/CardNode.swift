@@ -4,7 +4,7 @@ import SpriteKit
 class CardNode: SKSpriteNode {
     let card: Card
     private var isSelected = false
-    private let selectedOffset: CGFloat = 25
+    private let selectedOffset: CGFloat = 20
 
     init(card: Card, size: CGSize) {
         self.card = card
@@ -125,8 +125,8 @@ class CardNode: SKSpriteNode {
 
         // 中央大花色
         let centerSuit = SKLabelNode(text: suitText)
-        centerSuit.fontSize = size.width * 0.45
-        centerSuit.fontColor = color.withAlphaComponent(0.70)
+        centerSuit.fontSize = size.width * 0.38
+        centerSuit.fontColor = color.withAlphaComponent(0.60)
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: -2)
         centerSuit.zPosition = 2
