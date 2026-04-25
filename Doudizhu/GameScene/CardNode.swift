@@ -30,42 +30,59 @@ class CardNode: SKSpriteNode {
 
     private var cardColor: SKColor {
         if isJoker {
-            // 赤金大王 / 翡翠小王
+            // 赤金大王 / 翡翠小王（在象牙白底上需要更饱和）
             return card.rank == .jokerRed
-                ? SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1)
-                : SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1)
+                ? SKColor(red: 0.78, green: 0.55, blue: 0.12, alpha: 1)
+                : SKColor(red: 0.0, green: 0.48, blue: 0.42, alpha: 1)
         }
-        // 朱砂红 / 翡翠青
+        // 朱砂红 / 墨黑（传统扑克配色：红黑分明）
         return isRed
-            ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1)
-            : SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1)
+            ? SKColor(red: 0.72, green: 0.08, blue: 0.08, alpha: 1)
+            : SKColor(red: 0.10, green: 0.08, blue: 0.06, alpha: 1)
     }
 
     private func drawCard() {
-        // 阴影
+        // 阴影 — 暖色调
         let shadow = SKShapeNode(rectOf: CGSize(width: size.width - 2, height: size.height - 2),
                                   cornerRadius: 8)
-        shadow.fillColor = SKColor.black.withAlphaComponent(0.5)
+        shadow.fillColor = SKColor(red: 0.06, green: 0.04, blue: 0.02, alpha: 0.4)
         shadow.strokeColor = .clear
         shadow.position = CGPoint(x: 2, y: -3)
         shadow.zPosition = -1
         addChild(shadow)
 
-        // 卡牌背景 — 墨色宣纸底
+        // 卡牌背景 — 象牙白牌面（仿真实扑克牌）
         let bg = SKShapeNode(rectOf: size, cornerRadius: 8)
-        bg.fillColor = SKColor(red: 0.10, green: 0.09, blue: 0.12, alpha: 1.0)
-        bg.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.3)
+        bg.fillColor = SKColor(red: 0.95, green: 0.92, blue: 0.86, alpha: 1.0)
+        bg.strokeColor = SKColor(red: 0.72, green: 0.62, blue: 0.48, alpha: 0.5)
         bg.lineWidth = 1.0
         addChild(bg)
 
-        // 宣纸纹理层（微噪纤维感）
+        // 宣纸纹理层（淡黄古纸质感）
         let textureBg = SKShapeNode(rectOf: CGSize(width: size.width - 4, height: size.height - 4),
                                      cornerRadius: 6)
-        textureBg.fillColor = SKColor(red: 0.14, green: 0.13, blue: 0.16, alpha: 0.4)
+        textureBg.fillColor = SKColor(red: 0.90, green: 0.86, blue: 0.78, alpha: 0.25)
         textureBg.strokeColor = .clear
         textureBg.position = CGPoint(x: 0, y: size.height * 0.03)
-        textureBg.alpha = 0.5
+        textureBg.alpha = 0.4
         addChild(textureBg)
+
+        // 四角回纹装饰（中式传统纹样）
+        for (dx, dy) in [(-1, 1), (1, 1), (-1, -1), (1, -1)] as [(CGFloat, CGFloat)] {
+            let corner = SKShapeNode()
+            let path = CGMutablePath()
+            let cx = dx * (size.width / 2 - 6)
+            let cy = dy * (size.height / 2 - 6)
+            let len: CGFloat = 7
+            path.move(to: CGPoint(x: cx - dx * len, y: cy))
+            path.addLine(to: CGPoint(x: cx, y: cy))
+            path.addLine(to: CGPoint(x: cx, y: cy - dy * len))
+            corner.path = path
+            corner.strokeColor = SKColor(red: 0.72, green: 0.62, blue: 0.48, alpha: 0.25)
+            corner.lineWidth = 0.7
+            corner.fillColor = .clear
+            addChild(corner)
+        }
 
         // Joker 特殊处理
         if isJoker {
@@ -77,9 +94,10 @@ class CardNode: SKSpriteNode {
         let suitText = card.suit?.rawValue ?? ""
         let color = cardColor
 
-        // 左上角：点数 + 花色（竖排）
+        // 左上角：点数 + 花色（竖排）— 宋体书法风
+        let serifFont = Theme.spriteKitSerifFontName
         let topRank = SKLabelNode(text: rankText)
-        topRank.fontName = "Helvetica-Bold"
+        topRank.fontName = serifFont
         topRank.fontSize = size.width * 0.3
         topRank.fontColor = color
         topRank.horizontalAlignmentMode = .left
@@ -97,7 +115,7 @@ class CardNode: SKSpriteNode {
 
         // 右上角：点数（确保被叠时仍可见）
         let rightRank = SKLabelNode(text: rankText)
-        rightRank.fontName = "Helvetica-Bold"
+        rightRank.fontName = serifFont
         rightRank.fontSize = size.width * 0.28
         rightRank.fontColor = color
         rightRank.horizontalAlignmentMode = .right
@@ -114,17 +132,17 @@ class CardNode: SKSpriteNode {
         rightSuit.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - size.width * 0.31)
         addChild(rightSuit)
 
-        // 中央大花色
+        // 中央大花色 — 水印效果（象牙白底上需要更淡）
         let centerSuit = SKLabelNode(text: suitText)
         centerSuit.fontSize = size.width * 0.5
-        centerSuit.fontColor = color.withAlphaComponent(0.4)
+        centerSuit.fontColor = color.withAlphaComponent(0.12)
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: 0)
         addChild(centerSuit)
 
         // 右下角（旋转180°）
         let botRank = SKLabelNode(text: rankText)
-        botRank.fontName = "Helvetica-Bold"
+        botRank.fontName = serifFont
         botRank.fontSize = size.width * 0.3
         botRank.fontColor = color
         botRank.horizontalAlignmentMode = .right
