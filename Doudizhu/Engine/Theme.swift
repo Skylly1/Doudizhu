@@ -37,15 +37,15 @@ enum Theme {
 
     // MARK: 背景 — 紫檀暖木
 
-    /// 主背景 — 深紫檀色（OLED 可见暖底，不是黑色！）
-    static let bgPrimary = Color(red: 0.16, green: 0.11, blue: 0.08)
+    /// 主背景 — 深紫檀色（真机实测可见暖底）
+    static let bgPrimary = Color(red: 0.18, green: 0.13, blue: 0.09)
     /// 二级背景 — 花梨木面板
-    static let bgCard = Color(red: 0.22, green: 0.17, blue: 0.13)
+    static let bgCard = Color(red: 0.24, green: 0.18, blue: 0.13)
     /// 三级背景 — 嵌入区域
-    static let bgInset = Color(red: 0.19, green: 0.14, blue: 0.10)
+    static let bgInset = Color(red: 0.21, green: 0.15, blue: 0.11)
     /// 描边 — 暖金灰
-    static let border = Color(red: 0.40, green: 0.33, blue: 0.24).opacity(0.6)
-    static let borderLight = Color(red: 0.35, green: 0.28, blue: 0.20).opacity(0.35)
+    static let border = Color(red: 0.42, green: 0.35, blue: 0.25).opacity(0.65)
+    static let borderLight = Color(red: 0.38, green: 0.30, blue: 0.22).opacity(0.4)
 
     /// 牌面象牙白 — 用于扑克牌正面
     static let cardFace = Color(red: 0.95, green: 0.92, blue: 0.86)
@@ -246,26 +246,27 @@ extension View {
 struct GameBackground: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
-            // 双层渐变背景（上方暖光 → 中间紫檀 → 底部深沉）
+            // 三段渐变背景 — 上方暖金棕 → 中间紫檀 → 底部深墨
             LinearGradient(
                 colors: [
-                    Color(red: 0.22, green: 0.15, blue: 0.10),
-                    Color(red: 0.16, green: 0.11, blue: 0.08),
-                    Color(red: 0.10, green: 0.07, blue: 0.05)
+                    Color(red: 0.26, green: 0.18, blue: 0.12),
+                    Color(red: 0.18, green: 0.13, blue: 0.09),
+                    Color(red: 0.12, green: 0.08, blue: 0.06)
                 ],
                 startPoint: .top, endPoint: .bottom
             )
             .ignoresSafeArea()
 
-            // 金色氛围光晕（更强可见度）
+            // 顶部金色氛围光晕 — 高可见度
             RadialGradient(
                 colors: [
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.12),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.18),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.04),
                     Color.clear
                 ],
                 center: .top,
                 startRadius: 0,
-                endRadius: 400
+                endRadius: 350
             )
             .ignoresSafeArea()
 
