@@ -67,22 +67,30 @@ class CardNode: SKSpriteNode {
         textureBg.alpha = 0.4
         addChild(textureBg)
 
-        // 四角回纹装饰（中式传统纹样）
+        // 四角回纹装饰（中式传统纹样）— 加强可见度
         for (dx, dy) in [(-1, 1), (1, 1), (-1, -1), (1, -1)] as [(CGFloat, CGFloat)] {
             let corner = SKShapeNode()
             let path = CGMutablePath()
             let cx = dx * (size.width / 2 - 6)
             let cy = dy * (size.height / 2 - 6)
-            let len: CGFloat = 7
+            let len: CGFloat = 8
             path.move(to: CGPoint(x: cx - dx * len, y: cy))
             path.addLine(to: CGPoint(x: cx, y: cy))
             path.addLine(to: CGPoint(x: cx, y: cy - dy * len))
             corner.path = path
-            corner.strokeColor = SKColor(red: 0.72, green: 0.62, blue: 0.48, alpha: 0.25)
-            corner.lineWidth = 0.7
+            corner.strokeColor = SKColor(red: 0.72, green: 0.55, blue: 0.35, alpha: 0.40)
+            corner.lineWidth = 0.8
             corner.fillColor = .clear
             addChild(corner)
         }
+
+        // 牌面内框线（仿真实扑克牌的内边框）
+        let innerBorder = SKShapeNode(rectOf: CGSize(width: size.width - 8, height: size.height - 8),
+                                       cornerRadius: 5)
+        innerBorder.fillColor = .clear
+        innerBorder.strokeColor = SKColor(red: 0.72, green: 0.55, blue: 0.35, alpha: 0.12)
+        innerBorder.lineWidth = 0.5
+        addChild(innerBorder)
 
         // Joker 特殊处理
         if isJoker {

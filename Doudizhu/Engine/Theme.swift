@@ -35,17 +35,17 @@ enum Theme {
     /// 紫气系 — 传说稀有度
     static let legendary = Color(red: 0.50, green: 0.20, blue: 0.72)
 
-    // MARK: 背景 — 宣纸暖褐
+    // MARK: 背景 — 紫檀暖木
 
-    /// 主背景 — 深宣纸褐（暖底调，不是纯黑）
-    static let bgPrimary = Color(red: 0.12, green: 0.10, blue: 0.08)
-    /// 二级背景 — 墨茶色卡片
-    static let bgCard = Color(red: 0.18, green: 0.15, blue: 0.12)
-    /// 三级背景 — 内嵌区域
-    static let bgInset = Color(red: 0.14, green: 0.12, blue: 0.10)
-    /// 描边 — 暖灰
-    static let border = Color(red: 0.35, green: 0.30, blue: 0.24).opacity(0.5)
-    static let borderLight = Color(red: 0.30, green: 0.26, blue: 0.20).opacity(0.3)
+    /// 主背景 — 深紫檀色（OLED 可见暖底，不是黑色！）
+    static let bgPrimary = Color(red: 0.16, green: 0.11, blue: 0.08)
+    /// 二级背景 — 花梨木面板
+    static let bgCard = Color(red: 0.22, green: 0.17, blue: 0.13)
+    /// 三级背景 — 嵌入区域
+    static let bgInset = Color(red: 0.19, green: 0.14, blue: 0.10)
+    /// 描边 — 暖金灰
+    static let border = Color(red: 0.40, green: 0.33, blue: 0.24).opacity(0.6)
+    static let borderLight = Color(red: 0.35, green: 0.28, blue: 0.20).opacity(0.35)
 
     /// 牌面象牙白 — 用于扑克牌正面
     static let cardFace = Color(red: 0.95, green: 0.92, blue: 0.86)
@@ -246,25 +246,26 @@ extension View {
 struct GameBackground: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
+            // 双层渐变背景（上方暖光 → 中间紫檀 → 底部深沉）
+            LinearGradient(
+                colors: [
+                    Color(red: 0.22, green: 0.15, blue: 0.10),
+                    Color(red: 0.16, green: 0.11, blue: 0.08),
+                    Color(red: 0.10, green: 0.07, blue: 0.05)
+                ],
+                startPoint: .top, endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-            // 水墨氛围：上方暖金光晕
+            // 金色氛围光晕（更强可见度）
             RadialGradient(
                 colors: [
-                    Color(red: 0.22, green: 0.18, blue: 0.10).opacity(0.4),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.12),
                     Color.clear
                 ],
                 center: .top,
                 startRadius: 0,
-                endRadius: 500
-            )
-            .ignoresSafeArea()
-
-            // 底部暖色暗影（仿古纸渐深效果）
-            LinearGradient(
-                colors: [Color.clear, Color(red: 0.06, green: 0.05, blue: 0.03).opacity(0.4)],
-                startPoint: .center,
-                endPoint: .bottom
+                endRadius: 400
             )
             .ignoresSafeArea()
 
