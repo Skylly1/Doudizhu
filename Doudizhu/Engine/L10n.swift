@@ -104,11 +104,11 @@ enum L10n {
     static var equippedBuffs: String { localized("已装备增益", en: "Equipped Buffs") }
 
     // MARK: - 试玩结束
-    static var demoOver: String { localized("试玩结束", en: "Demo Over") }
+    static var demoOver: String { localized("试玩结束", en: "Trial Complete") }
     static var unlockFull: String { localized("解锁完整版", en: "Unlock Full Version") }
     static var restorePurchase: String { localized("恢复购买", en: "Restore Purchase") }
-    static var demoDescription: String { localized("你已体验了斗破乾坤的核心玩法！\n解锁完整版，继续挑战更高层数。",
-                                                    en: "You've experienced the core gameplay!\nUnlock the full version to challenge higher floors.") }
+    static var demoDescription: String { localized("你已经体验了乡野篇的精彩牌局！\n更刺激的府城暗局和江湖争霸在等着你。",
+                                                    en: "You've conquered the Village chapter!\nMore intense battles await in City and Martial arcs.") }
     static func unlockFullPrice(_ price: String) -> String { localized("解锁完整版 — \(price)", en: "Unlock Full — \(price)") }
 
     // MARK: - 教程
@@ -281,10 +281,21 @@ enum L10n {
 
     // MARK: - 试玩特权
     static var featureAllFloors: String { localized("全部 15 层关卡 + 3 大 Boss 挑战", en: "All 15 floors + 3 Boss fights") }
-    static var featureAscension: String { localized("挑战等级系统(Ascension) — 10级难度", en: "Ascension system — 10 difficulty levels") }
-    static var featureJokers: String { localized("20 张规则牌，无限流派搭配", en: "20 Joker cards, unlimited builds") }
-    static var featureLeaderboard: String { localized("排行榜 + 成就系统", en: "Leaderboard + Achievements") }
-    static var featureUpdates: String { localized("持续更新：新牌、新关卡、新模式", en: "Ongoing updates: new cards, floors, modes") }
+    static var featureAscension: String { localized("挑战等级系统 — 10 级难度", en: "Ascension system — 10 difficulty levels") }
+    static var featureJokers: String {
+        let count = Joker.allJokers.count
+        return localized("\(count) 张规则牌 · 9 种流派 · 无限搭配", en: "\(count) Jokers · 9 Builds · Infinite combos")
+    }
+    static var featureLeaderboard: String { localized("排行榜 + 17 项成就", en: "Leaderboard + 17 Achievements") }
+    static var featureUpdates: String { localized("买断制永久拥有 · 持续免费更新", en: "One-time purchase · Free updates forever") }
+
+    // 付费墙 — 情感锚点
+    static var demoGateTrialSummary: String { localized("你的试玩成绩", en: "Your Trial Stats") }
+    static func demoGateFloorsCleared(_ n: Int) -> String { localized("闯过 \(n) 层", en: "\(n) Floors Cleared") }
+    static func demoGateBestScore(_ n: Int) -> String { localized("最高得分 \(n)", en: "Best Score: \(n)") }
+    static func demoGateBestCombo(_ n: Int) -> String { localized("最长连击 ×\(n)", en: "Best Combo: ×\(n)") }
+    static var demoGateWhatsNext: String { localized("接下来的冒险", en: "What's Next") }
+    static var demoGateDailyFree: String { localized("每日挑战免费畅玩", en: "Daily Challenge is always free") }
 
     // MARK: - Joker Rarity
     static var rarityCommon: String { localized("普通", en: "Common") }
