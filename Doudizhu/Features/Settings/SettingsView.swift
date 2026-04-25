@@ -109,8 +109,13 @@ struct SettingsView: View {
             .padding(Theme.spacingMD)
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
-                    .fill(Theme.bgCard)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .stroke(Theme.gold.opacity(0.1), lineWidth: 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
         }
     }
 

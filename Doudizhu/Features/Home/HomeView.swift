@@ -205,10 +205,14 @@ struct HomeView: View {
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
-                    .fill(played ? Theme.bgInset : Theme.bgCard)
-                    .stroke(played ? Theme.borderLight : (dailyPulse ? Theme.gold : Theme.border),
-                            lineWidth: played ? 1 : (dailyPulse ? 1.5 : 0.5))
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .stroke(played ? Theme.borderLight : (dailyPulse ? Theme.gold : Theme.gold.opacity(0.15)),
+                                    lineWidth: played ? 0.5 : (dailyPulse ? 1.5 : 0.5))
+                    )
             )
+            .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
         }
         .disabled(played)
     }

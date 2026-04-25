@@ -312,11 +312,15 @@ struct JokerShopRow: View {
         .padding(Theme.spacingMD)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                .fill(Theme.bgCard)
-                .stroke(rarityColor.opacity(0.3), lineWidth: 1)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .stroke(rarityColor.opacity(0.3), lineWidth: 1)
+                )
         )
         .shadow(color: rarityColor.opacity(item.joker.rarity == .legendary ? 0.35 : 0.15),
                 radius: item.joker.rarity == .legendary ? 12 : 6)
+        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
     }
 }
 
@@ -361,9 +365,13 @@ struct ShopItemRow: View {
         .padding(Theme.spacingMD)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                .fill(Theme.bgCard)
-                .stroke(Theme.border)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .stroke(Theme.border)
+                )
         )
+        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
     }
 }
 
@@ -476,8 +484,9 @@ struct PatternUpgradeRow: View {
         .padding(.horizontal, Theme.spacingMD)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusSM)
-                .fill(Theme.bgCard)
+                .fill(.ultraThinMaterial)
         )
+        .shadow(color: .black.opacity(0.1), radius: 3, y: 1)
     }
 }
 
