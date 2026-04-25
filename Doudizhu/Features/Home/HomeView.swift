@@ -19,7 +19,7 @@ struct FloatingParticles: View {
                     context.fill(
                         Circle().path(in: CGRect(x: x - radius, y: y - radius,
                                                   width: radius * 2, height: radius * 2)),
-                        with: .color(Color(red: 1.0, green: 0.84, blue: 0.0))
+                        with: .color(Color(red: 0.85, green: 0.68, blue: 0.28))
                     )
                 }
             }
@@ -103,11 +103,17 @@ struct HomeView: View {
 
                 // 标题区
                 VStack(spacing: 12) {
-                    // 水墨牌面 icon（替代 emoji）
-                    Image(systemName: "suit.spade.fill")
-                        .font(.system(size: 48, weight: .bold))
-                        .foregroundStyle(Theme.goldGradient)
-                        .shadow(color: Theme.gold.opacity(0.3), radius: 8)
+                    // 国潮印章式标识 — "斗"字
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Theme.gold.opacity(0.35), lineWidth: 1.5)
+                            .frame(width: 58, height: 58)
+                            .rotationEffect(.degrees(45))
+                        Text("斗")
+                            .font(.system(size: 40, weight: .black, design: .serif))
+                            .foregroundStyle(Theme.goldGradient)
+                    }
+                    .shadow(color: Theme.gold.opacity(0.3), radius: 12)
 
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
