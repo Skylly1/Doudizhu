@@ -176,7 +176,7 @@ private struct FloorNode: View {
                             .font(.body.bold())
                             .foregroundColor(.white)
                     } else if floor.isShop {
-                        Image(systemName: "dollarsign.circle.fill")
+                        Image(systemName: "circle.circle.fill")
                             .font(.title3)
                             .foregroundColor(Theme.gold)
                     } else if floor.isBoss {

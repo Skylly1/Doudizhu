@@ -18,16 +18,16 @@ class BattleScene: SKScene {
     private let cardOverlap: CGFloat = 32
 
     override func didMove(to view: SKView) {
-        // 暖紫檀底色 — 匹配 Theme.bgPrimary 提亮值
-        backgroundColor = SKColor(red: 0.15, green: 0.10, blue: 0.07, alpha: 1.0)
+        // 暖棕底色 — 大幅提亮，OLED 可见
+        backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.11, alpha: 1.0)
 
         // 顶部暖光渐变层
         let bgGrad = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.5))
-        bgGrad.fillColor = SKColor(red: 0.26, green: 0.18, blue: 0.12, alpha: 0.35)
+        bgGrad.fillColor = SKColor(red: 0.30, green: 0.22, blue: 0.15, alpha: 0.40)
         bgGrad.strokeColor = .clear
         bgGrad.position = CGPoint(x: size.width / 2, y: size.height * 0.75)
         bgGrad.zPosition = -100
-        bgGrad.alpha = 0.6
+        bgGrad.alpha = 0.7
         addChild(bgGrad)
 
         // 出牌区域
@@ -43,17 +43,17 @@ class BattleScene: SKScene {
     private func drawTableDecor() {
         // 外层木质桌框（暖色大椭圆）
         let tableFrame = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.82, height: size.height * 0.38))
-        tableFrame.fillColor = SKColor(red: 0.20, green: 0.14, blue: 0.09, alpha: 0.4)
-        tableFrame.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.12)
+        tableFrame.fillColor = SKColor(red: 0.24, green: 0.17, blue: 0.11, alpha: 0.5)
+        tableFrame.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.18)
         tableFrame.lineWidth = 2
         tableFrame.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
         tableFrame.zPosition = -12
         addChild(tableFrame)
 
-        // 内层毡布面 — 深墨绿
+        // 内层毡布面 — 深墨绿（更可见）
         let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.72, height: size.height * 0.30))
-        table.fillColor = SKColor(red: 0.05, green: 0.14, blue: 0.09, alpha: 0.7)
-        table.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.20)
+        table.fillColor = SKColor(red: 0.08, green: 0.18, blue: 0.12, alpha: 0.75)
+        table.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.25)
         table.lineWidth = 1.5
         table.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
         table.zPosition = -10
@@ -61,8 +61,8 @@ class BattleScene: SKScene {
 
         // 中央出牌区域 — 金色双圆
         let circle = SKShapeNode(circleOfRadius: 50)
-        circle.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.04)
-        circle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.18)
+        circle.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.06)
+        circle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.22)
         circle.lineWidth = 1.5
         circle.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
         circle.zPosition = -5

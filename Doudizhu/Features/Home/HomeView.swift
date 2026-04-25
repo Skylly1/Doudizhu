@@ -215,12 +215,12 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            // 渐变主背景
+            // 渐变主背景 — 大幅提亮
             LinearGradient(
                 colors: [
-                    Color(red: 0.28, green: 0.20, blue: 0.13),
-                    Color(red: 0.18, green: 0.13, blue: 0.09),
-                    Color(red: 0.11, green: 0.08, blue: 0.05)
+                    Color(red: 0.34, green: 0.25, blue: 0.17),
+                    Color(red: 0.22, green: 0.16, blue: 0.11),
+                    Color(red: 0.15, green: 0.11, blue: 0.08)
                 ],
                 startPoint: .top, endPoint: .bottom
             )
@@ -229,8 +229,8 @@ struct HomeView: View {
             // 顶部金色光晕 — 更大更亮
             RadialGradient(
                 colors: [
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.22),
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.06),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.25),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.08),
                     Color.clear
                 ],
                 center: .init(x: 0.5, y: 0.15),
