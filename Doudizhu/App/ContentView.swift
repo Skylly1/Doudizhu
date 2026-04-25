@@ -78,8 +78,11 @@ struct ContentView: View {
                     SettingsView(onBack: { currentScreen = .home })
                 }
             }
-            .animation(.easeInOut(duration: 0.35), value: currentScreen)
-            .transition(.opacity.combined(with: .scale(scale: 0.97)))
+            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: currentScreen)
+            .transition(.asymmetric(
+                insertion: .opacity.combined(with: .scale(scale: 0.95)).combined(with: .offset(y: 8)),
+                removal: .opacity.combined(with: .scale(scale: 1.02))
+            ))
 
             // 教程覆盖层
             TutorialOverlay(manager: tutorialManager)

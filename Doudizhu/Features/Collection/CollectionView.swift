@@ -12,11 +12,11 @@ struct CollectionView: View {
 
                 // Tab 切换
                 HStack(spacing: 0) {
-                    tabButton(L10n.jokerSection, icon: "🃏", index: 0)
-                    tabButton(L10n.buffSection, icon: "✨", index: 1)
-                    tabButton(L10n.patternTab, icon: "📖", index: 2)
-                    tabButton(L10n.achievements, icon: "🏆", index: 3)
-                    tabButton(L10n.statsTab, icon: "📊", index: 4)
+                    tabButton(L10n.jokerSection, systemIcon: "suit.spade.fill", index: 0)
+                    tabButton(L10n.buffSection, systemIcon: "sparkles", index: 1)
+                    tabButton(L10n.patternTab, systemIcon: "book.fill", index: 2)
+                    tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
+                    tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -34,14 +34,18 @@ struct CollectionView: View {
         .gameBackground()
     }
 
-    private func tabButton(_ title: String, icon: String, index: Int) -> some View {
+    private func tabButton(_ title: String, systemIcon: String, index: Int) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) { selectedTab = index }
         } label: {
             VStack(spacing: 4) {
-                Text("\(icon) \(title)")
-                    .font(.subheadline.weight(selectedTab == index ? .bold : .medium))
-                    .foregroundColor(selectedTab == index ? Theme.gold : Theme.textTertiary)
+                HStack(spacing: 4) {
+                    Image(systemName: systemIcon)
+                        .font(.caption)
+                    Text(title)
+                }
+                .font(.subheadline.weight(selectedTab == index ? .bold : .medium))
+                .foregroundColor(selectedTab == index ? Theme.gold : Theme.textTertiary)
                 Rectangle()
                     .fill(selectedTab == index ? Theme.gold : Color.clear)
                     .frame(height: 2)

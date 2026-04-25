@@ -103,7 +103,8 @@ struct PatternGuideView: View {
 
     private func tipCard(_ title: String, _ text: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("💡")
+            Image(systemName: "lightbulb.fill")
+                .foregroundColor(Theme.gold)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline.bold())

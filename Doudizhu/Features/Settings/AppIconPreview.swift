@@ -4,33 +4,41 @@ import SwiftUI
 struct AppIconPreview: View {
     var body: some View {
         ZStack {
-            // Background: dark blue-black gradient
+            // Background: 墨色宣纸渐变
             LinearGradient(
                 colors: [
-                    Color(red: 0.05, green: 0.08, blue: 0.15),
-                    Color(red: 0.02, green: 0.04, blue: 0.08)
+                    Color(red: 0.08, green: 0.06, blue: 0.12),
+                    Color(red: 0.03, green: 0.03, blue: 0.06)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
-            // Diagonal gold accent stripe
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.15),
-                            Color.clear
-                        ],
-                        startPoint: .topTrailing,
-                        endPoint: .bottomLeading
-                    )
-                )
+            // 赤金光晕
+            RadialGradient(
+                colors: [
+                    Color(red: 0.83, green: 0.64, blue: 0.22).opacity(0.15),
+                    Color.clear
+                ],
+                center: .center,
+                startRadius: 0,
+                endRadius: 120
+            )
 
             VStack(spacing: 4) {
-                // Playing card emoji as center icon
-                Text("🎴")
-                    .font(.system(size: 80))
+                // 牌面图标（替代 emoji）
+                Image(systemName: "suit.spade.fill")
+                    .font(.system(size: 52, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.95, green: 0.82, blue: 0.42),
+                                Color(red: 0.83, green: 0.64, blue: 0.22),
+                                Color(red: 0.65, green: 0.48, blue: 0.12)
+                            ],
+                            startPoint: .top, endPoint: .bottom
+                        )
+                    )
                     .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
 
                 // Chinese title
@@ -39,14 +47,14 @@ struct AppIconPreview: View {
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
-                                Color(red: 1.0, green: 0.93, blue: 0.55),
-                                Color(red: 1.0, green: 0.84, blue: 0.0),
-                                Color(red: 0.85, green: 0.65, blue: 0.0)
+                                Color(red: 0.95, green: 0.82, blue: 0.42),
+                                Color(red: 0.83, green: 0.64, blue: 0.22),
+                                Color(red: 0.65, green: 0.48, blue: 0.12)
                             ],
                             startPoint: .top, endPoint: .bottom
                         )
                     )
-                    .shadow(color: Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.4), radius: 8)
+                    .shadow(color: Color(red: 0.83, green: 0.64, blue: 0.22).opacity(0.4), radius: 8)
 
                 Text("乾坤")
                     .font(.system(size: 28, weight: .bold, design: .serif))

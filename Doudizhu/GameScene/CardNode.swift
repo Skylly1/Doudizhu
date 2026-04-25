@@ -30,11 +30,15 @@ class CardNode: SKSpriteNode {
 
     private var cardColor: SKColor {
         if isJoker {
-            return card.rank == .jokerRed ? SKColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 1)
-                : SKColor(red: 0.7, green: 0.8, blue: 0.9, alpha: 1)
+            // 赤金大王 / 翡翠小王
+            return card.rank == .jokerRed
+                ? SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1)
+                : SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1)
         }
-        return isRed ? SKColor(red: 1.0, green: 0.35, blue: 0.35, alpha: 1)
-            : SKColor(red: 0.75, green: 0.85, blue: 1.0, alpha: 1)
+        // 朱砂红 / 翡翠青
+        return isRed
+            ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1)
+            : SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1)
     }
 
     private func drawCard() {
@@ -47,21 +51,21 @@ class CardNode: SKSpriteNode {
         shadow.zPosition = -1
         addChild(shadow)
 
-        // 卡牌背景 — 暗色主题
+        // 卡牌背景 — 墨色宣纸底
         let bg = SKShapeNode(rectOf: size, cornerRadius: 8)
-        bg.fillColor = SKColor(red: 0.12, green: 0.12, blue: 0.18, alpha: 1.0)
-        bg.strokeColor = SKColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 0.35)
+        bg.fillColor = SKColor(red: 0.10, green: 0.09, blue: 0.12, alpha: 1.0)
+        bg.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.3)
         bg.lineWidth = 1.0
         addChild(bg)
 
-        // Inner subtle gradient effect (lighter at top, darker at bottom)
-        let innerGlow = SKShapeNode(rectOf: CGSize(width: size.width - 4, height: size.height - 4),
+        // 宣纸纹理层（微噪纤维感）
+        let textureBg = SKShapeNode(rectOf: CGSize(width: size.width - 4, height: size.height - 4),
                                      cornerRadius: 6)
-        innerGlow.fillColor = SKColor(red: 0.18, green: 0.18, blue: 0.25, alpha: 0.5)
-        innerGlow.strokeColor = .clear
-        innerGlow.position = CGPoint(x: 0, y: size.height * 0.05)
-        innerGlow.alpha = 0.6
-        addChild(innerGlow)
+        textureBg.fillColor = SKColor(red: 0.14, green: 0.13, blue: 0.16, alpha: 0.4)
+        textureBg.strokeColor = .clear
+        textureBg.position = CGPoint(x: 0, y: size.height * 0.03)
+        textureBg.alpha = 0.5
+        addChild(textureBg)
 
         // Joker 特殊处理
         if isJoker {
@@ -164,28 +168,40 @@ class CardNode: SKSpriteNode {
         rightLabel.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - 5)
         addChild(rightLabel)
 
-        // 中央大王/小王 emoji
-        let emoji = SKLabelNode(text: isRed ? "👑" : "🃏")
-        emoji.fontSize = size.width * 0.5
-        emoji.verticalAlignmentMode = .center
-        emoji.position = CGPoint(x: 0, y: 2)
-        addChild(emoji)
+        // 中央大"王"字书法
+        let centerKing = SKLabelNode(text: "王")
+        centerKing.fontName = serifFont
+        centerKing.fontSize = size.width * 0.55
+        centerKing.fontColor = color
+        centerKing.verticalAlignmentMode = .center
+        centerKing.position = CGPoint(x: 0, y: 2)
+        addChild(centerKing)
 
-        // Joker special glow
+        // 发光光环（赤金/翡翠青）
         let jokerGlow = SKShapeNode(circleOfRadius: size.width * 0.35)
-        jokerGlow.fillColor = (isRed ? SKColor.red : SKColor.purple).withAlphaComponent(0.08)
-        jokerGlow.strokeColor = .clear
+        jokerGlow.fillColor = color.withAlphaComponent(0.1)
+        jokerGlow.strokeColor = color.withAlphaComponent(0.25)
+        jokerGlow.lineWidth = 1.5
         jokerGlow.position = CGPoint(x: 0, y: 2)
         jokerGlow.zPosition = -0.5
         addChild(jokerGlow)
 
-        // 底部 — 书法衬线字体
-        let botLabel = SKLabelNode(text: "王")
+        // 脉冲发光动画
+        let pulse = SKAction.repeatForever(
+            SKAction.sequence([
+                SKAction.fadeAlpha(to: 0.5, duration: 0.8),
+                SKAction.fadeAlpha(to: 1.0, duration: 0.8)
+            ])
+        )
+        jokerGlow.run(pulse)
+
+        // 底部 "大王"/"小王" 完整标注
+        let botLabel = SKLabelNode(text: isRed ? "大王" : "小王")
         botLabel.fontName = serifFont
-        botLabel.fontSize = size.width * 0.26
-        botLabel.fontColor = color
+        botLabel.fontSize = size.width * 0.2
+        botLabel.fontColor = color.withAlphaComponent(0.6)
         botLabel.verticalAlignmentMode = .center
-        botLabel.position = CGPoint(x: 0, y: -size.height / 2 + size.width * 0.25)
+        botLabel.position = CGPoint(x: 0, y: -size.height / 2 + size.width * 0.2)
         addChild(botLabel)
     }
 
@@ -202,21 +218,29 @@ class CardNode: SKSpriteNode {
         scaleUp.timingMode = .easeOut
         run(SKAction.group([moveUp, scaleUp]))
 
-        // Glowing highlight border
+        // 赤金发光描边
         let highlight = SKShapeNode(rectOf: CGSize(width: size.width + 4, height: size.height + 4),
                                      cornerRadius: 10)
         highlight.fillColor = .clear
-        highlight.strokeColor = SKColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+        highlight.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1.0)
         highlight.lineWidth = 2.5
-        highlight.glowWidth = 5
+        highlight.glowWidth = 8
         highlight.name = "highlight"
-        highlight.alpha = 0.8
+        highlight.alpha = 0.9
         addChild(highlight)
+
+        // 内层柔光晕
+        let innerGlow = SKShapeNode(rectOf: CGSize(width: size.width + 2, height: size.height + 2),
+                                     cornerRadius: 9)
+        innerGlow.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.06)
+        innerGlow.strokeColor = .clear
+        innerGlow.name = "innerGlow"
+        addChild(innerGlow)
 
         // Pulsing glow
         let pulse = SKAction.repeatForever(
             SKAction.sequence([
-                SKAction.fadeAlpha(to: 0.4, duration: 0.6),
+                SKAction.fadeAlpha(to: 0.5, duration: 0.6),
                 SKAction.fadeAlpha(to: 1.0, duration: 0.6)
             ])
         )
@@ -234,6 +258,7 @@ class CardNode: SKSpriteNode {
         run(SKAction.group([moveDown, scaleDown]))
 
         childNode(withName: "highlight")?.removeFromParent()
+        childNode(withName: "innerGlow")?.removeFromParent()
     }
 }
 

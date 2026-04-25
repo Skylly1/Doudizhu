@@ -34,8 +34,9 @@ struct AchievementView: View {
                 if prog.unlocked == 0 {
                     // Empty state
                     VStack(spacing: Theme.spacingMD) {
-                        Text("🏆")
-                            .font(.system(size: 56))
+                        Image(systemName: "trophy.fill")
+                            .font(.system(size: 44))
+                            .foregroundColor(Theme.textTertiary)
                         Text(L10n.emptyAchievements)
                             .font(Theme.fontBody)
                             .foregroundColor(Theme.textTertiary)

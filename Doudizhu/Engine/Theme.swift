@@ -6,46 +6,46 @@ import UIKit
 /// 全局设计 Token — 所有 View 从这里取颜色、字体、间距
 enum Theme {
 
-    // MARK: 主色板
+    // MARK: 主色板 — 新中式水墨暗金
 
-    /// 金色系 — 用于标题、CTA、高亮
-    static let gold = Color(red: 1.0, green: 0.84, blue: 0.0)
-    static let goldLight = Color(red: 1.0, green: 0.93, blue: 0.55)
-    static let goldDark = Color(red: 0.85, green: 0.65, blue: 0.0)
+    /// 赤金系 — 标题、CTA、高亮（比纯金更沉稳古朴）
+    static let gold = Color(red: 0.83, green: 0.64, blue: 0.22)
+    static let goldLight = Color(red: 0.95, green: 0.82, blue: 0.42)
+    static let goldDark = Color(red: 0.65, green: 0.48, blue: 0.12)
     static let goldGradient = LinearGradient(
         colors: [goldLight, gold, goldDark],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
 
-    /// 青色系 — 规则牌、选中态、信息
-    static let cyan = Color(red: 0.0, green: 0.87, blue: 0.87)
-    static let cyanDim = Color(red: 0.0, green: 0.87, blue: 0.87).opacity(0.2)
+    /// 翡翠青系 — 规则牌、选中态、信息（偏绿更中国风）
+    static let cyan = Color(red: 0.0, green: 0.72, blue: 0.66)
+    static let cyanDim = Color(red: 0.0, green: 0.72, blue: 0.66).opacity(0.2)
 
-    /// 橙色系 — Buff、连击、警告
-    static let flame = Color(red: 1.0, green: 0.55, blue: 0.0)
-    static let flameDim = Color(red: 1.0, green: 0.55, blue: 0.0).opacity(0.2)
+    /// 朱砂红系 — Buff、连击、进攻色
+    static let flame = Color(red: 0.79, green: 0.30, blue: 0.30)
+    static let flameDim = Color(red: 0.79, green: 0.30, blue: 0.30).opacity(0.2)
 
-    /// 红色系 — 危险、失败、弃牌
-    static let danger = Color(red: 0.9, green: 0.2, blue: 0.2)
-    static let dangerDim = Color(red: 0.9, green: 0.2, blue: 0.2).opacity(0.15)
+    /// 殷红系 — 危险、失败、弃牌
+    static let danger = Color(red: 0.70, green: 0.13, blue: 0.13)
+    static let dangerDim = Color(red: 0.70, green: 0.13, blue: 0.13).opacity(0.15)
 
-    /// 绿色系 — 成功、普通稀有度
-    static let success = Color(red: 0.2, green: 0.85, blue: 0.4)
+    /// 竹青系 — 成功、普通稀有度
+    static let success = Color(red: 0.18, green: 0.55, blue: 0.34)
 
-    /// 紫色系 — 传说稀有度
-    static let legendary = Color(red: 0.65, green: 0.3, blue: 0.9)
+    /// 紫气系 — 传说稀有度（更深沉）
+    static let legendary = Color(red: 0.48, green: 0.18, blue: 0.74)
 
-    // MARK: 背景
+    // MARK: 背景 — 墨色宣纸
 
-    /// 主背景 — 深蓝黑
-    static let bgPrimary = Color(red: 0.04, green: 0.06, blue: 0.10)
-    /// 二级背景 — 卡片/面板
-    static let bgCard = Color.white.opacity(0.06)
+    /// 主背景 — 墨色宣纸（微暖）
+    static let bgPrimary = Color(red: 0.06, green: 0.05, blue: 0.08)
+    /// 二级背景 — 宣纸浅层
+    static let bgCard = Color(red: 0.10, green: 0.09, blue: 0.12)
     /// 三级背景 — 输入/内嵌区域
-    static let bgInset = Color.white.opacity(0.03)
+    static let bgInset = Color.white.opacity(0.04)
     /// 描边
-    static let border = Color.white.opacity(0.12)
-    static let borderLight = Color.white.opacity(0.06)
+    static let border = Color.white.opacity(0.10)
+    static let borderLight = Color.white.opacity(0.05)
 
     // MARK: 文字
 
@@ -242,15 +242,23 @@ struct GameBackground: ViewModifier {
         ZStack {
             Theme.bgPrimary.ignoresSafeArea()
 
-            // 微妙的径向渐变
+            // 水墨氛围：上方暖光晕 + 底部冷沉淀
             RadialGradient(
                 colors: [
-                    Color(red: 0.08, green: 0.10, blue: 0.18).opacity(0.6),
+                    Color(red: 0.12, green: 0.10, blue: 0.16).opacity(0.5),
                     Color.clear
                 ],
                 center: .top,
                 startRadius: 0,
-                endRadius: 600
+                endRadius: 500
+            )
+            .ignoresSafeArea()
+
+            // 微妙的底部墨渍暗影
+            LinearGradient(
+                colors: [Color.clear, Color.black.opacity(0.3)],
+                startPoint: .center,
+                endPoint: .bottom
             )
             .ignoresSafeArea()
 
@@ -313,5 +321,52 @@ struct GameNavBar: View {
         }
         .padding(.horizontal, Theme.spacingMD)
         .padding(.top, Theme.spacingSM)
+    }
+}
+
+// MARK: - 水墨分割线
+
+struct InkDivider: View {
+    var color: Color = Theme.gold.opacity(0.3)
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Rectangle()
+                .fill(LinearGradient(
+                    colors: [Color.clear, color],
+                    startPoint: .leading, endPoint: .trailing
+                ))
+                .frame(height: 1)
+            Image(systemName: "diamond.fill")
+                .font(.system(size: 6))
+                .foregroundColor(color)
+            Rectangle()
+                .fill(LinearGradient(
+                    colors: [color, Color.clear],
+                    startPoint: .leading, endPoint: .trailing
+                ))
+                .frame(height: 1)
+        }
+        .padding(.horizontal, Theme.spacingMD)
+    }
+}
+
+// MARK: - 印章标签
+
+struct StampBadge: View {
+    let text: String
+    var color: Color = Theme.flame
+
+    var body: some View {
+        Text(text)
+            .font(.caption2.bold())
+            .foregroundColor(color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(color, lineWidth: 1.5)
+            )
+            .rotationEffect(.degrees(-3))
     }
 }

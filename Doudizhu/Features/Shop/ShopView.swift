@@ -122,7 +122,7 @@ struct ShopView: View {
 
                 // 武功秘籍区
                 VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                    Text(L10n.isEnglish ? "🥋 Martial Arts Manuals" : "🥋 武功秘籍")
+                    Label(L10n.isEnglish ? "Martial Arts Manuals" : "武功秘籍", systemImage: "book.closed.fill")
                         .font(Theme.fontSection)
                         .foregroundColor(Theme.gold)
                         .padding(.horizontal, Theme.spacingLG)
@@ -146,8 +146,9 @@ struct ShopView: View {
 
                 if shopItems.isEmpty && jokerItems.isEmpty {
                     VStack(spacing: Theme.spacingMD) {
-                        Text("🏪")
-                            .font(.system(size: 48))
+                        Image(systemName: "bag.fill")
+                            .font(.system(size: 42))
+                            .foregroundStyle(Theme.gold.opacity(0.4))
                         Text(L10n.shopRestocking)
                             .font(Theme.fontBody)
                             .foregroundColor(Theme.textTertiary)
@@ -314,6 +315,8 @@ struct JokerShopRow: View {
                 .fill(Theme.bgCard)
                 .stroke(rarityColor.opacity(0.3), lineWidth: 1)
         )
+        .shadow(color: rarityColor.opacity(item.joker.rarity == .legendary ? 0.35 : 0.15),
+                radius: item.joker.rarity == .legendary ? 12 : 6)
     }
 }
 
@@ -449,7 +452,11 @@ struct PatternUpgradeRow: View {
                         onBuy(cost)
                     }
                 } label: {
-                    Text("🪙\(cost)")
+                    HStack(spacing: 2) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .font(.caption2)
+                        Text("\(cost)")
+                    }
                         .font(.caption.bold())
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
