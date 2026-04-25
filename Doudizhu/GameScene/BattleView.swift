@@ -31,7 +31,7 @@ struct BattleView: View {
                 SpriteView(scene: scene)
                     .ignoresSafeArea()
             } else {
-                Color.black.ignoresSafeArea()
+                Color(red: 0.13, green: 0.09, blue: 0.06).ignoresSafeArea()
             }
 
             // SwiftUI 覆盖层
@@ -163,7 +163,7 @@ struct BattleView: View {
             Button { showExitConfirm = true } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Theme.textSecondary)
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
@@ -211,7 +211,7 @@ struct BattleView: View {
             } label: {
                 Image(systemName: "questionmark.circle.fill")
                     .font(.title3)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(Theme.textSecondary)
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())

@@ -13,12 +13,22 @@ class BattleScene: SKScene {
     let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量（基准值，实际会根据手牌数动态缩放）
-    private let baseCardWidth: CGFloat = 64
-    private let baseCardHeight: CGFloat = 96
-    private let cardOverlap: CGFloat = 30
+    private let baseCardWidth: CGFloat = 72
+    private let baseCardHeight: CGFloat = 108
+    private let cardOverlap: CGFloat = 32
 
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor(red: 0.12, green: 0.10, blue: 0.08, alpha: 1.0)
+        // 渐变背景 — 上方暖紫檀 → 底部深墨（非纯色黑）
+        backgroundColor = SKColor(red: 0.13, green: 0.09, blue: 0.06, alpha: 1.0)
+
+        // 顶部暖光渐变层
+        let bgGrad = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.5))
+        bgGrad.fillColor = SKColor(red: 0.22, green: 0.15, blue: 0.10, alpha: 0.35)
+        bgGrad.strokeColor = .clear
+        bgGrad.position = CGPoint(x: size.width / 2, y: size.height * 0.75)
+        bgGrad.zPosition = -100
+        bgGrad.alpha = 0.6
+        addChild(bgGrad)
 
         // 出牌区域
         playedAreaNode.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
@@ -31,54 +41,67 @@ class BattleScene: SKScene {
     }
 
     private func drawTableDecor() {
-        // 牌桌毡布 — 传统墨绿毡面 + 金线边框
-        let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.75, height: size.height * 0.32))
-        table.fillColor = SKColor(red: 0.06, green: 0.16, blue: 0.10, alpha: 0.6)
-        table.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.15)
+        // 外层木质桌框（暖色大椭圆）
+        let tableFrame = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.82, height: size.height * 0.38))
+        tableFrame.fillColor = SKColor(red: 0.20, green: 0.14, blue: 0.09, alpha: 0.4)
+        tableFrame.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.12)
+        tableFrame.lineWidth = 2
+        tableFrame.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
+        tableFrame.zPosition = -12
+        addChild(tableFrame)
+
+        // 内层毡布面 — 深墨绿
+        let table = SKShapeNode(ellipseOf: CGSize(width: size.width * 0.72, height: size.height * 0.30))
+        table.fillColor = SKColor(red: 0.05, green: 0.14, blue: 0.09, alpha: 0.7)
+        table.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.20)
         table.lineWidth = 1.5
-        table.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
+        table.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
         table.zPosition = -10
         addChild(table)
 
-        // 中央出牌区域 — 金色圆圈
-        let circle = SKShapeNode(circleOfRadius: 55)
-        circle.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.03)
-        circle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.12)
+        // 中央出牌区域 — 金色双圆
+        let circle = SKShapeNode(circleOfRadius: 50)
+        circle.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.04)
+        circle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.18)
         circle.lineWidth = 1.5
-        circle.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
+        circle.position = CGPoint(x: size.width / 2, y: size.height * 0.54)
         circle.zPosition = -5
         addChild(circle)
 
-        // 外围虚线装饰 — 金色
-        let dashCircle = SKShapeNode(circleOfRadius: 72)
-        dashCircle.fillColor = .clear
-        dashCircle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.06)
-        dashCircle.lineWidth = 1
-        dashCircle.position = circle.position
-        dashCircle.zPosition = -5
-        addChild(dashCircle)
+        let outerCircle = SKShapeNode(circleOfRadius: 65)
+        outerCircle.fillColor = .clear
+        outerCircle.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.08)
+        outerCircle.lineWidth = 1
+        outerCircle.position = circle.position
+        outerCircle.zPosition = -5
+        addChild(outerCircle)
 
         let hintText = L10n.isEnglish ? "Play Area" : "出牌区"
         let hint = SKLabelNode(text: hintText)
         hint.fontName = Theme.spriteKitSerifFontName
-        hint.fontSize = 13
-        hint.fontColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.18)
-        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.52 - 5)
+        hint.fontSize = 14
+        hint.fontColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.25)
+        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.54 - 5)
         hint.name = "hint"
         hint.zPosition = -4
         addChild(hint)
 
-        // 四角金点装饰
+        // 四角金色回纹装饰
         for (dx, dy) in [(-1.0, 1.0), (1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)] {
-            let dot = SKShapeNode(circleOfRadius: 3)
-            dot.fillColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.10)
-            dot.strokeColor = .clear
-            dot.position = CGPoint(
-                x: size.width / 2 + dx * size.width * 0.38,
-                y: size.height * 0.52 + dy * size.height * 0.16
-            )
-            dot.zPosition = -10
-            addChild(dot)
+            let corner = SKShapeNode()
+            let path = CGMutablePath()
+            let cx = size.width / 2 + dx * size.width * 0.38
+            let cy = size.height * 0.54 + dy * size.height * 0.17
+            let len: CGFloat = 12
+            path.move(to: CGPoint(x: cx - dx * len, y: cy))
+            path.addLine(to: CGPoint(x: cx, y: cy))
+            path.addLine(to: CGPoint(x: cx, y: cy - dy * len))
+            corner.path = path
+            corner.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.15)
+            corner.lineWidth = 1.5
+            corner.fillColor = .clear
+            corner.zPosition = -10
+            addChild(corner)
         }
     }
 
