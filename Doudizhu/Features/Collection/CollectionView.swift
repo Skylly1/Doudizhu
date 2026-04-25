@@ -99,7 +99,7 @@ struct CollectionView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(isLocked ? "???" : joker.name)
+                    Text(joker.name)
                         .font(.subheadline.bold())
                         .foregroundColor(isLocked ? Theme.textTertiary : Theme.textPrimary)
                     Text(joker.rarity.displayName)
@@ -108,8 +108,13 @@ struct CollectionView: View {
                         .padding(.vertical, 2)
                         .background(Capsule().fill(rarityColor.opacity(isLocked ? 0.1 : 0.2)))
                         .foregroundColor(isLocked ? rarityColor.opacity(0.4) : rarityColor)
+                    if isLocked {
+                        Image(systemName: "lock.fill")
+                            .font(.caption2)
+                            .foregroundColor(Theme.textDisabled)
+                    }
                 }
-                Text(isLocked ? L10n.rarityCommon == joker.rarity.displayName ? "" : "Unlock via achievements" : joker.description)
+                Text(isLocked ? (L10n.isEnglish ? "Unlock via achievements" : "通过成就解锁") : joker.description)
                     .font(Theme.fontCaption)
                     .foregroundColor(isLocked ? Theme.textTertiary : Theme.textSecondary)
             }

@@ -9,7 +9,6 @@ struct BuildSelectView: View {
         VStack(spacing: 0) {
             GameNavBar(
                 title: L10n.chooseBuild,
-                subtitle: L10n.buildHint,
                 onBack: onBack
             )
 

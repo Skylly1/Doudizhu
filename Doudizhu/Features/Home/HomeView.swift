@@ -50,7 +50,7 @@ struct CardFanDecor: View {
             let w = geo.size.width
             let h = geo.size.height
             let centerX = w / 2
-            let baseY = h * 0.88
+            let baseY = h * 0.80
             let cardW: CGFloat = 52
             let cardH: CGFloat = 76
 
@@ -222,22 +222,22 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            // 渐变主背景 — 大幅提亮
+            // 渐变主背景 — 温暖国潮色
             LinearGradient(
                 colors: [
-                    Color(red: 0.34, green: 0.25, blue: 0.17),
-                    Color(red: 0.22, green: 0.16, blue: 0.11),
-                    Color(red: 0.15, green: 0.11, blue: 0.08)
+                    Color(red: 0.38, green: 0.26, blue: 0.16),
+                    Color(red: 0.26, green: 0.18, blue: 0.12),
+                    Color(red: 0.17, green: 0.12, blue: 0.09)
                 ],
                 startPoint: .top, endPoint: .bottom
             )
             .ignoresSafeArea()
 
-            // 顶部金色光晕 — 更大更亮
+            // 顶部金色光晕 — 温暖聚焦
             RadialGradient(
                 colors: [
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.25),
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.08),
+                    Color(red: 0.90, green: 0.72, blue: 0.30).opacity(0.30),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.10),
                     Color.clear
                 ],
                 center: .init(x: 0.5, y: 0.15),
@@ -260,7 +260,7 @@ struct HomeView: View {
 
             // 主内容
             VStack(spacing: 0) {
-                Spacer().frame(height: 60)
+                Spacer().frame(height: 40)
 
                 // 标题区
                 VStack(spacing: 14) {
@@ -309,7 +309,7 @@ struct HomeView: View {
                 .scaleEffect(titleScale)
                 .opacity(titleOpacity)
 
-                Spacer().frame(height: Theme.isCompactScreen ? 20 : 36)
+                Spacer().frame(height: Theme.isCompactScreen ? 16 : 24)
 
                 // Ascension 等级展示
                 let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
@@ -328,7 +328,7 @@ struct HomeView: View {
                 }
 
                 // 菜单按钮
-                VStack(spacing: 14) {
+                VStack(spacing: 12) {
                     // 继续冒险（有存档时显示）
                     if hasSavedGame {
                         PrimaryButton(
@@ -341,7 +341,7 @@ struct HomeView: View {
                         ) {
                             onContinue()
                         }
-                        .padding(.horizontal, 50)
+                        .padding(.horizontal, 40)
                         .offset(y: showButtons[0] ? 0 : 40)
                         .opacity(showButtons[0] ? 1.0 : 0)
                     }
@@ -352,20 +352,20 @@ struct HomeView: View {
                                   icon: hasSavedGame ? "plus.circle.fill" : "play.fill") {
                         onNavigate(.map)
                     }
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
                     .offset(y: showButtons[1] ? 0 : 40)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
                     SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
                         onNavigate(.buildSelect)
                     }
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
                     .offset(y: showButtons[2] ? 0 : 40)
                     .opacity(showButtons[2] ? 1.0 : 0)
 
-                    // Daily Challenge
+                    // 每日挑战
                     dailyChallengeButton
-                        .padding(.horizontal, 50)
+                        .padding(.horizontal, 40)
                         .offset(y: showButtons[3] ? 0 : 40)
                         .opacity(showButtons[3] ? 1.0 : 0)
 
@@ -377,7 +377,7 @@ struct HomeView: View {
                             onNavigate(.settings)
                         }
                     }
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
                     .offset(y: showButtons[4] ? 0 : 40)
                     .opacity(showButtons[4] ? 1.0 : 0)
                 }
@@ -387,13 +387,7 @@ struct HomeView: View {
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 6)
-
-                // 版本信息
-                Text(L10n.versionString)
-                    .font(.system(size: 10, weight: .light, design: .monospaced))
-                    .foregroundColor(Theme.textDisabled.opacity(0.5))
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 16)
             }
         }
         .onAppear {
@@ -439,16 +433,16 @@ private struct TodayStatsBanner: View {
             statItem(icon: "trophy.fill", color: Theme.success, value: "\(stats.totalWins)",
                      label: L10n.isEnglish ? "Wins" : "胜场")
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                .fill(.ultraThinMaterial)
+                .fill(.thinMaterial)
                 .overlay(
                     RoundedRectangle(cornerRadius: Theme.radiusMD)
-                        .stroke(Theme.gold.opacity(0.12), lineWidth: 0.5)
+                        .stroke(Theme.gold.opacity(0.18), lineWidth: 0.5)
                 )
         )
-        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
     }
 
     private var divider: some View {

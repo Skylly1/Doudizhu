@@ -11,7 +11,7 @@ enum L10n {
 
     // MARK: - 通用
     static var appName: String { localized("斗破乾坤", en: "Dou Po Qian Kun") }
-    static var appSubtitle: String { localized("Roguelike 斗地主", en: "Roguelike Dou Di Zhu") }
+    static var appSubtitle: String { localized("肉鸽牌局 · 乾坤一掷", en: "Roguelike Dou Di Zhu") }
     static var back: String { localized("返回", en: "Back") }
     static var confirm: String { localized("确认", en: "Confirm") }
     static var cancel: String { localized("取消", en: "Cancel") }
@@ -85,9 +85,9 @@ enum L10n {
     static var refreshCost: String { localized("花费15金币刷新商品", en: "Spend 15 gold to refresh items") }
     
     // MARK: - 首屏
-    static var quickStart: String { localized("⚡ 快速开战", en: "⚡ Quick Start") }
-    static var continueRun: String { localized("▶ 继续冒险", en: "▶ Continue Run") }
-    static var dailyChallenge: String { localized("📅 每日挑战", en: "📅 Daily Challenge") }
+    static var quickStart: String { localized("快速开战", en: "Quick Start") }
+    static var continueRun: String { localized("继续冒险", en: "Continue Run") }
+    static var dailyChallenge: String { localized("每日挑战", en: "Daily Challenge") }
     static var comingSoon: String { localized("即将推出", en: "Coming Soon") }
 
     // MARK: - 商店
@@ -256,19 +256,19 @@ enum L10n {
     static func buffCount(_ n: Int) -> String { localized("共 \(n) 种增益道具", en: "\(n) Buffs Total") }
 
     // MARK: - 设置
-    static var settingsSound: String { localized("🔊 音效", en: "🔊 Sound") }
+    static var settingsSound: String { localized("音效", en: "Sound") }
     static var settingsSoundEffect: String { localized("音效", en: "Sound Effects") }
     static var settingsVolume: String { localized("音量", en: "Volume") }
     static var settingsMusic: String { localized("背景音乐", en: "Background Music") }
     static var settingsHaptic: String { localized("震动反馈", en: "Haptic Feedback") }
-    static var settingsGame: String { localized("🎮 游戏", en: "🎮 Game") }
-    static var settingsAbout: String { localized("ℹ️ 关于", en: "ℹ️ About") }
+    static var settingsGame: String { localized("游戏", en: "Game") }
+    static var settingsAbout: String { localized("关于", en: "About") }
     static var settingsVersion: String { localized("版本", en: "Version") }
     static var settingsEngine: String { localized("引擎", en: "Engine") }
-    static var settingsInspiration: String { localized("灵感", en: "Inspiration") }
+    static var settingsInspiration: String { localized("灵感来源", en: "Inspiration") }
     static var versionString: String { localized("v1.0 · 斗破乾坤", en: "v1.0 · Dou Po Qian Kun") }
     static var resetTutorial: String { localized("重置教程", en: "Reset Tutorial") }
-    static var settingsLanguage: String { localized("🌐 语言", en: "🌐 Language") }
+    static var settingsLanguage: String { localized("语言", en: "Language") }
     static var settingsLanguageHint: String { localized("跟随系统语言设置", en: "Follows system language") }
     static var settingsCurrentLang: String { localized("当前：中文", en: "Current: English") }
 

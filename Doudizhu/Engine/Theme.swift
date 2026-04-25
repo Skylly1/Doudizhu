@@ -56,8 +56,8 @@ enum Theme {
 
     /// 主文字 — 暖白（宣纸上的墨）
     static let textPrimary = Color(red: 0.93, green: 0.90, blue: 0.85)
-    static let textSecondary = Color(red: 0.75, green: 0.70, blue: 0.62)
-    static let textTertiary = Color(red: 0.55, green: 0.50, blue: 0.42)
+    static let textSecondary = Color(red: 0.80, green: 0.75, blue: 0.67)
+    static let textTertiary = Color(red: 0.62, green: 0.57, blue: 0.49)
     static let textDisabled = Color(red: 0.40, green: 0.36, blue: 0.30)
 
     // MARK: 字体
@@ -285,12 +285,12 @@ extension View {
 struct GameBackground: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
-            // 三段渐变背景 — 大幅提亮 OLED 可见
+            // 三段渐变背景 — 温暖国潮色
             LinearGradient(
                 colors: [
-                    Color(red: 0.32, green: 0.24, blue: 0.16),
-                    Color(red: 0.22, green: 0.16, blue: 0.11),
-                    Color(red: 0.16, green: 0.11, blue: 0.08)
+                    Color(red: 0.35, green: 0.25, blue: 0.17),
+                    Color(red: 0.24, green: 0.17, blue: 0.12),
+                    Color(red: 0.17, green: 0.12, blue: 0.09)
                 ],
                 startPoint: .top, endPoint: .bottom
             )
@@ -329,45 +329,39 @@ struct GameNavBar: View {
     var trailing: AnyView? = nil
 
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             if let onBack {
                 Button(action: {
                     FeedbackManager.shared.buttonTap()
                     onBack()
                 }) {
-                    Image(systemName: "chevron.left.circle.fill")
-                        .font(.title2)
-                        .foregroundStyle(.ultraThinMaterial)
-                        .symbolRenderingMode(.hierarchical)
+                    Image(systemName: "chevron.left")
+                        .font(.body.weight(.semibold))
+                        .foregroundColor(Theme.textSecondary)
+                        .frame(width: 36, height: 36)
+                        .background(
+                            Circle()
+                                .fill(.ultraThinMaterial)
+                        )
                 }
             }
 
             Spacer()
 
-            VStack(spacing: 2) {
-                if !title.isEmpty {
-                    Text(title)
-                        .font(Theme.fontSection)
-                        .foregroundColor(Theme.textPrimary)
-                }
-                if let subtitle {
-                    Text(subtitle)
-                        .font(Theme.fontCaption)
-                        .foregroundColor(Theme.textTertiary)
-                }
-            }
+            Text(title)
+                .font(.headline)
+                .foregroundColor(Theme.textPrimary)
 
             Spacer()
 
             if let trailing {
                 trailing
             } else if onBack != nil {
-                // 占位保持居中
-                Color.clear.frame(width: 32)
+                Color.clear.frame(width: 36, height: 36)
             }
         }
         .padding(.horizontal, Theme.spacingMD)
-        .padding(.top, Theme.spacingSM)
+        .padding(.vertical, 6)
     }
 }
 

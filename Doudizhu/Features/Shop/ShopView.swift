@@ -15,7 +15,6 @@ struct ShopView: View {
                 // 标题 + 返回
                 GameNavBar(
                     title: L10n.shop,
-                    subtitle: L10n.shopSubtitle,
                     onBack: onQuit,
                     trailing: AnyView(
                         HStack(spacing: 6) {
