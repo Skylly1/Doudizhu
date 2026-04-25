@@ -13,9 +13,9 @@ class BattleScene: SKScene {
     let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量（基准值，实际会根据手牌数动态缩放）
-    private let baseCardWidth: CGFloat = 72
-    private let baseCardHeight: CGFloat = 108
-    private let cardOverlap: CGFloat = 32
+    private let baseCardWidth: CGFloat = 58
+    private let baseCardHeight: CGFloat = 87
+    private let cardOverlap: CGFloat = 28
 
     override func didMove(to view: SKView) {
         // 暖棕底色 — 大幅提亮，OLED 可见
@@ -116,22 +116,22 @@ class BattleScene: SKScene {
         let count = cards.count
 
         // Dynamic card sizing: shrink cards when hand is large
-        let scaleFactor: CGFloat = count <= 8 ? 1.0 : max(0.72, 1.0 - CGFloat(count - 8) * 0.04)
+        let scaleFactor: CGFloat = count <= 7 ? 1.0 : max(0.70, 1.0 - CGFloat(count - 7) * 0.05)
         let cardWidth = baseCardWidth * scaleFactor
         let cardHeight = baseCardHeight * scaleFactor
 
         // 动态计算 overlap 确保不超出屏幕
-        let maxWidth = size.width - 24
+        let maxWidth = size.width - 20
         let idealOverlap = cardOverlap * scaleFactor
         let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        // Leave room for SwiftUI bottom panel (~180pt for buttons + score bar + safe area)
-        let baseY = cardHeight / 2 + 210
+        // Leave room for SwiftUI bottom panel (~160pt for buttons + score bar + safe area)
+        let baseY = cardHeight / 2 + 180
 
-        // 扇形弧度参数
-        let maxAngle: CGFloat = count > 5 ? 0.035 : 0.02  // 每张牌的最大旋转角
-        let arcHeight: CGFloat = count > 5 ? 12 : 6        // 弧线高度
+        // 扇形弧度参数 — 温和弧度
+        let maxAngle: CGFloat = count > 5 ? 0.028 : 0.015
+        let arcHeight: CGFloat = count > 5 ? 8 : 4
 
         for (index, card) in cards.enumerated() {
             let node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))
@@ -331,8 +331,8 @@ class BattleScene: SKScene {
         playedAreaNode.addChild(patternLabel)
 
         // 显示打出的牌（缩小版）
-        let smallSize = CGSize(width: 40, height: 60)
-        let overlap: CGFloat = 22
+        let smallSize = CGSize(width: 34, height: 51)
+        let overlap: CGFloat = 18
         let totalW = CGFloat(cards.count - 1) * overlap + smallSize.width
         let startX = -totalW / 2 + smallSize.width / 2
 

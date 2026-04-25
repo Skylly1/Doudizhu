@@ -560,7 +560,7 @@ struct BattleView: View {
                 Image(systemName: rogueRun.handSortMode.icon)
                     .font(.body.weight(.medium))
                     .foregroundColor(Theme.gold)
-                    .frame(width: 44, height: 50)
+                    .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusSM)
                             .fill(.ultraThinMaterial)
@@ -599,7 +599,7 @@ struct BattleView: View {
                 .font(.body.weight(.medium))
                 .foregroundColor(rogueRun.discardsRemaining > 0 ? Theme.textPrimary : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 50)
+                .frame(height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(.ultraThinMaterial)
@@ -637,7 +637,7 @@ struct BattleView: View {
                 .font(.body.weight(.semibold))
                 .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 50)
+                .frame(height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(playButtonFill)
