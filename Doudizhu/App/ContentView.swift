@@ -2,22 +2,34 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var currentScreen: AppScreen = .home
-    @State private var previousScreen: AppScreen? = nil
+    /// 导航历史栈：支持多层返回
+    @State private var navigationStack: [AppScreen] = []
     @StateObject private var rogueRun = RogueRun()
     @StateObject private var tutorialManager = TutorialManager()
     @StateObject private var purchaseManager = PurchaseManager.shared
     @Environment(\.scenePhase) private var scenePhase
 
-    /// Navigate to a new screen, remembering previous for back gesture
+    // MARK: - 导航方法
+
+    /// 压栈导航：将当前页面入栈，跳转到目标页面
     private func navigate(to screen: AppScreen) {
-        previousScreen = currentScreen
+        navigationStack.append(currentScreen)
         currentScreen = screen
     }
 
-    /// Go back to the logical parent screen
+    /// 弹栈返回：回到上一个页面（栈空则回首页）
     private func goBack() {
-        currentScreen = previousScreen ?? .home
-        previousScreen = nil
+        if let previous = navigationStack.popLast() {
+            currentScreen = previous
+        } else {
+            currentScreen = .home
+        }
+    }
+
+    /// 清栈回首页：退出战斗等场景时直接回到首页
+    private func goHome() {
+        navigationStack.removeAll()
+        currentScreen = .home
     }
 
     var body: some View {
@@ -48,22 +60,25 @@ struct ContentView: View {
                         navigate(to: .battle)
                         tutorialManager.startIfNeeded()
                     }, onBack: {
-                        navigate(to: .map)
+                        goBack()
                     })
-                    .swipeBack { navigate(to: .map) }
+                    .swipeBack { goBack() }
                 case .dailyChallenge:
                     DailyChallengeView(
                         onStart: { challenge in
                             rogueRun.startDailyChallenge(challenge)
                             navigate(to: .battle)
                         },
-                        onBack: { navigate(to: .home) }
+                        onBack: { goBack() }
                     )
-                    .swipeBack { navigate(to: .home) }
+                    .swipeBack { goBack() }
                 case .battle:
                     BattleView(
                         rogueRun: rogueRun,
-                        onBack: { navigate(to: .home) },
+                        onBack: {
+                            SoundManager.shared.stopBGM()
+                            goHome()
+                        },
                         onShop: { navigate(to: .shop) }
                     )
                     .onChange(of: rogueRun.phase) { _, newPhase in
@@ -78,32 +93,42 @@ struct ContentView: View {
                 case .shop:
                     ShopView(rogueRun: rogueRun, onLeave: {
                         rogueRun.leaveShop()
-                        navigate(to: .battle)
+                        goBack()
                     }, onQuit: {
                         SoundManager.shared.stopBGM()
-                        navigate(to: .home)
+                        goHome()
                     })
+                    .swipeBack {
+                        rogueRun.leaveShop()
+                        goBack()
+                    }
                 case .demoGate:
                     DemoGateView(
                         purchaseManager: purchaseManager,
                         onContinue: {
                             rogueRun.advanceToNextFloor()
-                            navigate(to: .battle)
+                            goBack()
                         },
-                        onBack: { navigate(to: .home) }
+                        onBack: {
+                            SoundManager.shared.stopBGM()
+                            goHome()
+                        }
                     )
-                    .swipeBack { navigate(to: .home) }
+                    .swipeBack {
+                        SoundManager.shared.stopBGM()
+                        goHome()
+                    }
                 case .map:
                     MapView(onStart: {
                         navigate(to: .buildSelect)
-                    }, onBack: { navigate(to: .home) })
-                    .swipeBack { navigate(to: .home) }
+                    }, onBack: { goBack() })
+                    .swipeBack { goBack() }
                 case .collection:
-                    CollectionView(onBack: { navigate(to: .home) })
-                        .swipeBack { navigate(to: .home) }
+                    CollectionView(onBack: { goBack() })
+                        .swipeBack { goBack() }
                 case .settings:
-                    SettingsView(onBack: { navigate(to: .home) })
-                        .swipeBack { navigate(to: .home) }
+                    SettingsView(onBack: { goBack() })
+                        .swipeBack { goBack() }
                 }
             }
             .animation(.spring(response: 0.4, dampingFraction: 0.85), value: currentScreen)
