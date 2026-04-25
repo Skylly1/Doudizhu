@@ -15,7 +15,7 @@ struct MapView: View {
             Theme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                GameNavBar(title: L10n.adventurePath, subtitle: L10n.mapSubtitle, onBack: onBack)
+                GameNavBar(title: L10n.adventurePath, onBack: onBack)
 
                 // Stats summary
                 MapStatsSummary(

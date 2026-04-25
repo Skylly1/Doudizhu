@@ -13,7 +13,6 @@ struct DailyChallengeView: View {
             VStack(spacing: 0) {
                 GameNavBar(
                     title: L10n.dailyChallengeTitle,
-                    subtitle: L10n.dailyChallengeSubtitle,
                     onBack: onBack
                 )
 

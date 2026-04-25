@@ -57,7 +57,7 @@ struct SettingsView: View {
                             Divider().background(Theme.border)
                             infoRow(L10n.settingsEngine, value: "SwiftUI + SpriteKit")
                             Divider().background(Theme.border)
-                            infoRow(L10n.settingsInspiration, value: "Balatro × Doudizhu")
+                            infoRow(L10n.settingsInspiration, value: L10n.isEnglish ? "Balatro × Doudizhu" : "Balatro × 斗地主")
                         }
 
                         // 语言
