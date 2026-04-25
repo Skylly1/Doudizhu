@@ -58,7 +58,8 @@ class BattleScene: SKScene {
         dashCircle.zPosition = -5
         addChild(dashCircle)
 
-        let hint = SKLabelNode(text: "出牌区")
+        let hintText = L10n.isEnglish ? "Play Area" : "出牌区"
+        let hint = SKLabelNode(text: hintText)
         hint.fontName = "PingFangSC-Light"
         hint.fontSize = 13
         hint.fontColor = SKColor.white.withAlphaComponent(0.10)
@@ -305,13 +306,34 @@ class BattleScene: SKScene {
     private func showScorePopup(_ result: PlayResult) {
         let y = size.height * 0.52 + 100
 
+        // chips × mult 微型标签（Balatro 风格核心展示）
+        let chipsMultText = "\(result.pattern.baseChips) × \(String(format: "%.1f", result.pattern.baseMult))"
+        let chipsMultLabel = SKLabelNode(text: chipsMultText)
+        chipsMultLabel.fontName = "Helvetica"
+        chipsMultLabel.fontSize = 16
+        chipsMultLabel.fontColor = SKColor.white.withAlphaComponent(0.7)
+        chipsMultLabel.position = CGPoint(x: size.width / 2, y: y + 30)
+        chipsMultLabel.zPosition = 99
+        chipsMultLabel.alpha = 0
+        addChild(chipsMultLabel)
+        chipsMultLabel.run(SKAction.sequence([
+            .fadeIn(withDuration: 0.15),
+            .wait(forDuration: 0.8),
+            SKAction.group([
+                .moveBy(x: 0, y: 20, duration: 0.4),
+                .fadeOut(withDuration: 0.4)
+            ]),
+            .removeFromParent()
+        ]))
+
         // 分数 — 根据大小动态调整
         let scoreText = "+\(result.score)"
         let label = SKLabelNode(text: scoreText)
         label.fontName = "Helvetica-Bold"
-        label.fontSize = result.score >= 200 ? 52 : (result.score >= 100 ? 44 : 36)
-        label.fontColor = result.score >= 200 ? SKColor.systemPink
-            : (result.score >= 100 ? SKColor.orange : SKColor.yellow)
+        label.fontSize = result.score >= 300 ? 56 : (result.score >= 200 ? 48 : (result.score >= 100 ? 42 : 34))
+        label.fontColor = result.score >= 300 ? SKColor.systemPink
+            : (result.score >= 200 ? SKColor.orange
+               : (result.score >= 100 ? SKColor.yellow : SKColor.white))
         label.position = CGPoint(x: size.width / 2, y: y)
         label.zPosition = 100
         label.setScale(0.3)

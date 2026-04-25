@@ -492,12 +492,34 @@ struct BattleView: View {
     private var scoreBreakdownView: some View {
         if case .scoring(let result) = rogueRun.phase {
             VStack(spacing: 2) {
+                // 牌型名称
                 HStack {
                     Text(result.pattern.type.displayName)
                         .font(.caption.bold())
                         .foregroundColor(Theme.cyan)
                     Spacer()
-                    Text("+\(result.pattern.baseScore)")
+                }
+                // chips × mult 核心展示（Balatro 风格）
+                HStack(spacing: 4) {
+                    Text("\(result.pattern.baseChips)")
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundColor(Theme.cyan)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Theme.cyanDim))
+                    Text("×")
+                        .font(.caption2)
+                        .foregroundColor(Theme.textSecondary)
+                    Text(String(format: "%.1f", result.pattern.baseMult))
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundColor(Theme.flame)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Theme.flameDim))
+                    Text("=")
+                        .font(.caption2)
+                        .foregroundColor(Theme.textSecondary)
+                    Text("\(result.pattern.baseScore)")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(Theme.textSecondary)
                 }
@@ -536,7 +558,7 @@ struct BattleView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .frame(maxWidth: 200)
+            .frame(maxWidth: 220)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Theme.bgPrimary.opacity(0.9))
@@ -562,7 +584,13 @@ struct BattleView: View {
                 VStack(spacing: Theme.spacingSM) {
                     statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
                     statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
-                    statRow(L10n.goldEarned, value: "+\(rogueRun.currentFloor.targetScore / 10)")
+                    let baseGold = rogueRun.currentFloor.targetScore / 10
+                    let overScore = max(0, rogueRun.floorScore - rogueRun.effectiveTargetScore)
+                    let overBonus = min(baseGold, overScore / 20)
+                    statRow(L10n.goldEarned, value: "+\(baseGold)")
+                    if overBonus > 0 {
+                        statRow(L10n.overscoreBonus, value: "+\(overBonus) 💰")
+                    }
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
@@ -593,6 +621,13 @@ struct BattleView: View {
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
+
+                // 重试本关按钮
+                PrimaryButton(title: L10n.retryFloor, icon: "arrow.counterclockwise") {
+                    rogueRun.retryCurrentFloor()
+                    battleScene?.refreshHand()
+                }
+                .frame(width: 220)
 
                 Button(L10n.restart) {
                     rogueRun.restart()

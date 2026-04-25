@@ -299,25 +299,25 @@ enum L10n {
     static var jokerEmptyFortName: String { localized("空城计", en: "Empty Fort") }
     static var jokerEmptyFortDesc: String { localized("手牌≤5张时，所有得分×1.5", en: "Score ×1.5 when hand ≤5 cards") }
     static var jokerFireBlazeName: String { localized("火烧连营", en: "Blaze Barrage") }
-    static var jokerFireBlazeDesc: String { localized("炸弹和火箭得分×2", en: "Bomb & Rocket score ×2") }
+    static var jokerFireBlazeDesc: String { localized("炸弹和火箭得分×1.75", en: "Bomb & Rocket score ×1.75") }
     static var jokerRideWaveName: String { localized("顺势而为", en: "Ride the Wave") }
     static var jokerRideWaveDesc: String { localized("顺子和连对得分×2", en: "Straight & Pair Straight score ×2") }
     static var jokerSiegeName: String { localized("四面楚歌", en: "Siege") }
-    static var jokerSiegeDesc: String { localized("手牌中每张2或A，得分+10%", en: "+10% score per 2 or A in hand") }
+    static var jokerSiegeDesc: String { localized("手牌中每张2或A，+8筹码", en: "+8 chips per 2 or A in hand") }
     static var jokerSecretPathName: String { localized("暗度陈仓", en: "Secret Path") }
     static var jokerSecretPathDesc: String { localized("每关换牌次数+2", en: "+2 swaps per floor") }
     static var jokerThunderStrikeName: String { localized("一鸣惊人", en: "Thunderstrike") }
-    static var jokerThunderStrikeDesc: String { localized("每关第一次出牌得分×2.5", en: "First play each floor scores ×2.5") }
+    static var jokerThunderStrikeDesc: String { localized("每关第一次出牌倍率+1.0", en: "+1.0 mult on first play each floor") }
     static var jokerSwitcherooName: String { localized("偷梁换柱", en: "Switcheroo") }
     static var jokerSwitcherooDesc: String { localized("换牌时多抽1张牌", en: "Draw 1 extra card when swapping") }
     static var jokerLastStandName: String { localized("破釜沉舟", en: "Last Stand") }
-    static var jokerLastStandDesc: String { localized("最后1次出牌机会时得分×3", en: "Score ×3 on your final play") }
+    static var jokerLastStandDesc: String { localized("最后1次出牌倍率+1.5", en: "+1.5 mult on your final play") }
     static var jokerPairMasteryName: String { localized("成双成对", en: "Perfect Pair") }
     static var jokerPairMasteryDesc: String { localized("对子得分×2", en: "Pair score ×2") }
     static var jokerTripleThreatName: String { localized("三生万物", en: "Triple Threat") }
-    static var jokerTripleThreatDesc: String { localized("三带类牌型得分+50%", en: "Triple-type patterns +50%") }
+    static var jokerTripleThreatDesc: String { localized("三带类牌型倍率+0.8", en: "+0.8 mult for triple-type patterns") }
     static var jokerGoldRushName: String { localized("点石成金", en: "Gold Rush") }
-    static var jokerGoldRushDesc: String { localized("每次出牌额外获得 5 金币", en: "+5 gold per play") }
+    static var jokerGoldRushDesc: String { localized("每次出牌额外获得 8 金币", en: "+8 gold per play") }
     static var jokerSecondWindName: String { localized("回光返照", en: "Second Wind") }
     static var jokerSecondWindDesc: String { localized("每关额外获得 1 次出牌机会", en: "+1 extra play per floor") }
     static var jokerCardCounterName: String { localized("心算如飞", en: "Card Counter") }
@@ -325,33 +325,33 @@ enum L10n {
     static var jokerLuckyDrawName: String { localized("锦鲤附体", en: "Lucky Koi") }
     static var jokerLuckyDrawDesc: String { localized("换牌改从牌堆底部取（底牌运气更好）", en: "Swap draws from bottom of deck (luckier cards)") }
     static var jokerScoreSurgeName: String { localized("厚积薄发", en: "Score Surge") }
-    static var jokerScoreSurgeDesc: String { localized("当前层得分≥目标50%时，出牌+30%", en: "+30% when floor score ≥50% of target") }
+    static var jokerScoreSurgeDesc: String { localized("层得分≥目标50%时+20筹码", en: "+20 chips when floor score ≥50% target") }
     static var jokerMiniHandName: String { localized("精打细算", en: "Precision Play") }
     static var jokerMiniHandDesc: String { localized("出3张及以下的牌型+60%", en: "+60% for patterns of 3 or fewer cards") }
     static var jokerMultiKillName: String { localized("连环杀", en: "Multi Kill") }
-    static var jokerMultiKillDesc: String { localized("连击≥3时额外+20%加成", en: "Extra +20% at combo ≥3") }
+    static var jokerMultiKillDesc: String { localized("连击≥3时倍率+0.4", en: "+0.4 mult at combo ≥3") }
     static var jokerShieldBreakerName: String { localized("破甲", en: "Shield Breaker") }
-    static var jokerShieldBreakerDesc: String { localized("上次出牌≥100分时，本次+25%", en: "+25% if last play scored ≥100") }
+    static var jokerShieldBreakerDesc: String { localized("上次出牌≥60分时，本次倍率+0.5", en: "+0.5 mult if last play scored ≥60") }
     static var jokerCriticalHitName: String { localized("暴击之手", en: "Critical Hit") }
     static var jokerCriticalHitDesc: String { localized("10%概率双倍得分", en: "10% chance to double score") }
     static var jokerInsuranceName: String { localized("保险单", en: "Insurance") }
     static var jokerInsuranceDesc: String { localized("失败时保留50%分数", en: "Keep 50% score on failure") }
     static var jokerCollectorName: String { localized("同花顺缘", en: "Flush Fate") }
-    static var jokerCollectorDesc: String { localized("同花色出5张以上+50分", en: "+50 pts for 5+ same-suit cards") }
+    static var jokerCollectorDesc: String { localized("同花色出5张+35筹码", en: "+35 chips for 5+ same-suit cards") }
     static var jokerNightOwlName: String { localized("夜枭", en: "Night Owl") }
-    static var jokerNightOwlDesc: String { localized("后半程(8-15关)得分+20%", en: "+20% score in floors 8-15") }
+    static var jokerNightOwlDesc: String { localized("后半程(8-15关)倍率+0.4", en: "+0.4 mult in floors 8-15") }
     static var jokerEarlyBirdName: String { localized("先声夺人", en: "Early Bird") }
     static var jokerEarlyBirdDesc: String { localized("每关第一手出牌+100分", en: "+100 pts on first play each floor") }
     static var jokerMiserName: String { localized("守财奴", en: "Miser") }
-    static var jokerMiserDesc: String { localized("每持有50金币，得分+5%", en: "+5% score per 50 gold held") }
+    static var jokerMiserDesc: String { localized("每持有50金币+8筹码", en: "+8 chips per 50 gold held") }
     static var jokerGamblerName: String { localized("赌徒之心", en: "Gambler's Heart") }
     static var jokerGamblerDesc: String { localized("随机±30%得分（期望+5%）", en: "Random ±30% score (expected +5%)") }
     static var jokerPhoenixName: String { localized("浴火凤凰", en: "Phoenix") }
     static var jokerPhoenixDesc: String { localized("每局游戏可复活一次", en: "Revive once per run") }
     static var jokerDragonName: String { localized("神龙摆尾", en: "Dragon Tail") }
-    static var jokerDragonDesc: String { localized("连击达到5时，下一手3倍得分", en: "×3 score after reaching 5-combo") }
+    static var jokerDragonDesc: String { localized("连击达到5时倍率+2.0", en: "+2.0 mult when reaching 5-combo") }
     static var jokerTideTurnerName: String { localized("逆转乾坤", en: "Tide Turner") }
-    static var jokerTideTurnerDesc: String { localized("得分低于目标30%时，出牌+50%", en: "+50% when score <30% of target") }
+    static var jokerTideTurnerDesc: String { localized("得分低于目标40%时倍率+0.8", en: "+0.8 mult when score <40% of target") }
 
     // MARK: - Floors
     static var floor1Name: String { localized("乡野牌局", en: "Village Game") }
@@ -423,6 +423,13 @@ enum L10n {
     static var emptyStats: String { localized("开始你的第一次冒险吧！", en: "Start your first adventure!") }
     static var emptyAchievements: String { localized("还没有解锁成就，继续冒险吧！", en: "No achievements yet. Keep adventuring!") }
     static var shopRestocking: String { localized("商店正在补货...", en: "Shop is restocking...") }
+
+    // MARK: - 重试 & 超额奖励
+    static var retryFloor: String { localized("重试本关", en: "Retry Floor") }
+    static var overscoreBonus: String { localized("超额奖励", en: "Overscore Bonus") }
+    static var chipsLabel: String { localized("筹码", en: "Chips") }
+    static var multLabel: String { localized("倍率", en: "Mult") }
+    static func refreshShopCost(_ cost: Int) -> String { localized("🔄 刷新 (-\(cost)💰)", en: "🔄 Refresh (-\(cost)💰)") }
 
     // MARK: - 辅助
 

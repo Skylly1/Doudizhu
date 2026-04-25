@@ -296,31 +296,31 @@ struct FloorConfig {
         // === Joker effects split into chip/mult ===
 
         // Mult-boosting Jokers:
-        if combo == 1 && hasJoker(.firstPlayBonus) { mult += 1.5 }
-        if playsRemaining == 0 && hasJoker(.lastStandBonus) { mult += 2.0 }
+        if combo == 1 && hasJoker(.firstPlayBonus) { mult += 1.0 }  // 一鸣惊人: ×2.5→×2.0 (nerf)
+        if playsRemaining == 0 && hasJoker(.lastStandBonus) { mult += 1.5 }  // 破釜沉舟: ×3→×2.5 (nerf)
         if handCards.count - cards.count <= 5 && hasJoker(.lowHandBonus) { mult += 0.5 }
-        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) { mult += 1.0 }
+        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) { mult += 0.75 }  // 火烧连营: ×2→×1.75 (nerf)
         if hasJoker(.sequenceBonus) && (pattern.type == .straight || pattern.type == .pairStraight) { mult += 1.0 }
         if hasJoker(.pairMastery) && pattern.type == .pair { mult += 1.0 }
-        if hasJoker(.tripleThreat) && (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) { mult += 0.5 }
-        if hasJoker(.multiKill) && combo >= 3 { mult += 0.2 }
-        if hasJoker(.shieldBreaker) && lastScoreEarned >= 100 { mult += 0.25 }
-        if hasJoker(.nightOwl) && currentFloor.floor >= 8 { mult += 0.2 }
+        if hasJoker(.tripleThreat) && (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) { mult += 0.8 }  // 三生万物: +0.5→+0.8 (buff)
+        if hasJoker(.multiKill) && combo >= 3 { mult += 0.4 }  // 连环杀: +0.2→+0.4 (buff)
+        if hasJoker(.shieldBreaker) && lastScoreEarned >= 60 { mult += 0.5 }  // 破甲: 100分→60分门槛降低, +0.25→+0.5 (buff)
+        if hasJoker(.nightOwl) && currentFloor.floor >= 8 { mult += 0.4 }  // 夜枭: +0.2→+0.4 (buff)
 
         // Chip-boosting Jokers:
         if hasJoker(.highCardBonus) {
             let highCount = handCards.filter { $0.rank == .two || $0.rank == .ace }.count
-            chips += Double(highCount) * 5.0
+            chips += Double(highCount) * 8.0  // 四面楚歌: 5→8 per K/A/2 (buff)
         }
-        if hasJoker(.cardCounter) && cards.count >= 5 { chips += 20.0 }
+        if hasJoker(.cardCounter) && cards.count >= 5 { chips += 25.0 }  // 心算如飞: 20→25 (buff)
         if hasJoker(.miniHandBonus) && cards.count <= 3 { chips += 15.0 }
-        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 && floorScore >= currentFloor.targetScore / 2 { chips += 15.0 }
+        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 && floorScore >= currentFloor.targetScore / 2 { chips += 20.0 }  // 厚积薄发: 15→20 (buff)
         if hasJoker(.earlyBird) && combo == 1 { chips += 30.0 }
         if hasJoker(.collector) && cards.count >= 5 {
             let suits = Set(cards.compactMap { $0.suit })
-            if suits.count == 1 { chips += 25.0 }
+            if suits.count == 1 { chips += 35.0 }  // 同花顺缘: 25→35 (buff)
         }
-        if hasJoker(.miser) && gold >= 50 { chips += Double(gold / 50) * 5.0 }
+        if hasJoker(.miser) && gold >= 50 { chips += Double(gold / 50) * 8.0 }  // 守财奴: 5→8 per 50g (buff)
 
         // Random/special Jokers:
         if hasJoker(.criticalHit) && Int.random(in: 0..<10) == 0 { mult *= 2.0 }
@@ -328,8 +328,8 @@ struct FloorConfig {
             let roll = Double.random(in: -0.30...0.40)
             mult *= (1.0 + roll)
         }
-        if hasJoker(.dragon) && combo == 6 { mult += 2.0 }
-        if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 3 / 10 { mult += 0.5 }
+        if hasJoker(.dragon) && combo == 5 { mult += 2.0 }  // 神龙摆尾: combo 6→5 门槛降低 (buff)
+        if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 4 / 10 { mult += 0.8 }  // 逆转乾坤: 30%→40%门槛+0.5→+0.8 (buff)
 
         // Engine Jokers
         if hasJoker(.bloodPact) { mult += 3.0 }
@@ -381,10 +381,10 @@ struct FloorConfig {
         totalScore += earned
         lastScoreEarned = earned
 
-        // 规则牌：点石成金 — 每次出牌+5金币
+        // 规则牌：点石成金 — 每次出牌+8金币 (buff: 5→8)
         if hasJoker(.goldRush) {
-            gold += 5
-            PlayerStats.shared.totalGoldEarned += 5
+            gold += 8
+            PlayerStats.shared.totalGoldEarned += 8
         }
 
         // 成就检测
@@ -453,12 +453,16 @@ struct FloorConfig {
     /// 得分动画结束后调用
     func onScoringComplete() {
         if isFloorCleared {
-            let bonus = currentFloor.targetScore / 10
-            gold += bonus
+            let baseBonus = currentFloor.targetScore / 10
+            // 超额奖励：超过目标分的部分按 5% 转化为额外金币（最多翻倍）
+            let overScore = max(0, floorScore - effectiveTargetScore)
+            let overBonus = min(baseBonus, overScore / 20)
+            let totalBonus = baseBonus + overBonus
+            gold += totalBonus
 
             // PlayerStats: floor cleared
             PlayerStats.shared.totalFloors += 1
-            PlayerStats.shared.totalGoldEarned += bonus
+            PlayerStats.shared.totalGoldEarned += totalBonus
             PlayerStats.shared.save()
 
             // 成就检测
@@ -654,6 +658,18 @@ struct FloorConfig {
         PlayerStats.shared.totalRuns += 1
 
         DailyChallenge.markPlayed()
+        startFloor()
+    }
+
+    /// 重试当前关卡（保留 Joker/Buff/金币，重置本层状态）
+    func retryCurrentFloor() {
+        floorScore = 0
+        combo = 0
+        lastPlayResult = nil
+        lastScoreEarned = 0
+        let deal = Deck.dealRoguelike(handSize: 10)
+        handCards = deal.hand
+        drawPile = deal.drawPile
         startFloor()
     }
 
