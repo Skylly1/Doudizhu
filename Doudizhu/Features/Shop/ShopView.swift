@@ -27,10 +27,11 @@ struct ShopView: View {
                         .foregroundColor(Theme.goldDark.opacity(0.7))
                 }
 
-                // 刷新按钮
+                // 刷新按钮（刷新费用随关卡递增：基础10，每层+2，上限25）
+                let refreshCost = min(25, 10 + rogueRun.currentFloorIndex * 2)
                 Button {
-                    if rogueRun.gold >= 15 {
-                        rogueRun.gold -= 15
+                    if rogueRun.gold >= refreshCost {
+                        rogueRun.gold -= refreshCost
                         FeedbackManager.shared.purchase()
                         SoundManager.shared.play(.shopBuy)
                         withAnimation(.spring(response: 0.3)) {
@@ -40,19 +41,19 @@ struct ShopView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.clockwise")
-                        Text(L10n.refreshShop)
+                        Text(L10n.refreshShopCost(refreshCost))
                     }
                     .font(.subheadline.bold())
-                    .foregroundColor(rogueRun.gold >= 15 ? Theme.cyan : Theme.textDisabled)
+                    .foregroundColor(rogueRun.gold >= refreshCost ? Theme.cyan : Theme.textDisabled)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(
                         Capsule()
-                            .fill(rogueRun.gold >= 15 ? Theme.cyanDim : Theme.bgInset)
-                            .stroke(rogueRun.gold >= 15 ? Theme.cyan.opacity(0.3) : Theme.borderLight)
+                            .fill(rogueRun.gold >= refreshCost ? Theme.cyanDim : Theme.bgInset)
+                            .stroke(rogueRun.gold >= refreshCost ? Theme.cyan.opacity(0.3) : Theme.borderLight)
                     )
                 }
-                .disabled(rogueRun.gold < 15)
+                .disabled(rogueRun.gold < refreshCost)
 
                 // 规则牌区
                 if !jokerItems.isEmpty {
@@ -223,7 +224,7 @@ struct ShopView: View {
     private func generateShopItems() {
         let ownedEffects = Set(rogueRun.activeJokers.map(\.effect))
         let availableJokers = JokerUnlockManager.availableJokers.filter { !ownedEffects.contains($0.effect) }.shuffled()
-        jokerItems = availableJokers.prefix(2).map { joker in
+        jokerItems = availableJokers.prefix(3).map { joker in
             let baseCost: Int
             switch joker.rarity {
             case .common:    baseCost = 40
@@ -234,8 +235,8 @@ struct ShopView: View {
         }
 
         let available = Buff.allBuffs.shuffled()
-        shopItems = available.prefix(2).enumerated().map { index, buff in
-            ShopItem(buff: buff, cost: (index + 1) * 30 + Int.random(in: 0...20))
+        shopItems = available.prefix(3).enumerated().map { index, buff in
+            ShopItem(buff: buff, cost: (index + 1) * 25 + Int.random(in: 0...15))
         }
     }
 }

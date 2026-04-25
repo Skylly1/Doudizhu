@@ -36,6 +36,10 @@ struct BattleView: View {
             // SwiftUI 覆盖层
             VStack(spacing: 0) {
                 topBar
+                // 本层出牌记录
+                if !rogueRun.playHistory.isEmpty {
+                    playHistoryBar
+                }
                 Spacer()
                 scoreTargetBar
                     .padding(.bottom, 6)
@@ -212,6 +216,34 @@ struct BattleView: View {
         }
         .padding(.horizontal, Theme.spacingSM)
         .padding(.top, 4)
+    }
+
+    // MARK: - 出牌记录
+
+    private var playHistoryBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(Array(rogueRun.playHistory.enumerated()), id: \.offset) { idx, play in
+                    VStack(spacing: 1) {
+                        Text(play.pattern.type.displayName)
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(Theme.cyan)
+                        Text("+\(play.score)")
+                            .font(.system(size: 10, weight: .semibold).monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Theme.bgInset)
+                            .stroke(play.isFloorCleared ? Theme.gold.opacity(0.4) : Theme.borderLight)
+                    )
+                }
+            }
+            .padding(.horizontal, Theme.spacingSM)
+        }
+        .frame(height: 32)
     }
 
     // MARK: - 分数进度条
@@ -409,7 +441,23 @@ struct BattleView: View {
             }
 
             HStack(spacing: Theme.spacingMD) {
-            // 弃牌按钮
+            // 手牌排序切换
+            Button {
+                rogueRun.toggleSortMode()
+                battleScene?.refreshHand()
+                FeedbackManager.shared.cardTap()
+            } label: {
+                Image(systemName: rogueRun.handSortMode.icon)
+                    .font(.body.weight(.medium))
+                    .foregroundColor(Theme.cyan)
+                    .frame(width: 44, height: 50)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusSM)
+                            .fill(Theme.cyanDim)
+                            .stroke(Theme.cyan.opacity(0.3))
+                    )
+            }
+            .accessibilityLabel(rogueRun.handSortMode.label)
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
@@ -492,12 +540,34 @@ struct BattleView: View {
     private var scoreBreakdownView: some View {
         if case .scoring(let result) = rogueRun.phase {
             VStack(spacing: 2) {
+                // 牌型名称
                 HStack {
                     Text(result.pattern.type.displayName)
                         .font(.caption.bold())
                         .foregroundColor(Theme.cyan)
                     Spacer()
-                    Text("+\(result.pattern.baseScore)")
+                }
+                // chips × mult 核心展示（Balatro 风格）— 使用实际最终值
+                HStack(spacing: 4) {
+                    Text("\(result.chips)")
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundColor(Theme.cyan)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Theme.cyanDim))
+                    Text("×")
+                        .font(.caption2)
+                        .foregroundColor(Theme.textSecondary)
+                    Text(String(format: "%.1f", result.mult))
+                        .font(.caption.bold().monospacedDigit())
+                        .foregroundColor(Theme.flame)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Theme.flameDim))
+                    Text("=")
+                        .font(.caption2)
+                        .foregroundColor(Theme.textSecondary)
+                    Text("\(Int(Double(result.chips) * result.mult))")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(Theme.textSecondary)
                 }
@@ -536,7 +606,7 @@ struct BattleView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .frame(maxWidth: 200)
+            .frame(maxWidth: 220)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Theme.bgPrimary.opacity(0.9))
@@ -562,7 +632,13 @@ struct BattleView: View {
                 VStack(spacing: Theme.spacingSM) {
                     statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
                     statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
-                    statRow(L10n.goldEarned, value: "+\(rogueRun.currentFloor.targetScore / 10)")
+                    let baseGold = rogueRun.currentFloor.targetScore / 10
+                    let overScore = max(0, rogueRun.floorScore - rogueRun.effectiveTargetScore)
+                    let overBonus = min(baseGold, overScore / 20)
+                    statRow(L10n.goldEarned, value: "+\(baseGold)")
+                    if overBonus > 0 {
+                        statRow(L10n.overscoreBonus, value: "+\(overBonus) 💰")
+                    }
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
@@ -593,6 +669,13 @@ struct BattleView: View {
                 }
                 .padding(Theme.spacingMD)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
+
+                // 重试本关按钮
+                PrimaryButton(title: L10n.retryFloor, icon: "arrow.counterclockwise") {
+                    rogueRun.retryCurrentFloor()
+                    battleScene?.refreshHand()
+                }
+                .frame(width: 220)
 
                 Button(L10n.restart) {
                     rogueRun.restart()

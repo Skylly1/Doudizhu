@@ -19,18 +19,18 @@ enum PatternType: String, Codable, Hashable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .single:         return "单张"
-        case .pair:           return "对子"
-        case .triple:         return "三条"
-        case .tripleWithOne:  return "三带一"
-        case .tripleWithPair: return "三带二"
-        case .straight:       return "顺子"
-        case .pairStraight:   return "连对"
-        case .plane:          return "飞机"
-        case .planeWithWings: return "飞机带翅膀"
-        case .bomb:           return "💣 炸弹"
-        case .rocket:         return "🚀 火箭"
-        case .fourWithTwo:    return "四带二"
+        case .single:         return L10n.patternSingle
+        case .pair:           return L10n.patternPair
+        case .triple:         return L10n.patternTriple
+        case .tripleWithOne:  return L10n.patternTripleOne
+        case .tripleWithPair: return L10n.patternTriplePair
+        case .straight:       return L10n.patternStraight
+        case .pairStraight:   return L10n.patternPairStraight
+        case .plane:          return L10n.patternPlane
+        case .planeWithWings: return L10n.patternPlaneWings
+        case .bomb:           return "💣 " + L10n.patternBomb
+        case .rocket:         return "🚀 " + L10n.patternRocket
+        case .fourWithTwo:    return L10n.patternFourTwo
         }
     }
 }

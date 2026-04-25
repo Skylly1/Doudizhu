@@ -60,20 +60,20 @@ struct FloorConfig {
         // === 第一章：乡野篇 ===
         FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 120, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor1Desc, isShop: false),
-        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 200, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 220, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor2Desc, isShop: false),
         FloorConfig(floor: 3, name: L10n.floor3Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor3Desc, isShop: true),
-        FloorConfig(floor: 4, name: L10n.floor4Name, targetScore: 450, maxPlays: 5, maxDiscards: 2,
+        FloorConfig(floor: 4, name: L10n.floor4Name, targetScore: 400, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor4Desc, isShop: false, bossModifiers: [.scoreCap]),
         // === 第二章：府城篇 ===
-        FloorConfig(floor: 5, name: L10n.floor5Name, targetScore: 600, maxPlays: 5, maxDiscards: 2,
+        FloorConfig(floor: 5, name: L10n.floor5Name, targetScore: 550, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor5Desc, isShop: false),
-        FloorConfig(floor: 6, name: L10n.floor6Name, targetScore: 800, maxPlays: 4, maxDiscards: 2,
+        FloorConfig(floor: 6, name: L10n.floor6Name, targetScore: 750, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor6Desc, isShop: false, bossModifiers: [.handShrink]),
         FloorConfig(floor: 7, name: L10n.floor7Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor7Desc, isShop: true),
-        FloorConfig(floor: 8, name: L10n.floor8Name, targetScore: 1200, maxPlays: 4, maxDiscards: 2,
+        FloorConfig(floor: 8, name: L10n.floor8Name, targetScore: 1100, maxPlays: 4, maxDiscards: 2,
                     description: L10n.floor8Desc, isShop: false,
                     bossModifiers: [.bannedPattern]),
         // === 第三章：江湖篇 ===
@@ -96,6 +96,34 @@ struct FloorConfig {
     ]
 }
 
+// MARK: - 手牌排序模式
+
+enum HandSortMode: String, CaseIterable {
+    case byRank = "rank"
+    case bySuit = "suit"
+
+    var icon: String {
+        switch self {
+        case .byRank: return "textformat.123"
+        case .bySuit: return "suit.spade.fill"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .byRank: return L10n.sortByRank
+        case .bySuit: return L10n.sortBySuit
+        }
+    }
+
+    var next: HandSortMode {
+        switch self {
+        case .byRank: return .bySuit
+        case .bySuit: return .byRank
+        }
+    }
+}
+
 // MARK: - Roguelike 核心
 
 @MainActor class RogueRun: ObservableObject {
@@ -114,7 +142,9 @@ struct FloorConfig {
     @Published var lastPlayResult: PlayResult?
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
     @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
+    @Published var playHistory: [PlayResult] = []   // 本层出牌记录
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
+    @Published var handSortMode: HandSortMode = .byRank  // 手牌排序模式
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
     var phoenixUsed: Bool = false               // 浴火凤凰复活是否已使用
     var dailyChallenge: DailyChallenge?         // 每日挑战（非nil表示当前为每日挑战模式）
@@ -177,6 +207,7 @@ struct FloorConfig {
         discardsRemaining = floor.maxDiscards
         combo = 0
         lastPlayResult = nil
+        playHistory = []
         bossState = nil
         
         // Ascension 调整
@@ -296,31 +327,31 @@ struct FloorConfig {
         // === Joker effects split into chip/mult ===
 
         // Mult-boosting Jokers:
-        if combo == 1 && hasJoker(.firstPlayBonus) { mult += 1.5 }
-        if playsRemaining == 0 && hasJoker(.lastStandBonus) { mult += 2.0 }
+        if combo == 1 && hasJoker(.firstPlayBonus) { mult += 1.0 }  // 一鸣惊人: ×2.5→×2.0 (nerf)
+        if playsRemaining == 0 && hasJoker(.lastStandBonus) { mult += 1.5 }  // 破釜沉舟: ×3→×2.5 (nerf)
         if handCards.count - cards.count <= 5 && hasJoker(.lowHandBonus) { mult += 0.5 }
-        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) { mult += 1.0 }
+        if hasJoker(.explosiveBonus) && (pattern.type == .bomb || pattern.type == .rocket) { mult += 0.75 }  // 火烧连营: ×2→×1.75 (nerf)
         if hasJoker(.sequenceBonus) && (pattern.type == .straight || pattern.type == .pairStraight) { mult += 1.0 }
         if hasJoker(.pairMastery) && pattern.type == .pair { mult += 1.0 }
-        if hasJoker(.tripleThreat) && (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) { mult += 0.5 }
-        if hasJoker(.multiKill) && combo >= 3 { mult += 0.2 }
-        if hasJoker(.shieldBreaker) && lastScoreEarned >= 100 { mult += 0.25 }
-        if hasJoker(.nightOwl) && currentFloor.floor >= 8 { mult += 0.2 }
+        if hasJoker(.tripleThreat) && (pattern.type == .triple || pattern.type == .tripleWithOne || pattern.type == .tripleWithPair) { mult += 0.8 }  // 三生万物: +0.5→+0.8 (buff)
+        if hasJoker(.multiKill) && combo >= 3 { mult += 0.4 }  // 连环杀: +0.2→+0.4 (buff)
+        if hasJoker(.shieldBreaker) && lastScoreEarned >= 60 { mult += 0.5 }  // 破甲: 100分→60分门槛降低, +0.25→+0.5 (buff)
+        if hasJoker(.nightOwl) && currentFloor.floor >= 8 { mult += 0.4 }  // 夜枭: +0.2→+0.4 (buff)
 
         // Chip-boosting Jokers:
         if hasJoker(.highCardBonus) {
             let highCount = handCards.filter { $0.rank == .two || $0.rank == .ace }.count
-            chips += Double(highCount) * 5.0
+            chips += Double(highCount) * 8.0  // 四面楚歌: 5→8 per K/A/2 (buff)
         }
-        if hasJoker(.cardCounter) && cards.count >= 5 { chips += 20.0 }
+        if hasJoker(.cardCounter) && cards.count >= 5 { chips += 25.0 }  // 心算如飞: 20→25 (buff)
         if hasJoker(.miniHandBonus) && cards.count <= 3 { chips += 15.0 }
-        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 && floorScore >= currentFloor.targetScore / 2 { chips += 15.0 }
+        if hasJoker(.scoreSurge) && currentFloor.targetScore > 0 && floorScore >= currentFloor.targetScore / 2 { chips += 20.0 }  // 厚积薄发: 15→20 (buff)
         if hasJoker(.earlyBird) && combo == 1 { chips += 30.0 }
         if hasJoker(.collector) && cards.count >= 5 {
             let suits = Set(cards.compactMap { $0.suit })
-            if suits.count == 1 { chips += 25.0 }
+            if suits.count == 1 { chips += 35.0 }  // 同花顺缘: 25→35 (buff)
         }
-        if hasJoker(.miser) && gold >= 50 { chips += Double(gold / 50) * 5.0 }
+        if hasJoker(.miser) && gold >= 50 { chips += Double(gold / 50) * 8.0 }  // 守财奴: 5→8 per 50g (buff)
 
         // Random/special Jokers:
         if hasJoker(.criticalHit) && Int.random(in: 0..<10) == 0 { mult *= 2.0 }
@@ -328,8 +359,8 @@ struct FloorConfig {
             let roll = Double.random(in: -0.30...0.40)
             mult *= (1.0 + roll)
         }
-        if hasJoker(.dragon) && combo == 6 { mult += 2.0 }
-        if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 3 / 10 { mult += 0.5 }
+        if hasJoker(.dragon) && combo == 5 { mult += 2.0 }  // 神龙摆尾: combo 6→5 门槛降低 (buff)
+        if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 4 / 10 { mult += 0.8 }  // 逆转乾坤: 30%→40%门槛+0.5→+0.8 (buff)
 
         // Engine Jokers
         if hasJoker(.bloodPact) { mult += 3.0 }
@@ -341,6 +372,8 @@ struct FloorConfig {
         }
 
         // Calculate final score
+        let finalChips = Int(chips)
+        let finalMult = mult
         var earned = Int(chips * mult)
 
         // === Boss 修改器 ===
@@ -381,10 +414,10 @@ struct FloorConfig {
         totalScore += earned
         lastScoreEarned = earned
 
-        // 规则牌：点石成金 — 每次出牌+5金币
+        // 规则牌：点石成金 — 每次出牌+8金币 (buff: 5→8)
         if hasJoker(.goldRush) {
-            gold += 5
-            PlayerStats.shared.totalGoldEarned += 5
+            gold += 8
+            PlayerStats.shared.totalGoldEarned += 8
         }
 
         // 成就检测
@@ -409,25 +442,62 @@ struct FloorConfig {
             let refillCount = min(10, drawPile.count)
             handCards = Array(drawPile.prefix(refillCount))
             drawPile.removeFirst(refillCount)
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // 规则牌：贪心鬼 — 出牌后额外抽1张
         if hasJoker(.drawAfterPlay) && !drawPile.isEmpty {
             handCards.append(drawPile.removeFirst())
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // Build score breakdown for display
         var breakdown: [ScoreComponent] = []
-        breakdown.append(ScoreComponent(label: pattern.type.displayName, value: pattern.baseScore, isMultiplier: false))
-        let bonus = earned - pattern.baseScore
-        if bonus > 0 {
-            breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Bonus" : "加成", value: bonus, isMultiplier: false))
-        } else if bonus < 0 {
-            breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Penalty" : "减益", value: bonus, isMultiplier: false))
+
+        // 1. Base pattern
+        breakdown.append(ScoreComponent(
+            label: pattern.type.displayName,
+            value: Int(Double(pattern.baseChips) * pattern.baseMult),
+            isMultiplier: false
+        ))
+
+        // 2. Buff contributions
+        let buffChips = activeBuffs.reduce(0) { $0 + $1.chipBonus(pattern: pattern) }
+        let buffMult = activeBuffs.reduce(0.0) { $0 + $1.multBonus(pattern: pattern) }
+        if buffChips > 0 || buffMult > 0 {
+            breakdown.append(ScoreComponent(
+                label: L10n.isEnglish ? "Buff" : "增益",
+                value: Int(Double(buffChips) + buffMult * Double(pattern.baseChips)),
+                isMultiplier: false
+            ))
         }
-        breakdown.append(ScoreComponent(label: L10n.isEnglish ? "Total" : "总计", value: earned, isMultiplier: false))
+
+        // 3. Joker count
+        let jokerContrib = earned - Int(Double(pattern.baseChips + buffChips) * (pattern.baseMult + buffMult) * multiplier)
+        if jokerContrib > 0 && !activeJokers.isEmpty {
+            breakdown.append(ScoreComponent(
+                label: L10n.isEnglish ? "Jokers ×\(activeJokers.count)" : "规则牌 ×\(activeJokers.count)",
+                value: jokerContrib,
+                isMultiplier: false
+            ))
+        }
+
+        // 4. Combo
+        if combo > 1 {
+            let comboValue = Int(Double(pattern.baseChips) * Double(combo - 1) * (hasJoker(.doubleComboRate) ? 0.30 : 0.15))
+            breakdown.append(ScoreComponent(
+                label: "Combo ×\(combo)",
+                value: comboValue,
+                isMultiplier: false
+            ))
+        }
+
+        // 5. Total
+        breakdown.append(ScoreComponent(
+            label: L10n.isEnglish ? "Total" : "总计",
+            value: earned,
+            isMultiplier: false
+        ))
 
         let result = PlayResult(
             pattern: pattern,
@@ -435,9 +505,12 @@ struct FloorConfig {
             totalScore: floorScore,
             combo: combo,
             isFloorCleared: isFloorCleared,
-            breakdown: breakdown
+            breakdown: breakdown,
+            chips: finalChips,
+            mult: finalMult
         )
         lastPlayResult = result
+        playHistory.append(result)
         phase = .scoring(result)
 
         // PlayerStats tracking
@@ -453,12 +526,16 @@ struct FloorConfig {
     /// 得分动画结束后调用
     func onScoringComplete() {
         if isFloorCleared {
-            let bonus = currentFloor.targetScore / 10
-            gold += bonus
+            let baseBonus = currentFloor.targetScore / 10
+            // 超额奖励：超过目标分的部分按 5% 转化为额外金币（最多翻倍）
+            let overScore = max(0, floorScore - effectiveTargetScore)
+            let overBonus = min(baseBonus, overScore / 20)
+            let totalBonus = baseBonus + overBonus
+            gold += totalBonus
 
             // PlayerStats: floor cleared
             PlayerStats.shared.totalFloors += 1
-            PlayerStats.shared.totalGoldEarned += bonus
+            PlayerStats.shared.totalGoldEarned += totalBonus
             PlayerStats.shared.save()
 
             // 成就检测
@@ -533,7 +610,7 @@ struct FloorConfig {
                 drawPile.removeFirst(drawCount)
             }
             handCards.append(contentsOf: drawn)
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // 换牌后如果手牌空了且没达标
@@ -657,6 +734,41 @@ struct FloorConfig {
         startFloor()
     }
 
+    /// 重试当前关卡（保留 Joker/Buff/金币，重置本层状态）
+    func retryCurrentFloor() {
+        floorScore = 0
+        combo = 0
+        lastPlayResult = nil
+        lastScoreEarned = 0
+        playHistory = []
+        let deal = Deck.dealRoguelike(handSize: 10)
+        handCards = deal.hand
+        drawPile = deal.drawPile
+        startFloor()
+    }
+
+    /// 切换手牌排序模式 & 重排
+    func toggleSortMode() {
+        handSortMode = handSortMode.next
+        sortHand()
+    }
+
+    /// 按当前模式排序手牌
+    func sortHand() {
+        switch handSortMode {
+        case .byRank:
+            handCards.sort { $0.rank < $1.rank }
+        case .bySuit:
+            let suitOrder: [Suit: Int] = [.spade: 0, .heart: 1, .club: 2, .diamond: 3]
+            handCards.sort { a, b in
+                let sa = a.suit.flatMap { suitOrder[$0] } ?? 9
+                let sb = b.suit.flatMap { suitOrder[$0] } ?? 9
+                if sa != sb { return sa < sb }
+                return a.rank < b.rank
+            }
+        }
+    }
+
     /// 重新开始整个游戏
     func restart() {
         // 游戏次数成就
@@ -720,6 +832,8 @@ struct PlayResult: Equatable {
     let combo: Int
     let isFloorCleared: Bool
     var breakdown: [ScoreComponent] = []
+    var chips: Int = 0
+    var mult: Double = 1.0
 
     static func == (lhs: PlayResult, rhs: PlayResult) -> Bool {
         lhs.score == rhs.score && lhs.totalScore == rhs.totalScore && lhs.combo == rhs.combo
