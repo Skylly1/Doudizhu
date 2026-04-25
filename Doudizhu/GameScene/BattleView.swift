@@ -31,7 +31,7 @@ struct BattleView: View {
                 SpriteView(scene: scene)
                     .ignoresSafeArea()
             } else {
-                Color(red: 0.13, green: 0.09, blue: 0.06).ignoresSafeArea()
+                Color(red: 0.15, green: 0.10, blue: 0.07).ignoresSafeArea()
             }
 
             // SwiftUI 覆盖层

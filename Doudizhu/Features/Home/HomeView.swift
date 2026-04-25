@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FloatingParticles: View {
-    let count: Int = 25
+    let count: Int = 30
 
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -9,11 +9,24 @@ struct FloatingParticles: View {
                 let time = timeline.date.timeIntervalSinceReferenceDate
                 for i in 0..<count {
                     let seed = Double(i) * 137.5
-                    let x = (sin(seed + time * 0.3) * 0.5 + 0.5) * size.width
-                    let progress = fmod(seed * 0.01 + time * (0.02 + Double(i) * 0.002), 1.0)
+                    let x = (sin(seed + time * 0.25) * 0.5 + 0.5) * size.width
+                    let progress = fmod(seed * 0.01 + time * (0.015 + Double(i) * 0.0015), 1.0)
                     let y = size.height * (1.0 - progress)
-                    let opacity = sin(progress * .pi) * 0.5
-                    let radius = 2.0 + sin(seed) * 1.5
+                    let opacity = sin(progress * .pi) * 0.6
+                    // 混合大小：部分大颗粒（像萤火虫），部分小颗粒
+                    let isLarge = i % 4 == 0
+                    let radius: Double = isLarge ? (3.5 + sin(seed) * 2.0) : (1.8 + sin(seed) * 1.0)
+                    let glowRadius: Double = isLarge ? 6.0 : 0.0
+
+                    // 大颗粒加辉光效果
+                    if isLarge && opacity > 0.2 {
+                        context.opacity = opacity * 0.3
+                        context.fill(
+                            Circle().path(in: CGRect(x: x - glowRadius, y: y - glowRadius,
+                                                      width: glowRadius * 2, height: glowRadius * 2)),
+                            with: .color(Color(red: 0.90, green: 0.75, blue: 0.35))
+                        )
+                    }
 
                     context.opacity = opacity
                     context.fill(
@@ -28,55 +41,128 @@ struct FloatingParticles: View {
     }
 }
 
-/// 水墨山水剪影背景装饰
-struct InkLandscapeDecor: View {
+/// 底部扑克牌扇形展示动画 — 大气的入口视觉
+struct CardFanDecor: View {
+    @State private var appeared = false
+
     var body: some View {
         GeometryReader { geo in
-            Canvas { context, size in
-                // 远山剪影（层层叠叠的山峰）
-                let mountains: [(yBase: CGFloat, height: CGFloat, alpha: Double)] = [
-                    (0.72, 0.12, 0.06),
-                    (0.76, 0.10, 0.08),
-                    (0.80, 0.08, 0.10),
-                ]
-                for mt in mountains {
-                    let path = CGMutablePath()
-                    let yBase = size.height * mt.yBase
-                    path.move(to: CGPoint(x: 0, y: yBase))
-                    let peaks = 7
-                    for p in 0...peaks {
-                        let x = size.width * CGFloat(p) / CGFloat(peaks)
-                        let seed = sin(Double(p) * 2.3 + mt.yBase * 10) * 0.5 + 0.5
-                        let peakH = size.height * mt.height * CGFloat(seed)
-                        path.addLine(to: CGPoint(x: x, y: yBase - peakH))
-                    }
-                    path.addLine(to: CGPoint(x: size.width, y: size.height))
-                    path.addLine(to: CGPoint(x: 0, y: size.height))
-                    path.closeSubpath()
-                    context.opacity = mt.alpha
-                    context.fill(Path(path), with: .color(Color(red: 0.10, green: 0.08, blue: 0.06)))
-                }
+            let w = geo.size.width
+            let h = geo.size.height
+            let centerX = w / 2
+            let baseY = h * 0.88
+            let cardW: CGFloat = 52
+            let cardH: CGFloat = 76
 
-                // 云雾效果（椭圆半透明层）
-                let clouds: [(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, alpha: Double)] = [
-                    (0.2, 0.68, 0.35, 0.04, 0.05),
-                    (0.6, 0.73, 0.30, 0.03, 0.04),
-                    (0.8, 0.65, 0.25, 0.035, 0.03),
-                ]
-                for c in clouds {
-                    let rect = CGRect(
-                        x: size.width * c.x - size.width * c.w / 2,
-                        y: size.height * c.y,
-                        width: size.width * c.w,
-                        height: size.height * c.h
+            // 5 张扇形排列的卡牌
+            let cards: [(rank: String, suit: String, color: Color, angle: Double, offsetX: CGFloat)] = [
+                ("A", "♠", Color(red: 0.15, green: 0.12, blue: 0.10), -18, -80),
+                ("K", "♥", Color(red: 0.72, green: 0.08, blue: 0.08), -9, -40),
+                ("Q", "♠", Color(red: 0.15, green: 0.12, blue: 0.10), 0, 0),
+                ("J", "♦", Color(red: 0.72, green: 0.08, blue: 0.08), 9, 40),
+                ("10", "♣", Color(red: 0.15, green: 0.12, blue: 0.10), 18, 80),
+            ]
+
+            ZStack {
+                // 底部光晕
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.10),
+                                Color.clear
+                            ],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 120
+                        )
                     )
-                    context.opacity = c.alpha
-                    context.fill(Ellipse().path(in: rect),
-                                 with: .color(Color(red: 0.85, green: 0.68, blue: 0.28)))
+                    .frame(width: 280, height: 80)
+                    .position(x: centerX, y: baseY + 20)
+
+                ForEach(Array(cards.enumerated()), id: \.offset) { index, card in
+                    // 单张卡牌
+                    ZStack {
+                        // 牌面
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color(red: 0.95, green: 0.92, blue: 0.86))
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color(red: 0.72, green: 0.62, blue: 0.48).opacity(0.5), lineWidth: 0.8)
+
+                        // 内框
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(Color(red: 0.72, green: 0.55, blue: 0.35).opacity(0.15), lineWidth: 0.4)
+                            .padding(3)
+
+                        VStack(spacing: 1) {
+                            Text(card.rank)
+                                .font(.system(size: 16, weight: .bold, design: .serif))
+                                .foregroundColor(card.color)
+                            Text(card.suit)
+                                .font(.system(size: 12))
+                                .foregroundColor(card.color)
+                        }
+                    }
+                    .frame(width: cardW, height: cardH)
+                    .shadow(color: .black.opacity(0.4), radius: 4, y: 3)
+                    .rotationEffect(.degrees(card.angle))
+                    .position(
+                        x: centerX + card.offsetX,
+                        y: baseY
+                    )
+                    .opacity(appeared ? 1.0 : 0.0)
+                    .offset(y: appeared ? 0 : 30)
+                    .animation(
+                        .spring(response: 0.6, dampingFraction: 0.7).delay(0.8 + Double(index) * 0.08),
+                        value: appeared
+                    )
                 }
             }
         }
         .allowsHitTesting(false)
+        .onAppear { appeared = true }
+    }
+}
+
+/// 底部烟雾/水墨氛围层
+struct BottomMistLayer: View {
+    @State private var shift: CGFloat = 0
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+
+            ZStack {
+                // 底部渐变烟雾
+                LinearGradient(
+                    colors: [
+                        Color.clear,
+                        Color(red: 0.12, green: 0.08, blue: 0.06).opacity(0.3),
+                        Color(red: 0.10, green: 0.07, blue: 0.05).opacity(0.8)
+                    ],
+                    startPoint: .init(x: 0.5, y: 0.7),
+                    endPoint: .bottom
+                )
+
+                // 流动的金色雾气
+                Ellipse()
+                    .fill(Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.06))
+                    .frame(width: w * 0.7, height: 40)
+                    .position(x: w * 0.4 + shift * 20, y: h * 0.82)
+
+                Ellipse()
+                    .fill(Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.04))
+                    .frame(width: w * 0.5, height: 30)
+                    .position(x: w * 0.65 - shift * 15, y: h * 0.86)
+            }
+        }
+        .allowsHitTesting(false)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
+                shift = 1
+            }
+        }
     }
 }
 
@@ -129,61 +215,75 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
-
-            // 装饰背景
-            VStack {
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [Theme.gold.opacity(0.08), Color.clear],
-                            center: .center,
-                            startRadius: 0, endRadius: 250
-                        )
-                    )
-                    .frame(width: 500, height: 500)
-                    .offset(y: -100)
-                Spacer()
-            }
+            // 渐变主背景
+            LinearGradient(
+                colors: [
+                    Color(red: 0.28, green: 0.20, blue: 0.13),
+                    Color(red: 0.18, green: 0.13, blue: 0.09),
+                    Color(red: 0.11, green: 0.08, blue: 0.05)
+                ],
+                startPoint: .top, endPoint: .bottom
+            )
             .ignoresSafeArea()
 
+            // 顶部金色光晕 — 更大更亮
+            RadialGradient(
+                colors: [
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.22),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.06),
+                    Color.clear
+                ],
+                center: .init(x: 0.5, y: 0.15),
+                startRadius: 0,
+                endRadius: 300
+            )
+            .ignoresSafeArea()
+
+            // 底部烟雾氛围
+            BottomMistLayer()
+                .ignoresSafeArea()
+
+            // 浮动粒子
             FloatingParticles()
                 .ignoresSafeArea()
 
-            InkLandscapeDecor()
+            // 底部卡牌扇形装饰
+            CardFanDecor()
                 .ignoresSafeArea()
 
+            // 主内容
             VStack(spacing: 0) {
-                Spacer()
+                Spacer().frame(height: 60)
 
                 // 标题区
-                VStack(spacing: 12) {
-                    // 国潮印章式标识 — "斗"字（加大 + 辉光加强）
+                VStack(spacing: 14) {
+                    // 国潮印章式标识 — "斗"字
                     ZStack {
-                        // 外层辉光
+                        // 大辉光圈
                         Circle()
-                            .fill(Theme.gold.opacity(0.08))
-                            .frame(width: 100, height: 100)
-                            .blur(radius: 20)
+                            .fill(Theme.gold.opacity(0.12))
+                            .frame(width: 120, height: 120)
+                            .blur(radius: 25)
+                        // 外菱形框
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Theme.gold.opacity(0.45), lineWidth: 2)
-                            .frame(width: 68, height: 68)
+                            .stroke(Theme.gold.opacity(0.50), lineWidth: 2)
+                            .frame(width: 72, height: 72)
                             .rotationEffect(.degrees(45))
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Theme.gold.opacity(0.20), lineWidth: 1)
-                            .frame(width: 56, height: 56)
+                        // 内菱形框
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Theme.gold.opacity(0.22), lineWidth: 1)
+                            .frame(width: 58, height: 58)
                             .rotationEffect(.degrees(45))
                         Text("斗")
-                            .font(.system(size: 46, weight: .black, design: .serif))
+                            .font(.system(size: 48, weight: .black, design: .serif))
                             .foregroundStyle(Theme.goldGradient)
                     }
-                    .shadow(color: Theme.gold.opacity(0.4), radius: 16)
+                    .shadow(color: Theme.gold.opacity(0.5), radius: 20)
 
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
                         .foregroundStyle(Theme.goldGradient)
-                        .shadow(color: Theme.gold.opacity(0.4), radius: 12, y: 0)
-                        .shadow(color: Theme.gold.opacity(0.2), radius: 24, y: 0)
+                        .shadow(color: Theme.gold.opacity(0.5), radius: 12, y: 0)
 
                     Text(L10n.appSubtitle)
                         .font(Theme.subtitleFont)
@@ -192,17 +292,17 @@ struct HomeView: View {
 
                     // 装饰分隔线
                     HStack(spacing: 8) {
-                        Rectangle().fill(Theme.gold.opacity(0.2)).frame(width: 30, height: 1)
+                        Rectangle().fill(Theme.gold.opacity(0.25)).frame(width: 35, height: 1)
                         Image(systemName: "rhombus.fill")
                             .font(.system(size: 5))
-                            .foregroundColor(Theme.gold.opacity(0.4))
-                        Rectangle().fill(Theme.gold.opacity(0.2)).frame(width: 30, height: 1)
+                            .foregroundColor(Theme.gold.opacity(0.5))
+                        Rectangle().fill(Theme.gold.opacity(0.25)).frame(width: 35, height: 1)
                     }
                 }
                 .scaleEffect(titleScale)
                 .opacity(titleOpacity)
 
-                Spacer().frame(height: Theme.isCompactScreen ? Theme.spacingLG : Theme.spacingXXL)
+                Spacer().frame(height: Theme.isCompactScreen ? 20 : 36)
 
                 // Ascension 等级展示
                 let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
@@ -225,20 +325,20 @@ struct HomeView: View {
                     PrimaryButton(title: L10n.startAdventure, icon: "play.fill") {
                         onNavigate(.map)
                     }
-                    .padding(.horizontal, 60)
+                    .padding(.horizontal, 50)
                     .offset(y: showButtons[0] ? 0 : 40)
                     .opacity(showButtons[0] ? 1.0 : 0)
 
                     SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
                         onNavigate(.buildSelect)
                     }
-                    .padding(.horizontal, 60)
+                    .padding(.horizontal, 50)
                     .offset(y: showButtons[1] ? 0 : 40)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
                     // Daily Challenge
                     dailyChallengeButton
-                        .padding(.horizontal, 60)
+                        .padding(.horizontal, 50)
                         .offset(y: showButtons[2] ? 0 : 40)
                         .opacity(showButtons[2] ? 1.0 : 0)
 
@@ -250,6 +350,7 @@ struct HomeView: View {
                             onNavigate(.settings)
                         }
                     }
+                    .padding(.horizontal, 50)
                     .offset(y: showButtons[3] ? 0 : 40)
                     .opacity(showButtons[3] ? 1.0 : 0)
                 }
@@ -257,14 +358,10 @@ struct HomeView: View {
                 Spacer()
 
                 // 版本信息
-                Divider()
-                    .frame(width: 40)
-                    .background(Theme.border)
-                    .padding(.bottom, 4)
                 Text(L10n.versionString)
                     .font(.system(size: 10, weight: .light, design: .monospaced))
                     .foregroundColor(Theme.textDisabled.opacity(0.5))
-                    .padding(.bottom, Theme.spacingMD)
+                    .padding(.bottom, 8)
             }
         }
         .onAppear {

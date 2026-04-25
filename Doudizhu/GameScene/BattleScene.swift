@@ -18,12 +18,12 @@ class BattleScene: SKScene {
     private let cardOverlap: CGFloat = 32
 
     override func didMove(to view: SKView) {
-        // 渐变背景 — 上方暖紫檀 → 底部深墨（非纯色黑）
-        backgroundColor = SKColor(red: 0.13, green: 0.09, blue: 0.06, alpha: 1.0)
+        // 暖紫檀底色 — 匹配 Theme.bgPrimary 提亮值
+        backgroundColor = SKColor(red: 0.15, green: 0.10, blue: 0.07, alpha: 1.0)
 
         // 顶部暖光渐变层
         let bgGrad = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.5))
-        bgGrad.fillColor = SKColor(red: 0.22, green: 0.15, blue: 0.10, alpha: 0.35)
+        bgGrad.fillColor = SKColor(red: 0.26, green: 0.18, blue: 0.12, alpha: 0.35)
         bgGrad.strokeColor = .clear
         bgGrad.position = CGPoint(x: size.width / 2, y: size.height * 0.75)
         bgGrad.zPosition = -100
