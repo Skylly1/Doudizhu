@@ -171,6 +171,19 @@ class BattleScene: SKScene {
 
             addChild(node)
             cardNodes.append(node)
+
+            // phantomCards: 幻影牌半透明 + 问号标记
+            if let boss = rogueRun?.bossState, boss.phantomCardIds.contains(card.id) {
+                node.alpha = 0.5
+                let phantom = SKLabelNode(text: "?")
+                phantom.fontName = Theme.spriteKitSerifFontName
+                phantom.fontSize = cardWidth * 0.4
+                phantom.fontColor = SKColor(red: 0.82, green: 0.22, blue: 0.18, alpha: 0.8)
+                phantom.verticalAlignmentMode = .center
+                phantom.zPosition = 10
+                phantom.name = "phantomMark"
+                node.addChild(phantom)
+            }
         }
     }
 
@@ -212,9 +225,13 @@ class BattleScene: SKScene {
         Task { @MainActor in
             FeedbackManager.shared.playCards(score: result.score)
             SoundManager.shared.play(.cardPlay)
-            if result.pattern.type == .bomb || result.pattern.type == .rocket {
+            if result.pattern.type == .bomb {
                 FeedbackManager.shared.explosion()
                 SoundManager.shared.play(.bombExplosion)
+            }
+            if result.pattern.type == .rocket {
+                FeedbackManager.shared.explosion()
+                SoundManager.shared.play(.rocketLaunch)
             }
             if result.combo > 1 {
                 FeedbackManager.shared.comboHit(level: result.combo)
@@ -271,6 +288,19 @@ class BattleScene: SKScene {
 
     private func toggleSelection(_ node: CardNode) {
         let cardId = node.card.id
+
+        // phantomCards: 被标记为幻影的牌无法选中
+        if let boss = rogueRun?.bossState, boss.phantomCardIds.contains(cardId) {
+            // 抖动反馈
+            let shake = SKAction.sequence([
+                .moveBy(x: -4, y: 0, duration: 0.03),
+                .moveBy(x: 8, y: 0, duration: 0.03),
+                .moveBy(x: -8, y: 0, duration: 0.03),
+                .moveBy(x: 4, y: 0, duration: 0.03),
+            ])
+            node.run(shake)
+            return
+        }
 
         Task { @MainActor in
             FeedbackManager.shared.cardTap()
@@ -375,7 +405,7 @@ class BattleScene: SKScene {
 
         // 连击提示
         if result.combo > 1 {
-            let comboLabel = SKLabelNode(text: "🔥 \(result.combo)x COMBO!")
+            let comboLabel = SKLabelNode(text: "\(result.combo)x COMBO!")
             comboLabel.fontName = "Helvetica-Bold"
             comboLabel.fontSize = result.combo >= 4 ? 24 : 18
             comboLabel.fontColor = result.combo >= 4 ? SKColor.systemPink : SKColor.orange
@@ -515,5 +545,131 @@ class BattleScene: SKScene {
             ])
             node.run(shake)
         }
+    }
+
+    // MARK: - 过关庆祝动画
+
+    /// 过关时的全屏庆祝粒子 — 从上方洒落金色粒子
+    func playFloorClearCelebration() {
+        let goldColors: [SKColor] = [
+            SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 1),
+            SKColor(red: 0.96, green: 0.84, blue: 0.45, alpha: 1),
+            SKColor(red: 0.62, green: 0.45, blue: 0.12, alpha: 1),
+        ]
+
+        // 金色光柱
+        for i in 0..<3 {
+            let beam = SKShapeNode(rectOf: CGSize(width: 2, height: size.height * 0.6))
+            beam.fillColor = SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 0.15)
+            beam.strokeColor = .clear
+            beam.position = CGPoint(
+                x: size.width * (0.25 + CGFloat(i) * 0.25),
+                y: size.height * 0.5
+            )
+            beam.zPosition = 160
+            beam.alpha = 0
+            addChild(beam)
+
+            beam.run(SKAction.sequence([
+                .wait(forDuration: Double(i) * 0.1),
+                .fadeAlpha(to: 0.3, duration: 0.15),
+                .fadeOut(withDuration: 0.8),
+                .removeFromParent()
+            ]))
+        }
+
+        // 洒落金色粒子
+        for i in 0..<30 {
+            let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
+            particle.fillColor = goldColors.randomElement()!
+            particle.strokeColor = .clear
+            particle.position = CGPoint(
+                x: CGFloat.random(in: 0...size.width),
+                y: size.height + 20
+            )
+            particle.zPosition = 170
+            addChild(particle)
+
+            let endX = particle.position.x + CGFloat.random(in: -40...40)
+            let endY = CGFloat.random(in: -20...size.height * 0.3)
+            let dur = Double.random(in: 0.6...1.4)
+
+            particle.run(SKAction.sequence([
+                .wait(forDuration: Double(i) * 0.03),
+                SKAction.group([
+                    .move(to: CGPoint(x: endX, y: endY), duration: dur),
+                    .fadeOut(withDuration: dur),
+                    .scale(to: 0.2, duration: dur)
+                ]),
+                .removeFromParent()
+            ]))
+        }
+
+        // 中央金色光环
+        let ring = SKShapeNode(circleOfRadius: 20)
+        ring.strokeColor = SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 0.6)
+        ring.fillColor = .clear
+        ring.lineWidth = 3
+        ring.glowWidth = 8
+        ring.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
+        ring.zPosition = 175
+        ring.setScale(0.1)
+        addChild(ring)
+
+        ring.run(SKAction.sequence([
+            SKAction.group([
+                .scale(to: 8, duration: 0.6),
+                .fadeOut(withDuration: 0.6)
+            ]),
+            .removeFromParent()
+        ]))
+    }
+
+    /// 通关时的全屏烟花效果
+    func playVictoryCelebration() {
+        let celebColors: [SKColor] = [
+            SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 1),
+            SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1),
+            SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1),
+            SKColor(red: 0.48, green: 0.18, blue: 0.74, alpha: 1),
+            SKColor(red: 0.96, green: 0.84, blue: 0.45, alpha: 1),
+        ]
+
+        // 多波次烟花
+        for wave in 0..<3 {
+            let center = CGPoint(
+                x: CGFloat.random(in: size.width * 0.2...size.width * 0.8),
+                y: CGFloat.random(in: size.height * 0.4...size.height * 0.7)
+            )
+
+            for _ in 0..<20 {
+                let spark = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...4))
+                spark.fillColor = celebColors.randomElement()!
+                spark.strokeColor = .clear
+                spark.position = center
+                spark.zPosition = 200
+                spark.alpha = 0
+                addChild(spark)
+
+                let angle = CGFloat.random(in: 0...(2 * .pi))
+                let dist = CGFloat.random(in: 50...140)
+                let dx = cos(angle) * dist
+                let dy = sin(angle) * dist
+                let dur = Double.random(in: 0.4...0.8)
+
+                spark.run(SKAction.sequence([
+                    .wait(forDuration: Double(wave) * 0.4 + Double.random(in: 0...0.1)),
+                    .fadeIn(withDuration: 0.05),
+                    SKAction.group([
+                        .moveBy(x: dx, y: dy, duration: dur),
+                        .fadeOut(withDuration: dur),
+                        .scale(to: 0.1, duration: dur)
+                    ]),
+                    .removeFromParent()
+                ]))
+            }
+        }
+
+        screenShake(intensity: 0.5)
     }
 }

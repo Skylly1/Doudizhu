@@ -6,50 +6,30 @@ struct BuildSelectView: View {
     let onBack: () -> Void
 
     var body: some View {
-        ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
+        VStack(spacing: 0) {
+            GameNavBar(
+                title: L10n.chooseBuild,
+                subtitle: L10n.buildHint,
+                onBack: onBack
+            )
 
-            VStack(spacing: 0) {
-                // Compact inline header
-                HStack(spacing: 12) {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.ultraThinMaterial)
-                            .symbolRenderingMode(.hierarchical)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L10n.chooseBuild)
-                            .font(Theme.fontSection)
-                            .foregroundColor(Theme.textPrimary)
-                        Text(L10n.buildHint)
-                            .font(Theme.fontCaption)
-                            .foregroundColor(Theme.textTertiary)
-                    }
-
-                    Spacer()
-                }
-                .padding(.horizontal, Theme.spacingMD)
-                .padding(.vertical, Theme.spacingSM)
-
-                ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10)
-                    ], spacing: 10) {
-                        ForEach(StarterBuild.allBuilds) { build in
-                            BuildCard(build: build) {
-                                onSelect(build)
-                            }
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 10),
+                    GridItem(.flexible(), spacing: 10)
+                ], spacing: 10) {
+                    ForEach(StarterBuild.allBuilds) { build in
+                        BuildCard(build: build) {
+                            onSelect(build)
                         }
                     }
-                    .padding(.horizontal, Theme.spacingMD)
-                    .padding(.top, Theme.spacingSM)
-                    .padding(.bottom, Theme.spacingXXL)
                 }
+                .padding(.horizontal, Theme.spacingMD)
+                .padding(.top, Theme.spacingSM)
+                .padding(.bottom, Theme.spacingXXL)
             }
         }
+        .gameBackground()
     }
 }
 

@@ -108,10 +108,15 @@ struct Deck {
     }
 
     /// Roguelike 模式发牌：发指定数量手牌，剩余作为牌堆
-    static func dealRoguelike(handSize: Int = 10) -> (hand: [Card], drawPile: [Card]) {
-        let cards = standard().shuffled()
-        let hand = Array(cards.prefix(handSize)).sorted { $0.rank < $1.rank }
-        let drawPile = Array(cards.dropFirst(handSize))
+    static func dealRoguelike(handSize: Int = 10, deckSize: Int? = nil) -> (hand: [Card], drawPile: [Card]) {
+        var cards = standard().shuffled()
+        // 精简牌组：仅保留前 N 张
+        if let size = deckSize, size < cards.count {
+            cards = Array(cards.prefix(size))
+        }
+        let actualHandSize = min(handSize, cards.count)
+        let hand = Array(cards.prefix(actualHandSize)).sorted { $0.rank < $1.rank }
+        let drawPile = Array(cards.dropFirst(actualHandSize))
         return (hand, drawPile)
     }
 }

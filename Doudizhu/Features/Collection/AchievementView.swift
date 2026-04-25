@@ -50,7 +50,7 @@ struct AchievementView: View {
                 ForEach(Achievement.Category.allCases, id: \.self) { category in
                     let items = Achievement.all.filter { $0.category == category }
                     VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                        Text(category.rawValue)
+                        Text(category.displayName)
                             .font(Theme.fontSection)
                             .foregroundColor(Theme.gold)
                             .padding(.horizontal, Theme.spacingLG)
@@ -69,10 +69,22 @@ struct AchievementView: View {
 
     private func achievementRow(_ ach: Achievement) -> some View {
         let unlocked = tracker.isUnlocked(ach.id)
+        let accentColor: Color = switch ach.category {
+        case .progress: Theme.cyan
+        case .scoring:  Theme.gold
+        case .mastery:  Theme.flame
+        case .style:    Theme.legendary
+        }
+
         return HStack(spacing: 12) {
-            Text(ach.icon)
-                .font(.title2)
-                .opacity(unlocked ? 1.0 : 0.3)
+            ZStack {
+                Circle()
+                    .fill(unlocked ? accentColor.opacity(0.15) : Theme.bgInset)
+                    .frame(width: 42, height: 42)
+                Image(systemName: ach.icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(unlocked ? accentColor : Theme.textDisabled)
+            }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(ach.name)
@@ -98,8 +110,9 @@ struct AchievementView: View {
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusSM)
                 .fill(unlocked ? Theme.bgCard : Theme.bgInset)
-                .stroke(unlocked ? Theme.gold.opacity(0.15) : Theme.borderLight)
+                .stroke(unlocked ? accentColor.opacity(0.2) : Theme.borderLight)
         )
+        .shadow(color: unlocked ? accentColor.opacity(0.1) : .clear, radius: 4, y: 2)
         .padding(.horizontal, Theme.spacingMD)
     }
 }
