@@ -168,7 +168,7 @@ private struct FloorNode: View {
 
                     // Node content
                     if state == .cleared {
-                        // Green checkmark overlay
+                        // 金印章"过关"效果
                         Circle()
                             .fill(Theme.success.opacity(0.85))
                             .frame(width: nodeSize, height: nodeSize)
@@ -176,9 +176,13 @@ private struct FloorNode: View {
                             .font(.body.bold())
                             .foregroundColor(.white)
                     } else if floor.isShop {
-                        Text("🏪").font(.title3)
+                        Image(systemName: "dollarsign.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(Theme.gold)
                     } else if floor.isBoss {
-                        Text("💀").font(.title3)
+                        Image(systemName: "flame.fill")
+                            .font(.title3)
+                            .foregroundColor(Theme.flame)
                     } else {
                         Text("\(floor.floor)")
                             .font(.body.bold().monospacedDigit())

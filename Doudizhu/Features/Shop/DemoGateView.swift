@@ -20,8 +20,9 @@ struct DemoGateView: View {
             VStack(spacing: Theme.spacingLG) {
                 Spacer()
 
-                Text("🎴")
-                    .font(.system(size: 72))
+                Image(systemName: "suit.spade.fill")
+                    .font(.system(size: 56, weight: .bold))
+                    .foregroundStyle(Theme.goldGradient)
 
                 Text(L10n.demoOver)
                     .font(Theme.fontHeading)

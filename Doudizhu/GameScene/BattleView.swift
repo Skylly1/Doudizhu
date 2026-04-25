@@ -16,6 +16,7 @@ struct BattleView: View {
     @State private var contextHint: String? = nil
     @State private var playsUsedThisFloor: Int = 0
     @State private var showExitConfirm = false
+    @State private var jokersExpanded = false
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -88,9 +89,13 @@ struct BattleView: View {
                         Text(ach.icon)
                             .font(.title2)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("🎉 \(L10n.achievementUnlocked)")
-                                .font(Theme.fontCaption)
-                                .foregroundColor(Theme.gold)
+                            HStack(spacing: 4) {
+                                Image(systemName: "trophy.fill")
+                                    .foregroundColor(Theme.gold)
+                                Text(L10n.achievementUnlocked)
+                                    .font(Theme.fontCaption)
+                                    .foregroundColor(Theme.gold)
+                            }
                             Text(ach.name)
                                 .font(.headline)
                                 .foregroundColor(Theme.textPrimary)
@@ -281,33 +286,70 @@ struct BattleView: View {
                 .padding(.horizontal)
             }
 
-            // Jokers + Buffs merged into one scrollable row
+            // Jokers + Buffs — 可折叠条
             if !rogueRun.activeJokers.isEmpty || !rogueRun.activeBuffs.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 4) {
-                        ForEach(rogueRun.activeJokers) { joker in
-                            HStack(spacing: 2) {
-                                Text(joker.icon).font(.caption2)
-                                Text(joker.name).font(.caption2)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Capsule().fill(Theme.cyanDim))
-                            .foregroundColor(Theme.cyan)
+                VStack(spacing: 0) {
+                    // Toggle header
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            jokersExpanded.toggle()
                         }
-                        ForEach(rogueRun.activeBuffs) { buff in
-                            HStack(spacing: 2) {
-                                Text(buff.icon).font(.caption2)
-                                Text(buff.name).font(.caption2)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "suit.spade.fill")
+                                .font(.caption2)
+                                .foregroundColor(Theme.cyan)
+                            Text("\(rogueRun.activeJokers.count)")
+                                .font(.caption2.monospacedDigit())
+                                .foregroundColor(Theme.cyan)
+                            if !rogueRun.activeBuffs.isEmpty {
+                                Text("·")
+                                    .foregroundColor(Theme.textTertiary)
+                                Image(systemName: "sparkles")
+                                    .font(.caption2)
+                                    .foregroundColor(Theme.flame)
+                                Text("\(rogueRun.activeBuffs.count)")
+                                    .font(.caption2.monospacedDigit())
+                                    .foregroundColor(Theme.flame)
                             }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Capsule().fill(Theme.flameDim))
-                            .foregroundColor(Theme.flame)
+                            Image(systemName: jokersExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption2)
+                                .foregroundColor(Theme.textTertiary)
                         }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Theme.bgCard.opacity(0.8)))
+                    }
+
+                    if jokersExpanded {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 4) {
+                                ForEach(rogueRun.activeJokers) { joker in
+                                    HStack(spacing: 2) {
+                                        Text(joker.icon).font(.caption2)
+                                        Text(joker.name).font(.caption2)
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Capsule().fill(Theme.cyanDim))
+                                    .foregroundColor(Theme.cyan)
+                                }
+                                ForEach(rogueRun.activeBuffs) { buff in
+                                    HStack(spacing: 2) {
+                                        Text(buff.icon).font(.caption2)
+                                        Text(buff.name).font(.caption2)
+                                    }
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Capsule().fill(Theme.flameDim))
+                                    .foregroundColor(Theme.flame)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
-                .padding(.horizontal)
             }
 
             // Score row: plays / discards / score + progress bar inline
@@ -397,7 +439,7 @@ struct BattleView: View {
 
             // 牌型提示 / 操作提示
             if showNoSelectionHint {
-                Text("👆 \(L10n.selectCardsFirst)")
+                Text(L10n.selectCardsFirst)
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.gold.opacity(0.9))
                     .transition(.scale.combined(with: .opacity))
@@ -621,9 +663,9 @@ struct BattleView: View {
     private var floorWinOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("✨ \(L10n.cleared)")
+                Text(L10n.cleared)
                     .font(.largeTitle.bold())
-                    .foregroundColor(Theme.gold)
+                    .foregroundStyle(Theme.goldGradient)
 
                 Text(rogueRun.currentFloor.name)
                     .font(Theme.subtitleFont)
@@ -637,7 +679,7 @@ struct BattleView: View {
                     let overBonus = min(baseGold, overScore / 20)
                     statRow(L10n.goldEarned, value: "+\(baseGold)")
                     if overBonus > 0 {
-                        statRow(L10n.overscoreBonus, value: "+\(overBonus) 💰")
+                        statRow(L10n.overscoreBonus, value: "+\(overBonus)")
                     }
                 }
                 .padding(Theme.spacingMD)
@@ -655,7 +697,7 @@ struct BattleView: View {
     private var floorFailOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("💀 \(L10n.failed)")
+                Text(L10n.failed)
                     .font(.largeTitle.bold())
                     .foregroundColor(Theme.danger)
 
@@ -692,9 +734,9 @@ struct BattleView: View {
     private var victoryOverlay: some View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
-                Text("🏆 \(L10n.victory)")
+                Text(L10n.victory)
                     .font(.largeTitle.bold())
-                    .foregroundColor(Theme.gold)
+                    .foregroundStyle(Theme.goldGradient)
 
                 Text(L10n.bossDefeated)
                     .font(.title3)
@@ -780,9 +822,12 @@ struct BattleView: View {
                 RoundedRectangle(cornerRadius: Theme.radiusLG)
                     .fill(Theme.bgPrimary.opacity(0.95))
                     .stroke(Theme.gold.opacity(0.2))
+                    .shadow(color: Theme.gold.opacity(0.15), radius: 20)
             )
             .padding(Theme.spacingXL)
+            .transition(.scale(scale: 0.8).combined(with: .opacity))
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.75), value: rogueRun.phase)
     }
 
     private func statRow(_ label: String, value: String) -> some View {

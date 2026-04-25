@@ -18,7 +18,7 @@ class BattleScene: SKScene {
     private let cardOverlap: CGFloat = 30
 
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor(red: 0.02, green: 0.06, blue: 0.10, alpha: 1.0)
+        backgroundColor = SKColor(red: 0.06, green: 0.05, blue: 0.08, alpha: 1.0)
 
         // 出牌区域
         playedAreaNode.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
@@ -371,10 +371,35 @@ class BattleScene: SKScene {
             comboLabel.run(comboAnim)
         }
 
-        // 炸弹/火箭 — 屏幕震动 + 闪白
+        // 炸弹/火箭 — 屏幕震动 + 闪光 + 冲击波环
         if result.pattern.type == .bomb || result.pattern.type == .rocket {
-            screenShake(intensity: result.pattern.type == .rocket ? 1.5 : 1.0)
-            screenFlash(color: result.pattern.type == .rocket ? .red : .orange)
+            let isRocket = result.pattern.type == .rocket
+            screenShake(intensity: isRocket ? 1.5 : 1.0)
+            screenFlash(color: isRocket
+                        ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1.0)
+                        : SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1.0))
+
+            // 冲击波环
+            let ringCenter = CGPoint(x: size.width / 2, y: y)
+            let ring = SKShapeNode(circleOfRadius: 10)
+            ring.strokeColor = isRocket
+                ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 0.8)
+                : SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.8)
+            ring.fillColor = .clear
+            ring.lineWidth = isRocket ? 4 : 3
+            ring.glowWidth = isRocket ? 8 : 5
+            ring.position = ringCenter
+            ring.zPosition = 180
+            ring.setScale(0.1)
+            addChild(ring)
+
+            ring.run(SKAction.sequence([
+                SKAction.group([
+                    .scale(to: isRocket ? 18 : 12, duration: 0.4),
+                    .fadeOut(withDuration: 0.4)
+                ]),
+                .removeFromParent()
+            ]))
         }
 
         // 高连击也震一下
@@ -423,7 +448,13 @@ class BattleScene: SKScene {
     }
 
     private func emitScoreParticles(at pos: CGPoint, count: Int = 12) {
-        let colors: [SKColor] = [.yellow, .orange, .cyan, .systemPink]
+        // 新中式粒子色系：赤金 / 翡翠 / 朱砂 / 紫气
+        let colors: [SKColor] = [
+            SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1),
+            SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1),
+            SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1),
+            SKColor(red: 0.48, green: 0.18, blue: 0.74, alpha: 1)
+        ]
         for _ in 0..<count {
             let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
             particle.fillColor = colors.randomElement()!

@@ -103,8 +103,11 @@ struct HomeView: View {
 
                 // 标题区
                 VStack(spacing: 12) {
-                    Text("🎴")
-                        .font(.system(size: 56))
+                    // 水墨牌面 icon（替代 emoji）
+                    Image(systemName: "suit.spade.fill")
+                        .font(.system(size: 48, weight: .bold))
+                        .foregroundStyle(Theme.goldGradient)
+                        .shadow(color: Theme.gold.opacity(0.3), radius: 8)
 
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
