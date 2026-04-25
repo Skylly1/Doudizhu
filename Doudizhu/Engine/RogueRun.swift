@@ -60,20 +60,20 @@ struct FloorConfig {
         // === 第一章：乡野篇 ===
         FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 120, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor1Desc, isShop: false),
-        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 200, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 220, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor2Desc, isShop: false),
         FloorConfig(floor: 3, name: L10n.floor3Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor3Desc, isShop: true),
-        FloorConfig(floor: 4, name: L10n.floor4Name, targetScore: 450, maxPlays: 5, maxDiscards: 2,
+        FloorConfig(floor: 4, name: L10n.floor4Name, targetScore: 400, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor4Desc, isShop: false, bossModifiers: [.scoreCap]),
         // === 第二章：府城篇 ===
-        FloorConfig(floor: 5, name: L10n.floor5Name, targetScore: 600, maxPlays: 5, maxDiscards: 2,
+        FloorConfig(floor: 5, name: L10n.floor5Name, targetScore: 550, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor5Desc, isShop: false),
-        FloorConfig(floor: 6, name: L10n.floor6Name, targetScore: 800, maxPlays: 4, maxDiscards: 2,
+        FloorConfig(floor: 6, name: L10n.floor6Name, targetScore: 750, maxPlays: 5, maxDiscards: 2,
                     description: L10n.floor6Desc, isShop: false, bossModifiers: [.handShrink]),
         FloorConfig(floor: 7, name: L10n.floor7Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor7Desc, isShop: true),
-        FloorConfig(floor: 8, name: L10n.floor8Name, targetScore: 1200, maxPlays: 4, maxDiscards: 2,
+        FloorConfig(floor: 8, name: L10n.floor8Name, targetScore: 1100, maxPlays: 4, maxDiscards: 2,
                     description: L10n.floor8Desc, isShop: false,
                     bossModifiers: [.bannedPattern]),
         // === 第三章：江湖篇 ===
@@ -96,6 +96,34 @@ struct FloorConfig {
     ]
 }
 
+// MARK: - 手牌排序模式
+
+enum HandSortMode: String, CaseIterable {
+    case byRank = "rank"
+    case bySuit = "suit"
+
+    var icon: String {
+        switch self {
+        case .byRank: return "textformat.123"
+        case .bySuit: return "suit.spade.fill"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .byRank: return L10n.sortByRank
+        case .bySuit: return L10n.sortBySuit
+        }
+    }
+
+    var next: HandSortMode {
+        switch self {
+        case .byRank: return .bySuit
+        case .bySuit: return .byRank
+        }
+    }
+}
+
 // MARK: - Roguelike 核心
 
 @MainActor class RogueRun: ObservableObject {
@@ -115,6 +143,7 @@ struct FloorConfig {
     @Published var combo: Int = 0               // 连续出牌计数（连击加分）
     @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
+    @Published var handSortMode: HandSortMode = .byRank  // 手牌排序模式
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
     var phoenixUsed: Bool = false               // 浴火凤凰复活是否已使用
     var dailyChallenge: DailyChallenge?         // 每日挑战（非nil表示当前为每日挑战模式）
@@ -409,13 +438,13 @@ struct FloorConfig {
             let refillCount = min(10, drawPile.count)
             handCards = Array(drawPile.prefix(refillCount))
             drawPile.removeFirst(refillCount)
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // 规则牌：贪心鬼 — 出牌后额外抽1张
         if hasJoker(.drawAfterPlay) && !drawPile.isEmpty {
             handCards.append(drawPile.removeFirst())
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // Build score breakdown for display
@@ -537,7 +566,7 @@ struct FloorConfig {
                 drawPile.removeFirst(drawCount)
             }
             handCards.append(contentsOf: drawn)
-            handCards.sort { $0.rank < $1.rank }
+            sortHand()
         }
 
         // 换牌后如果手牌空了且没达标
@@ -671,6 +700,28 @@ struct FloorConfig {
         handCards = deal.hand
         drawPile = deal.drawPile
         startFloor()
+    }
+
+    /// 切换手牌排序模式 & 重排
+    func toggleSortMode() {
+        handSortMode = handSortMode.next
+        sortHand()
+    }
+
+    /// 按当前模式排序手牌
+    func sortHand() {
+        switch handSortMode {
+        case .byRank:
+            handCards.sort { $0.rank < $1.rank }
+        case .bySuit:
+            let suitOrder: [Suit: Int] = [.spade: 0, .heart: 1, .club: 2, .diamond: 3]
+            handCards.sort { a, b in
+                let sa = a.suit.flatMap { suitOrder[$0] } ?? 9
+                let sb = b.suit.flatMap { suitOrder[$0] } ?? 9
+                if sa != sb { return sa < sb }
+                return a.rank < b.rank
+            }
+        }
     }
 
     /// 重新开始整个游戏

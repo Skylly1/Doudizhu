@@ -409,7 +409,23 @@ struct BattleView: View {
             }
 
             HStack(spacing: Theme.spacingMD) {
-            // 弃牌按钮
+            // 手牌排序切换
+            Button {
+                rogueRun.toggleSortMode()
+                battleScene?.refreshHand()
+                FeedbackManager.shared.cardTap()
+            } label: {
+                Image(systemName: rogueRun.handSortMode.icon)
+                    .font(.body.weight(.medium))
+                    .foregroundColor(Theme.cyan)
+                    .frame(width: 44, height: 50)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusSM)
+                            .fill(Theme.cyanDim)
+                            .stroke(Theme.cyan.opacity(0.3))
+                    )
+            }
+            .accessibilityLabel(rogueRun.handSortMode.label)
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()

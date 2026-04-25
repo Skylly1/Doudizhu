@@ -431,6 +431,10 @@ enum L10n {
     static var multLabel: String { localized("倍率", en: "Mult") }
     static func refreshShopCost(_ cost: Int) -> String { localized("🔄 刷新 (-\(cost)💰)", en: "🔄 Refresh (-\(cost)💰)") }
 
+    // MARK: - 排序
+    static var sortByRank: String { localized("按点数", en: "By Rank") }
+    static var sortBySuit: String { localized("按花色", en: "By Suit") }
+
     // MARK: - 辅助
 
     private static func localized(_ zh: String, en: String) -> String {
