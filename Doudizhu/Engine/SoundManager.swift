@@ -15,6 +15,9 @@ enum GameSound: Sendable {
     case victory
     case buttonTap
     case achievementUnlock
+    case rocketLaunch
+    case bossAppear
+    case goldCoin
 }
 
 // MARK: - 程序化音效管理器
@@ -101,6 +104,9 @@ final class SoundManager {
         case .victory:            samples = makeVictory()
         case .buttonTap:          samples = makeButtonTap()
         case .achievementUnlock:  samples = makeAchievementUnlock()
+        case .rocketLaunch:       samples = makeRocketLaunch()
+        case .bossAppear:         samples = makeBossAppear()
+        case .goldCoin:           samples = makeGoldCoin()
         }
 
         scheduleBuffer(samples)
@@ -361,5 +367,136 @@ final class SoundManager {
         shimmerPadded += [Float](repeating: 0, count: max(0, maxLen - shimmerPadded.count))
         let combined = mix([part2, shimmerPadded])
         return concat([part1, combined])
+    }
+
+    /// Rocket whoosh + explosion (~400ms)
+    private func makeRocketLaunch() -> [Float] {
+        let count = Int(sampleRate * 0.4)
+        let whoosh: [Float] = (0..<count).map { i in
+            let t = Float(i) / Float(sampleRate)
+            let freq: Float = 200 + 2000 * t * t  // accelerating rise
+            return 0.15 * sinf(2 * .pi * freq * t)
+        }
+        let noiseBurst = envelope(
+            noise(duration: 0.4, amplitude: 0.15),
+            attack: 0.01, decay: 0.1, sustain: 0.05, release: 0.25
+        )
+        return mix([
+            envelope(whoosh, attack: 0.01, decay: 0.1, sustain: 0.08, release: 0.22),
+            noiseBurst
+        ])
+    }
+
+    /// Ominous boss entrance (~600ms)
+    private func makeBossAppear() -> [Float] {
+        let deep = envelope(
+            sine(frequency: 80, duration: 0.6, amplitude: 0.35),
+            attack: 0.05, decay: 0.1, sustain: 0.15, release: 0.3
+        )
+        let dissonant = envelope(
+            sine(frequency: 113, duration: 0.5, amplitude: 0.15),
+            attack: 0.08, decay: 0.1, sustain: 0.1, release: 0.22
+        )
+        let rumble = envelope(
+            noise(duration: 0.6, amplitude: 0.08),
+            attack: 0.05, decay: 0.15, sustain: 0.05, release: 0.35
+        )
+        return mix([deep, dissonant, rumble])
+    }
+
+    /// Quick coin collect (~120ms)
+    private func makeGoldCoin() -> [Float] {
+        let ping = envelope(
+            sine(frequency: 2400, duration: 0.12, amplitude: 0.15),
+            attack: 0.002, decay: 0.02, sustain: 0.03, release: 0.07
+        )
+        let harmonic = envelope(
+            sine(frequency: 3600, duration: 0.08, amplitude: 0.06),
+            attack: 0.002, decay: 0.015, sustain: 0.01, release: 0.05
+        )
+        return mix([ping, harmonic])
+    }
+
+    // MARK: - BGM System
+
+    private var bgmPlayerNode: AVAudioPlayerNode?
+    private var bgmTimer: Timer?
+    private var isBGMPlaying = false
+
+    /// 开始播放程序化环境 BGM
+    func startBGM() {
+        guard UserDefaults.standard.bool(forKey: "musicEnabled") else { return }
+        guard !isBGMPlaying else { return }
+        isBGMPlaying = true
+        ensureRunning()
+        playBGMLoop()
+    }
+
+    /// 停止 BGM
+    func stopBGM() {
+        isBGMPlaying = false
+        bgmTimer?.invalidate()
+        bgmTimer = nil
+        bgmPlayerNode?.stop()
+    }
+
+    /// 程序化 BGM — 古风五声音阶旋律循环
+    private func playBGMLoop() {
+        guard isBGMPlaying else { return }
+
+        let samples = generateBGMPhrase()
+        scheduleBuffer(samples)
+
+        // 循环播放（每个乐句约4秒）
+        let phraseDuration = Double(samples.count) / sampleRate
+        bgmTimer = Timer.scheduledTimer(withTimeInterval: phraseDuration, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                self?.playBGMLoop()
+            }
+        }
+    }
+
+    /// 生成一个 BGM 乐句（五声音阶 + 随机变化）
+    private func generateBGMPhrase() -> [Float] {
+        // 中国五声音阶 (宫商角徵羽): C D E G A
+        let pentatonic: [Float] = [262, 294, 330, 392, 440, 523, 588, 660]
+        let noteDurations: [Float] = [0.4, 0.3, 0.5, 0.6, 0.35, 0.45]
+
+        var phrase: [[Float]] = []
+        let noteCount = Int.random(in: 6...9)
+
+        for i in 0..<noteCount {
+            let freq = pentatonic.randomElement()!
+            let dur = noteDurations.randomElement()!
+            let amp: Float = Float.random(in: 0.03...0.06)
+
+            let note = envelope(
+                sine(frequency: freq, duration: dur, amplitude: amp),
+                attack: 0.02, decay: 0.05, sustain: 0.5, release: dur * 0.4
+            )
+
+            // 偶尔加泛音（古筝效果）
+            if i % 3 == 0 {
+                let harmonic = envelope(
+                    sine(frequency: freq * 2, duration: dur * 0.6, amplitude: amp * 0.25),
+                    attack: 0.01, decay: 0.03, sustain: 0.2, release: dur * 0.3
+                )
+                let maxLen = max(note.count, harmonic.count)
+                var padNote = note + [Float](repeating: 0, count: max(0, maxLen - note.count))
+                let padHarm = harmonic + [Float](repeating: 0, count: max(0, maxLen - harmonic.count))
+                padNote = mix([padNote, padHarm])
+                phrase.append(padNote)
+            } else {
+                phrase.append(note)
+            }
+
+            // 随机间隔
+            if Bool.random() {
+                let silence = [Float](repeating: 0, count: Int(sampleRate * Double(Float.random(in: 0.1...0.25))))
+                phrase.append(silence)
+            }
+        }
+
+        return concat(phrase)
     }
 }

@@ -14,17 +14,19 @@ struct DailyChallenge {
         let comps = cal.dateComponents([.year, .month, .day], from: Date())
         let seed = UInt64(comps.year! * 10000 + comps.month! * 100 + comps.day!)
 
-        // Rotate modifiers based on day of week
+        // Rotate modifiers based on day of week + week parity
         let dayOfWeek = cal.component(.weekday, from: Date())
+        let weekOfYear = cal.component(.weekOfYear, from: Date())
+        let isEvenWeek = weekOfYear % 2 == 0
         let mods: [DailyChallengeModifier] = {
             switch dayOfWeek {
-            case 1: return [.noBombs]           // Sunday: no bombs allowed
-            case 2: return [.halfGold]           // Monday: start with half gold
-            case 3: return [.extraPlays]         // Tuesday: +2 plays per floor
-            case 4: return [.noDiscards]         // Wednesday: no discards
-            case 5: return [.doubleScore]        // Thursday: 2x scoring
-            case 6: return [.speedRun]           // Friday: 3 plays max per floor
-            case 7: return [.bossRush]           // Saturday: every 3rd floor is boss
+            case 1: return [isEvenWeek ? .noBombs : .allOrNothing]
+            case 2: return [isEvenWeek ? .halfGold : .goldRush]
+            case 3: return [isEvenWeek ? .extraPlays : .giantHand]
+            case 4: return [isEvenWeek ? .noDiscards : .tinyDeck]
+            case 5: return [isEvenWeek ? .doubleScore : .mirrorMatch]
+            case 6: return [isEvenWeek ? .speedRun : .bossRush]
+            case 7: return [.bossRush, .speedRun]   // Saturday: double modifier
             default: return []
             }
         }()
@@ -73,6 +75,12 @@ enum DailyChallengeModifier: String, CaseIterable {
     case doubleScore = "double_score"
     case speedRun = "speed_run"
     case bossRush = "boss_rush"
+    // 新增 5 种模式
+    case giantHand = "giant_hand"        // 手牌+5张
+    case tinyDeck = "tiny_deck"          // 牌堆仅36张
+    case allOrNothing = "all_or_nothing" // 只能炸弹/火箭得分
+    case goldRush = "gold_rush"          // 金币×3但商店价格×2
+    case mirrorMatch = "mirror_match"    // 每层都有Boss修改器
 
     var name: String {
         switch self {
@@ -83,18 +91,28 @@ enum DailyChallengeModifier: String, CaseIterable {
         case .doubleScore: return L10n.isEnglish ? "Double Score" : "双倍得分"
         case .speedRun: return L10n.isEnglish ? "Speed Run" : "极速挑战"
         case .bossRush: return L10n.isEnglish ? "Boss Rush" : "Boss连战"
+        case .giantHand: return L10n.isEnglish ? "Giant Hand" : "巨人之手"
+        case .tinyDeck: return L10n.isEnglish ? "Tiny Deck" : "精简牌组"
+        case .allOrNothing: return L10n.isEnglish ? "All or Nothing" : "孤注一掷"
+        case .goldRush: return L10n.isEnglish ? "Gold Rush" : "淘金热"
+        case .mirrorMatch: return L10n.isEnglish ? "Mirror Match" : "镜像对决"
         }
     }
 
     var icon: String {
         switch self {
-        case .noBombs: return "💣"
-        case .halfGold: return "💰"
-        case .extraPlays: return "🃏"
-        case .noDiscards: return "🚫"
-        case .doubleScore: return "✨"
-        case .speedRun: return "⚡"
-        case .bossRush: return "⚔️"
+        case .noBombs: return "nosign"
+        case .halfGold: return "dollarsign.circle"
+        case .extraPlays: return "hand.raised.fill"
+        case .noDiscards: return "xmark.circle.fill"
+        case .doubleScore: return "sparkles"
+        case .speedRun: return "bolt.fill"
+        case .bossRush: return "flame.fill"
+        case .giantHand: return "hand.wave.fill"
+        case .tinyDeck: return "rectangle.stack.fill"
+        case .allOrNothing: return "target"
+        case .goldRush: return "bitcoinsign.circle.fill"
+        case .mirrorMatch: return "arrow.left.arrow.right"
         }
     }
 }

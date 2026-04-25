@@ -34,13 +34,49 @@ struct DemoGateView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
 
+                // 进度指示器 — 展示已解锁比例
+                let demoFloors = 5
+                let totalFloors = FloorConfig.allFloors.count
+                let unlockedPercent = Int(Double(demoFloors) / Double(totalFloors) * 100)
+                VStack(spacing: 6) {
+                    HStack {
+                        Text(L10n.isEnglish ? "Content Unlocked" : "已解锁内容")
+                            .font(.caption.bold())
+                            .foregroundColor(Theme.textSecondary)
+                        Spacer()
+                        Text("\(unlockedPercent)%")
+                            .font(.caption.bold().monospacedDigit())
+                            .foregroundColor(Theme.gold)
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Theme.bgInset)
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Theme.goldGradient)
+                                .frame(width: geo.size.width * CGFloat(unlockedPercent) / 100.0)
+                        }
+                    }
+                    .frame(height: 8)
+
+                    let remainingFloors = totalFloors - demoFloors
+                    let totalJokers = Joker.allJokers.count
+                    Text(L10n.isEnglish
+                         ? "Purchase to unlock \(remainingFloors) more floors, \(totalJokers)+ Jokers & all future updates"
+                         : "购买解锁\(remainingFloors)层关卡、\(totalJokers)+规则牌及所有后续更新")
+                        .font(.system(size: 11))
+                        .foregroundColor(Theme.textTertiary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal, Theme.spacingLG)
+
                 // 完整版特权
                 VStack(alignment: .leading, spacing: 14) {
-                    featureRow(icon: "🏔️", text: L10n.featureAllFloors)
-                    featureRow(icon: "🔥", text: L10n.featureAscension)
-                    featureRow(icon: "🃏", text: L10n.featureJokers)
-                    featureRow(icon: "🏆", text: L10n.featureLeaderboard)
-                    featureRow(icon: "🔄", text: L10n.featureUpdates)
+                    featureRow(systemIcon: "mountain.2.fill", color: Theme.cyan, text: L10n.featureAllFloors)
+                    featureRow(systemIcon: "flame.fill", color: Theme.flame, text: L10n.featureAscension)
+                    featureRow(systemIcon: "suit.spade.fill", color: Theme.gold, text: L10n.featureJokers)
+                    featureRow(systemIcon: "trophy.fill", color: Theme.gold, text: L10n.featureLeaderboard)
+                    featureRow(systemIcon: "arrow.triangle.2.circlepath", color: Theme.success, text: L10n.featureUpdates)
                 }
                 .padding(Theme.spacingLG)
                 .background(
@@ -89,9 +125,12 @@ struct DemoGateView: View {
         }
     }
 
-    private func featureRow(icon: String, text: String) -> some View {
+    private func featureRow(systemIcon: String, color: Color, text: String) -> some View {
         HStack(spacing: 12) {
-            Text(icon).font(.title3)
+            Image(systemName: systemIcon)
+                .font(.title3)
+                .foregroundColor(color)
+                .frame(width: 28)
             Text(text)
                 .font(.subheadline)
                 .foregroundColor(Theme.textSecondary)

@@ -66,6 +66,17 @@ enum JokerEffect: String, Codable, Hashable {
     case infiniteLoop       // 无限循环: If exactly 0 cards left after play, refill hand from draw pile
     case bloodPact          // 血契: +3.0 mult but hand size permanently -1
     case fortuneWheel       // 命运之轮: Each Joker slot adds +0.5 mult
+    // 第五批 10 种 — 高级策略
+    case bombChain          // 连锁爆破: 炸弹后下一手+50%
+    case handOverflow       // 爆手牌: 手牌>8张时+20%
+    case patternVariety     // 博采众长: 本层使用过3+种不同牌型后+30%
+    case goldConverter      // 金石为开: 每50金币转化+15筹码
+    case trashToTreasure    // 化腐为奇: 弃牌后下一手+40%
+    case kingSlayer         // 弑君者: 包含K的牌型+25%
+    case aceHigh            // 以A为尊: 包含A的牌型+20筹码
+    case planeBonus         // 展翅高飞: 飞机类牌型+80%
+    case straightFlush      // 同花连珠: 顺子且同花色时×3
+    case endgameSurge       // 终局冲刺: 最后2次出牌机会+40%
 }
 
 /// 规则牌
@@ -345,6 +356,77 @@ extension Joker {
             effect: .fortuneWheel,
             icon: "🎡",
             rarity: .legendary
+        ),
+        // ── 第五批 10 张 — 高级策略 ──
+        Joker(
+            name: L10n.isEnglish ? "Chain Blast" : "连锁爆破",
+            description: L10n.isEnglish ? "+50% after bomb" : "炸弹后下一手+50%",
+            effect: .bombChain,
+            icon: "💥",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Overflow" : "爆手牌",
+            description: L10n.isEnglish ? "+20% when 8+ cards" : "手牌>8时+20%",
+            effect: .handOverflow,
+            icon: "🃏",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Variety Show" : "博采众长",
+            description: L10n.isEnglish ? "+30% after 3+ pattern types" : "本层使用3+种牌型后+30%",
+            effect: .patternVariety,
+            icon: "🎪",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Gold Converter" : "金石为开",
+            description: L10n.isEnglish ? "+15 chips per 50 gold" : "每50金币+15筹码",
+            effect: .goldConverter,
+            icon: "⚗️",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Trash to Treasure" : "化腐为奇",
+            description: L10n.isEnglish ? "+40% after discard" : "弃牌后下一手+40%",
+            effect: .trashToTreasure,
+            icon: "♻️",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "King Slayer" : "弑君者",
+            description: L10n.isEnglish ? "+25% with K" : "含K的牌型+25%",
+            effect: .kingSlayer,
+            icon: "👑",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Ace High" : "以A为尊",
+            description: L10n.isEnglish ? "+20 chips with A" : "含A牌型+20筹码",
+            effect: .aceHigh,
+            icon: "🅰️",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Soaring Plane" : "展翅高飞",
+            description: L10n.isEnglish ? "+80% for planes" : "飞机类牌型+80%",
+            effect: .planeBonus,
+            icon: "✈️",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Straight Flush" : "同花连珠",
+            description: L10n.isEnglish ? "×3 for flush straight" : "同花顺子×3",
+            effect: .straightFlush,
+            icon: "💎",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Endgame Surge" : "终局冲刺",
+            description: L10n.isEnglish ? "+40% in last 2 plays" : "最后2次出牌+40%",
+            effect: .endgameSurge,
+            icon: "⏰",
+            rarity: .rare
         ),
     ]
 }

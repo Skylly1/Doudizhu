@@ -167,10 +167,12 @@ struct BottomMistLayer: View {
 }
 
 struct HomeView: View {
+    let hasSavedGame: Bool
     let onNavigate: (AppScreen) -> Void
+    let onContinue: () -> Void
     @State private var titleScale: CGFloat = 0.8
     @State private var titleOpacity: Double = 0
-    @State private var showButtons = [false, false, false, false]
+    @State private var showButtons = [false, false, false, false, false]
     @State private var dailyPulse = false
 
     private var dailyChallengeButton: some View {
@@ -180,8 +182,9 @@ struct HomeView: View {
             if !played { onNavigate(.dailyChallenge) }
         } label: {
             HStack(spacing: 8) {
-                Text(daily.modifiers.first?.icon ?? "📅")
+                Image(systemName: daily.modifiers.first?.icon ?? "calendar")
                     .font(.body)
+                    .foregroundColor(Theme.flame)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(played
                          ? (L10n.isEnglish ? "Completed" : "已完成")
@@ -326,25 +329,45 @@ struct HomeView: View {
 
                 // 菜单按钮
                 VStack(spacing: 14) {
-                    PrimaryButton(title: L10n.startAdventure, icon: "play.fill") {
-                        onNavigate(.map)
+                    // 继续冒险（有存档时显示）
+                    if hasSavedGame {
+                        PrimaryButton(
+                            title: L10n.isEnglish ? "Continue" : "继续冒险",
+                            icon: "play.circle.fill",
+                            gradient: LinearGradient(
+                                colors: [Theme.cyan, Theme.cyan.opacity(0.7)],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        ) {
+                            onContinue()
+                        }
+                        .padding(.horizontal, 50)
+                        .offset(y: showButtons[0] ? 0 : 40)
+                        .opacity(showButtons[0] ? 1.0 : 0)
                     }
-                    .padding(.horizontal, 50)
-                    .offset(y: showButtons[0] ? 0 : 40)
-                    .opacity(showButtons[0] ? 1.0 : 0)
 
-                    SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
-                        onNavigate(.buildSelect)
+                    PrimaryButton(title: hasSavedGame
+                                  ? (L10n.isEnglish ? "New Run" : "新的冒险")
+                                  : L10n.startAdventure,
+                                  icon: hasSavedGame ? "plus.circle.fill" : "play.fill") {
+                        onNavigate(.map)
                     }
                     .padding(.horizontal, 50)
                     .offset(y: showButtons[1] ? 0 : 40)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
+                    SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
+                        onNavigate(.buildSelect)
+                    }
+                    .padding(.horizontal, 50)
+                    .offset(y: showButtons[2] ? 0 : 40)
+                    .opacity(showButtons[2] ? 1.0 : 0)
+
                     // Daily Challenge
                     dailyChallengeButton
                         .padding(.horizontal, 50)
-                        .offset(y: showButtons[2] ? 0 : 40)
-                        .opacity(showButtons[2] ? 1.0 : 0)
+                        .offset(y: showButtons[3] ? 0 : 40)
+                        .opacity(showButtons[3] ? 1.0 : 0)
 
                     HStack(spacing: 12) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
@@ -355,11 +378,16 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 50)
-                    .offset(y: showButtons[3] ? 0 : 40)
-                    .opacity(showButtons[3] ? 1.0 : 0)
+                    .offset(y: showButtons[4] ? 0 : 40)
+                    .opacity(showButtons[4] ? 1.0 : 0)
                 }
 
                 Spacer()
+
+                // 今日数据概览
+                TodayStatsBanner()
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 6)
 
                 // 版本信息
                 Text(L10n.versionString)
@@ -385,6 +413,9 @@ struct HomeView: View {
             withAnimation(.easeOut(duration: 0.5).delay(0.65)) {
                 showButtons[3] = true
             }
+            withAnimation(.easeOut(duration: 0.5).delay(0.75)) {
+                showButtons[4] = true
+            }
             withAnimation(.easeInOut(duration: 1.5).repeatForever().delay(0.8)) {
                 dailyPulse = true
             }
@@ -392,6 +423,56 @@ struct HomeView: View {
     }
 }
 
+// MARK: - 今日数据横条
+
+private struct TodayStatsBanner: View {
+    @ObservedObject private var stats = PlayerStats.shared
+
+    var body: some View {
+        HStack(spacing: 0) {
+            statItem(icon: "gamecontroller.fill", color: Theme.cyan, value: "\(stats.totalRuns)",
+                     label: L10n.isEnglish ? "Runs" : "局数")
+            divider
+            statItem(icon: "crown.fill", color: Theme.gold, value: "\(stats.highestSingleScore)",
+                     label: L10n.isEnglish ? "Best" : "最高分")
+            divider
+            statItem(icon: "trophy.fill", color: Theme.success, value: "\(stats.totalWins)",
+                     label: L10n.isEnglish ? "Wins" : "胜场")
+        }
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .stroke(Theme.gold.opacity(0.12), lineWidth: 0.5)
+                )
+        )
+        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+    }
+
+    private var divider: some View {
+        Rectangle().fill(Theme.border).frame(width: 1, height: 22)
+    }
+
+    private func statItem(icon: String, color: Color, value: String, label: String) -> some View {
+        VStack(spacing: 2) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10))
+                    .foregroundColor(color)
+                Text(value)
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(Theme.textPrimary)
+            }
+            Text(label)
+                .font(.system(size: 9))
+                .foregroundColor(Theme.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
 #Preview {
-    HomeView(onNavigate: { _ in })
+    HomeView(hasSavedGame: true, onNavigate: { _ in }, onContinue: {})
 }

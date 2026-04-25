@@ -17,6 +17,10 @@ struct BattleView: View {
     @State private var playsUsedThisFloor: Int = 0
     @State private var showExitConfirm = false
     @State private var jokersExpanded = false
+    @State private var showPauseMenu = false
+    @AppStorage("soundEnabled") private var soundEnabled = true
+    @AppStorage("musicEnabled") private var musicEnabled = true
+    @AppStorage("hapticEnabled") private var hapticEnabled = true
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -57,6 +61,12 @@ struct BattleView: View {
                         FeedbackManager.shared.floorWin()
                         SoundManager.shared.play(.floorClear)
                         ReviewManager.recordFloorWin()
+                        battleScene?.playFloorClearCelebration()
+                    }
+            } else if case .specialEvent(let event) = rogueRun.phase {
+                specialEventOverlay(event: event)
+                    .onAppear {
+                        SoundManager.shared.play(.buttonTap)
                     }
             } else if rogueRun.phase == .floorFail {
                 floorFailOverlay
@@ -69,7 +79,13 @@ struct BattleView: View {
                     .onAppear {
                         FeedbackManager.shared.victory()
                         SoundManager.shared.play(.victory)
+                        battleScene?.playVictoryCelebration()
                     }
+            }
+
+            // 暂停菜单覆盖层
+            if showPauseMenu {
+                pauseMenuOverlay
             }
 
             // Score breakdown popup during scoring phase
@@ -86,8 +102,9 @@ struct BattleView: View {
             if let ach = achievementTracker.latestUnlock {
                 VStack {
                     HStack(spacing: Theme.spacingSM) {
-                        Text(ach.icon)
+                        Image(systemName: ach.icon)
                             .font(.title2)
+                            .foregroundColor(Theme.gold)
                         VStack(alignment: .leading, spacing: 2) {
                             HStack(spacing: 4) {
                                 Image(systemName: "trophy.fill")
@@ -132,6 +149,12 @@ struct BattleView: View {
             // Refresh hand when returning from shop
             battleScene?.refreshHand()
             playsUsedThisFloor = 0
+            // Start BGM
+            SoundManager.shared.startBGM()
+            // Boss 入场音效
+            if rogueRun.currentFloor.isBoss {
+                SoundManager.shared.play(.bossAppear)
+            }
             // Show initial hint for new players
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 showInitialHint()
@@ -160,19 +183,14 @@ struct BattleView: View {
 
     private var topBar: some View {
         HStack(spacing: 8) {
-            Button { showExitConfirm = true } label: {
-                Image(systemName: "xmark.circle.fill")
+            // 暂停按钮
+            Button { showPauseMenu = true } label: {
+                Image(systemName: "pause.circle.fill")
                     .font(.title2)
                     .foregroundColor(Theme.textSecondary)
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
-            .alert(L10n.exitConfirmTitle, isPresented: $showExitConfirm) {
-                Button(L10n.exitConfirmContinue, role: .cancel) { }
-                Button(L10n.exitConfirmQuit, role: .destructive) { onBack() }
-            } message: {
-                Text(L10n.exitConfirmMessage)
-            }
 
             // 关卡名 + 目标分，合并为一行
             HStack(spacing: 4) {
@@ -197,7 +215,7 @@ struct BattleView: View {
 
             // 金币
             HStack(spacing: 3) {
-                Image(systemName: "circle.circle.fill")
+                Image(systemName: "dollarsign.circle.fill")
                     .font(.caption)
                     .foregroundColor(Theme.gold)
                 Text("\(rogueRun.gold)")
@@ -268,14 +286,17 @@ struct BattleView: View {
                     HStack(spacing: 6) {
                         ForEach(boss.modifiers, id: \.rawValue) { mod in
                             HStack(spacing: 3) {
+                                Image(systemName: mod.systemIcon)
+                                    .font(.caption)
                                 Text(mod.name).font(.caption.bold())
-                                Text(mod.description).font(.caption)
                             }
                             .foregroundColor(Theme.flame)
                         }
                         if let banned = boss.bannedPatternType {
                             HStack(spacing: 2) {
-                                Text("⛔").font(.caption)
+                                Image(systemName: "nosign")
+                                    .font(.caption)
+                                    .foregroundColor(Theme.danger)
                                 Text(L10n.bannedPatternLabel(banned.displayName))
                                     .font(.caption.bold())
                                     .foregroundColor(Theme.danger)
@@ -400,7 +421,11 @@ struct BattleView: View {
 
                 // Combo inline
                 if rogueRun.combo > 1 {
-                    Text("🔥×\(rogueRun.combo)")
+                    HStack(spacing: 2) {
+                        Image(systemName: "flame.fill")
+                            .font(.caption2)
+                        Text("×\(rogueRun.combo)")
+                    }
                         .font(.caption2.bold())
                         .foregroundColor(Theme.flame)
                         .transition(.scale.combined(with: .opacity))
@@ -433,6 +458,22 @@ struct BattleView: View {
     }
 
     // MARK: - 操作按钮
+
+    /// 出牌按钮颜色：正常=金色，剩余1次=橙色，0次=灰色
+    private var playButtonFill: Color {
+        if rogueRun.playsRemaining <= 0 { return Theme.bgInset }
+        if rogueRun.playsRemaining == 1 && rogueRun.floorScore < rogueRun.effectiveTargetScore {
+            return Theme.flame // 紧急红橙色
+        }
+        return Theme.gold
+    }
+
+    /// 弃牌边框颜色：正常=红50%，剩余1次=亮红，0次=灰
+    private var discardBorderColor: Color {
+        if rogueRun.discardsRemaining <= 0 { return Theme.borderLight }
+        if rogueRun.discardsRemaining == 1 { return Theme.danger.opacity(0.8) }
+        return Theme.danger.opacity(0.5)
+    }
 
     /// 实时识别选中牌的牌型（selectionVersion 触发 SwiftUI 重算）
     private var selectedPattern: CardPattern? {
@@ -498,7 +539,12 @@ struct BattleView: View {
                     default: return L10n.invalidPattern
                     }
                 }()
-                Text("💡 \(hint)")
+                HStack(spacing: 4) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.caption2)
+                        .foregroundColor(Theme.gold)
+                    Text(hint)
+                }
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.gold.opacity(0.8))
                     .transition(.opacity)
@@ -559,7 +605,7 @@ struct BattleView: View {
                         .fill(.ultraThinMaterial)
                         .overlay(
                             RoundedRectangle(cornerRadius: Theme.radiusSM)
-                                .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight, lineWidth: 0.6)
+                                .stroke(discardBorderColor, lineWidth: 0.6)
                         )
                 )
                 .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
@@ -594,7 +640,7 @@ struct BattleView: View {
                 .frame(height: 50)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
-                        .fill(rogueRun.playsRemaining > 0 ? Theme.gold : Theme.bgInset)
+                        .fill(playButtonFill)
                 )
                 .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.1), radius: 6, y: 3)
                 .contentShape(Rectangle())
@@ -743,7 +789,16 @@ struct BattleView: View {
                 VStack(spacing: Theme.spacingSM) {
                     statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
                     statRow(L10n.targetScoreLabel, value: "\(rogueRun.currentFloor.targetScore)")
+                    let gap = rogueRun.effectiveTargetScore - rogueRun.floorScore
+                    if gap > 0 {
+                        statRow(L10n.isEnglish ? "Gap" : "差距", value: "-\(gap)")
+                    }
                     statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
+                    statRow(L10n.isEnglish ? "Cards Played" : "出牌数", value: "\(rogueRun.playHistory.count)")
+                    if let bestPlay = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
+                        statRow(L10n.isEnglish ? "Best Hand" : "最佳一手", value: "\(bestPlay.score)")
+                    }
+                    statRow(L10n.isEnglish ? "Best Combo" : "最高连击", value: "×\(rogueRun.playHistory.map(\.combo).max() ?? 0)")
                 }
                 .padding(Theme.spacingMD)
                 .background(
@@ -766,6 +821,11 @@ struct BattleView: View {
                 .foregroundColor(.white)
                 .frame(width: 220, height: 50)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
+
+                SecondaryButton(title: L10n.backToMenu, icon: "house") {
+                    SoundManager.shared.stopBGM()
+                    onBack()
+                }
             }
         }
     }
@@ -784,6 +844,22 @@ struct BattleView: View {
                 Text(L10n.totalScoreValue(rogueRun.totalScore))
                     .font(.title.bold().monospacedDigit())
                     .foregroundColor(Theme.gold)
+
+                // 战绩统计
+                VStack(spacing: Theme.spacingSM) {
+                    statRow(L10n.isEnglish ? "Floors Cleared" : "通过层数", value: "\(rogueRun.currentFloorIndex + 1)")
+                    statRow(L10n.isEnglish ? "Cards Played" : "出牌总数", value: "\(rogueRun.playHistory.count)")
+                    if let best = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
+                        statRow(L10n.isEnglish ? "Best Hand" : "最佳一手", value: "\(best.score)")
+                    }
+                    statRow(L10n.isEnglish ? "Jokers" : "规则牌", value: "\(rogueRun.activeJokers.count)")
+                    statRow(L10n.isEnglish ? "Gold Remaining" : "剩余金币", value: "\(rogueRun.gold)")
+                }
+                .padding(Theme.spacingMD)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(.ultraThinMaterial)
+                )
 
                 PrimaryButton(title: L10n.playAgain, icon: "arrow.clockwise") {
                     rogueRun.restart()
@@ -850,8 +926,69 @@ struct BattleView: View {
                 }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
+                    SoundManager.shared.stopBGM()
                     onBack()
                 }
+            }
+        }
+    }
+
+    // MARK: - Special Event Overlay
+
+    private func specialEventOverlay(event: SpecialEvent) -> some View {
+        overlayBase {
+            VStack(spacing: Theme.spacingLG) {
+                Image(systemName: event.icon)
+                    .font(.system(size: 44))
+                    .foregroundStyle(Theme.goldGradient)
+                    .shadow(color: Theme.gold.opacity(0.4), radius: 8)
+
+                Text(event.title)
+                    .font(.title2.bold())
+                    .foregroundColor(Theme.textPrimary)
+
+                Text(event.description)
+                    .font(Theme.fontBody)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+
+                VStack(spacing: Theme.spacingSM) {
+                    ForEach(event.choices) { choice in
+                        Button {
+                            FeedbackManager.shared.impact(.medium)
+                            SoundManager.shared.play(.buttonTap)
+                            rogueRun.applyEventChoice(choice)
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: choice.icon)
+                                    .font(.title3)
+                                    .frame(width: 28)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(choice.label)
+                                        .font(.headline)
+                                        .foregroundColor(Theme.textPrimary)
+                                    Text(choice.description)
+                                        .font(Theme.fontCaption)
+                                        .foregroundColor(Theme.textTertiary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Theme.textTertiary)
+                            }
+                            .padding(Theme.spacingMD)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.radiusSM)
+                                    .fill(.ultraThinMaterial)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: Theme.radiusSM)
+                                            .stroke(Theme.gold.opacity(0.2))
+                                    )
+                            )
+                        }
+                    }
+                }
+                .frame(maxWidth: 280)
             }
         }
     }
@@ -890,6 +1027,148 @@ struct BattleView: View {
                 .font(Theme.fontMono)
                 .foregroundColor(Theme.textPrimary)
         }
+    }
+
+    // MARK: - 暂停菜单
+
+    private var pauseMenuOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.6).ignoresSafeArea()
+                .onTapGesture { showPauseMenu = false }
+
+            VStack(spacing: Theme.spacingLG) {
+                Text(L10n.isEnglish ? "Paused" : "已暂停")
+                    .font(.largeTitle.bold())
+                    .foregroundStyle(Theme.goldGradient)
+
+                // 当前进度信息
+                VStack(spacing: Theme.spacingSM) {
+                    statRow(L10n.floorNumber(rogueRun.currentFloorIndex + 1),
+                            value: rogueRun.currentFloor.name)
+                    statRow(L10n.isEnglish ? "Score" : "得分",
+                            value: "\(rogueRun.floorScore) / \(rogueRun.effectiveTargetScore)")
+                    statRow(L10n.isEnglish ? "Gold" : "金币",
+                            value: "\(rogueRun.gold)")
+                }
+                .padding(Theme.spacingMD)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(.ultraThinMaterial)
+                )
+
+                // 继续
+                PrimaryButton(
+                    title: L10n.isEnglish ? "Resume" : "继续游戏",
+                    icon: "play.fill"
+                ) {
+                    showPauseMenu = false
+                }
+                .frame(width: 220)
+
+                // 重试本关
+                SecondaryButton(
+                    title: L10n.retryFloor,
+                    icon: "arrow.counterclockwise"
+                ) {
+                    showPauseMenu = false
+                    rogueRun.retryCurrentFloor()
+                    battleScene?.refreshHand()
+                }
+                .frame(width: 220)
+
+                // 内联设置面板
+                VStack(spacing: Theme.spacingSM) {
+                    HStack {
+                        Image(systemName: soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                            .foregroundColor(soundEnabled ? Theme.gold : Theme.textDisabled)
+                            .frame(width: 24)
+                        Text(L10n.isEnglish ? "Sound" : "音效")
+                            .foregroundColor(Theme.textPrimary)
+                        Spacer()
+                        Toggle("", isOn: $soundEnabled)
+                            .labelsHidden()
+                            .tint(Theme.gold)
+                    }
+                    HStack {
+                        Image(systemName: musicEnabled ? "music.note" : "music.note.slash")
+                            .foregroundColor(musicEnabled ? Theme.gold : Theme.textDisabled)
+                            .frame(width: 24)
+                        Text(L10n.isEnglish ? "Music" : "音乐")
+                            .foregroundColor(Theme.textPrimary)
+                        Spacer()
+                        Toggle("", isOn: $musicEnabled)
+                            .labelsHidden()
+                            .tint(Theme.gold)
+                    }
+                    .onChange(of: musicEnabled) { _, newValue in
+                        if newValue {
+                            SoundManager.shared.startBGM()
+                        } else {
+                            SoundManager.shared.stopBGM()
+                        }
+                    }
+                    HStack {
+                        Image(systemName: hapticEnabled ? "hand.tap.fill" : "hand.raised.slash.fill")
+                            .foregroundColor(hapticEnabled ? Theme.gold : Theme.textDisabled)
+                            .frame(width: 24)
+                        Text(L10n.isEnglish ? "Haptics" : "震动")
+                            .foregroundColor(Theme.textPrimary)
+                        Spacer()
+                        Toggle("", isOn: $hapticEnabled)
+                            .labelsHidden()
+                            .tint(Theme.gold)
+                    }
+                }
+                .padding(Theme.spacingMD)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                                .stroke(Theme.border)
+                        )
+                )
+                .frame(width: 220)
+
+                // 放弃
+                Button {
+                    showPauseMenu = false
+                    rogueRun.clearSave()
+                    SoundManager.shared.stopBGM()
+                    onBack()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "xmark.circle.fill")
+                        Text(L10n.isEnglish ? "Quit Run" : "放弃冒险")
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.danger)
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.danger.opacity(0.4))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+            }
+            .padding(Theme.spacingXL)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusLG)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusLG)
+                            .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
+                    )
+            )
+            .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
+            .padding(Theme.spacingXL)
+            .transition(.scale(scale: 0.8).combined(with: .opacity))
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.75), value: showPauseMenu)
     }
 
     // MARK: - Progressive Hints

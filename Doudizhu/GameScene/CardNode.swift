@@ -42,12 +42,46 @@ class CardNode: SKSpriteNode {
     }
 
     private func drawCard() {
-        // 卡牌背景 — 圆角裁切，避免白边溢出
+        // 卡牌外阴影层 — 柔和立体感
+        let shadow = SKShapeNode(rectOf: CGSize(width: size.width + 1, height: size.height + 1), cornerRadius: 7)
+        shadow.fillColor = SKColor(red: 0.10, green: 0.08, blue: 0.06, alpha: 0.25)
+        shadow.strokeColor = .clear
+        shadow.position = CGPoint(x: 1, y: -2)
+        shadow.zPosition = -2
+        addChild(shadow)
+
+        // 卡牌主背景 — 象牙白渐变
         let bg = SKShapeNode(rectOf: size, cornerRadius: 6)
         bg.fillColor = SKColor(red: 0.96, green: 0.93, blue: 0.87, alpha: 1.0)
-        bg.strokeColor = SKColor(red: 0.65, green: 0.55, blue: 0.42, alpha: 0.45)
-        bg.lineWidth = 0.8
+        bg.strokeColor = SKColor(red: 0.58, green: 0.48, blue: 0.35, alpha: 0.55)
+        bg.lineWidth = 1.0
+        bg.zPosition = -1
         addChild(bg)
+
+        // 微纹理层 — 纸质感细噪点（轻轻的点阵装饰线）
+        let textureDots: [(CGFloat, CGFloat)] = [
+            (0.25, 0.30), (-0.15, -0.25), (0.35, -0.10), (-0.30, 0.20),
+            (0.10, -0.35), (-0.38, -0.05), (0.05, 0.38), (0.40, 0.15),
+            (-0.22, 0.35), (0.18, -0.40), (-0.35, -0.30), (0.30, 0.40),
+        ]
+        for (xr, yr) in textureDots {
+            let dot = SKShapeNode(circleOfRadius: 0.5)
+            dot.fillColor = SKColor(red: 0.65, green: 0.55, blue: 0.42, alpha: 0.06)
+            dot.strokeColor = .clear
+            dot.position = CGPoint(x: size.width * xr, y: size.height * yr)
+            dot.zPosition = -0.5
+            addChild(dot)
+        }
+
+        // 内框装饰 — 传统扑克双框线
+        let insetW = size.width - 10
+        let insetH = size.height - 10
+        let innerFrame = SKShapeNode(rectOf: CGSize(width: insetW, height: insetH), cornerRadius: 3)
+        innerFrame.fillColor = .clear
+        innerFrame.strokeColor = SKColor(red: 0.72, green: 0.60, blue: 0.42, alpha: 0.18)
+        innerFrame.lineWidth = 0.6
+        innerFrame.zPosition = 0
+        addChild(innerFrame)
 
         // Joker 特殊处理
         if isJoker {
@@ -68,6 +102,7 @@ class CardNode: SKSpriteNode {
         topRank.horizontalAlignmentMode = .left
         topRank.verticalAlignmentMode = .top
         topRank.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 4)
+        topRank.zPosition = 1
         addChild(topRank)
 
         let topSuit = SKLabelNode(text: suitText)
@@ -76,14 +111,25 @@ class CardNode: SKSpriteNode {
         topSuit.horizontalAlignmentMode = .left
         topSuit.verticalAlignmentMode = .top
         topSuit.position = CGPoint(x: -size.width / 2 + 6, y: size.height / 2 - size.width * 0.30)
+        topSuit.zPosition = 1
         addChild(topSuit)
+
+        // 中央花色装饰背景
+        let centerCircle = SKShapeNode(circleOfRadius: size.width * 0.22)
+        centerCircle.fillColor = color.withAlphaComponent(0.04)
+        centerCircle.strokeColor = color.withAlphaComponent(0.08)
+        centerCircle.lineWidth = 0.5
+        centerCircle.position = CGPoint(x: 0, y: -2)
+        centerCircle.zPosition = 1
+        addChild(centerCircle)
 
         // 中央大花色
         let centerSuit = SKLabelNode(text: suitText)
         centerSuit.fontSize = size.width * 0.45
-        centerSuit.fontColor = color.withAlphaComponent(0.65)
+        centerSuit.fontColor = color.withAlphaComponent(0.70)
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: -2)
+        centerSuit.zPosition = 2
         addChild(centerSuit)
 
         // 右下角（旋转180°）
@@ -95,6 +141,7 @@ class CardNode: SKSpriteNode {
         botRank.verticalAlignmentMode = .bottom
         botRank.position = CGPoint(x: size.width / 2 - 5, y: -size.height / 2 + size.width * 0.22)
         botRank.zRotation = .pi
+        botRank.zPosition = 1
         addChild(botRank)
 
         let botSuit = SKLabelNode(text: suitText)
@@ -104,14 +151,62 @@ class CardNode: SKSpriteNode {
         botSuit.verticalAlignmentMode = .bottom
         botSuit.position = CGPoint(x: size.width / 2 - 6, y: -size.height / 2 + 4)
         botSuit.zRotation = .pi
+        botSuit.zPosition = 1
         addChild(botSuit)
+
+        // 四角小花色装饰（高级扑克牌风格）
+        drawCornerPips(suit: suitText, color: color)
+    }
+
+    /// 四角小花色装饰 — 增加精致感
+    private func drawCornerPips(suit: String, color: SKColor) {
+        let pipSize = size.width * 0.10
+        let dimColor = color.withAlphaComponent(0.12)
+        let positions: [CGPoint] = [
+            CGPoint(x: size.width / 2 - 7, y: size.height / 2 - 6),
+            CGPoint(x: -size.width / 2 + 7, y: -size.height / 2 + 6),
+        ]
+        for pos in positions {
+            let pip = SKLabelNode(text: suit)
+            pip.fontSize = pipSize
+            pip.fontColor = dimColor
+            pip.verticalAlignmentMode = .center
+            pip.horizontalAlignmentMode = .center
+            pip.position = pos
+            pip.zPosition = 1
+            addChild(pip)
+        }
     }
 
     private func drawJokerCard() {
         let isRedJoker = card.rank == .jokerRed
         let color = cardColor
-
         let serifFont = Theme.spriteKitSerifFontName
+
+        // 装饰性背景 — Joker 专属渐变晕
+        let bgGlow = SKShapeNode(circleOfRadius: size.width * 0.35)
+        bgGlow.fillColor = color.withAlphaComponent(0.06)
+        bgGlow.strokeColor = .clear
+        bgGlow.position = CGPoint(x: 0, y: 0)
+        bgGlow.zPosition = 0
+        addChild(bgGlow)
+
+        // 菱形装饰框
+        let diamondSize: CGFloat = size.width * 0.55
+        let diamond = SKShapeNode()
+        let dPath = CGMutablePath()
+        dPath.move(to: CGPoint(x: 0, y: diamondSize / 2))
+        dPath.addLine(to: CGPoint(x: diamondSize / 2, y: 0))
+        dPath.addLine(to: CGPoint(x: 0, y: -diamondSize / 2))
+        dPath.addLine(to: CGPoint(x: -diamondSize / 2, y: 0))
+        dPath.closeSubpath()
+        diamond.path = dPath
+        diamond.fillColor = .clear
+        diamond.strokeColor = color.withAlphaComponent(0.15)
+        diamond.lineWidth = 1.0
+        diamond.position = CGPoint(x: 0, y: 0)
+        diamond.zPosition = 0
+        addChild(diamond)
 
         // 左上角标识
         let topLabel = SKLabelNode(text: isRedJoker ? "大" : "小")
@@ -121,6 +216,7 @@ class CardNode: SKSpriteNode {
         topLabel.horizontalAlignmentMode = .left
         topLabel.verticalAlignmentMode = .top
         topLabel.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 4)
+        topLabel.zPosition = 2
         addChild(topLabel)
 
         // 中央大"王"字
@@ -130,6 +226,7 @@ class CardNode: SKSpriteNode {
         centerKing.fontColor = color
         centerKing.verticalAlignmentMode = .center
         centerKing.position = CGPoint(x: 0, y: 0)
+        centerKing.zPosition = 2
         addChild(centerKing)
 
         // 底部标注
@@ -139,7 +236,20 @@ class CardNode: SKSpriteNode {
         botLabel.fontColor = color.withAlphaComponent(0.5)
         botLabel.verticalAlignmentMode = .center
         botLabel.position = CGPoint(x: 0, y: -size.height / 2 + size.width * 0.18)
+        botLabel.zPosition = 2
         addChild(botLabel)
+
+        // 右下角标识（旋转180°）
+        let botCorner = SKLabelNode(text: isRedJoker ? "大" : "小")
+        botCorner.fontName = serifFont
+        botCorner.fontSize = size.width * 0.20
+        botCorner.fontColor = color.withAlphaComponent(0.4)
+        botCorner.horizontalAlignmentMode = .right
+        botCorner.verticalAlignmentMode = .bottom
+        botCorner.position = CGPoint(x: size.width / 2 - 5, y: -size.height / 2 + 4)
+        botCorner.zRotation = .pi
+        botCorner.zPosition = 2
+        addChild(botCorner)
     }
 
     // MARK: - 选中状态

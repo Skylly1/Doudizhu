@@ -82,9 +82,20 @@ struct CollectionView: View {
         }
 
         return HStack(spacing: 12) {
-            Text(isLocked ? "🔒" : joker.icon)
-                .font(.title)
-                .frame(width: 44)
+            if isLocked {
+                ZStack {
+                    Circle()
+                        .fill(Theme.bgInset)
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "lock.fill")
+                        .font(.body)
+                        .foregroundColor(Theme.textDisabled)
+                }
+            } else {
+                Text(joker.icon)
+                    .font(.title)
+                    .frame(width: 44)
+            }
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {

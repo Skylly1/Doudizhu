@@ -26,6 +26,11 @@ struct MapView: View {
                 .padding(.horizontal, Theme.spacingLG)
                 .padding(.top, Theme.spacingSM)
 
+                // 章节概览卡片
+                chapterOverview
+                    .padding(.horizontal, Theme.spacingLG)
+                    .padding(.top, Theme.spacingSM)
+
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 0) {
@@ -69,6 +74,47 @@ struct MapView: View {
             }
         }
     }
+
+    // MARK: - 章节概览
+
+    private var chapterOverview: some View {
+        let chapters: [(name: String, icon: String, range: String, color: Color)] = [
+            (L10n.isEnglish ? "Village" : "乡野篇", "leaf.fill", "1-4", Theme.success),
+            (L10n.isEnglish ? "City" : "府城篇", "building.2.fill", "5-8", Theme.cyan),
+            (L10n.isEnglish ? "Jianghu" : "江湖篇", "mountain.2.fill", "9-15", Theme.flame),
+        ]
+        return HStack(spacing: Theme.spacingSM) {
+            ForEach(Array(chapters.enumerated()), id: \.offset) { _, ch in
+                let chapterCleared: Bool = {
+                    guard let last = ch.range.split(separator: "-").last,
+                          let end = Int(last) else { return false }
+                    return highestFloor >= end
+                }()
+                HStack(spacing: 6) {
+                    Image(systemName: ch.icon)
+                        .font(.caption)
+                        .foregroundColor(chapterCleared ? ch.color : Theme.textTertiary)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(ch.name)
+                            .font(.caption.bold())
+                            .foregroundColor(chapterCleared ? ch.color : Theme.textSecondary)
+                        Text(ch.range)
+                            .font(.system(size: 10).monospacedDigit())
+                            .foregroundColor(Theme.textTertiary)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(.vertical, Theme.spacingSM)
+        .background(.ultraThinMaterial)
+        .cornerRadius(Theme.radiusMD)
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .stroke(Theme.gold.opacity(0.12), lineWidth: 0.5)
+        )
+        .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
+    }
 }
 
 // MARK: - Stats Summary Bar
@@ -80,11 +126,11 @@ private struct MapStatsSummary: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            statItem(icon: "🏆", value: L10n.mapHighestFloor(max(1, highestFloor)))
+            statItem(systemIcon: "trophy.fill", iconColor: Theme.gold, value: L10n.mapHighestFloor(max(1, highestFloor)))
             Rectangle().fill(Theme.border).frame(width: 1, height: 20)
-            statItem(icon: "⚡", value: L10n.mapTotalRuns(totalRuns))
+            statItem(systemIcon: "bolt.fill", iconColor: Theme.flame, value: L10n.mapTotalRuns(totalRuns))
             Rectangle().fill(Theme.border).frame(width: 1, height: 20)
-            statItem(icon: "🎯", value: L10n.mapHighestScore(highestScore))
+            statItem(systemIcon: "target", iconColor: Theme.cyan, value: L10n.mapHighestScore(highestScore))
         }
         .padding(.vertical, Theme.spacingSM)
         .background(.ultraThinMaterial)
@@ -96,9 +142,11 @@ private struct MapStatsSummary: View {
         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
     }
 
-    private func statItem(icon: String, value: String) -> some View {
+    private func statItem(systemIcon: String, iconColor: Color, value: String) -> some View {
         HStack(spacing: 4) {
-            Text(icon)
+            Image(systemName: systemIcon)
+                .font(.caption)
+                .foregroundColor(iconColor)
             Text(value)
                 .font(Theme.fontCaption.monospacedDigit())
                 .foregroundColor(Theme.textSecondary)
@@ -121,6 +169,7 @@ private struct FloorNode: View {
     let hasPlayed: Bool
 
     @State private var pulseScale: CGFloat = 1.0
+    @State private var flowOffset: CGFloat = 0
 
     private var state: FloorNodeState {
         if hasPlayed && index < highestFloor { return .cleared }
@@ -154,12 +203,28 @@ private struct FloorNode: View {
             // 左侧连线 + 节点
             VStack(spacing: 0) {
                 if index > 0 {
-                    Rectangle()
-                        .fill(topLineColor)
-                        .frame(width: 2, height: 20)
+                    ZStack {
+                        Rectangle()
+                            .fill(topLineColor)
+                            .frame(width: 2, height: 20)
+                        if state == .cleared || state == .frontier {
+                            Rectangle()
+                                .fill(Theme.success.opacity(0.4))
+                                .frame(width: 4, height: 20)
+                                .blur(radius: 2)
+                        }
+                    }
                 }
 
                 ZStack {
+                    // 外层辉光（仅 frontier）
+                    if state == .frontier {
+                        Circle()
+                            .fill(Theme.gold.opacity(0.08))
+                            .frame(width: nodeSize + 16, height: nodeSize + 16)
+                            .blur(radius: 8)
+                    }
+
                     Circle()
                         .fill(nodeAccent.opacity(0.15))
                         .frame(width: nodeSize, height: nodeSize)
@@ -169,7 +234,6 @@ private struct FloorNode: View {
 
                     // Node content
                     if state == .cleared {
-                        // 金印章"过关"效果
                         Circle()
                             .fill(Theme.success.opacity(0.85))
                             .frame(width: nodeSize, height: nodeSize)
@@ -177,7 +241,7 @@ private struct FloorNode: View {
                             .font(.body.bold())
                             .foregroundColor(.white)
                     } else if floor.isShop {
-                        Image(systemName: "circle.circle.fill")
+                        Image(systemName: "dollarsign.circle.fill")
                             .font(.title3)
                             .foregroundColor(Theme.gold)
                     } else if floor.isBoss {
@@ -199,9 +263,17 @@ private struct FloorNode: View {
                 }
 
                 if !isLast {
-                    Rectangle()
-                        .fill(bottomLineColor)
-                        .frame(width: 2, height: 20)
+                    ZStack {
+                        Rectangle()
+                            .fill(bottomLineColor)
+                            .frame(width: 2, height: 20)
+                        if state == .cleared {
+                            Rectangle()
+                                .fill(Theme.success.opacity(0.4))
+                                .frame(width: 4, height: 20)
+                                .blur(radius: 2)
+                        }
+                    }
                 }
             }
 
@@ -223,15 +295,22 @@ private struct FloorNode: View {
                     }
 
                     if floor.isBoss && !floor.isShop {
-                        Text("🔥").font(.caption)
+                        Image(systemName: "flame.fill")
+                            .font(.caption)
+                            .foregroundColor(Theme.flame)
                     }
 
                     Spacer()
 
                     if !floor.isShop {
-                        Text("🎯 \(floor.targetScore)")
-                            .font(Theme.fontCaption.monospacedDigit())
-                            .foregroundColor(state == .cleared ? Theme.textTertiary : Theme.gold)
+                        HStack(spacing: 3) {
+                            Image(systemName: "target")
+                                .font(.caption2)
+                                .foregroundColor(state == .cleared ? Theme.textTertiary : Theme.gold)
+                            Text("\(floor.targetScore)")
+                                .font(Theme.fontCaption.monospacedDigit())
+                                .foregroundColor(state == .cleared ? Theme.textTertiary : Theme.gold)
+                        }
                     }
                 }
 

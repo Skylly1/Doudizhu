@@ -4,6 +4,7 @@ import SwiftUI
 struct ShopView: View {
     @ObservedObject var rogueRun: RogueRun
     let onLeave: () -> Void
+    var onQuit: (() -> Void)? = nil
 
     @State private var shopItems: [ShopItem] = []
     @State private var jokerItems: [JokerShopItem] = []
@@ -11,21 +12,22 @@ struct ShopView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: Theme.spacingLG) {
-                // 标题
-                GameNavBar(title: L10n.shop, subtitle: L10n.shopSubtitle)
-                    .padding(.top, Theme.spacingSM)
-
-                // 金币
-                HStack(spacing: 6) {
-                    Image(systemName: "circle.circle.fill")
-                        .foregroundColor(Theme.gold)
-                    Text("\(rogueRun.gold)")
-                        .font(.title3.bold().monospacedDigit())
-                        .foregroundColor(Theme.gold)
-                    Text(L10n.gold)
-                        .font(Theme.fontCaption)
-                        .foregroundColor(Theme.goldDark.opacity(0.7))
-                }
+                // 标题 + 返回
+                GameNavBar(
+                    title: L10n.shop,
+                    subtitle: L10n.shopSubtitle,
+                    onBack: onQuit,
+                    trailing: AnyView(
+                        HStack(spacing: 6) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .foregroundColor(Theme.gold)
+                            Text("\(rogueRun.gold)")
+                                .font(.title3.bold().monospacedDigit())
+                                .foregroundColor(Theme.gold)
+                        }
+                    )
+                )
+                .padding(.top, Theme.spacingSM)
 
                 // 刷新按钮（刷新费用随关卡递增：基础10，每层+2，上限25）
                 let refreshCost = min(25, 10 + rogueRun.currentFloorIndex * 2)
@@ -79,6 +81,7 @@ struct ShopView: View {
                                         if rogueRun.buyJoker(item.joker, cost: item.cost) {
                                             FeedbackManager.shared.purchase()
                                             SoundManager.shared.play(.shopBuy)
+                                            SoundManager.shared.play(.goldCoin)
                                             withAnimation(.spring(response: 0.3)) {
                                                 jokerItems.removeAll { $0.id == item.id }
                                             }
@@ -108,6 +111,7 @@ struct ShopView: View {
                                         if rogueRun.buyBuff(item.buff, cost: item.cost) {
                                             FeedbackManager.shared.purchase()
                                             SoundManager.shared.play(.shopBuy)
+                                            SoundManager.shared.play(.goldCoin)
                                             withAnimation(.spring(response: 0.3)) {
                                                 shopItems.removeAll { $0.id == item.id }
                                             }
@@ -223,6 +227,8 @@ struct ShopView: View {
     }
 
     private func generateShopItems() {
+        let priceMultiplier = rogueRun.dailyChallenge?.modifiers.contains(.goldRush) == true ? 2 : 1
+
         let ownedEffects = Set(rogueRun.activeJokers.map(\.effect))
         let availableJokers = JokerUnlockManager.availableJokers.filter { !ownedEffects.contains($0.effect) }.shuffled()
         jokerItems = availableJokers.prefix(3).map { joker in
@@ -232,12 +238,12 @@ struct ShopView: View {
             case .rare:      baseCost = 70
             case .legendary: baseCost = 120
             }
-            return JokerShopItem(joker: joker, cost: baseCost + Int.random(in: 0...20))
+            return JokerShopItem(joker: joker, cost: (baseCost + Int.random(in: 0...20)) * priceMultiplier)
         }
 
         let available = Buff.allBuffs.shuffled()
         shopItems = available.prefix(3).enumerated().map { index, buff in
-            ShopItem(buff: buff, cost: (index + 1) * 25 + Int.random(in: 0...15))
+            ShopItem(buff: buff, cost: ((index + 1) * 25 + Int.random(in: 0...15)) * priceMultiplier)
         }
     }
 }
@@ -294,7 +300,7 @@ struct JokerShopRow: View {
 
             Button(action: onBuy) {
                 HStack(spacing: 4) {
-                    Image(systemName: "circle.circle.fill")
+                    Image(systemName: "dollarsign.circle.fill")
                         .font(.caption)
                     Text("\(item.cost)")
                         .font(Theme.fontMono)
@@ -347,7 +353,7 @@ struct ShopItemRow: View {
 
             Button(action: onBuy) {
                 HStack(spacing: 4) {
-                    Image(systemName: "circle.circle.fill")
+                    Image(systemName: "dollarsign.circle.fill")
                         .font(.caption)
                     Text("\(item.cost)")
                         .font(Theme.fontMono)
@@ -491,5 +497,5 @@ struct PatternUpgradeRow: View {
 }
 
 #Preview {
-    ShopView(rogueRun: RogueRun(), onLeave: {})
+    ShopView(rogueRun: RogueRun(), onLeave: {}, onQuit: {})
 }

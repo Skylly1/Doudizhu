@@ -10,31 +10,12 @@ struct DailyChallengeView: View {
 
     var body: some View {
         ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
-
             VStack(spacing: 0) {
-                // Header
-                HStack(spacing: 12) {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left.circle.fill")
-                            .font(.title2)
-                            .foregroundStyle(.ultraThinMaterial)
-                            .symbolRenderingMode(.hierarchical)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L10n.dailyChallengeTitle)
-                            .font(Theme.fontSection)
-                            .foregroundColor(Theme.textPrimary)
-                        Text(L10n.dailyChallengeSubtitle)
-                            .font(Theme.fontCaption)
-                            .foregroundColor(Theme.textTertiary)
-                    }
-
-                    Spacer()
-                }
-                .padding(.horizontal, Theme.spacingMD)
-                .padding(.vertical, Theme.spacingSM)
+                GameNavBar(
+                    title: L10n.dailyChallengeTitle,
+                    subtitle: L10n.dailyChallengeSubtitle,
+                    onBack: onBack
+                )
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: Theme.spacingLG) {
@@ -61,9 +42,8 @@ struct DailyChallengeView: View {
                 }
             }
         }
+        .gameBackground()
     }
-
-    // MARK: - Subviews
 
     private var dateCard: some View {
         HStack {
@@ -100,8 +80,10 @@ struct DailyChallengeView: View {
 
             ForEach(challenge.modifiers, id: \.rawValue) { modifier in
                 HStack(spacing: 12) {
-                    Text(modifier.icon)
+                    Image(systemName: modifier.icon)
                         .font(.title2)
+                        .foregroundColor(Theme.flame)
+                        .frame(width: 32)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(modifier.name)
@@ -128,12 +110,14 @@ struct DailyChallengeView: View {
         VStack(alignment: .leading, spacing: Theme.spacingSM) {
             HStack(spacing: Theme.spacingSM) {
                 rewardItem(
-                    icon: "✨",
+                    systemIcon: "sparkles",
+                    iconColor: Theme.gold,
                     title: L10n.rewardMultiplier,
                     value: scoreMultiplierText
                 )
                 rewardItem(
-                    icon: "💰",
+                    systemIcon: "dollarsign.circle.fill",
+                    iconColor: Theme.gold,
                     title: L10n.bonusGoldLabel,
                     value: "+\(challenge.bonusGold)"
                 )
@@ -141,10 +125,11 @@ struct DailyChallengeView: View {
         }
     }
 
-    private func rewardItem(icon: String, title: String, value: String) -> some View {
+    private func rewardItem(systemIcon: String, iconColor: Color, title: String, value: String) -> some View {
         VStack(spacing: 6) {
-            Text(icon)
+            Image(systemName: systemIcon)
                 .font(.title)
+                .foregroundColor(iconColor)
             Text(title)
                 .font(Theme.fontCaption)
                 .foregroundColor(Theme.textTertiary)
@@ -220,6 +205,11 @@ struct DailyChallengeView: View {
         case .doubleScore: return L10n.isEnglish ? "All scores are doubled" : "所有得分翻倍"
         case .speedRun: return L10n.isEnglish ? "Max 3 plays per floor" : "每层最多 3 次出牌"
         case .bossRush: return L10n.isEnglish ? "Every 3rd floor is a boss" : "每 3 层出现 Boss"
+        case .giantHand: return L10n.isEnglish ? "Hand size +5 cards" : "手牌数量 +5 张"
+        case .tinyDeck: return L10n.isEnglish ? "Deck reduced to 36 cards" : "牌堆缩减至 36 张"
+        case .allOrNothing: return L10n.isEnglish ? "Only bombs & rockets score" : "仅炸弹和火箭可得分"
+        case .goldRush: return L10n.isEnglish ? "×3 gold, but shop prices ×2" : "金币×3，商店价格×2"
+        case .mirrorMatch: return L10n.isEnglish ? "Boss modifiers on every floor" : "每层都有Boss修改器"
         }
     }
 }

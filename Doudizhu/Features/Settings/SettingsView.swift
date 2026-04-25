@@ -53,7 +53,7 @@ struct SettingsView: View {
 
                         // 关于
                         settingSection(L10n.settingsAbout) {
-                            infoRow(L10n.settingsVersion, value: "1.0.0")
+                            infoRow(L10n.settingsVersion, value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0")
                             Divider().background(Theme.border)
                             infoRow(L10n.settingsEngine, value: "SwiftUI + SpriteKit")
                             Divider().background(Theme.border)
@@ -93,6 +93,13 @@ struct SettingsView: View {
         }
         .onChange(of: soundVolume) { _, newValue in
             SoundManager.shared.volume = Float(newValue)
+        }
+        .onChange(of: musicEnabled) { _, newValue in
+            if newValue {
+                SoundManager.shared.startBGM()
+            } else {
+                SoundManager.shared.stopBGM()
+            }
         }
     }
 
