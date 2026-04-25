@@ -247,8 +247,7 @@ struct PatternRecognizer {
 
 // MARK: - 武功秘籍（Pattern Upgrade System）
 
-@MainActor
-class PatternUpgradeManager: ObservableObject {
+final class PatternUpgradeManager: ObservableObject, @unchecked Sendable {
     static let shared = PatternUpgradeManager()
 
     private let storageKey = "pattern_upgrades"

@@ -956,7 +956,7 @@ struct BattleView: View {
                 VStack(spacing: Theme.spacingSM) {
                     ForEach(event.choices) { choice in
                         Button {
-                            FeedbackManager.shared.impact(.medium)
+                            FeedbackManager.shared.buttonTap()
                             SoundManager.shared.play(.buttonTap)
                             rogueRun.applyEventChoice(choice)
                         } label: {

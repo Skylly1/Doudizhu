@@ -53,11 +53,10 @@
 		F002B85206639EA0FE29A784 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE7295A565FD5C0659AD2914 /* StatsView.swift */; };
 		F28B2D6F59E5613C94C36978 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2A1CDC0757261ED0E545D /* ContentView.swift */; };
 		F41A8BE2818E4F9F2A1F431C /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = C004536BF49C1AC16F07AF1E /* L10n.swift */; };
-		F53FE7A0EEAEF69EA90D3BE0 /* PatternUpgradeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "斗破乾坤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02B7561C354AAEBCFCF1A20E /* Doudizhu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Doudizhu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		146704F64E5700B454564B2A /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		1AC3C87E0E4B3888A6207525 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 		1AF923141EB84CEE723619A6 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -70,7 +69,7 @@
 		3C71732CBF8E870978027D3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3F78DD5F2D0AB4C6C79C9A15 /* BossModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossModifier.swift; sourceTree = "<group>"; };
 		3FA4F448DB514BC1590E8F0C /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
-		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		60D933644042A8A7F300A933 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -92,12 +91,11 @@
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
 		C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicy.md; sourceTree = "<group>"; };
-		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
+		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; path = Configuration.storekit; sourceTree = "<group>"; };
 		C679C44488D1A397CF510FCE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
 		D6CF0BC12630F84C9C30B17C /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
-		DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternUpgradeManager.swift; sourceTree = "<group>"; };
 		DDCF1F17CE6C4B3B041FDFE8 /* PatternGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGuideView.swift; sourceTree = "<group>"; };
 		DE7295A565FD5C0659AD2914 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		EE2AE77369C90C482B24051C /* ShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareManager.swift; sourceTree = "<group>"; };
@@ -252,7 +250,6 @@
 				60D933644042A8A7F300A933 /* GameCenterManager.swift */,
 				BF62D06D635A1BDDFA6F2D58 /* Joker.swift */,
 				C004536BF49C1AC16F07AF1E /* L10n.swift */,
-				DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */,
 				8D3EC8A91741A8E076AAA4C1 /* PlayerStats.swift */,
 				781A117C670FF3910C3321E7 /* PurchaseManager.swift */,
 				8F5FC34D9EBDA2FC5221697F /* ReviewManager.swift */,
@@ -276,7 +273,7 @@
 		DF3626A1158A267437FA23AC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */,
+				02B7561C354AAEBCFCF1A20E /* Doudizhu.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -317,7 +314,7 @@
 			packageProductDependencies = (
 			);
 			productName = Doudizhu;
-			productReference = 02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */;
+			productReference = 02B7561C354AAEBCFCF1A20E /* Doudizhu.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -328,6 +325,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 4D0A6D61F1041C44F1306D61 /* Build configuration list for PBXProject "Doudizhu" */;
 			developmentRegion = "zh-Hans";
@@ -397,7 +396,6 @@
 				F41A8BE2818E4F9F2A1F431C /* L10n.swift in Sources */,
 				96049DD3D9B82908F3FBFA4D /* MapView.swift in Sources */,
 				14667930FF82DF75F427E36B /* PatternGuideView.swift in Sources */,
-				F53FE7A0EEAEF69EA90D3BE0 /* PatternUpgradeManager.swift in Sources */,
 				8F08C71C4784B70555D4CE5F /* PlayerStats.swift in Sources */,
 				56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */,
 				8F363274545A34AF12769EB9 /* ReviewManager.swift in Sources */,
@@ -435,7 +433,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -525,7 +522,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

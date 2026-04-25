@@ -86,7 +86,7 @@ final class GameSaveModel {
 
 extension GameSaveModel {
     /// 从 RogueRun 快照创建存档
-    static func snapshot(from run: RogueRun, buildId: String) -> GameSaveModel {
+    @MainActor static func snapshot(from run: RogueRun, buildId: String) -> GameSaveModel {
         let encoder = JSONEncoder()
         let handData = (try? encoder.encode(run.handCards)) ?? Data()
         let drawData = (try? encoder.encode(run.drawPile)) ?? Data()
@@ -127,7 +127,7 @@ extension GameSaveModel {
     }
 
     /// 将存档恢复到 RogueRun
-    func restore(to run: RogueRun) {
+    @MainActor func restore(to run: RogueRun) {
         let decoder = JSONDecoder()
 
         run.currentFloorIndex = currentFloorIndex
