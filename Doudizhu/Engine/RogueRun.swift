@@ -1110,7 +1110,6 @@ struct Buff: Identifiable, Codable, Hashable {
             return 0
         }
     }
-    }
 
     /// Mult bonus for the chips×mult scoring system
     func multBonus(pattern: CardPattern) -> Double {

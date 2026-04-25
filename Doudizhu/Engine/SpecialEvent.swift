@@ -182,7 +182,7 @@ enum SpecialEventGenerator {
             title: L10n.isEnglish ? "Fortune Teller" : "算命先生",
             description: L10n.isEnglish
                 ? "\"I see great things in your future... for a price.\""
-                : ""我看你骨骼惊奇，只需一点小费……"",
+                : "\u{201C}我看你骨骼惊奇，只需一点小费\u{2026}\u{2026}\u{201D}",
             icon: "eye.fill",
             choices: [
                 EventChoice(
