@@ -17,7 +17,7 @@ struct ShopView: View {
 
                 // 金币
                 HStack(spacing: 6) {
-                    Image(systemName: "dollarsign.circle.fill")
+                    Image(systemName: "circle.circle.fill")
                         .foregroundColor(Theme.gold)
                     Text("\(rogueRun.gold)")
                         .font(.title3.bold().monospacedDigit())
@@ -294,7 +294,7 @@ struct JokerShopRow: View {
 
             Button(action: onBuy) {
                 HStack(spacing: 4) {
-                    Image(systemName: "dollarsign.circle.fill")
+                    Image(systemName: "circle.circle.fill")
                         .font(.caption)
                     Text("\(item.cost)")
                         .font(Theme.fontMono)
@@ -343,7 +343,7 @@ struct ShopItemRow: View {
 
             Button(action: onBuy) {
                 HStack(spacing: 4) {
-                    Image(systemName: "dollarsign.circle.fill")
+                    Image(systemName: "circle.circle.fill")
                         .font(.caption)
                     Text("\(item.cost)")
                         .font(Theme.fontMono)
@@ -453,7 +453,7 @@ struct PatternUpgradeRow: View {
                     }
                 } label: {
                     HStack(spacing: 2) {
-                        Image(systemName: "dollarsign.circle.fill")
+                        Image(systemName: "circle.circle.fill")
                             .font(.caption2)
                         Text("\(cost)")
                     }

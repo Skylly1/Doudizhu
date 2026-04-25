@@ -44,7 +44,7 @@ struct StatsView: View {
                     statCard(systemIcon: "suit.club.fill", title: L10n.isEnglish ? "Cards Played" : "出牌次数", value: "\(stats.totalCardsPlayed)")
                     statCard(systemIcon: "flame.fill", title: L10n.isEnglish ? "Best Combo" : "最高连击", value: "\(stats.highestCombo)")
                     statCard(systemIcon: "star.fill", title: L10n.isEnglish ? "Best Score" : "最高单次得分", value: "\(stats.highestSingleScore)")
-                    statCard(systemIcon: "dollarsign.circle", title: L10n.isEnglish ? "Gold Earned" : "总获金币", value: "\(stats.totalGoldEarned)")
+                    statCard(systemIcon: "circle.circle", title: L10n.isEnglish ? "Gold Earned" : "总获金币", value: "\(stats.totalGoldEarned)")
                 }
                 .padding(.horizontal, Theme.spacingMD)
 

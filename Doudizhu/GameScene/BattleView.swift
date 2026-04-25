@@ -31,7 +31,7 @@ struct BattleView: View {
                 SpriteView(scene: scene)
                     .ignoresSafeArea()
             } else {
-                Color(red: 0.15, green: 0.10, blue: 0.07).ignoresSafeArea()
+                Color(red: 0.22, green: 0.16, blue: 0.11).ignoresSafeArea()
             }
 
             // SwiftUI 覆盖层
@@ -197,7 +197,7 @@ struct BattleView: View {
 
             // 金币
             HStack(spacing: 3) {
-                Image(systemName: "dollarsign.circle.fill")
+                Image(systemName: "circle.circle.fill")
                     .font(.caption)
                     .foregroundColor(Theme.gold)
                 Text("\(rogueRun.gold)")
@@ -221,6 +221,8 @@ struct BattleView: View {
         }
         .padding(.horizontal, Theme.spacingSM)
         .padding(.top, 4)
+        .padding(.bottom, 4)
+        .background(.ultraThinMaterial)
     }
 
     // MARK: - 出牌记录
@@ -354,11 +356,11 @@ struct BattleView: View {
 
             // Score row: plays / discards / score + progress bar inline
             HStack(spacing: 8) {
-                Label("\(rogueRun.playsRemaining)", systemImage: "hand.raised.fill")
+                Label("\(rogueRun.playsRemaining)", systemImage: "suit.spade.fill")
                     .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.playsRemaining <= 1 ? Theme.danger : Theme.cyan)
 
-                Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.triangle.2.circlepath")
+                Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.2.squarepath")
                     .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.discardsRemaining == 0 ? Theme.textDisabled : Theme.success)
 
@@ -396,6 +398,12 @@ struct BattleView: View {
                 }
             }
             .padding(.horizontal)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusSM)
+                    .fill(.ultraThinMaterial)
+            )
+            .padding(.horizontal, Theme.spacingSM)
         }
     }
 
@@ -491,12 +499,15 @@ struct BattleView: View {
             } label: {
                 Image(systemName: rogueRun.handSortMode.icon)
                     .font(.body.weight(.medium))
-                    .foregroundColor(Theme.cyan)
+                    .foregroundColor(Theme.gold)
                     .frame(width: 44, height: 50)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusSM)
-                            .fill(Theme.cyanDim)
-                            .stroke(Theme.cyan.opacity(0.3))
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusSM)
+                                    .stroke(Theme.gold.opacity(0.3), lineWidth: 0.6)
+                            )
                     )
             }
             .accessibilityLabel(rogueRun.handSortMode.label)
@@ -520,7 +531,6 @@ struct BattleView: View {
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: "arrow.triangle.2.circlepath")
                     Text(L10n.swap)
                     Text("(\(rogueRun.discardsRemaining))")
                         .font(.caption)
@@ -531,8 +541,11 @@ struct BattleView: View {
                 .frame(height: 50)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
-                        .fill(rogueRun.discardsRemaining > 0 ? Theme.dangerDim : Theme.bgInset)
-                        .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                                .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight, lineWidth: 0.6)
+                        )
                 )
                 .contentShape(Rectangle())
             }
@@ -555,7 +568,6 @@ struct BattleView: View {
                 showProgressiveHint()
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: "play.fill")
                     Text(L10n.play)
                     Text("(\(rogueRun.playsRemaining))")
                         .font(.caption)
