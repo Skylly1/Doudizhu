@@ -87,12 +87,13 @@ private struct MapStatsSummary: View {
             statItem(icon: "🎯", value: L10n.mapHighestScore(highestScore))
         }
         .padding(.vertical, Theme.spacingSM)
-        .background(Theme.bgCard)
+        .background(.ultraThinMaterial)
         .cornerRadius(Theme.radiusMD)
         .overlay(
             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                .stroke(Theme.border, lineWidth: 1)
+                .stroke(Theme.gold.opacity(0.15), lineWidth: 0.5)
         )
+        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
     }
 
     private func statItem(icon: String, value: String) -> some View {

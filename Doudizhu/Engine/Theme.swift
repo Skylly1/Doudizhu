@@ -149,9 +149,44 @@ struct CardPanel<Content: View>: View {
             .padding(Theme.spacingMD)
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
-                    .fill(Theme.bgCard)
-                    .stroke(highlight ?? Theme.border, lineWidth: highlight != nil ? 1.5 : 0.5)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .stroke(highlight ?? Theme.gold.opacity(0.15), lineWidth: highlight != nil ? 1.5 : 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
+    }
+}
+
+// MARK: - 毛玻璃面板 modifier
+
+struct GlassPanel: ViewModifier {
+    var cornerRadius: CGFloat = Theme.radiusMD
+    var borderColor: Color = Theme.gold.opacity(0.15)
+    var shadowRadius: CGFloat = 8
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(borderColor, lineWidth: 0.5)
+                    )
+            )
+            .shadow(color: .black.opacity(0.2), radius: shadowRadius, y: 4)
+    }
+}
+
+extension View {
+    func glassPanel(
+        cornerRadius: CGFloat = Theme.radiusMD,
+        border: Color = Theme.gold.opacity(0.15),
+        shadow: CGFloat = 8
+    ) -> some View {
+        modifier(GlassPanel(cornerRadius: cornerRadius, borderColor: border, shadowRadius: shadow))
     }
 }
 
@@ -183,7 +218,7 @@ struct PrimaryButton: View {
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
                     .fill(gradient)
             )
-            .shadow(color: Theme.gold.opacity(0.3), radius: 8, y: 4)
+            .shadow(color: Theme.gold.opacity(0.35), radius: 10, y: 5)
         }
         .buttonStyle(GameButtonStyle(pressScale: 0.93))
     }
@@ -214,9 +249,13 @@ struct SecondaryButton: View {
             .padding(.vertical, 10)
             .background(
                 Capsule()
-                    .fill(color.opacity(0.1))
-                    .stroke(color.opacity(0.2))
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        Capsule()
+                            .stroke(color.opacity(0.2), lineWidth: 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
         }
         .buttonStyle(GameButtonStyle(pressScale: 0.96))
     }

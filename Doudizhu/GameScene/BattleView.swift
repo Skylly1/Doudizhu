@@ -185,7 +185,7 @@ struct BattleView: View {
                         .foregroundColor(Theme.flame)
                         .padding(.horizontal, 3)
                         .padding(.vertical, 1)
-                        .background(Capsule().fill(Theme.flameDim))
+                        .background(Capsule().fill(.ultraThinMaterial))
                 }
                 Text(rogueRun.currentFloor.name)
                     .font(Theme.subtitleFont)
@@ -223,6 +223,7 @@ struct BattleView: View {
         .padding(.top, 4)
         .padding(.bottom, 4)
         .background(.ultraThinMaterial)
+        .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
     }
 
     // MARK: - 出牌记录
@@ -243,9 +244,13 @@ struct BattleView: View {
                     .padding(.vertical, 3)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Theme.bgInset)
-                            .stroke(play.isFloorCleared ? Theme.gold.opacity(0.4) : Theme.borderLight)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(play.isFloorCleared ? Theme.gold.opacity(0.4) : Theme.borderLight, lineWidth: 0.5)
+                            )
                     )
+                    .shadow(color: .black.opacity(0.12), radius: 3, y: 2)
                 }
             }
             .padding(.horizontal, Theme.spacingSM)
@@ -282,9 +287,13 @@ struct BattleView: View {
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Theme.flameDim)
-                        .stroke(Theme.flame.opacity(0.3))
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Theme.flame.opacity(0.3))
+                        )
                 )
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .padding(.horizontal)
             }
 
@@ -333,7 +342,7 @@ struct BattleView: View {
                                     }
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(Capsule().fill(Theme.cyanDim))
+                                    .background(Capsule().fill(.ultraThinMaterial))
                                     .foregroundColor(Theme.cyan)
                                 }
                                 ForEach(rogueRun.activeBuffs) { buff in
@@ -343,7 +352,7 @@ struct BattleView: View {
                                     }
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(Capsule().fill(Theme.flameDim))
+                                    .background(Capsule().fill(.ultraThinMaterial))
                                     .foregroundColor(Theme.flame)
                                 }
                             }
@@ -402,7 +411,12 @@ struct BattleView: View {
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusSM)
                     .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusSM)
+                            .stroke(Theme.gold.opacity(0.12), lineWidth: 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
             .padding(.horizontal, Theme.spacingSM)
         }
     }
@@ -468,8 +482,8 @@ struct BattleView: View {
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.vertical, 6)
                 .background(
-                    Capsule().fill(Theme.cyanDim)
-                        .stroke(Theme.cyan.opacity(0.3))
+                    Capsule().fill(.ultraThinMaterial)
+                        .overlay(Capsule().stroke(Theme.cyan.opacity(0.3)))
                 )
                 .transition(.scale.combined(with: .opacity))
             } else if let selected = battleScene?.getSelectedCards(), !selected.isEmpty {
@@ -509,6 +523,7 @@ struct BattleView: View {
                                     .stroke(Theme.gold.opacity(0.3), lineWidth: 0.6)
                             )
                     )
+                    .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
             }
             .accessibilityLabel(rogueRun.handSortMode.label)
             Button {
@@ -547,6 +562,7 @@ struct BattleView: View {
                                 .stroke(rogueRun.discardsRemaining > 0 ? Theme.danger.opacity(0.5) : Theme.borderLight, lineWidth: 0.6)
                         )
                 )
+                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -580,6 +596,7 @@ struct BattleView: View {
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(rogueRun.playsRemaining > 0 ? Theme.gold : Theme.bgInset)
                 )
+                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.1), radius: 6, y: 3)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -608,7 +625,7 @@ struct BattleView: View {
                         .foregroundColor(Theme.cyan)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Capsule().fill(Theme.cyanDim))
+                        .background(Capsule().fill(.ultraThinMaterial))
                     Text("×")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
@@ -617,7 +634,7 @@ struct BattleView: View {
                         .foregroundColor(Theme.flame)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Capsule().fill(Theme.flameDim))
+                        .background(Capsule().fill(.ultraThinMaterial))
                     Text("=")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
@@ -663,9 +680,13 @@ struct BattleView: View {
             .frame(maxWidth: 220)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Theme.bgPrimary.opacity(0.9))
-                    .stroke(Theme.gold.opacity(0.3))
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Theme.gold.opacity(0.25), lineWidth: 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.25), radius: 10, y: 5)
             .transition(.scale.combined(with: .opacity))
         }
     }
@@ -695,7 +716,10 @@ struct BattleView: View {
                     }
                 }
                 .padding(Theme.spacingMD)
-                .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(.ultraThinMaterial)
+                )
 
                 PrimaryButton(title: L10n.continueForward, icon: "arrow.right") {
                     rogueRun.advanceToNextFloor()
@@ -722,7 +746,10 @@ struct BattleView: View {
                     statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
                 }
                 .padding(Theme.spacingMD)
-                .background(RoundedRectangle(cornerRadius: Theme.radiusSM).fill(Theme.bgCard))
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                        .fill(.ultraThinMaterial)
+                )
 
                 // 重试本关按钮
                 PrimaryButton(title: L10n.retryFloor, icon: "arrow.counterclockwise") {
@@ -780,9 +807,13 @@ struct BattleView: View {
                         .frame(width: 220, height: 46)
                         .background(
                             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                .fill(Theme.flameDim)
-                                .stroke(Theme.flame.opacity(0.4))
+                                .fill(.ultraThinMaterial)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                        .stroke(Theme.flame.opacity(0.4))
+                                )
                         )
+                        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                     }
                 }
 
@@ -809,9 +840,13 @@ struct BattleView: View {
                     .frame(width: 220, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(Theme.cyanDim)
-                            .stroke(Theme.cyan.opacity(0.3))
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.cyan.opacity(0.3))
+                            )
                     )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
@@ -825,17 +860,21 @@ struct BattleView: View {
 
     private func overlayBase<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         ZStack {
-            Color.black.opacity(0.75).ignoresSafeArea()
+            Color.black.opacity(0.6).ignoresSafeArea()
             VStack {
                 content()
             }
             .padding(Theme.spacingXL)
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusLG)
-                    .fill(Theme.bgPrimary.opacity(0.95))
-                    .stroke(Theme.gold.opacity(0.2))
-                    .shadow(color: Theme.gold.opacity(0.15), radius: 20)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusLG)
+                            .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
+                    )
             )
+            .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
+            .shadow(color: Theme.gold.opacity(0.1), radius: 30)
             .padding(Theme.spacingXL)
             .transition(.scale(scale: 0.8).combined(with: .opacity))
         }
