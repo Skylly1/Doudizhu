@@ -98,6 +98,9 @@ struct ContentView: View {
                         SoundManager.shared.stopBGM()
                         goHome()
                     })
+                    .onAppear {
+                        SoundManager.shared.startBGM(mode: .shop)
+                    }
                     .swipeBack {
                         rogueRun.leaveShop()
                         goBack()

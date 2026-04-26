@@ -414,7 +414,7 @@ class BattleScene: SKScene {
             comboLabel.run(comboAnim)
         }
 
-        // 炸弹/火箭 — 屏幕震动 + 闪光 + 冲击波环
+        // 炸弹/火箭 — 屏幕震动 + 闪光 + 冲击波环 + 星爆粒子
         if result.pattern.type == .bomb || result.pattern.type == .rocket {
             let isRocket = result.pattern.type == .rocket
             screenShake(intensity: isRocket ? 1.5 : 1.0)
@@ -422,12 +422,14 @@ class BattleScene: SKScene {
                         ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1.0)
                         : SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1.0))
 
-            // 冲击波环
             let ringCenter = CGPoint(x: size.width / 2, y: y)
-            let ring = SKShapeNode(circleOfRadius: 10)
-            ring.strokeColor = isRocket
+            let accentColor = isRocket
                 ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 0.8)
                 : SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.8)
+
+            // 冲击波环
+            let ring = SKShapeNode(circleOfRadius: 10)
+            ring.strokeColor = accentColor
             ring.fillColor = .clear
             ring.lineWidth = isRocket ? 4 : 3
             ring.glowWidth = isRocket ? 8 : 5
@@ -443,11 +445,79 @@ class BattleScene: SKScene {
                 ]),
                 .removeFromParent()
             ]))
+
+            // 星爆粒子射线
+            let trailCount = isRocket ? 16 : 10
+            for i in 0..<trailCount {
+                let angle = (CGFloat(i) / CGFloat(trailCount)) * 2 * .pi + CGFloat.random(in: -0.15...0.15)
+                let dist: CGFloat = CGFloat.random(in: 70...160)
+
+                let spark = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...4))
+                spark.fillColor = accentColor.withAlphaComponent(1.0)
+                spark.strokeColor = .clear
+                spark.glowWidth = 3
+                spark.position = ringCenter
+                spark.zPosition = 179
+                spark.alpha = 0
+                addChild(spark)
+
+                let dx = cos(angle) * dist
+                let dy = sin(angle) * dist
+                let dur = Double.random(in: 0.25...0.45)
+
+                spark.run(SKAction.sequence([
+                    .wait(forDuration: 0.03),
+                    .fadeAlpha(to: 0.9, duration: 0.03),
+                    SKAction.group([
+                        .moveBy(x: dx, y: dy, duration: dur),
+                        .fadeOut(withDuration: dur),
+                        .scale(to: 0.2, duration: dur)
+                    ]),
+                    .removeFromParent()
+                ]))
+            }
+
+            // 中心闪光球
+            let core = SKShapeNode(circleOfRadius: isRocket ? 25 : 18)
+            core.fillColor = accentColor.withAlphaComponent(0.6)
+            core.strokeColor = .clear
+            core.glowWidth = isRocket ? 20 : 12
+            core.position = ringCenter
+            core.zPosition = 181
+            core.setScale(0.1)
+            addChild(core)
+
+            core.run(SKAction.sequence([
+                .scale(to: 1.5, duration: 0.08),
+                SKAction.group([
+                    .scale(to: 3.0, duration: 0.25),
+                    .fadeOut(withDuration: 0.25)
+                ]),
+                .removeFromParent()
+            ]))
         }
 
         // 高连击也震一下
         if result.combo >= 3 {
             screenShake(intensity: min(1.5, 0.3 + Double(result.combo) * 0.2))
+
+            // 连击 ≥ 4 屏幕边缘氛围光晕
+            if result.combo >= 4 {
+                let vignetteColor = result.combo >= 6
+                    ? SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 0.12)
+                    : SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.10)
+                let vignette = SKShapeNode(rectOf: size)
+                vignette.fillColor = vignetteColor
+                vignette.strokeColor = .clear
+                vignette.position = CGPoint(x: size.width / 2, y: size.height / 2)
+                vignette.zPosition = 95
+                addChild(vignette)
+                vignette.run(SKAction.sequence([
+                    .fadeAlpha(to: 0.5, duration: 0.08),
+                    .fadeOut(withDuration: 0.7),
+                    .removeFromParent()
+                ]))
+            }
         }
 
         // 分数粒子爆发 — 分层级
@@ -455,6 +525,30 @@ class BattleScene: SKScene {
             let count = result.score >= 300 ? 24 : (result.score >= 150 ? 16 : 8)
             emitScoreParticles(at: CGPoint(x: size.width / 2, y: y), count: count)
         }
+
+        // 分数飞向顶部总分区域
+        let flyLabel = SKLabelNode(text: "+\(result.score)")
+        flyLabel.fontName = "Helvetica-Bold"
+        flyLabel.fontSize = 18
+        flyLabel.fontColor = SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 1)
+        flyLabel.position = CGPoint(x: size.width / 2, y: y)
+        flyLabel.zPosition = 110
+        flyLabel.alpha = 0
+        addChild(flyLabel)
+
+        flyLabel.run(SKAction.sequence([
+            .wait(forDuration: 0.55),
+            .fadeIn(withDuration: 0.1),
+            SKAction.group([
+                .move(to: CGPoint(x: size.width * 0.35, y: size.height - 50), duration: 0.45),
+                .scale(to: 0.6, duration: 0.45),
+                .sequence([
+                    .wait(forDuration: 0.25),
+                    .fadeOut(withDuration: 0.2)
+                ])
+            ]),
+            .removeFromParent()
+        ]))
     }
 
     // MARK: - 特效
@@ -613,6 +707,49 @@ class BattleScene: SKScene {
             ]),
             .removeFromParent()
         ]))
+
+        // "过关！" 文字横幅动画
+        let clearText = SKLabelNode(text: L10n.isEnglish ? "CLEARED!" : "过关！")
+        clearText.fontName = Theme.spriteKitSerifFontName
+        clearText.fontSize = 52
+        clearText.fontColor = SKColor(red: 0.96, green: 0.84, blue: 0.45, alpha: 1)
+        clearText.position = CGPoint(x: size.width / 2, y: size.height * 0.52)
+        clearText.zPosition = 190
+        clearText.setScale(0.1)
+        clearText.alpha = 0
+        addChild(clearText)
+
+        clearText.run(SKAction.sequence([
+            .wait(forDuration: 0.15),
+            SKAction.group([
+                .fadeIn(withDuration: 0.12),
+                .scale(to: 1.3, duration: 0.18)
+            ]),
+            .scale(to: 1.0, duration: 0.1),
+            .wait(forDuration: 0.7),
+            SKAction.group([
+                .moveBy(x: 0, y: 40, duration: 0.5),
+                .fadeOut(withDuration: 0.5)
+            ]),
+            .removeFromParent()
+        ]))
+
+        // 文字下方光晕
+        let textGlow = SKShapeNode(ellipseOf: CGSize(width: 200, height: 40))
+        textGlow.fillColor = SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 0.15)
+        textGlow.strokeColor = .clear
+        textGlow.position = CGPoint(x: size.width / 2, y: size.height * 0.50)
+        textGlow.zPosition = 189
+        textGlow.alpha = 0
+        addChild(textGlow)
+
+        textGlow.run(SKAction.sequence([
+            .wait(forDuration: 0.15),
+            .fadeAlpha(to: 0.5, duration: 0.2),
+            .wait(forDuration: 0.5),
+            .fadeOut(withDuration: 0.5),
+            .removeFromParent()
+        ]))
     }
 
     /// 通关时的全屏烟花效果
@@ -661,5 +798,80 @@ class BattleScene: SKScene {
         }
 
         screenShake(intensity: 0.5)
+
+        // "通关！" 大字横幅 + 金色光晕
+        let victoryText = SKLabelNode(text: L10n.isEnglish ? "VICTORY!" : "通关！")
+        victoryText.fontName = Theme.spriteKitSerifFontName
+        victoryText.fontSize = 68
+        victoryText.fontColor = SKColor(red: 0.96, green: 0.84, blue: 0.45, alpha: 1)
+        victoryText.position = CGPoint(x: size.width / 2, y: size.height * 0.55)
+        victoryText.zPosition = 210
+        victoryText.setScale(0.05)
+        victoryText.alpha = 0
+        addChild(victoryText)
+
+        let glow = SKShapeNode(circleOfRadius: 80)
+        glow.fillColor = SKColor(red: 0.85, green: 0.68, blue: 0.28, alpha: 0.2)
+        glow.strokeColor = .clear
+        glow.position = victoryText.position
+        glow.zPosition = 209
+        glow.setScale(0.1)
+        glow.alpha = 0
+        addChild(glow)
+
+        victoryText.run(SKAction.sequence([
+            .wait(forDuration: 0.3),
+            SKAction.group([
+                .fadeIn(withDuration: 0.15),
+                .scale(to: 1.4, duration: 0.25)
+            ]),
+            .scale(to: 1.0, duration: 0.12),
+            .wait(forDuration: 1.2),
+            SKAction.group([
+                .scale(to: 1.15, duration: 0.6),
+                .fadeOut(withDuration: 0.6)
+            ]),
+            .removeFromParent()
+        ]))
+
+        glow.run(SKAction.sequence([
+            .wait(forDuration: 0.3),
+            SKAction.group([
+                .fadeAlpha(to: 0.5, duration: 0.25),
+                .scale(to: 3.0, duration: 0.4)
+            ]),
+            .fadeOut(withDuration: 1.0),
+            .removeFromParent()
+        ]))
+
+        // 第二波大型烟花（延迟）
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self else { return }
+            for _ in 0..<25 {
+                let spark = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
+                spark.fillColor = celebColors.randomElement()!
+                spark.strokeColor = .clear
+                let cx = CGFloat.random(in: self.size.width * 0.15...self.size.width * 0.85)
+                let cy = CGFloat.random(in: self.size.height * 0.35...self.size.height * 0.75)
+                spark.position = CGPoint(x: cx, y: cy)
+                spark.zPosition = 200
+                spark.alpha = 0
+                self.addChild(spark)
+
+                let angle = CGFloat.random(in: 0...(2 * .pi))
+                let dist = CGFloat.random(in: 40...100)
+                let dur = Double.random(in: 0.4...0.7)
+
+                spark.run(SKAction.sequence([
+                    .fadeIn(withDuration: 0.05),
+                    SKAction.group([
+                        .moveBy(x: cos(angle) * dist, y: sin(angle) * dist, duration: dur),
+                        .fadeOut(withDuration: dur),
+                        .scale(to: 0.1, duration: dur)
+                    ]),
+                    .removeFromParent()
+                ]))
+            }
+        }
     }
 }

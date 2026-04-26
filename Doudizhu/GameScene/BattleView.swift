@@ -154,8 +154,8 @@ struct BattleView: View {
             // Refresh hand when returning from shop
             battleScene?.refreshHand()
             playsUsedThisFloor = 0
-            // Start BGM
-            SoundManager.shared.startBGM()
+            // Start BGM（Boss 关使用暗调 BGM）
+            SoundManager.shared.startBGM(mode: rogueRun.currentFloor.isBoss ? .boss : .battle)
             // Boss 入场音效
             if rogueRun.currentFloor.isBoss {
                 SoundManager.shared.play(.bossAppear)

@@ -20,6 +20,14 @@ enum GameSound: Sendable {
     case goldCoin
 }
 
+// MARK: - BGM 模式
+
+enum BGMMode: Sendable {
+    case battle
+    case boss
+    case shop
+}
+
 // MARK: - 程序化音效管理器
 
 @MainActor
@@ -422,11 +430,15 @@ final class SoundManager {
     private var bgmPlayerNode: AVAudioPlayerNode?
     private var bgmTimer: Timer?
     private var isBGMPlaying = false
+    private var currentBGMMode: BGMMode = .battle
 
-    /// 开始播放程序化环境 BGM
-    func startBGM() {
+    /// 开始播放程序化环境 BGM（可指定模式）
+    func startBGM(mode: BGMMode = .battle) {
         guard UserDefaults.standard.bool(forKey: "musicEnabled") else { return }
-        guard !isBGMPlaying else { return }
+        let modeChanged = currentBGMMode != mode
+        currentBGMMode = mode
+        if isBGMPlaying && !modeChanged { return }
+        if modeChanged && isBGMPlaying { stopBGM() }
         isBGMPlaying = true
         ensureRunning()
         playBGMLoop()
@@ -440,11 +452,16 @@ final class SoundManager {
         bgmPlayerNode?.stop()
     }
 
-    /// 程序化 BGM — 古风五声音阶旋律循环
+    /// 程序化 BGM — 根据模式选择不同风格
     private func playBGMLoop() {
         guard isBGMPlaying else { return }
 
-        let samples = generateBGMPhrase()
+        let samples: [Float]
+        switch currentBGMMode {
+        case .battle: samples = generateBGMPhrase()
+        case .boss:   samples = generateBossBGMPhrase()
+        case .shop:   samples = generateShopBGMPhrase()
+        }
         scheduleBuffer(samples)
 
         // 循环播放（每个乐句约4秒）
@@ -493,6 +510,99 @@ final class SoundManager {
             // 随机间隔
             if Bool.random() {
                 let silence = [Float](repeating: 0, count: Int(sampleRate * Double(Float.random(in: 0.1...0.25))))
+                phrase.append(silence)
+            }
+        }
+
+        return concat(phrase)
+    }
+
+    /// Boss BGM — 低沉、不稳定、带压迫感的暗调五声音阶
+    private func generateBossBGMPhrase() -> [Float] {
+        let darkScale: [Float] = [131, 147, 165, 196, 220, 262, 294]
+        let noteDurations: [Float] = [0.5, 0.6, 0.7, 0.8, 0.45]
+
+        var phrase: [[Float]] = []
+        let noteCount = Int.random(in: 5...8)
+
+        for i in 0..<noteCount {
+            let freq = darkScale.randomElement()!
+            let dur = noteDurations.randomElement()!
+            let amp: Float = Float.random(in: 0.04...0.08)
+
+            let note = envelope(
+                sine(frequency: freq, duration: dur, amplitude: amp),
+                attack: 0.03, decay: 0.08, sustain: 0.4, release: dur * 0.5
+            )
+
+            // 不协和泛音（增加压迫感）
+            if i % 2 == 0 {
+                let dissonant = envelope(
+                    sine(frequency: freq * 1.06, duration: dur * 0.5, amplitude: amp * 0.3),
+                    attack: 0.02, decay: 0.05, sustain: 0.15, release: dur * 0.3
+                )
+                let maxLen = max(note.count, dissonant.count)
+                var padNote = note + [Float](repeating: 0, count: max(0, maxLen - note.count))
+                let padDiss = dissonant + [Float](repeating: 0, count: max(0, maxLen - dissonant.count))
+                padNote = mix([padNote, padDiss])
+                phrase.append(padNote)
+            } else {
+                phrase.append(note)
+            }
+
+            // 低频脉动鼓点
+            if i % 3 == 0 {
+                let drum = envelope(
+                    sine(frequency: 55, duration: 0.2, amplitude: 0.06),
+                    attack: 0.005, decay: 0.04, sustain: 0.02, release: 0.13
+                )
+                phrase.append(drum)
+            }
+
+            // 较长的不安静默
+            let silence = [Float](repeating: 0, count: Int(sampleRate * Double(Float.random(in: 0.15...0.4))))
+            phrase.append(silence)
+        }
+
+        return concat(phrase)
+    }
+
+    /// 商店 BGM — 轻快、明亮的高音区五声音阶
+    private func generateShopBGMPhrase() -> [Float] {
+        let lightScale: [Float] = [523, 588, 660, 784, 880, 1047]
+        let noteDurations: [Float] = [0.25, 0.3, 0.35, 0.2]
+
+        var phrase: [[Float]] = []
+        let noteCount = Int.random(in: 7...10)
+
+        for i in 0..<noteCount {
+            let freq = lightScale.randomElement()!
+            let dur = noteDurations.randomElement()!
+            let amp: Float = Float.random(in: 0.02...0.04)
+
+            let note = envelope(
+                sine(frequency: freq, duration: dur, amplitude: amp),
+                attack: 0.01, decay: 0.03, sustain: 0.4, release: dur * 0.4
+            )
+
+            // 轻盈泛音（风铃效果）
+            if i % 2 == 0 {
+                let chime = envelope(
+                    sine(frequency: freq * 2, duration: dur * 0.4, amplitude: amp * 0.2),
+                    attack: 0.005, decay: 0.02, sustain: 0.1, release: dur * 0.2
+                )
+                let maxLen = max(note.count, chime.count)
+                var padNote = note + [Float](repeating: 0, count: max(0, maxLen - note.count))
+                let padChime = chime + [Float](repeating: 0, count: max(0, maxLen - chime.count))
+                padNote = mix([padNote, padChime])
+                phrase.append(padNote)
+            } else {
+                phrase.append(note)
+            }
+
+            // 频繁但短的间隔
+            if Bool.random() {
+                let silence = [Float](repeating: 0, count: Int(sampleRate * Double(Float.random(in: 0.08...0.18))))
                 phrase.append(silence)
             }
         }
