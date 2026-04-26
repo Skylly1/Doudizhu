@@ -126,8 +126,8 @@ class BattleScene: SKScene {
         let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        // Leave room for SwiftUI bottom panel (~160pt for buttons + score bar + safe area)
-        let baseY = cardHeight / 2 + 180
+        // Leave room for SwiftUI bottom panel (~200pt for buttons + score bar + safe area)
+        let baseY = cardHeight / 2 + 200
 
         // 扇形弧度参数 — 温和弧度
         let maxAngle: CGFloat = count > 5 ? 0.028 : 0.015

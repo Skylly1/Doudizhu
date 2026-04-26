@@ -551,27 +551,6 @@ struct BattleView: View {
             }
 
             HStack(spacing: Theme.spacingMD) {
-            // 手牌排序切换
-            Button {
-                rogueRun.toggleSortMode()
-                battleScene?.refreshHand()
-                FeedbackManager.shared.cardTap()
-            } label: {
-                Image(systemName: rogueRun.handSortMode.icon)
-                    .font(.body.weight(.medium))
-                    .foregroundColor(Theme.gold)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusSM)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusSM)
-                                    .stroke(Theme.gold.opacity(0.3), lineWidth: 0.6)
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
-            }
-            .accessibilityLabel(rogueRun.handSortMode.label)
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
@@ -1129,6 +1108,32 @@ struct BattleView: View {
                         )
                 )
                 .frame(width: 220)
+
+                // 手牌排序
+                Button {
+                    rogueRun.toggleSortMode()
+                    battleScene?.refreshHand()
+                    FeedbackManager.shared.cardTap()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: rogueRun.handSortMode.icon)
+                        Text(rogueRun.handSortMode == .byRank
+                             ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
+                             : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.gold)
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.gold.opacity(0.3))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
 
                 // 放弃
                 Button {
