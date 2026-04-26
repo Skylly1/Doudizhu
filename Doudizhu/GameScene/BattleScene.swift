@@ -13,9 +13,9 @@ class BattleScene: SKScene {
     let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量（基准值，实际会根据手牌数动态缩放）
-    private let baseCardWidth: CGFloat = 58
-    private let baseCardHeight: CGFloat = 87
-    private let cardOverlap: CGFloat = 28
+    private let baseCardWidth: CGFloat = 66
+    private let baseCardHeight: CGFloat = 99
+    private let cardOverlap: CGFloat = 32
 
     override func didMove(to view: SKView) {
         // 暖棕底色 — 大幅提亮，OLED 可见
@@ -76,16 +76,6 @@ class BattleScene: SKScene {
         outerCircle.zPosition = -5
         addChild(outerCircle)
 
-        let hintText = L10n.isEnglish ? "Play Area" : "出牌区"
-        let hint = SKLabelNode(text: hintText)
-        hint.fontName = Theme.spriteKitSerifFontName
-        hint.fontSize = 14
-        hint.fontColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 0.25)
-        hint.position = CGPoint(x: size.width / 2, y: size.height * 0.54 - 5)
-        hint.name = "hint"
-        hint.zPosition = -4
-        addChild(hint)
-
         // 四角金色回纹装饰
         for (dx, dy) in [(-1.0, 1.0), (1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)] {
             let corner = SKShapeNode()
@@ -116,22 +106,22 @@ class BattleScene: SKScene {
         let count = cards.count
 
         // Dynamic card sizing: shrink cards when hand is large
-        let scaleFactor: CGFloat = count <= 7 ? 1.0 : max(0.70, 1.0 - CGFloat(count - 7) * 0.05)
+        let scaleFactor: CGFloat = count <= 7 ? 1.0 : max(0.65, 1.0 - CGFloat(count - 7) * 0.05)
         let cardWidth = baseCardWidth * scaleFactor
         let cardHeight = baseCardHeight * scaleFactor
 
         // 动态计算 overlap 确保不超出屏幕
-        let maxWidth = size.width - 20
+        let maxWidth = size.width - 24
         let idealOverlap = cardOverlap * scaleFactor
         let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        // Leave room for SwiftUI bottom panel (~200pt for buttons + score bar + safe area)
-        let baseY = cardHeight / 2 + 200
+        // Leave room for SwiftUI bottom panel
+        let baseY = cardHeight / 2 + 190
 
         // 扇形弧度参数 — 温和弧度
-        let maxAngle: CGFloat = count > 5 ? 0.028 : 0.015
-        let arcHeight: CGFloat = count > 5 ? 8 : 4
+        let maxAngle: CGFloat = count > 5 ? 0.022 : 0.012
+        let arcHeight: CGFloat = count > 5 ? 6 : 3
 
         for (index, card) in cards.enumerated() {
             let node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))

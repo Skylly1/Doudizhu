@@ -47,9 +47,9 @@ struct BattleView: View {
                 }
                 Spacer()
                 scoreTargetBar
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 4)
                 actionButtons
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 8)
             }
             .padding(.bottom, 0)
             .ignoresSafeArea(edges: .bottom)
@@ -578,16 +578,16 @@ struct BattleView: View {
                 .font(.body.weight(.medium))
                 .foregroundColor(rogueRun.discardsRemaining > 0 ? Theme.textPrimary : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
+                .frame(height: 48)
                 .background(
-                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(.ultraThinMaterial)
                         .overlay(
-                            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                            RoundedRectangle(cornerRadius: Theme.radiusMD)
                                 .stroke(discardBorderColor, lineWidth: 0.6)
                         )
                 )
-                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -616,12 +616,12 @@ struct BattleView: View {
                 .font(.body.weight(.semibold))
                 .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
+                .frame(height: 48)
                 .background(
-                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(playButtonFill)
                 )
-                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.1), radius: 6, y: 3)
+                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.08), radius: 5, y: 2)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)

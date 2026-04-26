@@ -76,59 +76,38 @@ class CardNode: SKSpriteNode {
         let suitText = card.suit?.rawValue ?? ""
         let color = cardColor
 
-        // 左上角：点数 — 视觉核心，大号加粗
         let serifFont = Theme.spriteKitSerifFontName
+
+        // 左上角：点数 — 大号清晰，核心信息
         let topRank = SKLabelNode(text: rankText)
         topRank.fontName = serifFont
-        topRank.fontSize = size.width * 0.36
+        topRank.fontSize = size.width * 0.38
         topRank.fontColor = color
         topRank.horizontalAlignmentMode = .left
         topRank.verticalAlignmentMode = .top
-        topRank.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 4)
+        topRank.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 3)
         topRank.zPosition = 1
         addChild(topRank)
 
-        // 左上角：花色
+        // 左上角：花色（紧贴点数下方）
         let topSuit = SKLabelNode(text: suitText)
-        topSuit.fontSize = size.width * 0.20
+        topSuit.fontSize = size.width * 0.22
         topSuit.fontColor = color
         topSuit.horizontalAlignmentMode = .left
         topSuit.verticalAlignmentMode = .top
-        topSuit.position = CGPoint(x: -size.width / 2 + 6, y: size.height / 2 - size.width * 0.38)
+        topSuit.position = CGPoint(x: -size.width / 2 + 6, y: size.height / 2 - size.width * 0.40)
         topSuit.zPosition = 1
         addChild(topSuit)
 
-        // 中央花色 — 低调水印
-        let centerSuit = SKLabelNode(text: suitText)
-        centerSuit.fontSize = size.width * 0.42
-        centerSuit.fontColor = color.withAlphaComponent(0.15)
-        centerSuit.verticalAlignmentMode = .center
-        centerSuit.horizontalAlignmentMode = .center
-        centerSuit.position = CGPoint(x: 2, y: -4)
-        centerSuit.zPosition = 1
-        addChild(centerSuit)
-
-        // 右下角镜像 — 淡化处理
-        let botRank = SKLabelNode(text: rankText)
-        botRank.fontName = serifFont
-        botRank.fontSize = size.width * 0.24
-        botRank.fontColor = color.withAlphaComponent(0.40)
-        botRank.horizontalAlignmentMode = .right
-        botRank.verticalAlignmentMode = .bottom
-        botRank.position = CGPoint(x: size.width / 2 - 5, y: -size.height / 2 + size.width * 0.20)
-        botRank.zRotation = .pi
-        botRank.zPosition = 1
-        addChild(botRank)
-
-        let botSuit = SKLabelNode(text: suitText)
-        botSuit.fontSize = size.width * 0.14
-        botSuit.fontColor = color.withAlphaComponent(0.30)
-        botSuit.horizontalAlignmentMode = .right
-        botSuit.verticalAlignmentMode = .bottom
-        botSuit.position = CGPoint(x: size.width / 2 - 6, y: -size.height / 2 + 4)
-        botSuit.zRotation = .pi
-        botSuit.zPosition = 1
-        addChild(botSuit)
+        // 右上角：小花色（辅助识别，扇形展开时可见）
+        let topRightSuit = SKLabelNode(text: suitText)
+        topRightSuit.fontSize = size.width * 0.16
+        topRightSuit.fontColor = color.withAlphaComponent(0.35)
+        topRightSuit.horizontalAlignmentMode = .right
+        topRightSuit.verticalAlignmentMode = .top
+        topRightSuit.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - 4)
+        topRightSuit.zPosition = 1
+        addChild(topRightSuit)
     }
 
     private func drawJokerCard() {
@@ -139,45 +118,35 @@ class CardNode: SKSpriteNode {
         // 左上角标识
         let topLabel = SKLabelNode(text: isRedJoker ? "大" : "小")
         topLabel.fontName = serifFont
-        topLabel.fontSize = size.width * 0.34
+        topLabel.fontSize = size.width * 0.36
         topLabel.fontColor = color
         topLabel.horizontalAlignmentMode = .left
         topLabel.verticalAlignmentMode = .top
-        topLabel.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 4)
+        topLabel.position = CGPoint(x: -size.width / 2 + 5, y: size.height / 2 - 3)
         topLabel.zPosition = 2
         addChild(topLabel)
 
-        // 中央光晕
-        let glow = SKShapeNode(circleOfRadius: size.width * 0.26)
-        glow.fillColor = color.withAlphaComponent(0.06)
-        glow.strokeColor = color.withAlphaComponent(0.08)
-        glow.lineWidth = 0.5
-        glow.position = CGPoint(x: 0, y: -2)
-        glow.zPosition = 1
-        addChild(glow)
+        // "王"字（紧跟左上角下方）
+        let kingLabel = SKLabelNode(text: "王")
+        kingLabel.fontName = serifFont
+        kingLabel.fontSize = size.width * 0.28
+        kingLabel.fontColor = color.withAlphaComponent(0.7)
+        kingLabel.horizontalAlignmentMode = .left
+        kingLabel.verticalAlignmentMode = .top
+        kingLabel.position = CGPoint(x: -size.width / 2 + 6, y: size.height / 2 - size.width * 0.38)
+        kingLabel.zPosition = 2
+        addChild(kingLabel)
 
-        // 中央"王"字
-        let centerKing = SKLabelNode(text: "王")
-        centerKing.fontName = serifFont
-        centerKing.fontSize = size.width * 0.48
-        centerKing.fontColor = color
-        centerKing.verticalAlignmentMode = .center
-        centerKing.horizontalAlignmentMode = .center
-        centerKing.position = CGPoint(x: 0, y: -2)
-        centerKing.zPosition = 2
-        addChild(centerKing)
-
-        // 右下角镜像
-        let botLabel = SKLabelNode(text: isRedJoker ? "大" : "小")
-        botLabel.fontName = serifFont
-        botLabel.fontSize = size.width * 0.22
-        botLabel.fontColor = color.withAlphaComponent(0.35)
-        botLabel.horizontalAlignmentMode = .right
-        botLabel.verticalAlignmentMode = .bottom
-        botLabel.position = CGPoint(x: size.width / 2 - 5, y: -size.height / 2 + 4)
-        botLabel.zRotation = .pi
-        botLabel.zPosition = 2
-        addChild(botLabel)
+        // 右上角小标记
+        let topRightLabel = SKLabelNode(text: isRedJoker ? "大" : "小")
+        topRightLabel.fontName = serifFont
+        topRightLabel.fontSize = size.width * 0.16
+        topRightLabel.fontColor = color.withAlphaComponent(0.35)
+        topRightLabel.horizontalAlignmentMode = .right
+        topRightLabel.verticalAlignmentMode = .top
+        topRightLabel.position = CGPoint(x: size.width / 2 - 5, y: size.height / 2 - 4)
+        topRightLabel.zPosition = 2
+        addChild(topRightLabel)
     }
 
     // MARK: - 选中状态
