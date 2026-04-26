@@ -5,6 +5,7 @@ struct AchievementView: View {
     @StateObject private var tracker = AchievementTracker.shared
 
     var body: some View {
+        ZStack {
         ScrollView {
             VStack(spacing: Theme.spacingLG) {
                 // 进度概览
@@ -65,6 +66,12 @@ struct AchievementView: View {
             .padding(.bottom, Theme.spacingXL)
         }
         .gameBackground()
+
+        ContextualHintOverlay(manager: ContextualHintManager.shared)
+        }
+        .onAppear {
+            ContextualHintManager.shared.onAchievementPageViewed()
+        }
     }
 
     private func achievementRow(_ ach: Achievement) -> some View {
@@ -75,6 +82,15 @@ struct AchievementView: View {
         case .mastery:  Theme.flame
         case .style:    Theme.legendary
         }
+
+        // 成就→规则牌解锁关联
+        let jokerUnlockLabel: String? = {
+            switch ach.id {
+            case "mid_run":    return L10n.isEnglish ? "🔓 Unlocks Rare Jokers" : "🔓 解锁稀有规则牌"
+            case "full_clear": return L10n.isEnglish ? "🔓 Unlocks Legendary Jokers" : "🔓 解锁传说规则牌"
+            default:           return nil
+            }
+        }()
 
         return HStack(spacing: 12) {
             ZStack {
@@ -93,6 +109,12 @@ struct AchievementView: View {
                 Text(ach.description)
                     .font(Theme.fontCaption)
                     .foregroundColor(unlocked ? Theme.textSecondary : Theme.textDisabled)
+                if let label = jokerUnlockLabel {
+                    Text(label)
+                        .font(.caption2.bold())
+                        .foregroundColor(unlocked ? Theme.success : Theme.cyan)
+                        .padding(.top, 1)
+                }
             }
 
             Spacer()

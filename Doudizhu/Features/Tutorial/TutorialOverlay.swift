@@ -38,8 +38,11 @@ enum TutorialStep: Int, CaseIterable {
     }
 
     /// Steps grouped by tutorial phase
-    static let phase1: [TutorialStep] = [.welcome, .patternBasics, .selectAndPlay]
-    static let phase2: [TutorialStep] = [.discardTip, .comboTip, .bigPatterns]
+    /// Phase 1: 核心操作（含换牌——QA反馈必须前置）
+    /// Phase 2: 进阶技巧
+    /// Phase 3: 系统介绍
+    static let phase1: [TutorialStep] = [.welcome, .patternBasics, .selectAndPlay, .discardTip]
+    static let phase2: [TutorialStep] = [.comboTip, .bigPatterns]
     static let phase3: [TutorialStep] = [.shopTip, .goalExplain]
 
     static func stepsForPhase(_ phase: Int) -> [TutorialStep] {
@@ -86,7 +89,7 @@ class TutorialManager: ObservableObject {
         case 0:
             currentStep = .welcome
         case 1:
-            currentStep = .discardTip
+            currentStep = .comboTip
         case 2:
             currentStep = .shopTip
         default:

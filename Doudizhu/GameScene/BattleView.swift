@@ -18,6 +18,7 @@ struct BattleView: View {
     @State private var showExitConfirm = false
     @State private var jokersExpanded = false
     @State private var showPauseMenu = false
+    @ObservedObject private var hintManager = ContextualHintManager.shared
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("musicEnabled") private var musicEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
@@ -88,6 +89,9 @@ struct BattleView: View {
                 pauseMenuOverlay
             }
 
+            // 上下文智能提示
+            ContextualHintOverlay(manager: hintManager)
+
             // Score breakdown popup during scoring phase
             if case .scoring = rogueRun.phase {
                 VStack {
@@ -154,6 +158,13 @@ struct BattleView: View {
             // Boss 入场音效
             if rogueRun.currentFloor.isBoss {
                 SoundManager.shared.play(.bossAppear)
+                // Boss 关上下文提示
+                if let boss = rogueRun.bossState {
+                    let modNames = boss.modifiers.map { $0.name }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        hintManager.onBossFloorEnter(modifierNames: modNames)
+                    }
+                }
             }
             // Show initial hint for new players
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {

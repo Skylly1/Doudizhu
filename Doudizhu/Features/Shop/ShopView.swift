@@ -141,6 +141,9 @@ struct ShopView: View {
                         .font(Theme.fontSection)
                         .foregroundColor(Theme.gold)
                         .padding(.horizontal, Theme.spacingLG)
+                        .onAppear {
+                            ContextualHintManager.shared.onUpgradeSectionViewed()
+                        }
 
                     VStack(spacing: 6) {
                         ForEach(PatternType.allCases, id: \.self) { type in
@@ -233,6 +236,9 @@ struct ShopView: View {
         if showFirstJokerGuide {
             firstJokerGuideOverlay
         }
+
+        // 上下文智能提示
+        ContextualHintOverlay(manager: ContextualHintManager.shared)
         }
         .gameBackground()
         .onAppear {
