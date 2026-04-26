@@ -145,7 +145,7 @@ enum SpecialEventGenerator {
                     label: L10n.isEnglish ? "Donate 30 gold" : "供奉30金币",
                     description: L10n.isEnglish ? "-30 gold, +1 play next floor" : "-30金币，下层多1次出牌",
                     icon: "heart.fill",
-                    effect: gold >= 30 ? .healPlays(1, goldCost: 30) : .nothing
+                    effect: .healPlays(1, goldCost: 30)
                 ),
             ]
         )

@@ -47,9 +47,9 @@ struct BattleView: View {
                 }
                 Spacer()
                 scoreTargetBar
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 4)
                 actionButtons
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 8)
             }
             .padding(.bottom, 0)
             .ignoresSafeArea(edges: .bottom)
@@ -551,27 +551,6 @@ struct BattleView: View {
             }
 
             HStack(spacing: Theme.spacingMD) {
-            // 手牌排序切换
-            Button {
-                rogueRun.toggleSortMode()
-                battleScene?.refreshHand()
-                FeedbackManager.shared.cardTap()
-            } label: {
-                Image(systemName: rogueRun.handSortMode.icon)
-                    .font(.body.weight(.medium))
-                    .foregroundColor(Theme.gold)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusSM)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusSM)
-                                    .stroke(Theme.gold.opacity(0.3), lineWidth: 0.6)
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
-            }
-            .accessibilityLabel(rogueRun.handSortMode.label)
             Button {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
@@ -599,16 +578,16 @@ struct BattleView: View {
                 .font(.body.weight(.medium))
                 .foregroundColor(rogueRun.discardsRemaining > 0 ? Theme.textPrimary : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
+                .frame(height: 48)
                 .background(
-                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(.ultraThinMaterial)
                         .overlay(
-                            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                            RoundedRectangle(cornerRadius: Theme.radiusMD)
                                 .stroke(discardBorderColor, lineWidth: 0.6)
                         )
                 )
-                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
+                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -637,12 +616,12 @@ struct BattleView: View {
                 .font(.body.weight(.semibold))
                 .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
+                .frame(height: 48)
                 .background(
-                    RoundedRectangle(cornerRadius: Theme.radiusSM)
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(playButtonFill)
                 )
-                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.1), radius: 6, y: 3)
+                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.25) : .black.opacity(0.08), radius: 4, y: 2)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
@@ -1129,6 +1108,32 @@ struct BattleView: View {
                         )
                 )
                 .frame(width: 220)
+
+                // 手牌排序
+                Button {
+                    rogueRun.toggleSortMode()
+                    battleScene?.refreshHand()
+                    FeedbackManager.shared.cardTap()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: rogueRun.handSortMode.icon)
+                        Text(rogueRun.handSortMode == .byRank
+                             ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
+                             : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.gold)
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.gold.opacity(0.3))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
 
                 // 放弃
                 Button {
