@@ -18,6 +18,7 @@ struct BattleView: View {
     @State private var showExitConfirm = false
     @State private var jokersExpanded = false
     @State private var showPauseMenu = false
+    @State private var showHelpSheet = false
     @ObservedObject private var hintManager = ContextualHintManager.shared
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("musicEnabled") private var musicEnabled = true
@@ -246,6 +247,9 @@ struct BattleView: View {
             .contentShape(Rectangle())
             .sheet(isPresented: $showPatternGuide) {
                 PatternGuideView()
+            }
+            .sheet(isPresented: $showHelpSheet) {
+                HelpView(onBack: { showHelpSheet = false })
             }
         }
         .padding(.horizontal, Theme.spacingSM)
@@ -1166,6 +1170,29 @@ struct BattleView: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: Theme.radiusMD)
                                     .stroke(Theme.cyan.opacity(0.3))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+
+                // 帮助与FAQ
+                Button {
+                    showPauseMenu = false
+                    showHelpSheet = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "questionmark.circle.fill")
+                        Text(L10n.helpAndFaq)
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.textSecondary)
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.textTertiary.opacity(0.3))
                             )
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
