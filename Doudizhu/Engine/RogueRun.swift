@@ -1038,7 +1038,10 @@ enum HandSortMode: String, CaseIterable {
         case .gainRandomBuff:
             let pick = Buff.allBuffs.randomElement()!
             activeBuffs.append(pick)
-        case .healPlays(let count):
+        case .healPlays(let count, let goldCost):
+            if goldCost > 0 {
+                gold = max(0, gold - goldCost)
+            }
             bonusPlays += count
         case .upgradeRandomJoker:
             guard gold >= 50 else { break }
