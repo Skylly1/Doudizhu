@@ -122,6 +122,13 @@ extension Achievement {
         (unlockedIds.count, Achievement.all.count)
     }
 
+    /// 重置所有成就进度
+    func resetAll() {
+        unlockedIds.removeAll()
+        latestUnlock = nil
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
     private func save() {
         if let data = try? JSONEncoder().encode(unlockedIds) {
             UserDefaults.standard.set(data, forKey: key)

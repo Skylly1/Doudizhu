@@ -49,8 +49,17 @@ final class PatternUpgradeManager: ObservableObject, @unchecked Sendable {
         return 50 + currentLevel * 30  // 50, 80, 110, ...
     }
 
+    /// 是否还能继续升级
+    func canUpgrade(_ type: PatternType) -> Bool {
+        (levels[type] ?? 0) < Self.maxLevel
+    }
+
     /// 最大等级
     static let maxLevel = 5
+    /// 每级增加的 chips
+    static let chipPerLevel = 5
+    /// 每级增加的 mult
+    static let multPerLevel = 0.2
 
     // MARK: - 修改
 

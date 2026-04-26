@@ -109,4 +109,23 @@ import Foundation
         defaults.set(favoriteBuild, forKey: "stats_favoriteBuild")
         defaults.set(totalPlayTime, forKey: "stats_totalPlayTime")
     }
+
+    /// 重置所有统计数据
+    func resetAll() {
+        totalRuns = 0
+        totalWins = 0
+        totalFloors = 0
+        totalCardsPlayed = 0
+        highestCombo = 0
+        highestSingleScore = 0
+        totalGoldEarned = 0
+        highestFloor = 0
+        favoriteBuild = ""
+        totalPlayTime = 0
+        // 清除 build 使用计数
+        for build in StarterBuild.allBuilds {
+            defaults.removeObject(forKey: "stats_buildCount_\(build.id)")
+        }
+        save()
+    }
 }

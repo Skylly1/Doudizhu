@@ -462,6 +462,246 @@ enum L10n {
     static var stuckHintCombo: String { localized("💡 连续出牌触发连击加成，每次+15%！", en: "💡 Chain plays for combo bonus: +15% each!") }
     static var stuckHintSwap: String { localized("💡 换牌可以重组手牌，别忘了还有换牌机会", en: "💡 Swap to rebuild your hand — don't forget your swaps!") }
 
+    // MARK: - 帮助与FAQ
+    static var helpTitle: String { localized("帮助与FAQ", en: "Help & FAQ") }
+
+    static var helpQuickStartTitle: String { localized("🎮 快速入门", en: "🎮 Quick Start") }
+    static var helpQuickStartBody: String { localized(
+        "斗破乾坤是一款 Roguelike 斗地主游戏。\n\n" +
+        "🎯 目标：打出牌型得分，达到目标分即可过关\n" +
+        "🃏 选牌：点击手牌选中，再点「出牌」\n" +
+        "🔄 换牌：选中不想要的牌，点「换牌」从牌堆抽新牌\n" +
+        "💰 商店：过关后用金币购买规则牌和增益\n" +
+        "🏆 通关：闯过15层击败最终Boss即为通关！",
+        en: "Dou Po Qian Kun is a Roguelike Doudizhu game.\n\n" +
+        "🎯 Goal: Play card patterns to score, reach the target to clear the floor\n" +
+        "🃏 Select: Tap cards to select, then tap 'Play'\n" +
+        "🔄 Swap: Select unwanted cards and tap 'Swap' to draw new ones\n" +
+        "💰 Shop: Buy Jokers and Buffs with gold between floors\n" +
+        "🏆 Win: Clear all 15 floors and defeat the final Boss!") }
+
+    static var helpPatternsTitle: String { localized("📋 牌型大全", en: "📋 Pattern Guide") }
+    static var helpPatternsBody: String { localized(
+        "牌面大小：3 < 4 < 5 < … < K < A < 2 < 小王 < 大王\n\n" +
+        "单张 — 任意一张牌\n" +
+        "对子 — 两张相同点数\n" +
+        "三条 — 三张相同点数\n" +
+        "三带一 — 三条 + 1张\n" +
+        "三带二 — 三条 + 1对\n" +
+        "顺子 — 5张以上连续（不含2和王）\n" +
+        "连对 — 3对以上连续对子\n" +
+        "飞机 — 2组以上连续三条\n" +
+        "飞机带翅膀 — 飞机 + 等量单张或对子\n" +
+        "炸弹 — 四张相同点数 ⚡ 高分！\n" +
+        "火箭 — 大小王 🚀 最强牌型！\n" +
+        "四带二 — 四张 + 2张单牌",
+        en: "Card ranking: 3 < 4 < 5 < … < K < A < 2 < Black Joker < Red Joker\n\n" +
+        "Single — Any one card\n" +
+        "Pair — Two of same rank\n" +
+        "Triple — Three of same rank\n" +
+        "Triple+1 — Triple + 1 kicker\n" +
+        "Triple+2 — Triple + 1 pair\n" +
+        "Straight — 5+ consecutive (no 2s or Jokers)\n" +
+        "Pair Straight — 3+ consecutive pairs\n" +
+        "Plane — 2+ consecutive triples\n" +
+        "Plane+Wings — Plane + equal single/pair kickers\n" +
+        "Bomb — Four of same rank ⚡ High score!\n" +
+        "Rocket — Both Jokers 🚀 Highest pattern!\n" +
+        "Four+Two — Four + 2 singles") }
+
+    static var helpScoringTitle: String { localized("🔢 计分系统", en: "🔢 Scoring System") }
+    static var helpScoringBody: String { localized(
+        "得分 = 基础筹码(Chips) × 倍率(Mult)\n\n" +
+        "📊 每种牌型有不同的基础筹码和倍率\n" +
+        "⚡ 连击：连续出牌不换牌，每次+15%倍率\n" +
+        "🃏 规则牌可以额外增加筹码或倍率\n" +
+        "✨ 增益道具也会加成特定牌型\n" +
+        "📖 武功秘籍可以永久提升牌型基础分\n\n" +
+        "💡 策略：组合高筹码牌型 + 高倍率规则牌 = 爆炸伤害！",
+        en: "Score = Base Chips × Multiplier (Mult)\n\n" +
+        "📊 Each pattern has different base chips and mult\n" +
+        "⚡ Combo: Chain plays without swapping for +15% mult each\n" +
+        "🃏 Jokers add extra chips or mult bonuses\n" +
+        "✨ Buffs boost specific pattern scores\n" +
+        "📖 Pattern upgrades permanently increase base scores\n\n" +
+        "💡 Strategy: High chips pattern + high mult Jokers = explosive damage!") }
+
+    static var helpJokersTitle: String { localized("🃏 规则牌是什么？", en: "🃏 What are Jokers?") }
+    static var helpJokersBody: String { localized(
+        "规则牌是改变游戏规则的核心能力卡！\n\n" +
+        "🟢 普通 — 基础加成效果\n" +
+        "🔵 稀有 — 强力组合效果（通关第5层解锁）\n" +
+        "🟣 传说 — 改变玩法的终极能力（通关全15层解锁）\n\n" +
+        "📌 最多同时装备 5 张规则牌\n" +
+        "📌 在商店用金币购买\n" +
+        "📌 效果跨层持久生效\n" +
+        "📌 不同规则牌可以组合出强力搭配！\n\n" +
+        "例如：「连环计」让连击加成翻倍 + 「一鸣惊人」让首手得分×2 = 开局即爆发",
+        en: "Jokers are core ability cards that change the rules!\n\n" +
+        "🟢 Common — Basic bonus effects\n" +
+        "🔵 Rare — Powerful combo effects (unlock by reaching Floor 5)\n" +
+        "🟣 Legendary — Game-changing abilities (unlock by full clear)\n\n" +
+        "📌 Max 5 Jokers equipped at once\n" +
+        "📌 Buy with gold in the shop\n" +
+        "📌 Effects persist across floors\n" +
+        "📌 Combine Jokers for powerful synergies!\n\n" +
+        "Example: 'Chain Plot' doubles combo bonus + 'First Strike' gives 2× first play = explosive opening") }
+
+    static var helpBuffsTitle: String { localized("✨ 增益道具是什么？", en: "✨ What are Buffs?") }
+    static var helpBuffsBody: String { localized(
+        "增益道具是临时的得分加成效果。\n\n" +
+        "🔥 部分增益仅在当前楼层有效\n" +
+        "⚡ 部分增益是一次性使用\n" +
+        "💰 在商店用金币购买\n\n" +
+        "与规则牌的区别：\n" +
+        "• 规则牌 = 持久能力（跨层生效）\n" +
+        "• 增益 = 临时加成（本层/一次性）\n\n" +
+        "💡 增益价格更低，适合短期增强特定策略！",
+        en: "Buffs are temporary score bonus effects.\n\n" +
+        "🔥 Some Buffs last for the current floor only\n" +
+        "⚡ Some Buffs are one-time use\n" +
+        "💰 Buy with gold in the shop\n\n" +
+        "Difference from Jokers:\n" +
+        "• Jokers = Permanent abilities (persist across floors)\n" +
+        "• Buffs = Temporary boosts (current floor/one-time)\n\n" +
+        "💡 Buffs are cheaper — great for short-term strategy!") }
+
+    static var helpShopTitle: String { localized("🛒 商店指南", en: "🛒 Shop Guide") }
+    static var helpShopBody: String { localized(
+        "商店出现在第3、7、11、14层，是你变强的关键！\n\n" +
+        "🃏 规则牌区 — 购买或刷新获得新的规则牌\n" +
+        "✨ 增益区 — 购买临时加成道具\n" +
+        "📖 武功秘籍 — 永久提升某种牌型的基础分\n" +
+        "🔄 刷新 — 花费金币刷新商品（费用递增）\n\n" +
+        "💡 金币来源：\n" +
+        "• 过关奖励（超额越多奖励越多）\n" +
+        "• 规则牌「点石成金」每次出牌+8金\n" +
+        "• 特殊事件奖励",
+        en: "The shop appears on Floors 3, 7, 11, 14 — key to getting stronger!\n\n" +
+        "🃏 Joker Section — Buy or refresh for new Jokers\n" +
+        "✨ Buff Section — Buy temporary boost items\n" +
+        "📖 Pattern Upgrades — Permanently increase pattern base scores\n" +
+        "🔄 Refresh — Spend gold to refresh stock (cost increases)\n\n" +
+        "💡 Gold sources:\n" +
+        "• Floor clear rewards (more for overscore)\n" +
+        "• 'Gold Rush' Joker gives +8 gold per play\n" +
+        "• Special event rewards") }
+
+    static var helpBossTitle: String { localized("⚔️ Boss关说明", en: "⚔️ Boss Floors") }
+    static var helpBossBody: String { localized(
+        "Boss关是每章最后一层，有特殊修改器改变规则！\n\n" +
+        "常见Boss修改器：\n" +
+        "🔒 封顶令 — 单次得分上限60%\n" +
+        "✋ 缩手缩脚 — 手牌减少2张\n" +
+        "🔇 封印术 — 随机封印一张规则牌\n" +
+        "📈 皇家特权 — 目标分每次出牌+5%\n" +
+        "📉 双重压制 — 每次出牌得分递减10%\n" +
+        "👻 幻影牌 — 2张手牌无法被选中\n\n" +
+        "💡 遇到Boss前，先在商店做好准备！",
+        en: "Boss floors are the last floor of each chapter with special modifiers!\n\n" +
+        "Common Boss Modifiers:\n" +
+        "🔒 Score Cap — Single play score capped at 60%\n" +
+        "✋ Hand Shrink — 2 fewer cards in hand\n" +
+        "🔇 Joker Silence — One random Joker disabled\n" +
+        "📈 Escalating — Target increases 5% per play\n" +
+        "📉 Scoring Decay — Each play scores 10% less\n" +
+        "👻 Phantom Cards — 2 random cards can't be selected\n\n" +
+        "💡 Prepare in the shop before facing the Boss!") }
+
+    static var helpAchievementsTitle: String { localized("🏆 成就与解锁", en: "🏆 Achievements & Unlocks") }
+    static var helpAchievementsBody: String { localized(
+        "成就不仅是荣誉，还能解锁新内容！\n\n" +
+        "🔓 到达第5层 → 解锁稀有规则牌\n" +
+        "🔓 通关全15层 → 解锁传说规则牌\n" +
+        "🔓 完成特定成就 → 解锁隐藏内容\n\n" +
+        "在「卡牌收藏」→「成就」页面查看所有成就进度。\n" +
+        "带有「🔓 解锁规则牌」标记的成就完成后会在商店出现对应的规则牌。",
+        en: "Achievements aren't just badges — they unlock new content!\n\n" +
+        "🔓 Reach Floor 5 → Unlock Rare Jokers\n" +
+        "🔓 Full 15-floor clear → Unlock Legendary Jokers\n" +
+        "🔓 Complete specific achievements → Unlock hidden content\n\n" +
+        "Check progress in 'Card Collection' → 'Achievements'.\n" +
+        "Achievements marked with '🔓 Unlocks Joker' will make new Jokers appear in the shop.") }
+
+    static var helpDailyTitle: String { localized("📅 每日挑战", en: "📅 Daily Challenge") }
+    static var helpDailyBody: String { localized(
+        "每天一个独特的挑战模式！\n\n" +
+        "🎯 特殊修改器改变游戏规则\n" +
+        "🏅 挑战完成后查看排名\n" +
+        "📊 每日挑战不影响正常存档\n\n" +
+        "修改器示例：\n" +
+        "• 速通 — 每层仅3次出牌\n" +
+        "• 巨手 — 手牌+5张\n" +
+        "• 纯炸弹 — 只有炸弹和火箭计分\n" +
+        "• 双倍得分 — 所有得分×2",
+        en: "A unique challenge every day!\n\n" +
+        "🎯 Special modifiers change the rules\n" +
+        "🏅 Check rankings after completing\n" +
+        "📊 Daily challenges don't affect your main save\n\n" +
+        "Modifier examples:\n" +
+        "• Speed Run — Only 3 plays per floor\n" +
+        "• Giant Hand — +5 cards in hand\n" +
+        "• All or Nothing — Only Bombs and Rockets score\n" +
+        "• Double Score — All scores ×2") }
+
+    static var helpAscensionTitle: String { localized("🔥 挑战等级 (Ascension)", en: "🔥 Ascension Levels") }
+    static var helpAscensionBody: String { localized(
+        "通关后可以提高挑战等级重玩！\n\n" +
+        "A1+ — 目标分+8%\n" +
+        "A3+ — 出牌次数-1\n" +
+        "A5+ — 换牌次数-1\n" +
+        "A7+ — 起始金币-30\n" +
+        "A10 — 最高难度，终极挑战！\n\n" +
+        "💡 挑战等级越高，胜利越有成就感！\n" +
+        "你的最高通关等级会显示在首页。",
+        en: "After clearing, raise the Ascension level for a harder run!\n\n" +
+        "A1+ — Target score +8%\n" +
+        "A3+ — 1 fewer play per floor\n" +
+        "A5+ — 1 fewer swap per floor\n" +
+        "A7+ — Starting gold -30\n" +
+        "A10 — Maximum difficulty!\n\n" +
+        "💡 Higher Ascension = greater achievement!\n" +
+        "Your highest clear is shown on the home screen.") }
+
+    static var helpTipsTitle: String { localized("💡 策略小贴士", en: "💡 Strategy Tips") }
+    static var helpTipsBody: String { localized(
+        "1️⃣ 连击很重要！尽量不换牌保持连击链\n" +
+        "2️⃣ 炸弹和火箭是翻盘利器，别轻易拆\n" +
+        "3️⃣ 商店里优先买规则牌，效果跨层持久\n" +
+        "4️⃣ 关注规则牌之间的组合搭配\n" +
+        "5️⃣ 超额过关可以获得更多金币奖励\n" +
+        "6️⃣ Boss关前留足出牌次数应对修改器\n" +
+        "7️⃣ 换牌不消耗出牌次数，但会打断连击\n" +
+        "8️⃣ 武功秘籍是永久的，长期投资回报高\n" +
+        "9️⃣ 每日挑战可以练手，不影响主线进度\n" +
+        "🔟 享受过程，每一局都是独一无二的！",
+        en: "1️⃣ Combos matter! Avoid swapping to keep the chain\n" +
+        "2️⃣ Bombs and Rockets are comeback kings — don't break them early\n" +
+        "3️⃣ Prioritize Jokers in shop — effects persist across floors\n" +
+        "4️⃣ Look for Joker synergies and combos\n" +
+        "5️⃣ Overscore floors for bonus gold rewards\n" +
+        "6️⃣ Save plays for Boss modifiers\n" +
+        "7️⃣ Swapping doesn't cost plays, but breaks combos\n" +
+        "8️⃣ Pattern upgrades are permanent — great long-term investment\n" +
+        "9️⃣ Daily challenges are great practice, no save impact\n" +
+        "🔟 Enjoy the journey — every run is unique!") }
+
+    // MARK: - 设置页面新增
+    static var helpAndFaq: String { localized("帮助与FAQ", en: "Help & FAQ") }
+    static var resetContextHints: String { localized("重置上下文提示", en: "Reset Context Hints") }
+    static var resetContextHintsDesc: String { localized("重新显示所有游戏内引导提示", en: "Re-show all in-game guidance hints") }
+    static var dataManagement: String { localized("数据管理", en: "Data Management") }
+    static var clearSaveData: String { localized("清除存档", en: "Clear Save Data") }
+    static var clearSaveDataDesc: String { localized("删除当前进行中的游戏存档", en: "Delete current in-progress game save") }
+    static var resetStats: String { localized("重置统计数据", en: "Reset Statistics") }
+    static var resetStatsDesc: String { localized("清除所有游戏统计（局数、最高分等）", en: "Clear all game stats (runs, high scores, etc.)") }
+    static var resetAllData: String { localized("重置所有数据", en: "Reset All Data") }
+    static var resetAllDataDesc: String { localized("清除所有数据（存档+统计+成就+升级）⚠️ 不可恢复", en: "Clear everything (saves, stats, achievements, upgrades) ⚠️ Irreversible") }
+    static var confirmReset: String { localized("确认重置", en: "Confirm Reset") }
+    static var privacyPolicy: String { localized("隐私政策", en: "Privacy Policy") }
+    static var done: String { localized("完成", en: "Done") }
+    static var hintResetDone: String { localized("已重置", en: "Reset Done") }
+
     // MARK: - 辅助
 
     private static func localized(_ zh: String, en: String) -> String {
