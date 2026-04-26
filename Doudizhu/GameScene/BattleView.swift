@@ -570,6 +570,11 @@ struct BattleView: View {
                 guard let scene = battleScene else { return }
                 let selected = scene.getSelectedCards()
                 if selected.isEmpty {
+                    // 首次点换牌时先弹出说明
+                    if !UserDefaults.standard.bool(forKey: "ctxHint_first_swap") {
+                        hintManager.onFirstSwap()
+                        return
+                    }
                     // Show hint: select cards first
                     withAnimation { showNoSelectionHint = true }
                     FeedbackManager.shared.cardTap()
@@ -1198,29 +1203,68 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
 
-                // 放弃
+                // 暂离保存（保留存档回主菜单）
                 Button {
                     showPauseMenu = false
-                    rogueRun.clearSave()
+                    // 自动存档已由 autoSave 和 scenePhase 处理
+                    SaveManager.shared.save(run: rogueRun, buildId: "")
                     SoundManager.shared.stopBGM()
                     onBack()
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: "xmark.circle.fill")
-                        Text(L10n.isEnglish ? "Quit Run" : "放弃冒险")
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                        Text(L10n.isEnglish ? "Save & Quit" : "暂离保存")
                     }
                     .font(.headline)
-                    .foregroundColor(Theme.danger)
+                    .foregroundColor(Theme.textSecondary)
                     .frame(width: 220, height: 46)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusMD)
                             .fill(.ultraThinMaterial)
                             .overlay(
                                 RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.danger.opacity(0.4))
+                                    .stroke(Theme.textTertiary.opacity(0.3))
                             )
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+
+                // 放弃冒险（删档，需二次确认）
+                Button {
+                    showExitConfirm = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "xmark.circle.fill")
+                        Text(L10n.isEnglish ? "Abandon Run" : "放弃冒险")
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.danger.opacity(0.7))
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.danger.opacity(0.2))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+                .alert(
+                    L10n.isEnglish ? "Abandon Run?" : "确认放弃？",
+                    isPresented: $showExitConfirm
+                ) {
+                    Button(L10n.cancel, role: .cancel) { }
+                    Button(L10n.isEnglish ? "Abandon" : "放弃", role: .destructive) {
+                        showPauseMenu = false
+                        rogueRun.clearSave()
+                        SoundManager.shared.stopBGM()
+                        onBack()
+                    }
+                } message: {
+                    Text(L10n.isEnglish
+                         ? "All progress in this run will be lost."
+                         : "本局所有进度将丢失，无法恢复。")
                 }
             }
             .padding(Theme.spacingXL)

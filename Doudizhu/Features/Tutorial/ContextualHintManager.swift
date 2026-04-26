@@ -17,6 +17,7 @@ final class ContextualHintManager: ObservableObject {
         case achievementIntro
         case upgradeIntro
         case lowGoldWarning
+        case firstSwap
 
         var id: String {
             switch self {
@@ -24,6 +25,7 @@ final class ContextualHintManager: ObservableObject {
             case .achievementIntro: return "achievement_intro"
             case .upgradeIntro:    return "upgrade_intro"
             case .lowGoldWarning:  return "low_gold_warning"
+            case .firstSwap:       return "first_swap"
             }
         }
 
@@ -37,6 +39,8 @@ final class ContextualHintManager: ObservableObject {
                 return L10n.isEnglish ? "📖 Pattern Upgrades" : "📖 牌型升级系统"
             case .lowGoldWarning:
                 return L10n.isEnglish ? "💡 Low on Gold" : "💡 金币不足"
+            case .firstSwap:
+                return L10n.isEnglish ? "🔄 Swap Cards" : "🔄 换牌说明"
             }
         }
 
@@ -59,6 +63,10 @@ final class ContextualHintManager: ObservableObject {
                 return L10n.isEnglish
                     ? "Save some gold for upgrades! Pattern upgrades are permanent and give long-term value."
                     : "留一些金币升级武功秘籍！牌型升级是永久的，长期收益更高。"
+            case .firstSwap:
+                return L10n.isEnglish
+                    ? "Select the cards you don't want, then tap Swap to replace them with new cards from the deck.\n\n💡 Swapping does NOT consume a play, but it breaks your combo streak.\n\n📌 Each floor has limited swap chances — use them wisely!"
+                    : "先选中不想要的牌，然后点「换牌」，这些牌会放回牌堆，并重新抽取等量新牌。\n\n💡 换牌不消耗出牌次数，但会打断连击。\n\n📌 每层的换牌次数有限，请合理使用！"
             }
         }
 
@@ -68,6 +76,7 @@ final class ContextualHintManager: ObservableObject {
             case .achievementIntro: return "trophy.fill"
             case .upgradeIntro:     return "book.closed.fill"
             case .lowGoldWarning:   return "dollarsign.circle"
+            case .firstSwap:        return "arrow.triangle.2.circlepath"
             }
         }
 
@@ -77,6 +86,7 @@ final class ContextualHintManager: ObservableObject {
             case .achievementIntro: return Theme.gold
             case .upgradeIntro:     return Theme.gold
             case .lowGoldWarning:   return Theme.cyan
+            case .firstSwap:        return Theme.cyan
             }
         }
     }
@@ -105,6 +115,12 @@ final class ContextualHintManager: ObservableObject {
     func onLowGoldInShop(gold: Int) {
         guard gold < 30, !hasSeen("low_gold_warning") else { return }
         show(.lowGoldWarning)
+    }
+
+    /// 首次使用换牌时触发
+    func onFirstSwap() {
+        guard !hasSeen("first_swap") else { return }
+        show(.firstSwap)
     }
 
     // MARK: - 展示 & 消除
@@ -136,7 +152,7 @@ final class ContextualHintManager: ObservableObject {
 
     /// 重置所有提示（设置页面用）
     func resetAll() {
-        for key in ["boss_intro", "achievement_intro", "upgrade_intro", "low_gold_warning"] {
+        for key in ["boss_intro", "achievement_intro", "upgrade_intro", "low_gold_warning", "first_swap"] {
             UserDefaults.standard.removeObject(forKey: "ctxHint_\(key)")
         }
     }
