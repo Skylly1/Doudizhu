@@ -3,71 +3,200 @@
     {
       "floor": 1,
       "name": "乡野牌局",
-      "targetScore": 300,
-      "aiDifficulty": "easy",
-      "description": "村口老槐树下的牌局"
+      "chapter": 1,
+      "targetScore": 120,
+      "maxPlays": 5,
+      "maxDiscards": 3,
+      "description": "村口老槐树下的牌局",
+      "isShop": false,
+      "bossModifiers": []
     },
     {
       "floor": 2,
       "name": "集市赌坊",
-      "targetScore": 500,
-      "aiDifficulty": "easy",
-      "description": "赶集路上遇到的牌摊"
+      "chapter": 1,
+      "targetScore": 220,
+      "maxPlays": 5,
+      "maxDiscards": 3,
+      "description": "赶集路上遇到的牌摊",
+      "isShop": false,
+      "bossModifiers": []
     },
     {
       "floor": 3,
-      "name": "茶馆对弈",
-      "targetScore": 800,
-      "aiDifficulty": "medium",
-      "description": "茶馆里的老牌手"
+      "name": "杂货铺",
+      "chapter": 1,
+      "targetScore": 0,
+      "maxPlays": 0,
+      "maxDiscards": 0,
+      "description": "补充装备，继续上路",
+      "isShop": true,
+      "bossModifiers": []
     },
     {
       "floor": 4,
-      "name": "商店",
-      "targetScore": 0,
-      "aiDifficulty": "easy",
-      "description": "休息一下，补充装备"
+      "name": "茶馆对弈",
+      "chapter": 1,
+      "targetScore": 400,
+      "maxPlays": 5,
+      "maxDiscards": 2,
+      "description": "茶馆里的老牌手",
+      "isShop": false,
+      "bossModifiers": ["scoreCap"]
     },
     {
       "floor": 5,
       "name": "县城擂台",
-      "targetScore": 1200,
-      "aiDifficulty": "medium",
-      "description": "县城里的斗地主擂台"
+      "chapter": 2,
+      "targetScore": 550,
+      "maxPlays": 5,
+      "maxDiscards": 2,
+      "description": "县城里的斗地主擂台",
+      "isShop": false,
+      "bossModifiers": []
     },
     {
       "floor": 6,
       "name": "府衙暗局",
-      "targetScore": 1800,
-      "aiDifficulty": "hard",
-      "description": "知府大人设下的暗局"
+      "chapter": 2,
+      "targetScore": 750,
+      "maxPlays": 5,
+      "maxDiscards": 2,
+      "description": "知府大人设下的暗局",
+      "isShop": false,
+      "bossModifiers": ["handShrink", "pairTax"]
     },
     {
       "floor": 7,
-      "name": "商店",
+      "name": "兵器铺",
+      "chapter": 2,
       "targetScore": 0,
-      "aiDifficulty": "easy",
-      "description": "最后的准备机会"
+      "maxPlays": 0,
+      "maxDiscards": 0,
+      "description": "精良的装备等着你",
+      "isShop": true,
+      "bossModifiers": []
     },
     {
       "floor": 8,
-      "name": "地主庄园",
-      "targetScore": 3000,
-      "aiDifficulty": "boss",
-      "description": "终极 Boss：恶霸地主"
+      "name": "县令挑战",
+      "chapter": 2,
+      "targetScore": 1100,
+      "maxPlays": 4,
+      "maxDiscards": 2,
+      "description": "县令大人的赌局——禁用一种牌型！",
+      "isShop": false,
+      "bossModifiers": ["bannedPattern"]
+    },
+    {
+      "floor": 9,
+      "name": "镖局较量",
+      "chapter": 3,
+      "targetScore": 1500,
+      "maxPlays": 4,
+      "maxDiscards": 1,
+      "description": "押镖路上遇到的高手",
+      "isShop": false,
+      "bossModifiers": []
+    },
+    {
+      "floor": 10,
+      "name": "武林大会",
+      "chapter": 3,
+      "targetScore": 2000,
+      "maxPlays": 4,
+      "maxDiscards": 1,
+      "description": "各路英雄齐聚一堂",
+      "isShop": false,
+      "bossModifiers": ["jokerSilence", "comboBreaker"]
+    },
+    {
+      "floor": 11,
+      "name": "藏宝阁",
+      "chapter": 3,
+      "targetScore": 0,
+      "maxPlays": 0,
+      "maxDiscards": 0,
+      "description": "最后的准备机会",
+      "isShop": true,
+      "bossModifiers": []
+    },
+    {
+      "floor": 12,
+      "name": "皇城暗影",
+      "chapter": 3,
+      "targetScore": 2500,
+      "maxPlays": 4,
+      "maxDiscards": 1,
+      "description": "京城地下赌场",
+      "isShop": false,
+      "bossModifiers": []
+    },
+    {
+      "floor": 13,
+      "name": "太子赌局",
+      "chapter": 3,
+      "targetScore": 3200,
+      "maxPlays": 3,
+      "maxDiscards": 1,
+      "description": "太子的赌局——分数越打越高！",
+      "isShop": false,
+      "bossModifiers": ["escalating", "goldDrain"]
+    },
+    {
+      "floor": 14,
+      "name": "藏宝阁·终",
+      "chapter": 3,
+      "targetScore": 0,
+      "maxPlays": 0,
+      "maxDiscards": 0,
+      "description": "最后一次强化机会",
+      "isShop": true,
+      "bossModifiers": []
+    },
+    {
+      "floor": 15,
+      "name": "斗破乾坤",
+      "chapter": 3,
+      "targetScore": 5000,
+      "maxPlays": 3,
+      "maxDiscards": 0,
+      "description": "最终Boss——得分递减+无弃牌！",
+      "isShop": false,
+      "bossModifiers": ["scoringDecay", "noDiscard", "phantomCards"]
     }
   ],
   "scoring": {
     "single": 5,
-    "pair": 10,
+    "pair": 12,
     "triple": 20,
-    "tripleWithOne": 25,
-    "tripleWithPair": 30,
+    "tripleWithOne": 28,
+    "tripleWithPair": 35,
     "straight_per_card": 15,
-    "pairStraight_per_pair": 20,
-    "plane_per_triple": 50,
-    "bomb": 100,
-    "rocket": 200,
-    "fourWithTwo": 80
-  }
+    "pairStraight_per_pair": 22,
+    "plane_per_triple": 55,
+    "bomb": 120,
+    "rocket": 250,
+    "fourWithTwo": 90
+  },
+  "chapters": [
+    {
+      "id": 1,
+      "name": "乡野篇",
+      "floors": [1, 2, 3, 4],
+      "theme": "village"
+    },
+    {
+      "id": 2,
+      "name": "府城篇",
+      "floors": [5, 6, 7, 8],
+      "theme": "city"
+    },
+    {
+      "id": 3,
+      "name": "江湖篇",
+      "floors": [9, 10, 11, 12, 13, 14, 15],
+      "theme": "martial"
+    }
+  ]
 }
