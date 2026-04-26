@@ -8,25 +8,30 @@ struct ShopView: View {
 
     @State private var shopItems: [ShopItem] = []
     @State private var jokerItems: [JokerShopItem] = []
+    @AppStorage("hasSeenShopIntro") private var hasSeenShopIntro = false
+    @State private var showShopIntro = false
+    @AppStorage("hasSeenFirstJokerGuide") private var hasSeenFirstJokerGuide = false
+    @State private var showFirstJokerGuide = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: Theme.spacingLG) {
-                // 标题 + 返回
-                GameNavBar(
-                    title: L10n.shop,
-                    onBack: onQuit,
-                    trailing: AnyView(
-                        HStack(spacing: 6) {
-                            Image(systemName: "dollarsign.circle.fill")
-                                .foregroundColor(Theme.gold)
-                            Text("\(rogueRun.gold)")
-                                .font(.title3.bold().monospacedDigit())
-                                .foregroundColor(Theme.gold)
-                        }
+        ZStack {
+            ScrollView {
+                VStack(spacing: Theme.spacingLG) {
+                    // 标题 + 返回
+                    GameNavBar(
+                        title: L10n.shop,
+                        onBack: onQuit,
+                        trailing: AnyView(
+                            HStack(spacing: 6) {
+                                Image(systemName: "dollarsign.circle.fill")
+                                    .foregroundColor(Theme.gold)
+                                Text("\(rogueRun.gold)")
+                                    .font(.title3.bold().monospacedDigit())
+                                    .foregroundColor(Theme.gold)
+                            }
+                        )
                     )
-                )
-                .padding(.top, Theme.spacingSM)
+                    .padding(.top, Theme.spacingSM)
 
                 // 刷新按钮（刷新费用随关卡递增：基础10，每层+2，上限25）
                 let refreshCost = min(25, 10 + rogueRun.currentFloorIndex * 2)
@@ -83,6 +88,13 @@ struct ShopView: View {
                                             SoundManager.shared.play(.goldCoin)
                                             withAnimation(.spring(response: 0.3)) {
                                                 jokerItems.removeAll { $0.id == item.id }
+                                            }
+                                            // 首次购买规则牌引导
+                                            if !hasSeenFirstJokerGuide {
+                                                Analytics.shared.track(.firstJokerPurchase, joker: item.joker.name)
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                    withAnimation(.spring(response: 0.4)) { showFirstJokerGuide = true }
+                                                }
                                             }
                                         }
                                     }
@@ -211,8 +223,152 @@ struct ShopView: View {
                 .padding(.bottom, Theme.spacingXL)
             }
         }
+
+        // 首次商店引导弹窗
+        if showShopIntro {
+            shopIntroOverlay
+        }
+
+        // 首次规则牌购买引导
+        if showFirstJokerGuide {
+            firstJokerGuideOverlay
+        }
+        }
         .gameBackground()
-        .onAppear { generateShopItems() }
+        .onAppear {
+            generateShopItems()
+            if !hasSeenShopIntro {
+                Analytics.shared.track(.shopFirstVisit)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.spring(response: 0.4)) { showShopIntro = true }
+                }
+            }
+        }
+    }
+
+    // MARK: - 首次商店引导
+
+    private var shopIntroOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.6).ignoresSafeArea()
+                .onTapGesture {
+                    dismissShopIntro()
+                }
+
+            VStack(spacing: Theme.spacingLG) {
+                Text(L10n.shopIntroTitle)
+                    .font(.title2.bold())
+                    .foregroundStyle(Theme.goldGradient)
+
+                Text(L10n.shopIntroMsg)
+                    .font(Theme.fontBody)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(5)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // 三个图标卡片
+                HStack(spacing: Theme.spacingMD) {
+                    introIconCard(icon: "suit.spade.fill", label: L10n.jokerSection, color: Theme.cyan)
+                    introIconCard(icon: "sparkles", label: L10n.buffSection, color: Theme.flame)
+                    introIconCard(icon: "book.closed.fill", label: L10n.isEnglish ? "Manuals" : "秘籍", color: Theme.gold)
+                }
+
+                Button {
+                    dismissShopIntro()
+                } label: {
+                    Text(L10n.shopIntroGotIt)
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding(.horizontal, Theme.spacingXL)
+                        .padding(.vertical, 12)
+                        .background(Capsule().fill(Theme.gold))
+                }
+            }
+            .padding(Theme.spacingXL)
+            .frame(maxWidth: 340)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusLG)
+                    .fill(Theme.bgPrimary.opacity(0.95))
+                    .stroke(Theme.gold.opacity(0.3))
+            )
+            .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
+            .padding(Theme.spacingLG)
+        }
+        .transition(.opacity)
+    }
+
+    private func introIconCard(icon: String, label: String, color: Color) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
+            Text(label)
+                .font(.caption.bold())
+                .foregroundColor(Theme.textSecondary)
+        }
+        .frame(width: 80, height: 70)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusSM)
+                .fill(color.opacity(0.08))
+                .stroke(color.opacity(0.2))
+        )
+    }
+
+    private func dismissShopIntro() {
+        withAnimation(.spring(response: 0.3)) { showShopIntro = false }
+        hasSeenShopIntro = true
+    }
+
+    // MARK: - 首次规则牌购买引导
+
+    private var firstJokerGuideOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.5).ignoresSafeArea()
+                .onTapGesture {
+                    dismissFirstJokerGuide()
+                }
+
+            VStack(spacing: Theme.spacingLG) {
+                Text(L10n.firstJokerTitle)
+                    .font(.title2.bold())
+                    .foregroundStyle(Theme.goldGradient)
+
+                Text(L10n.firstJokerMsg)
+                    .font(Theme.fontBody)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(5)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button {
+                    dismissFirstJokerGuide()
+                } label: {
+                    Text(L10n.shopIntroGotIt)
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .padding(.horizontal, Theme.spacingXL)
+                        .padding(.vertical, 12)
+                        .background(Capsule().fill(Theme.gold))
+                }
+            }
+            .padding(Theme.spacingXL)
+            .frame(maxWidth: 320)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusLG)
+                    .fill(Theme.bgPrimary.opacity(0.95))
+                    .stroke(Theme.cyan.opacity(0.3))
+            )
+            .shadow(color: Theme.cyan.opacity(0.2), radius: 16, y: 4)
+            .shadow(color: .black.opacity(0.3), radius: 20, y: 8)
+            .padding(Theme.spacingLG)
+        }
+        .transition(.scale(scale: 0.85).combined(with: .opacity))
+    }
+
+    private func dismissFirstJokerGuide() {
+        withAnimation(.spring(response: 0.3)) { showFirstJokerGuide = false }
+        hasSeenFirstJokerGuide = true
     }
 
     private func equippedSection<Content: View>(title: String, color: Color, @ViewBuilder content: () -> Content) -> some View {

@@ -446,6 +446,22 @@ enum L10n {
     static var sortByRank: String { localized("按点数", en: "By Rank") }
     static var sortBySuit: String { localized("按花色", en: "By Suit") }
 
+    // MARK: - 引导系统
+    static var gameGuide: String { localized("游戏指南", en: "Game Guide") }
+    static var shopIntroTitle: String { localized("🛒 欢迎来到商店！", en: "🛒 Welcome to the Shop!") }
+    static var shopIntroMsg: String { localized(
+        "这里是你变强的关键！\n\n🃏 规则牌 — 改变游戏规则的永久能力\n✨ 增益道具 — 特定牌型得分加成\n📖 武功秘籍 — 永久强化牌型基础分\n\n用金币购买，打造你的专属流派！",
+        en: "This is where you get stronger!\n\n🃏 Jokers — Permanent abilities that change rules\n✨ Buffs — Score bonuses for specific patterns\n📖 Manuals — Permanently upgrade pattern scores\n\nSpend gold to build your unique playstyle!") }
+    static var shopIntroGotIt: String { localized("明白了！", en: "Got it!") }
+    static var firstJokerTitle: String { localized("🎉 获得规则牌！", en: "🎉 Joker Acquired!") }
+    static var firstJokerMsg: String { localized(
+        "规则牌已自动装备，效果立即生效！\n\n💡 最多装备 5 张规则牌\n💡 不同规则牌可以组合出强力搭配\n💡 通过成就解锁更多稀有规则牌",
+        en: "Joker equipped automatically! Effect is active now.\n\n💡 Max 5 Jokers equipped\n💡 Combine Jokers for powerful synergies\n💡 Unlock rare Jokers via Achievements") }
+    static var stuckHintBomb: String { localized("💡 试试攒炸弹（4张同点数），得分是普通牌型的10倍！", en: "💡 Try saving for a Bomb (4-of-a-kind) — 10× more points!") }
+    static var stuckHintStraight: String { localized("💡 顺子（5张连续）得分很高，注意不能含2和王", en: "💡 Straights (5+ consecutive) score high! No 2s or Jokers") }
+    static var stuckHintCombo: String { localized("💡 连续出牌触发连击加成，每次+15%！", en: "💡 Chain plays for combo bonus: +15% each!") }
+    static var stuckHintSwap: String { localized("💡 换牌可以重组手牌，别忘了还有换牌机会", en: "💡 Swap to rebuild your hand — don't forget your swaps!") }
+
     // MARK: - 辅助
 
     private static func localized(_ zh: String, en: String) -> String {

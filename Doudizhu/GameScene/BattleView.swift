@@ -1136,6 +1136,30 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
 
+                // 游戏指南
+                Button {
+                    showPauseMenu = false
+                    showPatternGuide = true
+                    Analytics.shared.track(.guideOpened, params: ["source": "pause_menu"])
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "book.fill")
+                        Text(L10n.gameGuide)
+                    }
+                    .font(.headline)
+                    .foregroundColor(Theme.cyan)
+                    .frame(width: 220, height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.cyan.opacity(0.3))
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+
                 // 放弃
                 Button {
                     showPauseMenu = false
@@ -1203,6 +1227,24 @@ struct BattleView: View {
         default:
             hint = nil
         }
+
+        // 卡关策略提示：分数<目标50%且剩余出牌≤1
+        if hint == nil && rogueRun.playsRemaining <= 1 {
+            let progress = rogueRun.floorProgress
+            if progress < 0.5 {
+                let stuckHints = [L10n.stuckHintBomb, L10n.stuckHintStraight, L10n.stuckHintCombo]
+                let stuckHint = rogueRun.discardsRemaining > 0 ? L10n.stuckHintSwap : stuckHints.randomElement()
+                Analytics.shared.track(.stuckHintShown, params: ["progress": String(format: "%.0f%%", progress * 100)])
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                    withAnimation { contextHint = stuckHint }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                    withAnimation { contextHint = nil }
+                }
+                return
+            }
+        }
+
         guard let hint else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             withAnimation { contextHint = hint }

@@ -13,6 +13,12 @@ enum AnalyticsEvent: String {
     case tutorialComplete = "tutorial_complete"
     case tutorialSkip = "tutorial_skip"
 
+    // 引导系统
+    case shopFirstVisit = "shop_first_visit"
+    case firstJokerPurchase = "first_joker_purchase"
+    case guideOpened = "guide_opened"
+    case stuckHintShown = "stuck_hint_shown"
+
     // 核心循环
     case runStart = "run_start"
     case runComplete = "run_complete"
