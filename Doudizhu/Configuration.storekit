@@ -5,17 +5,17 @@
   ],
   "products" : [
     {
-      "displayPrice" : "2.99",
+      "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "1",
       "localizations" : [
         {
-          "description" : "解锁全部15层关卡、Boss战、飞升系统和30张规则牌",
+          "description" : "解锁全部15层关卡、3大Boss战、飞升系统和35+张规则牌",
           "displayName" : "完整版解锁",
           "locale" : "zh_CN"
         },
         {
-          "description" : "Unlock all 15 floors, Boss battles, Ascension system and 30 Joker cards",
+          "description" : "Unlock all 15 floors, 3 Boss battles, Ascension system and 35+ Joker cards",
           "displayName" : "Full Version Unlock",
           "locale" : "en_US"
         }

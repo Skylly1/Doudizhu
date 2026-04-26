@@ -1,29 +1,50 @@
 import Foundation
 import os.log
 
-/// Analytics event tracking stub
+/// Analytics event tracking — 核心转化漏斗 + 行为数据
 /// Replace with Firebase Analytics / Amplitude when ready
 enum AnalyticsEvent: String {
+    // 生命周期
     case sessionStart = "session_start"
+    case appFirstOpen = "app_first_open"
+
+    // 教程
     case tutorialStart = "tutorial_start"
     case tutorialComplete = "tutorial_complete"
     case tutorialSkip = "tutorial_skip"
+
+    // 核心循环
+    case runStart = "run_start"
+    case runComplete = "run_complete"
+    case runAbandon = "run_abandon"
+    case floorStart = "floor_start"
     case levelStart = "level_start"
     case levelComplete = "level_complete"
     case levelFail = "level_fail"
+
+    // 出牌行为
     case cardPlay = "card_play"
     case cardDiscard = "card_discard"
+    case comboAchieved = "combo_achieved"
+
+    // 系统交互
     case jokerUse = "joker_use"
+    case bossEncounter = "boss_encounter"
     case shopVisit = "shop_visit"
     case shopPurchase = "shop_purchase"
+    case dailyChallengeStart = "daily_challenge_start"
+
+    // 转化漏斗（直接影响营收）
     case iapInitiated = "iap_initiated"
     case iapCompleted = "iap_completed"
     case iapFailed = "iap_failed"
     case iapRestored = "iap_restored"
-    case achievementUnlocked = "achievement_unlocked"
     case paywallShown = "paywall_shown"
     case paywallConverted = "paywall_converted"
     case paywallDismissed = "paywall_dismissed"
+
+    // 成就 & 留存
+    case achievementUnlocked = "achievement_unlocked"
 }
 
 /// 轻量级 Analytics 引擎 — os_log + UserDefaults 持久化
@@ -81,11 +102,27 @@ enum AnalyticsEvent: String {
     var funnelSummary: String {
         let s = totalSessions
         let tc = totalEventCount(for: .tutorialComplete)
-        let ls = totalEventCount(for: .levelStart)
-        let lc = totalEventCount(for: .levelComplete)
+        let rs = totalEventCount(for: .runStart)
+        let rc = totalEventCount(for: .runComplete)
+        let pw = totalEventCount(for: .paywallShown)
+        let pc = totalEventCount(for: .paywallConverted)
         let ii = totalEventCount(for: .iapInitiated)
         let ic = totalEventCount(for: .iapCompleted)
-        return "Sessions:\(s) Tut✓:\(tc) Lvl:\(ls)→\(lc) IAP:\(ii)→\(ic)"
+        return "Sessions:\(s) Tut✓:\(tc) Run:\(rs)→\(rc) Paywall:\(pw)→\(pc) IAP:\(ii)→\(ic)"
+    }
+
+    /// 付费墙转化率 — 核心营收指标
+    var paywallConversionRate: Double {
+        let shown = totalEventCount(for: .paywallShown)
+        guard shown > 0 else { return 0 }
+        return Double(totalEventCount(for: .paywallConverted)) / Double(shown)
+    }
+
+    /// 试玩→购买转化率
+    var trialToPurchaseRate: Double {
+        let runs = totalEventCount(for: .runStart)
+        guard runs > 0 else { return 0 }
+        return Double(totalEventCount(for: .iapCompleted)) / Double(runs)
     }
 
     // MARK: - Private

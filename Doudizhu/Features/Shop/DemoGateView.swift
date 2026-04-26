@@ -53,6 +53,11 @@ struct DemoGateView: View {
             }
         }
         .onAppear {
+            Analytics.shared.track(.paywallShown, params: [
+                "floor_reached": "\(floorsCleared)",
+                "best_score": "\(bestScore)",
+                "best_combo": "\(bestCombo)"
+            ])
             withAnimation(.easeOut(duration: 0.6).delay(0.2)) {
                 showContent = true
             }
@@ -242,7 +247,12 @@ struct DemoGateView: View {
             Button {
                 Task {
                     let success = await purchaseManager.purchaseFullVersion()
-                    if success { onContinue() }
+                    if success {
+                        Analytics.shared.track(.paywallConverted, params: [
+                            "price": purchaseManager.formattedPrice
+                        ])
+                        onContinue()
+                    }
                 }
             } label: {
                 HStack(spacing: 8) {
@@ -275,7 +285,12 @@ struct DemoGateView: View {
                     .font(.caption)
                     .foregroundColor(Theme.textTertiary)
 
-                Button(L10n.backToMenu, action: onBack)
+                Button(L10n.backToMenu) {
+                    Analytics.shared.track(.paywallDismissed, params: [
+                        "floor_reached": "\(floorsCleared)"
+                    ])
+                    onBack()
+                }
                     .font(.caption.bold())
                     .foregroundColor(Theme.textTertiary)
             }

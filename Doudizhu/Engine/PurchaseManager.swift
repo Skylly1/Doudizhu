@@ -138,9 +138,9 @@ final class PurchaseManager: ObservableObject {
         purchaseState = .idle
     }
 
-    /// 格式化价格
+    /// 格式化价格 — fallback 必须与 App Store Connect 定价一致
     var formattedPrice: String {
-        product?.displayPrice ?? (L10n.isEnglish ? "$1.99" : "¥12")
+        product?.displayPrice ?? (L10n.isEnglish ? "$4.99" : "¥25")
     }
 
     // MARK: - Private
