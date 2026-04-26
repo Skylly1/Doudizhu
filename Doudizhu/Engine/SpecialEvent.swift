@@ -26,7 +26,7 @@ enum EventEffect {
     case gainRandomJoker
     case buyRandomJoker(cost: Int)  // 花费金币获得Joker
     case gainRandomBuff
-    case healPlays(Int)        // 恢复出牌次数
+    case healPlays(Int, goldCost: Int = 0)  // 恢复出牌次数，可选金币消耗
     case upgradeRandomJoker    // 现有Joker效果翻倍（标记用）
     case skipNextShop          // 跳过下一个商店
     case nothing               // 无事发生
@@ -143,9 +143,9 @@ enum SpecialEventGenerator {
                 ),
                 EventChoice(
                     label: L10n.isEnglish ? "Donate 30 gold" : "供奉30金币",
-                    description: L10n.isEnglish ? "+1 play next floor" : "下层多1次出牌",
+                    description: L10n.isEnglish ? "-30 gold, +1 play next floor" : "-30金币，下层多1次出牌",
                     icon: "heart.fill",
-                    effect: .healPlays(1)
+                    effect: gold >= 30 ? .healPlays(1, goldCost: 30) : .nothing
                 ),
             ]
         )

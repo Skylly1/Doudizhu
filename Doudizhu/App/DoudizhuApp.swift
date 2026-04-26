@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 @main
 struct DoudizhuApp: App {
@@ -14,6 +15,15 @@ struct DoudizhuApp: App {
         }
 
         GameCenterManager.shared.authenticate()
+        // 首次打开标记 — 漏斗首端
+        let firstOpenKey = "has_opened_before"
+        if !UserDefaults.standard.bool(forKey: firstOpenKey) {
+            UserDefaults.standard.set(true, forKey: firstOpenKey)
+            Analytics.shared.track(.appFirstOpen, params: [
+                "locale": Locale.current.identifier,
+                "device": UIDevice.current.model
+            ])
+        }
         Analytics.shared.track(.sessionStart)
     }
 

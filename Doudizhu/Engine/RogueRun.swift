@@ -229,6 +229,7 @@ enum HandSortMode: String, CaseIterable {
         
         if floor.isShop {
             phase = .shopping
+            Analytics.shared.track(.shopVisit, params: ["gold": "\(gold)"])
             return
         }
         
@@ -268,6 +269,10 @@ enum HandSortMode: String, CaseIterable {
         // Boss 关初始化
         if floor.isBoss {
             bossState = BossState(modifiers: floor.bossModifiers)
+            Analytics.shared.track(.bossEncounter, params: [
+                "floor": "\(floor.floor)",
+                "modifiers": floor.bossModifiers.map(\.rawValue).joined(separator: ",")
+            ])
             // timeLimit修改器: 出牌次数-1
             if floor.bossModifiers.contains(.timeLimit) {
                 playsRemaining = max(2, playsRemaining - 1)
@@ -343,6 +348,10 @@ enum HandSortMode: String, CaseIterable {
         }
 
         phase = .selecting
+        Analytics.shared.track(.floorStart, params: [
+            "floor": "\(currentFloor.floor)",
+            "is_boss": "\(currentFloor.isBoss)"
+        ])
         Analytics.shared.track(.levelStart, level: currentFloor.floor)
     }
 
@@ -631,6 +640,17 @@ enum HandSortMode: String, CaseIterable {
         if earned > stats.highestSingleScore { stats.highestSingleScore = earned }
         stats.save()
 
+        // 行为埋点
+        Analytics.shared.track(.cardPlay, params: [
+            "pattern": pattern.type.rawValue,
+            "cards": "\(cards.count)",
+            "score": "\(earned)",
+            "floor": "\(currentFloor.floor)"
+        ])
+        if combo >= 3 {
+            Analytics.shared.track(.comboAchieved, params: ["combo": "\(combo)"])
+        }
+
         autoSave()
 
         return result
@@ -751,6 +771,7 @@ enum HandSortMode: String, CaseIterable {
 
         autoSave()
         justDiscarded = true
+        Analytics.shared.track(.cardDiscard, params: ["cards": "\(cards.count)"])
         return true
     }
 
@@ -781,6 +802,12 @@ enum HandSortMode: String, CaseIterable {
             if dailyChallenge != nil {
                 DailyChallenge.recordScore(totalScore)
             }
+            Analytics.shared.track(.runComplete, params: [
+                "total_score": "\(totalScore)",
+                "ascension": "\(ascensionLevel)",
+                "build": currentBuildId,
+                "joker_count": "\(activeJokers.count)"
+            ])
             phase = .victory
             clearSave()
         } else {
@@ -821,6 +848,12 @@ enum HandSortMode: String, CaseIterable {
         currentBuildId = build.id
         PlayerStats.shared.totalRuns += 1
         PlayerStats.shared.recordBuildUsage(build.id)
+
+        // 核心漏斗埋点
+        Analytics.shared.track(.runStart, params: [
+            "build": build.id,
+            "ascension": "\(ascensionLevel)"
+        ])
 
         if let joker = build.startingJoker {
             activeJokers.append(joker)
@@ -870,6 +903,10 @@ enum HandSortMode: String, CaseIterable {
         currentBuildId = "daily"
         PlayerStats.shared.totalRuns += 1
 
+        Analytics.shared.track(.dailyChallengeStart, params: [
+            "modifier": challenge.modifiers.map(\.rawValue).joined(separator: ",")
+        ])
+
         DailyChallenge.markPlayed()
         startFloor()
     }
@@ -911,6 +948,14 @@ enum HandSortMode: String, CaseIterable {
 
     /// 重新开始整个游戏
     func restart() {
+        // 如果当前有进行中的局，记录为放弃
+        if currentFloorIndex > 0 {
+            Analytics.shared.track(.runAbandon, params: [
+                "floor": "\(currentFloor.floor)",
+                "score": "\(totalScore)",
+                "reason": "restart"
+            ])
+        }
         clearSave()
 
         // 游戏次数成就
@@ -949,6 +994,7 @@ enum HandSortMode: String, CaseIterable {
         guard gold >= cost else { return false }
         gold -= cost
         activeBuffs.append(buff)
+        Analytics.shared.track(.shopPurchase, params: ["type": "buff", "cost": "\(cost)"])
         return true
     }
 
@@ -958,6 +1004,7 @@ enum HandSortMode: String, CaseIterable {
         guard activeJokers.count < Joker.maxSlots else { return false }
         gold -= cost
         activeJokers.append(joker)
+        Analytics.shared.track(.shopPurchase, params: ["type": "joker", "id": joker.effect.rawValue, "cost": "\(cost)"])
         return true
     }
 
@@ -991,7 +1038,10 @@ enum HandSortMode: String, CaseIterable {
         case .gainRandomBuff:
             let pick = Buff.allBuffs.randomElement()!
             activeBuffs.append(pick)
-        case .healPlays(let count):
+        case .healPlays(let count, let goldCost):
+            if goldCost > 0 {
+                gold = max(0, gold - goldCost)
+            }
             bonusPlays += count
         case .upgradeRandomJoker:
             guard gold >= 50 else { break }
