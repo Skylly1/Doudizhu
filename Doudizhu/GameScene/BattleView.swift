@@ -621,7 +621,8 @@ struct BattleView: View {
                     RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(playButtonFill)
                 )
-                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.3) : .black.opacity(0.08), radius: 5, y: 2)
+
+                .shadow(color: rogueRun.playsRemaining > 0 ? Theme.gold.opacity(0.25) : .black.opacity(0.08), radius: 4, y: 2)
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
