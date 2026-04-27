@@ -104,6 +104,8 @@ extension GameSaveModel {
         case .dealing: phaseString = "dealing"
         case .shopping: phaseString = "shopping"
         case .floorWin: phaseString = "floorWin"
+        case .floorFail: phaseString = "floorFail"
+        case .victory: phaseString = "victory"
         default: phaseString = "selecting"
         }
 
@@ -157,15 +159,36 @@ extension GameSaveModel {
         // 每日挑战恢复
         run.dailyChallenge = isDailyChallenge ? DailyChallenge.today : nil
 
-        // Boss 关需要重新初始化 BossState
-        let floor = FloorConfig.allFloors[currentFloorIndex]
-        if floor.isBoss {
-            run.bossState = BossState(modifiers: floor.bossModifiers)
-        }
-
-        run.phase = .selecting
         run.playHistory = []
         run.lastPlayResult = nil
+
+        // 根据保存时的阶段智能恢复
+        switch phaseRaw {
+        case "floorWin":
+            // 已过关 — 推进到下一层（会发新手牌）
+            run.advanceToNextFloor()
+        case "shopping":
+            // 在商店中 — 保持商店阶段，由调用方导航到商店页面
+            run.phase = .shopping
+        default:
+            // "selecting" / "dealing" 等 — 恢复为选牌状态
+            // 越界保护（防止关卡配置变更导致崩溃）
+            guard currentFloorIndex >= 0,
+                  currentFloorIndex < FloorConfig.allFloors.count else {
+                run.phase = .victory
+                return
+            }
+            // Boss 关需要重新初始化 BossState
+            let floor = FloorConfig.allFloors[currentFloorIndex]
+            if floor.isBoss {
+                run.bossState = BossState(modifiers: floor.bossModifiers)
+            }
+            run.phase = .selecting
+            // 安全兜底：若手牌为空（异常存档），重新发牌
+            if run.handCards.isEmpty {
+                run.startFloor()
+            }
+        }
     }
 }
 
