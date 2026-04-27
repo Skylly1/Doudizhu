@@ -565,20 +565,16 @@ struct BattleView: View {
                     .foregroundColor(Theme.gold.opacity(0.8))
                     .transition(.opacity)
             } else if let pattern = selectedPattern {
-                HStack(spacing: 6) {
-                    Text(pattern.type.displayName)
-                        .font(.subheadline.bold())
-                        .foregroundColor(Theme.cyan)
-                    Text(L10n.baseScore(pattern.baseScore))
-                        .font(Theme.fontCaption)
-                        .foregroundColor(Theme.textTertiary)
+                VStack(spacing: 4) {
+                    patternPreviewCapsule(pattern)
+                    // 下方小字提示活跃的 Joker
+                    if !rogueRun.activeJokers.isEmpty {
+                        let jokerNames = rogueRun.activeJokers.prefix(3).map { "🃏 " + $0.name }.joined(separator: " · ")
+                        Text(jokerNames)
+                            .font(.system(size: 10))
+                            .foregroundColor(Theme.gold.opacity(0.6))
+                    }
                 }
-                .padding(.horizontal, Theme.spacingMD)
-                .padding(.vertical, 6)
-                .background(
-                    Capsule().fill(.ultraThinMaterial)
-                        .overlay(Capsule().stroke(Theme.cyan.opacity(0.3)))
-                )
                 .transition(.scale.combined(with: .opacity))
             } else if let selected = battleScene?.getSelectedCards(), !selected.isEmpty {
                 let count = selected.count
@@ -593,9 +589,9 @@ struct BattleView: View {
                     }
                 }()
                 HStack(spacing: 4) {
-                    Image(systemName: "lightbulb.fill")
+                    Image(systemName: selected.count >= 3 ? "xmark.circle.fill" : "lightbulb.fill")
                         .font(.caption2)
-                        .foregroundColor(Theme.gold)
+                        .foregroundColor(selected.count >= 3 ? Theme.danger : Theme.gold)
                     Text(hint)
                 }
                     .font(Theme.fontCaption)
@@ -1061,6 +1057,53 @@ struct BattleView: View {
                 .frame(maxWidth: 280)
             }
         }
+    }
+
+    // MARK: - Pattern Preview
+
+    @ViewBuilder
+    private func patternPreviewCapsule(_ pattern: CardPattern) -> some View {
+        HStack(spacing: 6) {
+            // 牌型名
+            Text(pattern.type.displayName)
+                .font(.subheadline.bold())
+                .foregroundColor(Theme.cyan)
+
+            // chips × mult = total 拆解
+            HStack(spacing: 3) {
+                Text("\(pattern.baseChips)")
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(Theme.cyan)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Theme.cyan.opacity(0.15)))
+
+                Text("×")
+                    .font(.caption2)
+                    .foregroundColor(Theme.textTertiary)
+
+                Text(String(format: "%.1f", pattern.baseMult))
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(Theme.flame)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Theme.flame.opacity(0.15)))
+
+                Text("=")
+                    .font(.caption2)
+                    .foregroundColor(Theme.textTertiary)
+
+                Text("\(pattern.baseScore)")
+                    .font(.caption.bold().monospacedDigit())
+                    .foregroundColor(Theme.gold)
+            }
+        }
+        .padding(.horizontal, Theme.spacingMD)
+        .padding(.vertical, 6)
+        .background(
+            Capsule().fill(.ultraThinMaterial)
+                .overlay(Capsule().stroke(Theme.cyan.opacity(0.3)))
+        )
     }
 
     // MARK: - Helpers
