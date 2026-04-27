@@ -917,6 +917,7 @@ enum HandSortMode: String, CaseIterable {
         }
 
         startFloor()
+        autoSave()  // 确保首次存档，防止用户退出后无存档可恢复
     }
 
     /// Start a daily challenge run
@@ -965,6 +966,7 @@ enum HandSortMode: String, CaseIterable {
 
         DailyChallenge.markStarted()
         startFloor()
+        autoSave()  // 确保首次存档，防止用户退出后无存档可恢复
     }
 
     /// 重试当前关卡（保留 Joker/Buff/金币，重置本层状态）

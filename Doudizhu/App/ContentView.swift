@@ -51,6 +51,10 @@ struct ContentView: View {
                         onContinue: {
                             if rogueRun.restoreFromSave() {
                                 navigate(to: .battle)
+                                // 若恢复到商店阶段，继续导航到商店
+                                if rogueRun.phase == .shopping {
+                                    navigate(to: .shop)
+                                }
                             }
                         }
                     )
@@ -72,6 +76,10 @@ struct ContentView: View {
                         onResume: DailyChallenge.hasInProgressToday ? {
                             if rogueRun.restoreFromDailySave() {
                                 navigate(to: .battle)
+                                // 若恢复到商店阶段，继续导航到商店
+                                if rogueRun.phase == .shopping {
+                                    navigate(to: .shop)
+                                }
                             }
                         } : nil,
                         onBack: { goBack() }
