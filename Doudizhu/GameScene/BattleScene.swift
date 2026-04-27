@@ -267,18 +267,215 @@ class BattleScene: SKScene {
         selectedCards.removeAll()
     }
 
-    // MARK: - 触摸交互
+    // MARK: - 触摸交互（手势引擎）
+
+    // --- 手势跟踪状态 ---
+    private var touchStartPoint: CGPoint?
+    private var touchStartTime: TimeInterval = 0
+    private var isSwipeSelecting = false
+    private var swipeTouchedCardIds: Set<UUID> = []
+    private var swipeSelectMode: Bool? = nil  // true = selecting, false = deselecting, nil = not started
+    private var lastTapTime: TimeInterval = 0
+    private var lastTapCardId: UUID?
+
+    // 阈值常量
+    private let doubleTapInterval: TimeInterval = 0.35
+    private let swipeSelectThreshold: CGFloat = 15   // 横向移动超过此值进入横滑模式
+    private let swipeActionThreshold: CGFloat = 50    // 上/下滑触发出牌/弃牌
+    private let tapDistanceThreshold: CGFloat = 12    // 小于此距离视为点击
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard rogueRun?.phase == .selecting else { return }
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+        let now = touch.timestamp
 
-        for node in cardNodes.reversed() {
-            if node.frame.contains(location) {
-                toggleSelection(node)
-                break
+        // 双击检测
+        if let lastId = lastTapCardId,
+           now - lastTapTime < doubleTapInterval,
+           let node = cardNodes.reversed().first(where: { $0.frame.contains(location) }),
+           node.card.id == lastId {
+            handleDoubleTap(node)
+            lastTapCardId = nil
+            touchStartPoint = nil
+            return
+        }
+
+        touchStartPoint = location
+        touchStartTime = now
+        isSwipeSelecting = false
+        swipeTouchedCardIds.removeAll()
+        swipeSelectMode = nil
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard rogueRun?.phase == .selecting else { return }
+        guard let touch = touches.first, let startPoint = touchStartPoint else { return }
+        let location = touch.location(in: self)
+        let dx = location.x - startPoint.x
+        let dy = location.y - startPoint.y
+
+        // 判断是否进入横滑选牌模式
+        if !isSwipeSelecting && abs(dx) > swipeSelectThreshold && abs(dx) > abs(dy) * 2 {
+            isSwipeSelecting = true
+        }
+
+        guard isSwipeSelecting else { return }
+
+        // 横滑经过的牌 → 逐张选中/取消
+        for node in cardNodes {
+            let cardId = node.card.id
+            guard !swipeTouchedCardIds.contains(cardId) else { continue }
+
+            // 使用更宽松的碰撞检测（横向扩展）
+            let expandedFrame = node.frame.insetBy(dx: -4, dy: -8)
+            guard expandedFrame.contains(location) else { continue }
+
+            // 幻影牌跳过
+            if let boss = rogueRun?.bossState, boss.phantomCardIds.contains(cardId) { continue }
+
+            swipeTouchedCardIds.insert(cardId)
+
+            // 首张牌决定模式：已选→取消模式，未选→选中模式
+            if swipeSelectMode == nil {
+                swipeSelectMode = !selectedCards.contains(cardId)
             }
+
+            let shouldSelect = swipeSelectMode ?? true
+            if shouldSelect && !selectedCards.contains(cardId) {
+                selectedCards.insert(cardId)
+                node.select()
+                Task { @MainActor in
+                    FeedbackManager.shared.cardTap()
+                }
+            } else if !shouldSelect && selectedCards.contains(cardId) {
+                selectedCards.remove(cardId)
+                node.deselect()
+                Task { @MainActor in
+                    FeedbackManager.shared.cardTap()
+                }
+            }
+            selectionChanged.send()
+        }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard rogueRun?.phase == .selecting else { return }
+        guard let touch = touches.first, let startPoint = touchStartPoint else {
+            touchStartPoint = nil
+            return
+        }
+        let location = touch.location(in: self)
+        let dx = location.x - startPoint.x
+        let dy = location.y - startPoint.y
+        let distance = hypot(dx, dy)
+
+        defer { touchStartPoint = nil }
+
+        // 横滑选牌模式 — 已在 touchesMoved 处理完，直接返回
+        if isSwipeSelecting { return }
+
+        // 上滑出牌（SpriteKit y轴向上）
+        if dy > swipeActionThreshold && abs(dy) > abs(dx) * 1.5 {
+            if !selectedCards.isEmpty {
+                Task { @MainActor in
+                    FeedbackManager.shared.playCards(score: 0)
+                    SoundManager.shared.play(.cardPlay)
+                }
+                playSelectedCards()
+            }
+            return
+        }
+
+        // 下滑弃牌
+        if dy < -swipeActionThreshold && abs(dy) > abs(dx) * 1.5 {
+            if !selectedCards.isEmpty {
+                handleSwipeDiscard()
+            }
+            return
+        }
+
+        // 短距离 = 单点选牌
+        if distance < tapDistanceThreshold {
+            let now = touch.timestamp
+            if let node = cardNodes.reversed().first(where: { $0.frame.contains(location) }) {
+                toggleSelection(node)
+                lastTapTime = now
+                lastTapCardId = node.card.id
+            }
+            return
+        }
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchStartPoint = nil
+        isSwipeSelecting = false
+        swipeTouchedCardIds.removeAll()
+        swipeSelectMode = nil
+    }
+
+    // MARK: - 双击智能选牌
+
+    private func handleDoubleTap(_ node: CardNode) {
+        guard let hand = rogueRun?.handCards else { return }
+        let card = node.card
+
+        guard let pattern = PatternRecognizer.bestPattern(containing: card, from: hand) else { return }
+
+        // 清除当前选中
+        clearSelection()
+
+        // 选中最佳牌型中的所有牌
+        for patternCard in pattern.cards {
+            if let cardNode = cardNodes.first(where: { $0.card.id == patternCard.id }) {
+                selectedCards.insert(patternCard.id)
+                cardNode.select()
+            }
+        }
+        selectionChanged.send()
+
+        Task { @MainActor in
+            FeedbackManager.shared.playCards(score: 0)
+            SoundManager.shared.play(.cardTap)
+        }
+    }
+
+    // MARK: - 下滑弃牌
+
+    private func handleSwipeDiscard() {
+        let selectedCardList = getSelectedCards()
+        guard !selectedCardList.isEmpty else { return }
+        guard let rogueRun = rogueRun else { return }
+
+        let success = rogueRun.discardCards(selectedCardList)
+        if success {
+            // 弃牌成功动画 — 牌飞向下方消失
+            let discardedIds = selectedCards
+            cardNodes.filter { discardedIds.contains($0.card.id) }.forEach { node in
+                node.childNode(withName: "highlight")?.removeFromParent()
+                let flyDown = SKAction.moveBy(x: 0, y: -200, duration: 0.25)
+                flyDown.timingMode = .easeIn
+                let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+                node.run(SKAction.sequence([
+                    SKAction.group([flyDown, fadeOut]),
+                    .removeFromParent()
+                ]))
+            }
+            cardNodes.removeAll { discardedIds.contains($0.card.id) }
+            selectedCards.removeAll()
+            selectionChanged.send()
+
+            Task { @MainActor in
+                FeedbackManager.shared.cardTap()
+                SoundManager.shared.play(.cardDiscard)
+            }
+
+            // 补牌后重新布局
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.layoutHand()
+            }
+        } else {
+            shakeSelected()
         }
     }
 
@@ -287,7 +484,6 @@ class BattleScene: SKScene {
 
         // phantomCards: 被标记为幻影的牌无法选中
         if let boss = rogueRun?.bossState, boss.phantomCardIds.contains(cardId) {
-            // 抖动反馈
             let shake = SKAction.sequence([
                 .moveBy(x: -4, y: 0, duration: 0.03),
                 .moveBy(x: 8, y: 0, duration: 0.03),

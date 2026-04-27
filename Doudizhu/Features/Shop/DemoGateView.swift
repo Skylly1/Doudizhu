@@ -52,6 +52,9 @@ struct DemoGateView: View {
                     // === 试玩成绩回顾（情感锚点）===
                     trialStatsSection
 
+                    // === 社交证明 ===
+                    socialProofSection
+
                     // === 当前装备展示（损失规避）===
                     if !equippedJokers.isEmpty || !equippedBuffs.isEmpty {
                         equippedSection
@@ -115,6 +118,31 @@ struct DemoGateView: View {
         }
         .scaleEffect(congratsScale)
         .opacity(congratsOpacity)
+    }
+
+    // MARK: - 社交证明
+
+    private var socialProofSection: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 2) {
+                ForEach(0..<5) { _ in
+                    Image(systemName: "star.fill")
+                        .font(.caption)
+                        .foregroundColor(Theme.gold)
+                }
+            }
+            
+            Text(L10n.isEnglish
+                 ? "\"Best card game since Balatro!\" — loved by players"
+                 : "\"自 Balatro 以来最好的卡牌游戏！\" — 玩家好评")
+                .font(.caption)
+                .foregroundColor(Theme.textSecondary)
+                .multilineTextAlignment(.center)
+                .italic()
+        }
+        .padding(.vertical, 10)
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 20)
     }
 
     // MARK: - 试玩成绩回顾
@@ -354,6 +382,22 @@ struct DemoGateView: View {
 
     private var purchaseSection: some View {
         VStack(spacing: 12) {
+            // 价格锚定（首发限时标签）
+            if isFirstView {
+                HStack(spacing: 6) {
+                    Text(L10n.isEnglish ? "Launch Special" : "首发特惠")
+                        .font(.caption.bold())
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(Theme.gold))
+                    
+                    Text(L10n.isEnglish ? "Limited-time price" : "限时价格")
+                        .font(.caption)
+                        .foregroundColor(Theme.gold.opacity(0.8))
+                }
+            }
+
             // 主购买按钮
             Button {
                 Task {
@@ -412,8 +456,8 @@ struct DemoGateView: View {
             // 回访用户加强文案
             if !isFirstView {
                 Text(L10n.isEnglish
-                     ? "💡 One-time purchase. No ads, no subscriptions."
-                     : "💡 一次购买，永久拥有。无广告、无订阅。")
+                     ? "💡 Launch price — one-time purchase. No ads, no subscriptions."
+                     : "💡 首发限时价 — 一次购买，永久拥有。无广告、无订阅。")
                     .font(.caption)
                     .foregroundColor(Theme.gold.opacity(0.8))
                     .multilineTextAlignment(.center)

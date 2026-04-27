@@ -1119,6 +1119,27 @@ enum HandSortMode: String, CaseIterable {
         }
         phase = .floorWin
     }
+
+    // MARK: - 首购奖励
+
+    /// 应用首购奖励（仅当前 run 有效，不破坏平衡）
+    func applyFirstPurchaseBonus() {
+        // +2 换牌次数
+        discardsRemaining += 2
+        
+        // +1 初始连击
+        combo = 1
+        
+        // 随机赠送一张 Joker（如果槽位未满）
+        if activeJokers.count < Joker.maxSlots {
+            let allJokers = Joker.allJokers.filter { j in
+                !activeJokers.contains(where: { $0.id == j.id })
+            }
+            if let randomJoker = allJokers.randomElement() {
+                activeJokers.append(randomJoker)
+            }
+        }
+    }
 }
 
 struct ScoreComponent: Hashable {
