@@ -175,6 +175,8 @@ struct HomeView: View {
     @State private var showButtons = [false, false, false, false]
     @State private var dailyPulse = false
     @State private var sealGlow = false
+    @State private var showNewRunConfirm = false
+    @State private var pendingNewRunScreen: AppScreen? = nil
 
     private var dailyChallengeButton: some View {
         let daily = DailyChallenge.today
@@ -355,7 +357,12 @@ struct HomeView: View {
                                   ? (L10n.isEnglish ? "New Run" : "新的冒险")
                                   : L10n.startAdventure,
                                   icon: hasSavedGame ? "plus.circle.fill" : "play.fill") {
-                        onNavigate(.map)
+                        if hasSavedGame {
+                            pendingNewRunScreen = .map
+                            showNewRunConfirm = true
+                        } else {
+                            onNavigate(.map)
+                        }
                     }
                     .padding(.horizontal, 40)
                     .offset(y: showButtons[1] ? 0 : 30)
@@ -364,7 +371,12 @@ struct HomeView: View {
                     // 快速开始 + 每日挑战 — 并排
                     HStack(spacing: 10) {
                         SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
-                            onNavigate(.buildSelect)
+                            if hasSavedGame {
+                                pendingNewRunScreen = .buildSelect
+                                showNewRunConfirm = true
+                            } else {
+                                onNavigate(.buildSelect)
+                            }
                         }
                         dailyChallengeButton
                     }
@@ -415,6 +427,24 @@ struct HomeView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever().delay(0.8)) {
                 dailyPulse = true
             }
+        }
+        .alert(
+            L10n.isEnglish ? "Start New Run?" : "开始新冒险？",
+            isPresented: $showNewRunConfirm
+        ) {
+            Button(L10n.cancel, role: .cancel) {
+                pendingNewRunScreen = nil
+            }
+            Button(L10n.isEnglish ? "Start New" : "开始新冒险", role: .destructive) {
+                if let screen = pendingNewRunScreen {
+                    onNavigate(screen)
+                    pendingNewRunScreen = nil
+                }
+            }
+        } message: {
+            Text(L10n.isEnglish
+                 ? "You have an adventure in progress. Starting a new run will overwrite your saved progress."
+                 : "你有一个进行中的冒险。开始新冒险将覆盖已保存的进度。")
         }
     }
 }

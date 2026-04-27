@@ -1,28 +1,44 @@
 import Foundation
 
-/// 本地化字符串管理器
-/// 使用方式：L10n.battleTitle, L10n.play 等
-/// 后续可迁移到 String Catalog (.xcstrings) 实现自动翻译
+/// 本地化字符串管理器 — 支持 8 种语言
+/// zh 中文 · en 英文 · ja 日本語 · ko 한국어 · fr Français · de Deutsch · es Español · pt Português
 enum L10n {
-    /// 当前语言（后续可做设置切换）
-    static var isEnglish: Bool {
-        Locale.current.language.languageCode?.identifier == "en"
+
+    // MARK: - 语言检测
+
+    enum Language: String, CaseIterable {
+        case zh, en, ja, ko, fr, de, es, pt
     }
+
+    /// 当前语言（跟随系统设置）
+    static var currentLanguage: Language {
+        guard let code = Locale.current.language.languageCode?.identifier else { return .en }
+        return Language(rawValue: code) ?? .en
+    }
+
+    /// 非中文环境统一回退英文（兼容 inline 三元表达式）
+    static var isEnglish: Bool { currentLanguage != .zh }
 
     // MARK: - 通用
     static var appName: String { localized("斗破乾坤", en: "Dou Po Qian Kun") }
-    static var appSubtitle: String { localized("肉鸽牌局 · 乾坤一掷", en: "Roguelike Dou Di Zhu") }
-    static var back: String { localized("返回", en: "Back") }
-    static var confirm: String { localized("确认", en: "Confirm") }
-    static var cancel: String { localized("取消", en: "Cancel") }
+    static var appSubtitle: String { localized("肉鸽牌局 · 乾坤一掷", en: "Roguelike Dou Di Zhu", ja: "ローグライク闘地主", ko: "로그라이크 더우디주", fr: "Dou Di Zhu Roguelike", de: "Roguelike Dou Di Zhu", es: "Dou Di Zhu Roguelike", pt: "Dou Di Zhu Roguelike") }
+    static var back: String { localized("返回", en: "Back", ja: "戻る", ko: "뒤로", fr: "Retour", de: "Zurück", es: "Volver", pt: "Voltar") }
+    static var confirm: String { localized("确认", en: "Confirm", ja: "確認", ko: "확인", fr: "Confirmer", de: "Bestätigen", es: "Confirmar", pt: "Confirmar") }
+    static var cancel: String { localized("取消", en: "Cancel", ja: "キャンセル", ko: "취소", fr: "Annuler", de: "Abbrechen", es: "Cancelar", pt: "Cancelar") }
 
     // MARK: - 主菜单
-    static var startAdventure: String { localized("开始冒险", en: "Start Adventure") }
-    static var cardCollection: String { localized("卡牌收藏", en: "Card Collection") }
-    static var settings: String { localized("设置", en: "Settings") }
-    static var chooseBuild: String { localized("选择流派", en: "Choose Build") }
+    static var startAdventure: String { localized("开始冒险", en: "Start Adventure", ja: "冒険開始", ko: "모험 시작", fr: "Commencer", de: "Abenteuer starten", es: "Iniciar aventura", pt: "Iniciar aventura") }
+    static var cardCollection: String { localized("卡牌收藏", en: "Card Collection", ja: "カード図鑑", ko: "카드 컬렉션", fr: "Collection", de: "Kartensammlung", es: "Colección", pt: "Coleção") }
+    static var settings: String { localized("设置", en: "Settings", ja: "設定", ko: "설정", fr: "Paramètres", de: "Einstellungen", es: "Ajustes", pt: "Configurações") }
+    static var chooseBuild: String { localized("选择流派", en: "Choose Build", ja: "ビルド選択", ko: "빌드 선택", fr: "Choisir un build", de: "Build wählen", es: "Elegir estilo", pt: "Escolher estilo") }
     static var buildHint: String { localized("不同流派影响你的起始装备和金币",
-                                              en: "Different builds affect your starting gear and gold") }
+                                              en: "Different builds affect your starting gear and gold",
+                                              ja: "ビルドにより初期装備とゴールドが変化",
+                                              ko: "빌드에 따라 시작 장비와 골드가 달라집니다",
+                                              fr: "Chaque build change l'équipement et l'or de départ",
+                                              de: "Builds beeinflussen Startausrüstung und Gold",
+                                              es: "Cada estilo cambia equipo y oro inicial",
+                                              pt: "Cada estilo muda equipamento e ouro inicial") }
 
     // MARK: - 地图
     static var adventurePath: String { localized("冒险之路", en: "Adventure Path") }
@@ -36,21 +52,21 @@ enum L10n {
     static func mapHighestScore(_ n: Int) -> String { localized("最高分\(n)", en: "Best \(n)") }
 
     // MARK: - 战斗
-    static var play: String { localized("出牌", en: "Play") }
-    static var swap: String { localized("换牌", en: "Swap") }
-    static var floor: String { localized("层", en: "Floor") }
-    static var combo: String { localized("连击", en: "Combo") }
-    static var cleared: String { localized("过关！", en: "Cleared!") }
-    static var failed: String { localized("失败", en: "Failed") }
-    static var victory: String { localized("通关！", en: "Victory!") }
-    static var continueForward: String { localized("继续前进 →", en: "Continue →") }
-    static var restart: String { localized("重新开始", en: "Restart") }
-    static var backToMenu: String { localized("返回主菜单", en: "Back to Menu") }
-    static var targetNotReached: String { localized("未达到目标分数", en: "Target score not reached") }
-    static var bossDefeated: String { localized("你击败了恶霸地主！", en: "You defeated the Landlord!") }
-    static var playAgain: String { localized("再来一局", en: "Play Again") }
-    static var achievementUnlocked: String { localized("成就解锁", en: "Achievement Unlocked") }
-    static var invalidPattern: String { localized("无效牌型", en: "Invalid Pattern") }
+    static var play: String { localized("出牌", en: "Play", ja: "出す", ko: "내기", fr: "Jouer", de: "Spielen", es: "Jugar", pt: "Jogar") }
+    static var swap: String { localized("换牌", en: "Swap", ja: "交換", ko: "교환", fr: "Échanger", de: "Tauschen", es: "Cambiar", pt: "Trocar") }
+    static var floor: String { localized("层", en: "Floor", ja: "階", ko: "층", fr: "Étage", de: "Etage", es: "Piso", pt: "Andar") }
+    static var combo: String { localized("连击", en: "Combo", ja: "コンボ", ko: "콤보", fr: "Combo", de: "Combo", es: "Combo", pt: "Combo") }
+    static var cleared: String { localized("过关！", en: "Cleared!", ja: "クリア！", ko: "클리어!", fr: "Réussi !", de: "Geschafft!", es: "¡Superado!", pt: "Passou!") }
+    static var failed: String { localized("失败", en: "Failed", ja: "失敗", ko: "실패", fr: "Échoué", de: "Gescheitert", es: "Fallido", pt: "Falhou") }
+    static var victory: String { localized("通关！", en: "Victory!", ja: "勝利！", ko: "승리!", fr: "Victoire !", de: "Sieg!", es: "¡Victoria!", pt: "Vitória!") }
+    static var continueForward: String { localized("继续前进 →", en: "Continue →", ja: "進む →", ko: "계속 →", fr: "Continuer →", de: "Weiter →", es: "Continuar →", pt: "Continuar →") }
+    static var restart: String { localized("重新开始", en: "Restart", ja: "やり直す", ko: "다시 시작", fr: "Recommencer", de: "Neustart", es: "Reiniciar", pt: "Reiniciar") }
+    static var backToMenu: String { localized("返回主菜单", en: "Back to Menu", ja: "メニューへ", ko: "메뉴로", fr: "Menu principal", de: "Hauptmenü", es: "Menú principal", pt: "Menu principal") }
+    static var targetNotReached: String { localized("未达到目标分数", en: "Target score not reached", ja: "目標スコア未達成", ko: "목표 점수 미달", fr: "Score cible non atteint", de: "Zielpunktzahl nicht erreicht", es: "Objetivo no alcanzado", pt: "Pontuação não atingida") }
+    static var bossDefeated: String { localized("你击败了恶霸地主！", en: "You defeated the Landlord!", ja: "地主を倒した！", ko: "지주를 물리쳤다!", fr: "Vous avez vaincu le Boss !", de: "Du hast den Boss besiegt!", es: "¡Derrotaste al jefe!", pt: "Você derrotou o chefe!") }
+    static var playAgain: String { localized("再来一局", en: "Play Again", ja: "もう一回", ko: "다시 하기", fr: "Rejouer", de: "Nochmal", es: "Jugar de nuevo", pt: "Jogar de novo") }
+    static var achievementUnlocked: String { localized("成就解锁", en: "Achievement Unlocked", ja: "実績解除", ko: "업적 달성", fr: "Succès débloqué", de: "Erfolg freigeschaltet", es: "Logro desbloqueado", pt: "Conquista desbloqueada") }
+    static var invalidPattern: String { localized("无效牌型", en: "Invalid Pattern", ja: "無効な役", ko: "무효 패턴", fr: "Invalide", de: "Ungültiges Muster", es: "Patrón inválido", pt: "Padrão inválido") }
     static var exitConfirmTitle: String { localized("确认退出?", en: "Quit Battle?") }
     static var exitConfirmMessage: String { localized("当前进度将丢失", en: "Current progress will be lost") }
     static var exitConfirmContinue: String { localized("继续游戏", en: "Continue") }
@@ -85,23 +101,23 @@ enum L10n {
     static var refreshCost: String { localized("花费15金币刷新商品", en: "Spend 15 gold to refresh items") }
     
     // MARK: - 首屏
-    static var quickStart: String { localized("快速开战", en: "Quick Start") }
-    static var continueRun: String { localized("继续冒险", en: "Continue Run") }
-    static var dailyChallenge: String { localized("每日挑战", en: "Daily Challenge") }
-    static var comingSoon: String { localized("即将推出", en: "Coming Soon") }
+    static var quickStart: String { localized("快速开战", en: "Quick Start", ja: "クイックスタート", ko: "빠른 시작", fr: "Partie rapide", de: "Schnellstart", es: "Inicio rápido", pt: "Início rápido") }
+    static var continueRun: String { localized("继续冒险", en: "Continue Run", ja: "冒険を続ける", ko: "모험 계속", fr: "Continuer", de: "Weiter spielen", es: "Continuar", pt: "Continuar") }
+    static var dailyChallenge: String { localized("每日挑战", en: "Daily Challenge", ja: "デイリーチャレンジ", ko: "일일 도전", fr: "Défi du jour", de: "Tägliche Herausforderung", es: "Desafío diario", pt: "Desafio diário") }
+    static var comingSoon: String { localized("即将推出", en: "Coming Soon", ja: "近日公開", ko: "곧 출시", fr: "Bientôt", de: "Demnächst", es: "Próximamente", pt: "Em breve") }
 
     // MARK: - 商店
-    static var shop: String { localized("商店", en: "Shop") }
-    static var jokerSection: String { localized("规则牌", en: "Jokers") }
-    static var buffSection: String { localized("增益道具", en: "Buffs") }
-    static var leave: String { localized("离开商店", en: "Leave Shop") }
-    static var owned: String { localized("已拥有", en: "Owned") }
-    static var full: String { localized("已满", en: "Full") }
-    static var shopSubtitle: String { localized("选购规则牌与增益道具", en: "Browse jokers and buffs") }
-    static var gold: String { localized("金币", en: "Gold") }
-    static var soldOut: String { localized("已售罄", en: "Sold Out") }
-    static var equippedJokers: String { localized("已装备规则牌", en: "Equipped Jokers") }
-    static var equippedBuffs: String { localized("已装备增益", en: "Equipped Buffs") }
+    static var shop: String { localized("商店", en: "Shop", ja: "ショップ", ko: "상점", fr: "Boutique", de: "Shop", es: "Tienda", pt: "Loja") }
+    static var jokerSection: String { localized("规则牌", en: "Jokers", ja: "ジョーカー", ko: "조커", fr: "Jokers", de: "Joker", es: "Jokers", pt: "Jokers") }
+    static var buffSection: String { localized("增益道具", en: "Buffs", ja: "バフ", ko: "버프", fr: "Bonus", de: "Buffs", es: "Mejoras", pt: "Bônus") }
+    static var leave: String { localized("离开商店", en: "Leave Shop", ja: "ショップを出る", ko: "상점 나가기", fr: "Quitter", de: "Verlassen", es: "Salir", pt: "Sair") }
+    static var owned: String { localized("已拥有", en: "Owned", ja: "所持中", ko: "보유", fr: "Possédé", de: "Besitzt", es: "Poseído", pt: "Possuído") }
+    static var full: String { localized("已满", en: "Full", ja: "満杯", ko: "가득", fr: "Plein", de: "Voll", es: "Lleno", pt: "Cheio") }
+    static var shopSubtitle: String { localized("选购规则牌与增益道具", en: "Browse jokers and buffs", ja: "ジョーカーとバフを探索", ko: "조커와 버프 구매", fr: "Parcourez jokers et bonus", de: "Joker und Buffs durchsuchen", es: "Busca jokers y mejoras", pt: "Explore jokers e bônus") }
+    static var gold: String { localized("金币", en: "Gold", ja: "ゴールド", ko: "골드", fr: "Or", de: "Gold", es: "Oro", pt: "Ouro") }
+    static var soldOut: String { localized("已售罄", en: "Sold Out", ja: "売り切れ", ko: "품절", fr: "Épuisé", de: "Ausverkauft", es: "Agotado", pt: "Esgotado") }
+    static var equippedJokers: String { localized("已装备规则牌", en: "Equipped Jokers", ja: "装備中のジョーカー", ko: "장착된 조커", fr: "Jokers équipés", de: "Ausgerüstete Joker", es: "Jokers equipados", pt: "Jokers equipados") }
+    static var equippedBuffs: String { localized("已装备增益", en: "Equipped Buffs", ja: "装備中のバフ", ko: "장착된 버프", fr: "Bonus équipés", de: "Ausgerüstete Buffs", es: "Mejoras equipadas", pt: "Bônus equipados") }
 
     // MARK: - 试玩结束
     static var demoOver: String { localized("试玩结束", en: "Trial Complete") }
@@ -112,64 +128,120 @@ enum L10n {
     static func unlockFullPrice(_ price: String) -> String { localized("解锁完整版 — \(price)", en: "Unlock Full — \(price)") }
 
     // MARK: - 教程
-    static var skipTutorial: String { localized("跳过教程", en: "Skip Tutorial") }
-    static var nextStep: String { localized("下一步 →", en: "Next →") }
-    static var startGame: String { localized("开始游戏！", en: "Start!") }
-    static var tutorialPlayTitle: String { localized("出牌", en: "Play Cards") }
+    static var skipTutorial: String { localized("跳过", en: "Skip", ja: "スキップ", ko: "건너뛰기", fr: "Passer", de: "Überspringen", es: "Saltar", pt: "Pular") }
+    static var nextStep: String { localized("下一步 →", en: "Next →", ja: "次へ →", ko: "다음 →", fr: "Suivant →", de: "Weiter →", es: "Siguiente →", pt: "Próximo →") }
+    static var startGame: String { localized("开始！", en: "Start!", ja: "開始！", ko: "시작!", fr: "C'est parti !", de: "Los!", es: "¡Empezar!", pt: "Começar!") }
+    static var tutorialPlayTitle: String { localized("出牌", en: "Play Cards", ja: "カードを出す", ko: "카드 내기", fr: "Jouer", de: "Karten spielen", es: "Jugar cartas", pt: "Jogar cartas") }
 
-    static var tutorialWelcomeTitle: String { localized("🎴 欢迎来到斗破乾坤！", en: "🎴 Welcome to Dou Po Qian Kun!") }
+    static var tutorialWelcomeTitle: String { localized(
+        "🎴 欢迎来到斗破乾坤！",
+        en: "🎴 Welcome to Dou Po Qian Kun!",
+        ja: "🎴 斗破乾坤へようこそ！",
+        ko: "🎴 투파건곤에 오신 것을 환영합니다!",
+        fr: "🎴 Bienvenue dans Dou Po Qian Kun !",
+        de: "🎴 Willkommen bei Dou Po Qian Kun!",
+        es: "🎴 ¡Bienvenido a Dou Po Qian Kun!",
+        pt: "🎴 Bem-vindo ao Dou Po Qian Kun!") }
     static var tutorialWelcomeMsg: String { localized(
-        "欢迎来到斗破乾坤！这是一款结合斗地主出牌规则的 Roguelike 卡牌冒险。\n\n点击任意位置继续。",
-        en: "Welcome to Dou Po Qian Kun! A Roguelike card adventure using Chinese Doudizhu card patterns.\n\nTap anywhere to continue.") }
+        "斗地主 × 肉鸽冒险\n打出牌型得分，收集强化，击败最终地主！",
+        en: "Doudizhu × Roguelike Adventure\nPlay patterns to score, collect upgrades, defeat the Landlord!",
+        ja: "闘地主 × ローグライク冒険\n役を出して得点、強化を集めて地主を倒せ！",
+        ko: "더우디주 × 로그라이크 모험\n패를 내어 점수 획득, 강화 수집, 지주를 처치!",
+        fr: "Doudizhu × Roguelike\nJouez des combinaisons, collectez des améliorations, battez le Boss !",
+        de: "Doudizhu × Roguelike\nSpiele Kartenmuster, sammle Upgrades, besiege den Boss!",
+        es: "Doudizhu × Roguelike\n¡Juega combinaciones, colecciona mejoras y vence al jefe!",
+        pt: "Doudizhu × Roguelike\nJogue combinações, colete melhorias e derrote o chefe!") }
 
-    static var tutorialGoalTitle: String { localized("🎯 关卡目标", en: "🎯 Floor Goal") }
+    static var tutorialGoalTitle: String { localized("🎯 关卡目标", en: "🎯 Floor Goal", ja: "🎯 フロア目標", ko: "🎯 층 목표", fr: "🎯 Objectif", de: "🎯 Etagen-Ziel", es: "🎯 Objetivo", pt: "🎯 Objetivo") }
     static var tutorialGoalMsg: String { localized(
-        "每一层有一个目标分数，在有限的出牌次数内达到目标即可过关。",
-        en: "Each floor has a target score. Reach it within limited plays to advance.") }
+        "每层有目标分，出牌次数有限\n合理搭配，精准过关",
+        en: "Each floor has a target score with limited plays\nPlan wisely to clear each floor",
+        ja: "各フロアに目標スコアとプレイ回数制限\n計画的にクリアしよう",
+        ko: "각 층마다 목표 점수와 제한된 플레이 횟수\n전략적으로 클리어하세요",
+        fr: "Chaque étage a un score cible et des coups limités\nPlanifiez bien pour réussir",
+        de: "Jede Etage hat eine Zielpunktzahl mit begrenzten Zügen\nPlane klug!",
+        es: "Cada piso tiene puntuación objetivo y jugadas limitadas\n¡Planifica bien!",
+        pt: "Cada andar tem pontuação alvo e jogadas limitadas\nPlaneje bem!") }
 
-    static var tutorialPatternTitle: String { localized("🃏 牌型基础", en: "🃏 Pattern Basics") }
+    static var tutorialPatternTitle: String { localized("🃏 牌型基础", en: "🃏 Pattern Basics", ja: "🃏 役の基本", ko: "🃏 패턴 기초", fr: "🃏 Combinaisons", de: "🃏 Muster-Grundlagen", es: "🃏 Patrones básicos", pt: "🃏 Padrões básicos") }
     static var tutorialPatternMsg: String { localized(
-        "出牌规则与斗地主相同：单张、对子、三条、顺子、炸弹等都是合法牌型。不同牌型有不同的基础分。",
-        en: "Card patterns follow Doudizhu rules: Single, Pair, Triple, Straight, Bomb, etc. Each pattern has a base score.") }
+        "单张 → 对子 → 三条 → 顺子 → 炸弹\n牌型越大，得分越高！",
+        en: "Single → Pair → Triple → Straight → Bomb\nBigger patterns = higher scores!",
+        ja: "シングル → ペア → トリプル → ストレート → ボム\n大きな役ほど高得点！",
+        ko: "싱글 → 페어 → 트리플 → 스트레이트 → 폭탄\n큰 패턴 = 높은 점수!",
+        fr: "Simple → Paire → Brelan → Suite → Bombe\nPlus c'est gros, plus ça rapporte !",
+        de: "Einzel → Paar → Drilling → Straße → Bombe\nGrößere Muster = mehr Punkte!",
+        es: "Simple → Par → Trío → Escalera → Bomba\n¡Más grande = más puntos!",
+        pt: "Simples → Par → Trinca → Sequência → Bomba\nMaiores = mais pontos!") }
 
-    static var tutorialBigPatternTitle: String { localized("💡 大牌型得分", en: "💡 Big Patterns") }
+    static var tutorialBigPatternTitle: String { localized("💡 大牌型得分", en: "💡 Big Patterns", ja: "💡 大きな役", ko: "💡 큰 패턴", fr: "💡 Gros motifs", de: "💡 Große Muster", es: "💡 Patrones grandes", pt: "💡 Padrões grandes") }
     static var tutorialBigPatternMsg: String { localized(
-        "💡 大牌型得分更高！炸弹(4张同点) 240分，火箭(双王) 400分，飞机和连对也有丰厚分数。善用大牌型是过关关键！",
-        en: "💡 Bigger patterns score more! Bomb (4-of-a-kind) = 240 pts, Rocket (both Jokers) = 400 pts. Using big patterns is key to clearing floors!") }
+        "炸弹 240分 · 火箭 400分\n大牌型是通关关键！",
+        en: "Bomb 240 pts · Rocket 400 pts\nBig patterns are key to victory!",
+        ja: "ボム 240点 · ロケット 400点\n大きな役がクリアの鍵！",
+        ko: "폭탄 240점 · 로켓 400점\n큰 패턴이 클리어의 열쇠!",
+        fr: "Bombe 240 pts · Fusée 400 pts\nLes gros motifs sont la clé !",
+        de: "Bombe 240 Pkt · Rakete 400 Pkt\nGroße Muster sind der Schlüssel!",
+        es: "Bomba 240 pts · Cohete 400 pts\n¡Los patrones grandes son la clave!",
+        pt: "Bomba 240 pts · Foguete 400 pts\nPadrões grandes são a chave!") }
 
-    static var tutorialSelectTitle: String { localized("👆 选牌与出牌", en: "👆 Select & Play") }
+    static var tutorialSelectTitle: String { localized("👆 选牌出牌", en: "👆 Select & Play", ja: "👆 選んで出す", ko: "👆 선택 & 플레이", fr: "👆 Choisir & Jouer", de: "👆 Wählen & Spielen", es: "👆 Elegir y jugar", pt: "👆 Escolher e jogar") }
     static var tutorialSelectMsg: String { localized(
-        "点击选牌，上方会实时显示牌型和分数。点「出牌」打出。如果选的牌不构成合法牌型，会提示无效。",
-        en: "Tap cards to select. The pattern and score appear above. Hit Play to submit. Invalid patterns are flagged.") }
+        "点牌选中，点「出牌」打出\n上方实时预览牌型和分数",
+        en: "Tap cards to select, tap Play to submit\nPattern and score preview shown above",
+        ja: "カードをタップで選択、「出す」で提出\n上部に役とスコアをプレビュー",
+        ko: "카드를 탭하여 선택, 내기 탭으로 제출\n위에서 패턴과 점수 미리보기",
+        fr: "Touchez pour sélectionner, puis Jouer\nAperçu du motif et du score en haut",
+        de: "Tippe zum Auswählen, dann Spielen\nMuster und Punkte oben angezeigt",
+        es: "Toca para seleccionar, luego Jugar\nVista previa de patrón y puntos arriba",
+        pt: "Toque para selecionar, depois Jogar\nPrevisão do padrão e pontos acima") }
 
-    static var tutorialDiscardTitle: String { localized("♻️ 换牌策略", en: "♻️ Swap Strategy") }
+    static var tutorialDiscardTitle: String { localized("♻️ 换牌策略", en: "♻️ Swap Strategy", ja: "♻️ 交換の戦略", ko: "♻️ 교환 전략", fr: "♻️ Stratégie d'échange", de: "♻️ Tausch-Strategie", es: "♻️ Estrategia de cambio", pt: "♻️ Estratégia de troca") }
     static var tutorialDiscardMsg: String { localized(
-        "不想要的牌可以「换牌」——选中后点换牌按钮，它们会被丢弃并补充新牌。换牌次数有限，请谨慎使用。",
-        en: "Use Swap to discard unwanted cards and draw new ones. Swap uses are limited — use wisely.") }
+        "选中不要的牌，点「换牌」换新牌\n次数有限，谨慎使用",
+        en: "Select unwanted cards, tap Swap to draw new ones\nLimited uses — spend wisely",
+        ja: "不要なカードを選び「交換」をタップ\n回数制限あり — 慎重に使おう",
+        ko: "필요없는 카드 선택 후 교환 탭\n횟수 제한 — 신중하게 사용",
+        fr: "Sélectionnez les cartes à échanger, puis Échanger\nUtilisations limitées — choisissez bien",
+        de: "Ungewünschte Karten wählen, dann Tauschen\nBegrenzte Nutzung — weise einsetzen",
+        es: "Selecciona cartas no deseadas, toca Cambiar\nUsos limitados — úsalos bien",
+        pt: "Selecione cartas indesejadas, toque Trocar\nUsos limitados — use com sabedoria") }
 
-    static var tutorialComboTitle: String { localized("🔥 连击加成", en: "🔥 Combo Bonus") }
+    static var tutorialComboTitle: String { localized("🔥 连击加成", en: "🔥 Combo Bonus", ja: "🔥 コンボボーナス", ko: "🔥 콤보 보너스", fr: "🔥 Bonus Combo", de: "🔥 Combo-Bonus", es: "🔥 Bonus Combo", pt: "🔥 Bônus Combo") }
     static var tutorialComboMsg: String { localized(
-        "连续出牌会形成连击（Combo），每次连击加成 +15%。弃牌会降低连击，所以尽量连续出牌！",
-        en: "Consecutive plays build Combo, +15% per level. Discarding reduces combo. Chain plays for max score!") }
+        "连续出牌触发连击，每次 +15%\n换牌打断连击，合理取舍！",
+        en: "Chain plays trigger combo, +15% each\nSwapping breaks combo — balance wisely!",
+        ja: "連続プレイでコンボ発動、毎回 +15%\n交換でコンボ中断 — 慎重に！",
+        ko: "연속 플레이로 콤보 발동, 매회 +15%\n교환은 콤보 중단 — 신중하게!",
+        fr: "Enchaînez pour un combo, +15% par coup\nÉchanger interrompt le combo !",
+        de: "Kettenspiele lösen Combo aus, +15% pro Zug\nTauschen unterbricht Combo!",
+        es: "Encadena jugadas para combo, +15% cada vez\n¡Cambiar rompe el combo!",
+        pt: "Jogadas em cadeia ativam combo, +15% cada\nTrocar quebra o combo!") }
 
-    static var tutorialShopTitle: String { localized("🛒 商店与强化", en: "🛒 Shop & Upgrades") }
+    static var tutorialShopTitle: String { localized("🛒 商店强化", en: "🛒 Shop & Upgrades", ja: "🛒 ショップと強化", ko: "🛒 상점 & 강화", fr: "🛒 Boutique", de: "🛒 Shop & Upgrades", es: "🛒 Tienda y mejoras", pt: "🛒 Loja e melhorias") }
     static var tutorialShopMsg: String { localized(
-        "过关后可以进入商店，用金币购买规则牌和增益道具来强化后续关卡。准备好了吗？开始冒险！",
-        en: "After clearing a floor, visit the shop to buy Jokers and Buffs. Ready? Let's go!") }
+        "过关后进入商店\n用金币购买规则牌和增益，越打越强！",
+        en: "Visit the shop between floors\nBuy Jokers and Buffs with gold — get stronger!",
+        ja: "フロア間でショップへ\nゴールドでジョーカーとバフを購入して強化！",
+        ko: "층 사이에 상점 방문\n골드로 조커와 버프 구매 — 더 강해지세요!",
+        fr: "Visitez la boutique entre les étages\nAchetez Jokers et Bonus avec de l'or !",
+        de: "Besuche den Shop zwischen Etagen\nKaufe Joker und Buffs mit Gold!",
+        es: "Visita la tienda entre pisos\n¡Compra Jokers y Mejoras con oro!",
+        pt: "Visite a loja entre andares\nCompre Jokers e Bônus com ouro!") }
 
     // MARK: - 牌型名称
-    static var patternSingle: String { localized("单张", en: "Single") }
-    static var patternPair: String { localized("对子", en: "Pair") }
-    static var patternTriple: String { localized("三条", en: "Triple") }
-    static var patternTripleOne: String { localized("三带一", en: "Triple+1") }
-    static var patternTriplePair: String { localized("三带二", en: "Full House") }
-    static var patternStraight: String { localized("顺子", en: "Straight") }
-    static var patternPairStraight: String { localized("连对", en: "Pair Straight") }
-    static var patternPlane: String { localized("飞机", en: "Airplane") }
-    static var patternPlaneWings: String { localized("飞机带翅膀", en: "Airplane+Wings") }
-    static var patternBomb: String { localized("炸弹", en: "Bomb") }
-    static var patternRocket: String { localized("火箭", en: "Rocket") }
-    static var patternFourTwo: String { localized("四带二", en: "Four+2") }
+    static var patternSingle: String { localized("单张", en: "Single", ja: "シングル", ko: "싱글", fr: "Simple", de: "Einzel", es: "Simple", pt: "Simples") }
+    static var patternPair: String { localized("对子", en: "Pair", ja: "ペア", ko: "페어", fr: "Paire", de: "Paar", es: "Par", pt: "Par") }
+    static var patternTriple: String { localized("三条", en: "Triple", ja: "トリプル", ko: "트리플", fr: "Brelan", de: "Drilling", es: "Trío", pt: "Trinca") }
+    static var patternTripleOne: String { localized("三带一", en: "Triple+1", ja: "トリプル+1", ko: "트리플+1", fr: "Brelan+1", de: "Drilling+1", es: "Trío+1", pt: "Trinca+1") }
+    static var patternTriplePair: String { localized("三带二", en: "Full House", ja: "フルハウス", ko: "풀하우스", fr: "Full", de: "Full House", es: "Full", pt: "Full House") }
+    static var patternStraight: String { localized("顺子", en: "Straight", ja: "ストレート", ko: "스트레이트", fr: "Suite", de: "Straße", es: "Escalera", pt: "Sequência") }
+    static var patternPairStraight: String { localized("连对", en: "Pair Straight", ja: "連ペア", ko: "연속 페어", fr: "Suite de paires", de: "Paarstraße", es: "Escalera doble", pt: "Sequência dupla") }
+    static var patternPlane: String { localized("飞机", en: "Airplane", ja: "飛行機", ko: "비행기", fr: "Avion", de: "Flugzeug", es: "Avión", pt: "Avião") }
+    static var patternPlaneWings: String { localized("飞机带翅膀", en: "Airplane+Wings", ja: "飛行機+翼", ko: "비행기+날개", fr: "Avion+Ailes", de: "Flugzeug+Flügel", es: "Avión+Alas", pt: "Avião+Asas") }
+    static var patternBomb: String { localized("炸弹", en: "Bomb", ja: "ボム", ko: "폭탄", fr: "Bombe", de: "Bombe", es: "Bomba", pt: "Bomba") }
+    static var patternRocket: String { localized("火箭", en: "Rocket", ja: "ロケット", ko: "로켓", fr: "Fusée", de: "Rakete", es: "Cohete", pt: "Foguete") }
+    static var patternFourTwo: String { localized("四带二", en: "Four+2", ja: "フォー+2", ko: "포+2", fr: "Carré+2", de: "Vierer+2", es: "Cuatro+2", pt: "Quadra+2") }
 
     // MARK: - Card Pattern Guide
     static func pts(_ n: Int) -> String { localized("\(n) 分", en: "\(n) pts") }
@@ -246,23 +318,23 @@ enum L10n {
     static var buildGamblerDesc: String { localized("命运由天。「赌徒之心」随机±30%，100金币。", en: "Fate decides. Gambler (±30%), 100 gold.") }
 
     // MARK: - 图鉴
-    static var collection: String { localized("图鉴", en: "Collection") }
-    static var patternTab: String { localized("牌型", en: "Patterns") }
-    static var achievements: String { localized("成就", en: "Achievements") }
-    static var statsTab: String { localized("统计", en: "Stats") }
-    static var patternGuide: String { localized("牌型参考", en: "Pattern Guide") }
+    static var collection: String { localized("图鉴", en: "Collection", ja: "図鑑", ko: "도감", fr: "Collection", de: "Sammlung", es: "Colección", pt: "Coleção") }
+    static var patternTab: String { localized("牌型", en: "Patterns", ja: "役", ko: "패턴", fr: "Motifs", de: "Muster", es: "Patrones", pt: "Padrões") }
+    static var achievements: String { localized("成就", en: "Achievements", ja: "実績", ko: "업적", fr: "Succès", de: "Erfolge", es: "Logros", pt: "Conquistas") }
+    static var statsTab: String { localized("统计", en: "Stats", ja: "統計", ko: "통계", fr: "Stats", de: "Statistiken", es: "Estadísticas", pt: "Estatísticas") }
+    static var patternGuide: String { localized("牌型参考", en: "Pattern Guide", ja: "役ガイド", ko: "패턴 가이드", fr: "Guide", de: "Muster-Guide", es: "Guía", pt: "Guia") }
     static var achievementsUnlocked: String { localized("已解锁成就", en: "Achievements Unlocked") }
     static func jokerCount(_ n: Int) -> String { localized("共 \(n) 张规则牌", en: "\(n) Jokers Total") }
     static func buffCount(_ n: Int) -> String { localized("共 \(n) 种增益道具", en: "\(n) Buffs Total") }
 
     // MARK: - 设置
-    static var settingsSound: String { localized("音效", en: "Sound") }
-    static var settingsSoundEffect: String { localized("音效", en: "Sound Effects") }
-    static var settingsVolume: String { localized("音量", en: "Volume") }
-    static var settingsMusic: String { localized("背景音乐", en: "Background Music") }
-    static var settingsHaptic: String { localized("震动反馈", en: "Haptic Feedback") }
-    static var settingsGame: String { localized("游戏", en: "Game") }
-    static var settingsAbout: String { localized("关于", en: "About") }
+    static var settingsSound: String { localized("音效", en: "Sound", ja: "サウンド", ko: "사운드", fr: "Son", de: "Sound", es: "Sonido", pt: "Som") }
+    static var settingsSoundEffect: String { localized("音效", en: "Sound Effects", ja: "効果音", ko: "효과음", fr: "Effets sonores", de: "Soundeffekte", es: "Efectos de sonido", pt: "Efeitos sonoros") }
+    static var settingsVolume: String { localized("音量", en: "Volume", ja: "音量", ko: "음량", fr: "Volume", de: "Lautstärke", es: "Volumen", pt: "Volume") }
+    static var settingsMusic: String { localized("背景音乐", en: "Background Music", ja: "BGM", ko: "배경음악", fr: "Musique", de: "Musik", es: "Música", pt: "Música") }
+    static var settingsHaptic: String { localized("震动反馈", en: "Haptic Feedback", ja: "触覚フィードバック", ko: "햅틱 피드백", fr: "Retour haptique", de: "Haptisches Feedback", es: "Vibración", pt: "Vibração") }
+    static var settingsGame: String { localized("游戏", en: "Game", ja: "ゲーム", ko: "게임", fr: "Jeu", de: "Spiel", es: "Juego", pt: "Jogo") }
+    static var settingsAbout: String { localized("关于", en: "About", ja: "情報", ko: "정보", fr: "À propos", de: "Über", es: "Acerca de", pt: "Sobre") }
     static var settingsVersion: String { localized("版本", en: "Version") }
     static var settingsEngine: String { localized("引擎", en: "Engine") }
     static var settingsInspiration: String { localized("灵感来源", en: "Inspiration") }
@@ -298,9 +370,9 @@ enum L10n {
     static var demoGateDailyFree: String { localized("每日挑战免费畅玩", en: "Daily Challenge is always free") }
 
     // MARK: - Joker Rarity
-    static var rarityCommon: String { localized("普通", en: "Common") }
-    static var rarityRare: String { localized("稀有", en: "Rare") }
-    static var rarityLegendary: String { localized("传说", en: "Legendary") }
+    static var rarityCommon: String { localized("普通", en: "Common", ja: "ノーマル", ko: "일반", fr: "Commun", de: "Gewöhnlich", es: "Común", pt: "Comum") }
+    static var rarityRare: String { localized("稀有", en: "Rare", ja: "レア", ko: "희귀", fr: "Rare", de: "Selten", es: "Raro", pt: "Raro") }
+    static var rarityLegendary: String { localized("传说", en: "Legendary", ja: "伝説", ko: "전설", fr: "Légendaire", de: "Legendär", es: "Legendario", pt: "Lendário") }
 
     // MARK: - Jokers
     static var jokerGreedyName: String { localized("贪心鬼", en: "Greedy Ghost") }
@@ -419,13 +491,13 @@ enum L10n {
     static var buffDivineTouchDesc: String { localized("全局得分 ×2", en: "All scores ×2") }
 
     // MARK: - 每日挑战
-    static var dailyChallengeTitle: String { localized("每日挑战", en: "Daily Challenge") }
-    static var dailyChallengeSubtitle: String { localized("每日限定规则，全服同种子", en: "Daily rules, same seed for all") }
-    static var todayModifiers: String { localized("今日规则", en: "Today's Rules") }
-    static var rewardMultiplier: String { localized("奖励倍率", en: "Reward Multiplier") }
-    static var bonusGoldLabel: String { localized("额外金币", en: "Bonus Gold") }
-    static var startDailyChallenge: String { localized("开始每日挑战", en: "Start Daily Challenge") }
-    static var dailyChallengeCompleted: String { localized("今日已完成", en: "Completed Today") }
+    static var dailyChallengeTitle: String { localized("每日挑战", en: "Daily Challenge", ja: "デイリーチャレンジ", ko: "일일 도전", fr: "Défi du jour", de: "Tägliche Herausforderung", es: "Desafío diario", pt: "Desafio diário") }
+    static var dailyChallengeSubtitle: String { localized("每日限定规则，全服同种子", en: "Daily rules, same seed for all", ja: "毎日限定ルール、全員同じシード", ko: "매일 한정 규칙, 전원 동일 시드", fr: "Règles quotidiennes, même seed pour tous", de: "Tägliche Regeln, gleicher Seed für alle", es: "Reglas diarias, misma semilla para todos", pt: "Regras diárias, mesma seed para todos") }
+    static var todayModifiers: String { localized("今日规则", en: "Today's Rules", ja: "今日のルール", ko: "오늘의 규칙", fr: "Règles du jour", de: "Heutige Regeln", es: "Reglas de hoy", pt: "Regras de hoje") }
+    static var rewardMultiplier: String { localized("奖励倍率", en: "Reward Multiplier", ja: "報酬倍率", ko: "보상 배율", fr: "Multiplicateur", de: "Belohnungsmultiplikator", es: "Multiplicador", pt: "Multiplicador") }
+    static var bonusGoldLabel: String { localized("额外金币", en: "Bonus Gold", ja: "ボーナスゴールド", ko: "보너스 골드", fr: "Or bonus", de: "Bonusgold", es: "Oro extra", pt: "Ouro bônus") }
+    static var startDailyChallenge: String { localized("开始挑战", en: "Start Challenge", ja: "チャレンジ開始", ko: "도전 시작", fr: "Commencer le défi", de: "Herausforderung starten", es: "Iniciar desafío", pt: "Iniciar desafio") }
+    static var dailyChallengeCompleted: String { localized("今日已完成", en: "Completed Today", ja: "本日完了", ko: "오늘 완료", fr: "Terminé aujourd'hui", de: "Heute abgeschlossen", es: "Completado hoy", pt: "Concluído hoje") }
     static func dailyBestScore(_ n: Int) -> String { localized("今日最高分: \(n)", en: "Today's Best: \(n)") }
     static var dailyChallengeNoBombs: String { localized("禁止使用炸弹和火箭", en: "Bombs and Rockets are banned") }
     static var dailyChallengeNoDiscards: String { localized("禁止换牌", en: "Discards are disabled") }
@@ -436,15 +508,15 @@ enum L10n {
     static var shopRestocking: String { localized("商店正在补货...", en: "Shop is restocking...") }
 
     // MARK: - 重试 & 超额奖励
-    static var retryFloor: String { localized("重试本关", en: "Retry Floor") }
+    static var retryFloor: String { localized("重试本关", en: "Retry Floor", ja: "リトライ", ko: "재도전", fr: "Réessayer", de: "Wiederholen", es: "Reintentar", pt: "Tentar de novo") }
     static var overscoreBonus: String { localized("超额奖励", en: "Overscore Bonus") }
     static var chipsLabel: String { localized("筹码", en: "Chips") }
     static var multLabel: String { localized("倍率", en: "Mult") }
     static func refreshShopCost(_ cost: Int) -> String { localized("🔄 刷新 (-\(cost)💰)", en: "🔄 Refresh (-\(cost)💰)") }
 
     // MARK: - 排序
-    static var sortByRank: String { localized("按点数", en: "By Rank") }
-    static var sortBySuit: String { localized("按花色", en: "By Suit") }
+    static var sortByRank: String { localized("按点数", en: "By Rank", ja: "ランク順", ko: "숫자순", fr: "Par rang", de: "Nach Rang", es: "Por rango", pt: "Por valor") }
+    static var sortBySuit: String { localized("按花色", en: "By Suit", ja: "スート順", ko: "무늬순", fr: "Par couleur", de: "Nach Farbe", es: "Por palo", pt: "Por naipe") }
 
     // MARK: - 引导系统
     static var gameGuide: String { localized("游戏指南", en: "Game Guide") }
@@ -644,7 +716,7 @@ enum L10n {
         "• All or Nothing — Only Bombs and Rockets score\n" +
         "• Double Score — All scores ×2") }
 
-    static var helpAscensionTitle: String { localized("🔥 挑战等级 (Ascension)", en: "🔥 Ascension Levels") }
+    static var helpAscensionTitle: String { localized("🔥 挑战等级", en: "🔥 Ascension Levels") }
     static var helpAscensionBody: String { localized(
         "通关后可以提高挑战等级重玩！\n\n" +
         "A1+ — 目标分+8%\n" +
@@ -687,24 +759,42 @@ enum L10n {
         "🔟 Enjoy the journey — every run is unique!") }
 
     // MARK: - 设置页面新增
-    static var helpAndFaq: String { localized("帮助与FAQ", en: "Help & FAQ") }
-    static var resetContextHints: String { localized("重置上下文提示", en: "Reset Context Hints") }
+    static var helpAndFaq: String { localized("帮助", en: "Help & FAQ", ja: "ヘルプ", ko: "도움말", fr: "Aide", de: "Hilfe", es: "Ayuda", pt: "Ajuda") }
+    static var resetContextHints: String { localized("重置引导提示", en: "Reset Context Hints", ja: "ヒントをリセット", ko: "힌트 초기화", fr: "Réinitialiser les indices", de: "Hinweise zurücksetzen", es: "Restablecer pistas", pt: "Redefinir dicas") }
     static var resetContextHintsDesc: String { localized("重新显示所有游戏内引导提示", en: "Re-show all in-game guidance hints") }
-    static var dataManagement: String { localized("数据管理", en: "Data Management") }
-    static var clearSaveData: String { localized("清除存档", en: "Clear Save Data") }
+    static var dataManagement: String { localized("数据管理", en: "Data Management", ja: "データ管理", ko: "데이터 관리", fr: "Gestion des données", de: "Datenverwaltung", es: "Gestión de datos", pt: "Gerenciamento de dados") }
+    static var clearSaveData: String { localized("清除存档", en: "Clear Save Data", ja: "セーブデータ削除", ko: "저장 데이터 삭제", fr: "Effacer la sauvegarde", de: "Speicherdaten löschen", es: "Borrar datos guardados", pt: "Limpar dados salvos") }
     static var clearSaveDataDesc: String { localized("删除当前进行中的游戏存档", en: "Delete current in-progress game save") }
-    static var resetStats: String { localized("重置统计数据", en: "Reset Statistics") }
+    static var resetStats: String { localized("重置统计", en: "Reset Statistics", ja: "統計リセット", ko: "통계 초기화", fr: "Réinitialiser les stats", de: "Statistiken zurücksetzen", es: "Restablecer estadísticas", pt: "Redefinir estatísticas") }
     static var resetStatsDesc: String { localized("清除所有游戏统计（局数、最高分等）", en: "Clear all game stats (runs, high scores, etc.)") }
-    static var resetAllData: String { localized("重置所有数据", en: "Reset All Data") }
+    static var resetAllData: String { localized("重置所有数据", en: "Reset All Data", ja: "全データリセット", ko: "모든 데이터 초기화", fr: "Tout réinitialiser", de: "Alle Daten zurücksetzen", es: "Restablecer todo", pt: "Redefinir tudo") }
     static var resetAllDataDesc: String { localized("清除所有数据（存档+统计+成就+升级）⚠️ 不可恢复", en: "Clear everything (saves, stats, achievements, upgrades) ⚠️ Irreversible") }
-    static var confirmReset: String { localized("确认重置", en: "Confirm Reset") }
-    static var privacyPolicy: String { localized("隐私政策", en: "Privacy Policy") }
-    static var done: String { localized("完成", en: "Done") }
-    static var hintResetDone: String { localized("已重置", en: "Reset Done") }
+    static var confirmReset: String { localized("确认重置", en: "Confirm Reset", ja: "リセット確認", ko: "초기화 확인", fr: "Confirmer", de: "Bestätigen", es: "Confirmar", pt: "Confirmar") }
+    static var privacyPolicy: String { localized("隐私政策", en: "Privacy Policy", ja: "プライバシーポリシー", ko: "개인정보 처리방침", fr: "Politique de confidentialité", de: "Datenschutz", es: "Política de privacidad", pt: "Política de privacidade") }
+    static var done: String { localized("完成", en: "Done", ja: "完了", ko: "완료", fr: "Terminé", de: "Fertig", es: "Listo", pt: "Concluído") }
+    static var hintResetDone: String { localized("已重置", en: "Reset Done", ja: "リセット完了", ko: "초기화 완료", fr: "Réinitialisé", de: "Zurückgesetzt", es: "Restablecido", pt: "Redefinido") }
 
-    // MARK: - 辅助
+    // MARK: - 本地化引擎
 
-    private static func localized(_ zh: String, en: String) -> String {
-        isEnglish ? en : zh
+    private static func localized(
+        _ zh: String,
+        en: String,
+        ja: String? = nil,
+        ko: String? = nil,
+        fr: String? = nil,
+        de: String? = nil,
+        es: String? = nil,
+        pt: String? = nil
+    ) -> String {
+        switch currentLanguage {
+        case .zh: return zh
+        case .en: return en
+        case .ja: return ja ?? en
+        case .ko: return ko ?? en
+        case .fr: return fr ?? en
+        case .de: return de ?? en
+        case .es: return es ?? en
+        case .pt: return pt ?? en
+        }
     }
 }

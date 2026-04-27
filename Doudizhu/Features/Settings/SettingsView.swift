@@ -241,11 +241,11 @@ struct SettingsView: View {
         guard let target = resetTarget else { return }
         switch target {
         case .saves:
-            SaveManager.shared.clearSaves()
+            SaveManager.shared.clearAllSaves()
         case .stats:
             PlayerStats.shared.resetAll()
         case .all:
-            SaveManager.shared.clearSaves()
+            SaveManager.shared.clearAllSaves()
             PlayerStats.shared.resetAll()
             AchievementTracker.shared.resetAll()
             PatternUpgradeManager.shared.resetAll()

@@ -138,7 +138,7 @@
 
 ## 11. Monetization
 
-- [ ] Finalize price point for full unlock ($2.99 / ¥18 recommended)
+- [ ] Finalize price point for full unlock ($4.99 / ¥25 recommended)
 - [ ] Configure regional pricing tiers in App Store Connect
 - [ ] Set up introductory offers (free trial, pay-up-front, pay-as-you-go)
 - [ ] Configure promotional offers for lapsed users

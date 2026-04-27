@@ -59,13 +59,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "斗破乾坤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02B7561C354AAEBCFCF1A20E /* Doudizhu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Doudizhu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		071990CD18A7AE4833D35611 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		146704F64E5700B454564B2A /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		1AC3C87E0E4B3888A6207525 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
 		1AF923141EB84CEE723619A6 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		1E2D6C54990C380453D910DE /* GameSaveModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSaveModel.swift; sourceTree = "<group>"; };
 		232ADF14AB20320A193DA2C6 /* DemoGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoGateView.swift; sourceTree = "<group>"; };
 		2330474EDBC2A259C1F91353 /* CrashReporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
+		26C15C80AFF1F4B086840291 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		26DB65F89B1EDAFA7672D20B /* AIPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIPlayer.swift; sourceTree = "<group>"; };
 		2B0A1117E7198534513E0AEB /* ContextualHintManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualHintManager.swift; sourceTree = "<group>"; };
 		2C00C4E1AAADECAEA18F6B8D /* AppIconPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconPreview.swift; sourceTree = "<group>"; };
@@ -74,7 +76,8 @@
 		3F78DD5F2D0AB4C6C79C9A15 /* BossModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossModifier.swift; sourceTree = "<group>"; };
 		3FA4F448DB514BC1590E8F0C /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		4005D6AE14836445A50CEC38 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
-		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5016652485B0AE2298F2F3D9 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		60D933644042A8A7F300A933 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -88,15 +91,17 @@
 		9E37291A94EBC72B683F9D15 /* DailyChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChallengeView.swift; sourceTree = "<group>"; };
 		9F7B44BF5B0718C7FCFCE0B6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A5FD4CE5431F3FDAB81C9525 /* BuildSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildSelectView.swift; sourceTree = "<group>"; };
+		A81FA830A359725E32888E03 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AA11AD796221384033EC5262 /* DailyChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChallenge.swift; sourceTree = "<group>"; };
 		ADFCDD0745535597D03CEACF /* FeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackManager.swift; sourceTree = "<group>"; };
+		AEAF5F539604B2D2015544B2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B1FB06006D744656FBD92B31 /* DoudizhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoudizhuApp.swift; sourceTree = "<group>"; };
 		BB5221E2C3524AE4B44A8FF9 /* BattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleView.swift; sourceTree = "<group>"; };
 		BF62D06D635A1BDDFA6F2D58 /* Joker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joker.swift; sourceTree = "<group>"; };
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
 		C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicy.md; sourceTree = "<group>"; };
-		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
+		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; path = Configuration.storekit; sourceTree = "<group>"; };
 		C679C44488D1A397CF510FCE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
@@ -104,6 +109,7 @@
 		DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternUpgradeManager.swift; sourceTree = "<group>"; };
 		DDCF1F17CE6C4B3B041FDFE8 /* PatternGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternGuideView.swift; sourceTree = "<group>"; };
 		DE7295A565FD5C0659AD2914 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		ED9AA0C8AB048C12A6D3B7A7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EE2AE77369C90C482B24051C /* ShareManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareManager.swift; sourceTree = "<group>"; };
 		F14BE9E13D0A099C22FA5966 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPattern.swift; sourceTree = "<group>"; };
@@ -229,7 +235,6 @@
 			children = (
 				1E2D6C54990C380453D910DE /* GameSaveModel.swift */,
 				121327BC4C6D99B617FB2B40 /* Configs */,
-				D745FAAD764EBD43D0BA1E2C /* Models */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -271,17 +276,10 @@
 			path = Engine;
 			sourceTree = "<group>";
 		};
-		D745FAAD764EBD43D0BA1E2C /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		DF3626A1158A267437FA23AC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */,
+				02B7561C354AAEBCFCF1A20E /* Doudizhu.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -323,7 +321,7 @@
 			packageProductDependencies = (
 			);
 			productName = Doudizhu;
-			productReference = 02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */;
+			productReference = 02B7561C354AAEBCFCF1A20E /* Doudizhu.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -334,13 +332,21 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 4D0A6D61F1041C44F1306D61 /* Build configuration list for PBXProject "Doudizhu" */;
 			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				de,
 				en,
+				es,
+				fr,
+				ja,
+				ko,
+				"pt-BR",
 				"zh-Hans",
 			);
 			mainGroup = 9AB7757CD2486DB0261D5AD3;
@@ -428,7 +434,13 @@
 		378DC5F776349B16C1FA4FA8 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
+				A81FA830A359725E32888E03 /* de */,
 				C679C44488D1A397CF510FCE /* en */,
+				ED9AA0C8AB048C12A6D3B7A7 /* es */,
+				071990CD18A7AE4833D35611 /* fr */,
+				26C15C80AFF1F4B086840291 /* ja */,
+				5016652485B0AE2298F2F3D9 /* ko */,
+				AEAF5F539604B2D2015544B2 /* pt-BR */,
 				FA0839D8A6E8A560D49EC0BA /* zh-Hans */,
 			);
 			name = Localizable.strings;
@@ -443,7 +455,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -533,7 +544,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

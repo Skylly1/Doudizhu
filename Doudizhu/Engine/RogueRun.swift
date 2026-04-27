@@ -166,15 +166,15 @@ enum HandSortMode: String, CaseIterable {
     /// 剩余牌堆（弃牌后从中补牌）
     var drawPile: [Card] = []
 
-    /// 是否有可恢复的存档
+    /// 是否有可恢复的主线存档
     var hasSavedRun: Bool { SaveManager.shared.hasSavedGame }
 
-    /// 自动保存（每次出牌/弃牌后调用）
+    /// 自动保存（每次出牌/弃牌后调用，按槽位隔离）
     private func autoSave() {
         SaveManager.shared.save(run: self, buildId: currentBuildId)
     }
 
-    /// 从存档恢复
+    /// 从主线存档恢复
     func restoreFromSave() -> Bool {
         guard let save = SaveManager.shared.loadSave() else { return false }
         save.restore(to: self)
@@ -183,9 +183,22 @@ enum HandSortMode: String, CaseIterable {
         return true
     }
 
-    /// 清除存档（通关/失败/放弃时）
+    /// 从每日挑战存档恢复
+    func restoreFromDailySave() -> Bool {
+        guard let save = SaveManager.shared.loadDailySave() else { return false }
+        save.restore(to: self)
+        currentBuildId = save.starterBuildId
+        runStartTime = Date()
+        return true
+    }
+
+    /// 清除存档（根据当前模式清对应槽位）
     func clearSave() {
-        SaveManager.shared.clearSaves()
+        if dailyChallenge != nil {
+            SaveManager.shared.clearDailySaves()
+        } else {
+            SaveManager.shared.clearSaves()
+        }
     }
 
     var currentFloor: FloorConfig {
@@ -745,7 +758,8 @@ enum HandSortMode: String, CaseIterable {
                 DailyChallenge.markCompleted()
             }
             phase = .floorFail
-            clearSave()
+            // 不自动删除存档 — 用户可从失败界面重试或保存退出
+            autoSave()
         } else {
             phase = .selecting
         }

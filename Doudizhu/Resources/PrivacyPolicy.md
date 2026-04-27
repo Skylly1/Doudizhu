@@ -1,6 +1,6 @@
 # 隐私政策 / Privacy Policy
 
-**最后更新 / Last Updated: 2025-01-01**
+**最后更新 / Last Updated: 2026-04-27**
 
 ---
 
@@ -20,14 +20,14 @@
 
 ### 本地存储
 
-应用仅使用 `UserDefaults` 在设备本地存储以下信息：
+应用使用 `UserDefaults` 和 `SwiftData` 在设备本地存储以下信息：
 
 | 存储项 | 用途 | 类型 |
 |--------|------|------|
 | 音效音量 | 保存玩家音效偏好设置 | 浮点数 |
-| 语言偏好 | 保存界面语言选择（中文/英文） | 字符串 |
 | 教程完成标记 | 记录玩家是否完成新手教程 | 布尔值 |
 | 购买状态 | 记录应用内购买解锁状态 | 布尔值 |
+| 游戏进度存档 | 保存当前冒险进度（关卡、分数、手牌等） | 数据库 |
 
 以上数据完全存储于用户设备本地，不会上传至任何服务器。
 
@@ -65,14 +65,14 @@ Dou Po Qian Kun is a purely offline single-player card game. It contains no netw
 
 ### Local Storage
 
-The app uses `UserDefaults` to store the following data locally on the device:
+The app uses `UserDefaults` and `SwiftData` to store the following data locally on the device:
 
 | Item | Purpose | Type |
 |------|---------|------|
 | Sound volume | Save player sound preferences | Float |
-| Language preference | Save UI language choice (Chinese/English) | String |
 | Tutorial completion flag | Track whether player has completed the tutorial | Boolean |
 | Purchase status | Track in-app purchase unlock state | Boolean |
+| Game save data | Save current adventure progress (floor, score, hand, etc.) | Database |
 
 All data is stored entirely on the user's device and is never uploaded to any server.
 

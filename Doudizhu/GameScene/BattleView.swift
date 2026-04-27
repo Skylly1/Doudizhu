@@ -16,6 +16,8 @@ struct BattleView: View {
     @State private var contextHint: String? = nil
     @State private var playsUsedThisFloor: Int = 0
     @State private var showExitConfirm = false
+    @State private var showFailExitConfirm = false
+    @State private var showRestartConfirm = false
     @State private var jokersExpanded = false
     @State private var showPauseMenu = false
     @State private var showHelpSheet = false
@@ -849,17 +851,49 @@ struct BattleView: View {
                 .frame(width: 220)
 
                 Button(L10n.restart) {
-                    rogueRun.restart()
-                    battleScene?.refreshHand()
+                    showRestartConfirm = true
                 }
                 .font(.headline)
                 .foregroundColor(.white)
                 .frame(width: 220, height: 50)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
+                .alert(
+                    L10n.isEnglish ? "Restart Run?" : "重新开始？",
+                    isPresented: $showRestartConfirm
+                ) {
+                    Button(L10n.cancel, role: .cancel) { }
+                    Button(L10n.restart, role: .destructive) {
+                        rogueRun.restart()
+                        battleScene?.refreshHand()
+                    }
+                } message: {
+                    Text(L10n.isEnglish
+                         ? "Current run progress will be lost. Start a fresh run from Floor 1."
+                         : "当前冒险进度将丢失，从第1层重新开始。")
+                }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
-                    SoundManager.shared.stopBGM()
-                    onBack()
+                    showFailExitConfirm = true
+                }
+                .alert(
+                    L10n.isEnglish ? "Back to Menu?" : "返回主菜单？",
+                    isPresented: $showFailExitConfirm
+                ) {
+                    Button(L10n.cancel, role: .cancel) { }
+                    Button(L10n.isEnglish ? "Save & Quit" : "保存并退出", role: .none) {
+                        SaveManager.shared.save(run: rogueRun, buildId: "")
+                        SoundManager.shared.stopBGM()
+                        onBack()
+                    }
+                    Button(L10n.isEnglish ? "Quit without saving" : "不保存退出", role: .destructive) {
+                        rogueRun.clearSave()
+                        SoundManager.shared.stopBGM()
+                        onBack()
+                    }
+                } message: {
+                    Text(L10n.isEnglish
+                         ? "Save your run to retry later, or quit without saving."
+                         : "保存后可以下次继续重试，不保存将丢失本局进度。")
                 }
             }
         }

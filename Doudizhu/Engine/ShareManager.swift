@@ -82,7 +82,7 @@ enum ShareManager {
             ]
             let tagStr = NSString(string: lang
                 ? "Chinese Poker Roguelike | App Store"
-                : "斗地主Roguelike卡牌 | App Store")
+                : "斗地主肉鸽卡牌 | App Store")
             let tagSize = tagStr.size(withAttributes: tagAttrs)
             tagStr.draw(at: CGPoint(x: (600 - tagSize.width) / 2, y: 310), withAttributes: tagAttrs)
 

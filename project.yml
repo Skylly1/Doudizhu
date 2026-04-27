@@ -10,6 +10,12 @@ options:
   knownRegions:
     - zh-Hans
     - en
+    - ja
+    - ko
+    - fr
+    - de
+    - es
+    - pt-BR
 
 settings:
   base:
