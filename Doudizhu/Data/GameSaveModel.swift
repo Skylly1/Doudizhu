@@ -40,6 +40,9 @@ final class GameSaveModel {
     // MARK: 每日挑战
     var isDailyChallenge: Bool
 
+    /// 存档版本号 — 用于未来迁移
+    var schemaVersion: Int
+
     init(
         runId: String = UUID().uuidString,
         timestamp: Date = Date(),
@@ -61,7 +64,8 @@ final class GameSaveModel {
         handSortModeRaw: String = "rank",
         starterBuildId: String = "",
         phaseRaw: String = "selecting",
-        isDailyChallenge: Bool = false
+        isDailyChallenge: Bool = false,
+        schemaVersion: Int = 1
     ) {
         self.runId = runId
         self.timestamp = timestamp
@@ -84,6 +88,7 @@ final class GameSaveModel {
         self.starterBuildId = starterBuildId
         self.phaseRaw = phaseRaw
         self.isDailyChallenge = isDailyChallenge
+        self.schemaVersion = schemaVersion
     }
 }
 
