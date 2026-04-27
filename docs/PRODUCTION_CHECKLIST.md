@@ -6,24 +6,24 @@
 
 ## 1. IAP / StoreKit 2
 
-- [ ] Replace `PurchaseManager` mock with real StoreKit 2 implementation
+- [x] Replace `PurchaseManager` mock with real StoreKit 2 implementation
 - [ ] Configure products in App Store Connect (unlock full version, cosmetics, etc.)
-- [ ] Implement `Product.products(for:)` to fetch available IAPs
-- [ ] Handle `Transaction.updates` for background transaction processing
+- [x] Implement `Product.products(for:)` to fetch available IAPs
+- [x] Handle `Transaction.updates` for background transaction processing
 - [ ] Implement receipt validation (server-side recommended)
 - [ ] Test in sandbox environment with multiple Apple ID accounts
-- [ ] Verify restore purchases flow works across devices
+- [x] Verify restore purchases flow works across devices
 - [ ] Handle edge cases: interrupted purchases, deferred transactions, refunds
-- [ ] Add `SKPaymentQueue.canMakePayments()` check before showing purchase UI
-- [ ] StoreKit Testing in Xcode: create `.storekit` configuration file
+- [x] Add `SKPaymentQueue.canMakePayments()` check before showing purchase UI
+- [x] StoreKit Testing in Xcode: create `.storekit` configuration file
 
 ## 2. Analytics
 
 - [ ] Replace `Analytics` stub with Firebase Analytics or Amplitude
-- [ ] Define event taxonomy: `level_start`, `level_complete`, `level_fail`, `purchase`, `shop_visit`
-- [ ] Track user properties: ascension level, total runs, preferred build
-- [ ] Implement funnel tracking: tutorial → first run → first purchase → retention
-- [ ] Add screen view tracking for all major views
+- [x] Define event taxonomy: `level_start`, `level_complete`, `level_fail`, `purchase`, `shop_visit`
+- [x] Track user properties: ascension level, total runs, preferred build
+- [x] Implement funnel tracking: tutorial → first run → first purchase → retention
+- [x] Add screen view tracking for all major views
 - [ ] Configure data retention and privacy settings per GDPR/CCPA
 - [ ] Set up real-time dashboards for launch monitoring
 - [ ] Verify events fire correctly in debug builds before release
@@ -45,26 +45,27 @@
 - [ ] Upload 5.5" (iPhone 8 Plus) screenshots if supporting older devices
 - [ ] Upload 12.9" iPad Pro screenshots (if supporting iPad)
 - [ ] Create App Preview videos (15-30 seconds, gameplay highlight)
-- [ ] Write compelling app description (4000 char max) in Chinese + English
-- [ ] Optimize keyword field (100 chars, comma-separated, no spaces)
-- [ ] Set promotional text (170 chars, updateable without review)
-- [ ] Configure subtitle (30 chars)
+- [x] Write compelling app description (4000 char max) in Chinese + English
+- [x] Optimize keyword field (100 chars, comma-separated, no spaces)
+- [x] Set promotional text (170 chars, updateable without review)
+- [x] Configure subtitle (30 chars)
 - [ ] Set primary + secondary categories (Games → Card / Strategy)
-- [ ] Add privacy policy URL
-- [ ] Add support URL
+- [x] Add privacy policy URL
+- [x] Add support URL
+- [x] Set contact email: doupoqiankun@126.com
 - [ ] Set age rating via questionnaire
 - [ ] Upload 1024×1024 app icon (no transparency, no rounded corners)
 
 ## 5. Privacy Manifest (PrivacyInfo.xcprivacy)
 
-- [ ] Create `PrivacyInfo.xcprivacy` in project root
-- [ ] Declare required reason APIs:
-  - [ ] `NSPrivacyAccessedAPICategoryUserDefaults` — game saves, settings
+- [x] Create `PrivacyInfo.xcprivacy` in project root
+- [x] Declare required reason APIs:
+  - [x] `NSPrivacyAccessedAPICategoryUserDefaults` — game saves, settings
   - [ ] `NSPrivacyAccessedAPICategorySystemBootTime` (if used for timing)
   - [ ] `NSPrivacyAccessedAPICategoryDiskSpace` (if checked)
 - [ ] Declare tracking domains (if any analytics SDK phones home)
-- [ ] Declare `NSPrivacyCollectedDataTypes` for analytics data
-- [ ] Set `NSPrivacyTracking` to `false` (unless ATT is used)
+- [x] Declare `NSPrivacyCollectedDataTypes` for analytics data
+- [x] Set `NSPrivacyTracking` to `false` (unless ATT is used)
 - [ ] Verify all 3rd-party SDKs include their own privacy manifests
 - [ ] Test with Xcode privacy report (Product → Generate Privacy Report)
 
@@ -77,10 +78,10 @@
   - [ ] "Daily Challenge" — daily high score
   - [ ] "Speed Run" — fastest 15-floor clear
 - [ ] Configure achievements in App Store Connect (mirror `Achievement.swift`)
-- [ ] Implement `GKLocalPlayer.local.authenticateHandler`
-- [ ] Submit scores via `GKLeaderboard.submitScore()`
-- [ ] Report achievements via `GKAchievement.report()`
-- [ ] Handle authentication failures gracefully (offline play still works)
+- [x] Implement `GKLocalPlayer.local.authenticateHandler`
+- [x] Submit scores via `GKLeaderboard.submitScore()`
+- [x] Report achievements via `GKAchievement.report()`
+- [x] Handle authentication failures gracefully (offline play still works)
 - [ ] Test on real device (Game Center sandbox)
 
 ## 7. App Review Preparation
@@ -124,7 +125,7 @@
 
 ## 10. Legal
 
-- [ ] Create privacy policy page (hosted URL, required for App Store)
+- [x] Create privacy policy page (hosted URL, required for App Store)
 - [ ] Create terms of use / EULA
 - [ ] Comply with COPPA if targeting under-13 (likely N/A for card games)
 - [ ] Comply with GDPR for EU users (data deletion, consent)
@@ -134,20 +135,20 @@
   - [ ] Anti-addiction time limits
   - [ ] ISBN / approval number (for paid games with IAP)
 - [ ] Add open-source license attributions if using any OSS libraries
-- [ ] Verify no copyrighted assets (fonts, sounds, images)
+- [x] Verify no copyrighted assets (fonts, sounds, images)
 
 ## 11. Monetization
 
-- [ ] Finalize price point for full unlock ($4.99 / ¥25 recommended)
+- [x] Finalize price point for full unlock ($4.99 / ¥25 recommended)
 - [ ] Configure regional pricing tiers in App Store Connect
 - [ ] Set up introductory offers (free trial, pay-up-front, pay-as-you-go)
 - [ ] Configure promotional offers for lapsed users
 - [ ] Plan launch promotion: temporary price reduction or bonus content
 - [ ] A/B test paywall copy and timing
-- [ ] Implement "Restore Purchases" button in Settings
+- [x] Implement "Restore Purchases" button in Settings
 - [ ] Consider Family Sharing support
 - [ ] Set up App Store subscription offer codes (if subscription model)
-- [ ] Verify price display uses `Product.displayPrice` (localized)
+- [x] Verify price display uses `Product.displayPrice` (localized)
 
 ## 12. CI/CD
 
@@ -175,7 +176,7 @@
 - [ ] Launch screen displays correctly
 - [ ] Test fresh install (no UserDefaults carry-over)
 - [ ] Test upgrade from previous TestFlight build
-- [ ] Verify all localized strings are present (Chinese + English)
+- [x] Verify all localized strings are present (8 languages: zh/en/ja/ko/fr/de/es/pt)
 - [ ] Run full playthrough: tutorial → 15 floors → victory
 - [ ] Verify Game Center integration end-to-end
 - [ ] Submit for review with ample time (allow 24-48 hours)

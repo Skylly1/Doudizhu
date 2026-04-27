@@ -539,7 +539,7 @@ enum L10n {
 
     static var helpQuickStartTitle: String { localized("🎮 快速入门", en: "🎮 Quick Start") }
     static var helpQuickStartBody: String { localized(
-        "斗破乾坤是一款 Roguelike 斗地主游戏。\n\n" +
+        "斗破乾坤是一款肉鸽斗地主游戏。\n\n" +
         "🎯 目标：打出牌型得分，达到目标分即可过关\n" +
         "🃏 选牌：点击手牌选中，再点「出牌」\n" +
         "🔄 换牌：选中不想要的牌，点「换牌」从牌堆抽新牌\n" +

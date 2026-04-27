@@ -51,6 +51,13 @@ v1.0.0 首发版本
 - 支持8种语言
 - Game Center 排行榜与成就
 
+### App Store Connect 配置
+- **支持URL**: https://[your-github-pages-url]/support.html
+- **隐私政策URL**: https://[your-github-pages-url]/privacy.html
+- **联系邮箱**: doupoqiankun@126.com
+- **分类**: 主分类 Games → Card / 副分类 Strategy
+- **年龄分级**: 4+ (无赌博/暴力/色情内容)
+
 ---
 
 ## English

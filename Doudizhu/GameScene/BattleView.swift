@@ -18,6 +18,7 @@ struct BattleView: View {
     @State private var showExitConfirm = false
     @State private var showFailExitConfirm = false
     @State private var showRestartConfirm = false
+    @State private var showRetryConfirm = false
     @State private var jokersExpanded = false
     @State private var showPauseMenu = false
     @State private var showHelpSheet = false
@@ -1134,16 +1135,29 @@ struct BattleView: View {
                 }
                 .frame(width: 220)
 
-                // 重试本关
+                // 重试本关（需二次确认，因为会丢失本层进度）
                 SecondaryButton(
                     title: L10n.retryFloor,
                     icon: "arrow.counterclockwise"
                 ) {
-                    showPauseMenu = false
-                    rogueRun.retryCurrentFloor()
-                    battleScene?.refreshHand()
+                    showRetryConfirm = true
                 }
                 .frame(width: 220)
+                .alert(
+                    L10n.isEnglish ? "Retry Floor?" : "重试本关？",
+                    isPresented: $showRetryConfirm
+                ) {
+                    Button(L10n.cancel, role: .cancel) { }
+                    Button(L10n.isEnglish ? "Retry" : "重试", role: .destructive) {
+                        showPauseMenu = false
+                        rogueRun.retryCurrentFloor()
+                        battleScene?.refreshHand()
+                    }
+                } message: {
+                    Text(L10n.isEnglish
+                         ? "Your progress on this floor will be reset."
+                         : "本层进度将被重置。")
+                }
 
                 // 内联设置面板
                 VStack(spacing: Theme.spacingSM) {

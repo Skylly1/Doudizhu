@@ -45,7 +45,7 @@
 
 ### 联系方式
 
-如有隐私相关问题，请联系开发者。
+如有隐私相关问题，请联系：doupoqiankun@126.com
 
 ---
 
@@ -94,4 +94,4 @@ This application does not collect, store, transmit, or share any personally iden
 
 ### Contact
 
-For privacy-related inquiries, please contact the developer.
+For privacy-related inquiries, please contact: doupoqiankun@126.com
