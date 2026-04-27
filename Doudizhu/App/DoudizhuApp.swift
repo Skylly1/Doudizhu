@@ -12,45 +12,13 @@ struct DoudizhuApp: App {
     init() {
         // Firebase 初始化（需要 GoogleService-Info.plist）
         #if canImport(FirebaseCore)
-        FirebaseApp.configure()
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        }
         #endif
 
         // SwiftData 存档容器（Schema 变更时自动重建）
-        do {
-            modelContainer = try ModelContainer(for: GameSaveModel.self)
-        } catch {
-            // Schema 不兼容 — 备份旧数据再重建
-            CrashReporter.shared.log("SwiftData schema migration failed: \(error)", level: .warning)
-            
-            let fm = FileManager.default
-            let storeDir = URL.applicationSupportDirectory
-            let backupDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
-                .appendingPathComponent("SaveBackup", isDirectory: true)
-            
-            // 创建备份目录
-            try? fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
-            
-            // 备份旧数据库文件
-            let timestamp = ISO8601DateFormatter().string(from: Date())
-            for suffix in ["", "-wal", "-shm"] {
-                let fileName = "default.store\(suffix)"
-                let source = storeDir.appending(path: fileName)
-                let backup = backupDir.appendingPathComponent("\(timestamp)_\(fileName)")
-                if fm.fileExists(atPath: source.path()) {
-                    try? fm.copyItem(at: source, to: backup)
-                    try? fm.removeItem(at: source)
-                }
-            }
-            CrashReporter.shared.log("Old save data backed up to \(backupDir.path())", level: .info)
-            
-            // 重建容器
-            do {
-                modelContainer = try ModelContainer(for: GameSaveModel.self)
-                CrashReporter.shared.log("ModelContainer recreated successfully after migration", level: .info)
-            } catch {
-                fatalError("Failed to init ModelContainer after backup+reset: \(error)")
-            }
-        }
+        modelContainer = Self.makeModelContainer()
 
         GameCenterManager.shared.authenticate()
         // 首次打开标记 — 漏斗首端
@@ -63,6 +31,47 @@ struct DoudizhuApp: App {
             ])
         }
         Analytics.shared.track(.sessionStart)
+    }
+
+    /// 创建 ModelContainer，Schema 不兼容时自动备份旧数据后重建
+    private static func makeModelContainer() -> ModelContainer {
+        // 先尝试正常打开
+        if let container = try? ModelContainer(for: GameSaveModel.self) {
+            return container
+        }
+
+        CrashReporter.shared.log("SwiftData schema migration failed — backing up old data", level: .warning)
+
+        let fm = FileManager.default
+        let appSupportDir = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let backupDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("SaveBackup", isDirectory: true)
+        try? fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
+
+        // 清除所有可能的 SwiftData 文件（default.store / *.sqlite 等）
+        let timestamp = ISO8601DateFormatter().string(from: Date())
+        if let contents = try? fm.contentsOfDirectory(at: appSupportDir, includingPropertiesForKeys: nil) {
+            for file in contents where file.lastPathComponent.contains("default.store") ||
+                                       file.lastPathComponent.hasSuffix(".sqlite") ||
+                                       file.lastPathComponent.hasSuffix(".sqlite-wal") ||
+                                       file.lastPathComponent.hasSuffix(".sqlite-shm") {
+                let backup = backupDir.appendingPathComponent("\(timestamp)_\(file.lastPathComponent)")
+                try? fm.copyItem(at: file, to: backup)
+                try? fm.removeItem(at: file)
+            }
+        }
+        CrashReporter.shared.log("Old save data backed up to \(backupDir.path())", level: .info)
+
+        // 用内存兜底避免 fatalError — 本次运行不持久化但至少不崩溃
+        if let container = try? ModelContainer(for: GameSaveModel.self) {
+            CrashReporter.shared.log("ModelContainer recreated after backup", level: .info)
+            return container
+        }
+
+        CrashReporter.shared.log("ModelContainer still fails — using in-memory fallback", level: .error)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        // swiftlint:disable:next force_try
+        return try! ModelContainer(for: GameSaveModel.self, configurations: config)
     }
 
     var body: some Scene {
