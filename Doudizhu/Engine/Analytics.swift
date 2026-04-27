@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FirebaseAnalytics)
+import FirebaseAnalytics
+#endif
 import os.log
 
 /// Analytics event tracking — 核心转化漏斗 + 行为数据
@@ -80,6 +83,11 @@ enum AnalyticsEvent: String {
         logger.info("📊 \(event.rawValue)\(paramStr)")
 
         persistEventCount(event)
+
+        // Firebase 转发
+        #if canImport(FirebaseAnalytics)
+        FirebaseAnalytics.Analytics.logEvent(event.rawValue, parameters: params.isEmpty ? nil : params)
+        #endif
     }
 
     func track(_ event: AnalyticsEvent, level: Int) {

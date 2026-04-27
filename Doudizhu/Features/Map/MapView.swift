@@ -69,6 +69,8 @@ struct MapView: View {
                 PrimaryButton(title: L10n.depart, icon: "figure.walk") {
                     onStart()
                 }
+                .accessibilityLabel("出发")
+                .accessibilityHint("开始冒险旅程")
                 .padding(.horizontal, Theme.spacingXL)
                 .padding(.bottom, Theme.spacingLG)
             }
@@ -104,6 +106,9 @@ struct MapView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(ch.name)，关卡\(ch.range)")
+                .accessibilityValue(chapterCleared ? "已完成" : "未完成")
             }
         }
         .padding(.vertical, Theme.spacingSM)
@@ -152,6 +157,8 @@ private struct MapStatsSummary: View {
                 .foregroundColor(Theme.textSecondary)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(value)
     }
 }
 
@@ -335,6 +342,9 @@ private struct FloorNode: View {
                 .fill(Theme.gold.opacity(state == .frontier ? 0.05 : 0))
                 .padding(.horizontal, Theme.spacingSM)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(floor.name)，\(floor.description)")
+        .accessibilityValue(state == .cleared ? "已通过" : (state == .frontier ? "当前进度" : "未解锁"))
     }
 }
 

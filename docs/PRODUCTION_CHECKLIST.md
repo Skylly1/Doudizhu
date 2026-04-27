@@ -19,7 +19,7 @@
 
 ## 2. Analytics
 
-- [ ] Replace `Analytics` stub with Firebase Analytics or Amplitude
+- [x] Replace `Analytics` stub with Firebase Analytics or Amplitude
 - [x] Define event taxonomy: `level_start`, `level_complete`, `level_fail`, `purchase`, `shop_visit`
 - [x] Track user properties: ascension level, total runs, preferred build
 - [x] Implement funnel tracking: tutorial → first run → first purchase → retention
@@ -30,11 +30,11 @@
 
 ## 3. Crash Reporting
 
-- [ ] Replace `CrashReporter` stub with Sentry or Firebase Crashlytics
-- [ ] Upload dSYM files automatically via build phase script
-- [ ] Configure breadcrumbs for game state (current floor, jokers, gold)
+- [x] Replace `CrashReporter` stub with Sentry or Firebase Crashlytics
+- [x] Upload dSYM files automatically via build phase script
+- [x] Configure breadcrumbs for game state (current floor, jokers, gold)
 - [ ] Set up alerts for crash-free rate drops below 99.5%
-- [ ] Add non-fatal error logging for recoverable failures
+- [x] Add non-fatal error logging for recoverable failures
 - [ ] Test crash reporting in TestFlight builds
 - [ ] Create on-call escalation process for P0 crashes
 
@@ -63,10 +63,10 @@
   - [x] `NSPrivacyAccessedAPICategoryUserDefaults` — game saves, settings
   - [ ] `NSPrivacyAccessedAPICategorySystemBootTime` (if used for timing)
   - [ ] `NSPrivacyAccessedAPICategoryDiskSpace` (if checked)
-- [ ] Declare tracking domains (if any analytics SDK phones home)
+- [x] Declare tracking domains (if any analytics SDK phones home)
 - [x] Declare `NSPrivacyCollectedDataTypes` for analytics data
 - [x] Set `NSPrivacyTracking` to `false` (unless ATT is used)
-- [ ] Verify all 3rd-party SDKs include their own privacy manifests
+- [x] Verify all 3rd-party SDKs include their own privacy manifests
 - [ ] Test with Xcode privacy report (Product → Generate Privacy Report)
 
 ## 6. Game Center
@@ -112,11 +112,11 @@
 
 ## 9. Accessibility
 
-- [ ] Add VoiceOver labels to all interactive elements
+- [x] Add VoiceOver labels to all interactive elements
 - [ ] Support Dynamic Type for all text (use `.font(.body)` + scaling)
 - [ ] Verify color contrast meets WCAG AA (4.5:1 for text)
 - [ ] Test with VoiceOver enabled end-to-end
-- [ ] Add accessibility traits (`.isButton`, `.isHeader`, etc.)
+- [x] Add accessibility traits (`.isButton`, `.isHeader`, etc.)
 - [ ] Support Reduce Motion preference (`@Environment(\.accessibilityReduceMotion)`)
 - [ ] Support Bold Text preference
 - [ ] Ensure card suits are distinguishable without color alone (shape + label)
@@ -157,7 +157,7 @@
 - [ ] Set up code signing with automatic provisioning
 - [ ] Create separate schemes for Debug / TestFlight / Release
 - [ ] Automate version bumping (CFBundleShortVersionString + build number)
-- [ ] Upload dSYMs to crash reporting service in build pipeline
+- [x] Upload dSYMs to crash reporting service in build pipeline
 - [ ] Run unit tests in CI before every build
 - [ ] Set up external TestFlight beta group (up to 10,000 testers)
 - [ ] Create release branch strategy (main → release/1.0)

@@ -138,6 +138,8 @@ struct HelpView: View {
                 }
                 .padding(Theme.spacingMD)
             }
+            .accessibilityLabel(title)
+            .accessibilityHint(isExpanded ? "双击收起" : "双击展开查看详情")
 
             if isExpanded {
                 Divider().background(Theme.border)
