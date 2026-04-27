@@ -16,9 +16,13 @@
 		2AEA63B2A49DC68F6D607E66 /* DailyChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11AD796221384033EC5262 /* DailyChallenge.swift */; };
 		32FEF27B31D06089225DB60E /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC3C87E0E4B3888A6207525 /* BattleScene.swift */; };
 		33AD595D0C5DDCC7388AA140 /* GestureGuideOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */; };
+		33E59A5D4B0C45D2CDA65245 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A35051E677B9E4564DB749 /* EngineTests.swift */; };
 		36328BC68873189A9D6DF6CB /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
+		3CB47F3929E2C270DC6D7224 /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
+		3F5024CCEFAF757B674DCE9F /* L10nStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */; };
 		3FAE3C1D2D4F2580E3C05F7F /* GameSaveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D6C54990C380453D910DE /* GameSaveModel.swift */; };
 		446DD01D4220769F7DCFB9A1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
+		47978C704CD59B2A5FF4DF21 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
 		4BF8E0B52AC2757A0EA6FF29 /* CardNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B75669125C466EC3ED7729 /* CardNode.swift */; };
 		4C7E3B89F18BCA0B77490A1B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378DC5F776349B16C1FA4FA8 /* Localizable.strings */; };
 		56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781A117C670FF3910C3321E7 /* PurchaseManager.swift */; };
@@ -101,8 +105,11 @@
 		AA11AD796221384033EC5262 /* DailyChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChallenge.swift; sourceTree = "<group>"; };
 		ADFCDD0745535597D03CEACF /* FeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackManager.swift; sourceTree = "<group>"; };
 		AEAF5F539604B2D2015544B2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		B1A35051E677B9E4564DB749 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		B1FB06006D744656FBD92B31 /* DoudizhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoudizhuApp.swift; sourceTree = "<group>"; };
+		B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10nStub.swift; sourceTree = "<group>"; };
 		BB5221E2C3524AE4B44A8FF9 /* BattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleView.swift; sourceTree = "<group>"; };
+		BF312B11526B28C5120B2348 /* DoudizhuTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DoudizhuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF62D06D635A1BDDFA6F2D58 /* Joker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joker.swift; sourceTree = "<group>"; };
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
@@ -151,6 +158,15 @@
 				6ED88E607C3BDA32ED8E9F0D /* floors.json */,
 			);
 			path = Configs;
+			sourceTree = "<group>";
+		};
+		1DDEF99FEFED4C77E356B1F1 /* DoudizhuTests */ = {
+			isa = PBXGroup;
+			children = (
+				B1A35051E677B9E4564DB749 /* EngineTests.swift */,
+				B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */,
+			);
+			path = DoudizhuTests;
 			sourceTree = "<group>";
 		};
 		369DB9F4BF9583FB4A1AA29F /* Resources */ = {
@@ -235,6 +251,7 @@
 			isa = PBXGroup;
 			children = (
 				98D72D79F653CE47B94E9D4F /* Doudizhu */,
+				1DDEF99FEFED4C77E356B1F1 /* DoudizhuTests */,
 				DF3626A1158A267437FA23AC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -308,6 +325,7 @@
 			isa = PBXGroup;
 			children = (
 				02B7561C354AAEBCFCF1A20E /* Doudizhu.app */,
+				BF312B11526B28C5120B2348 /* DoudizhuTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -334,6 +352,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		359A065F7F66FE82B3BD96A5 /* DoudizhuTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 991B6B63D8D3C7A452560E37 /* Build configuration list for PBXNativeTarget "DoudizhuTests" */;
+			buildPhases = (
+				FBA2AB8D922DCDDBD6954593 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DoudizhuTests;
+			packageProductDependencies = (
+			);
+			productName = DoudizhuTests;
+			productReference = BF312B11526B28C5120B2348 /* DoudizhuTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		879330810470EF14EED3843A /* Doudizhu */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D89D1C35447D31E9F3756548 /* Build configuration list for PBXNativeTarget "Doudizhu" */;
@@ -392,6 +427,7 @@
 			projectRoot = "";
 			targets = (
 				879330810470EF14EED3843A /* Doudizhu */,
+				359A065F7F66FE82B3BD96A5 /* DoudizhuTests */,
 			);
 		};
 /* End PBXProject section */
@@ -490,6 +526,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FBA2AB8D922DCDDBD6954593 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				47978C704CD59B2A5FF4DF21 /* Card.swift in Sources */,
+				3CB47F3929E2C270DC6D7224 /* CardPattern.swift in Sources */,
+				33E59A5D4B0C45D2CDA65245 /* EngineTests.swift in Sources */,
+				3F5024CCEFAF757B674DCE9F /* L10nStub.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -528,6 +575,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.doudizhu;
+				PRODUCT_MODULE_NAME = Doudizhu;
 				PRODUCT_NAME = "斗破乾坤";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -617,10 +665,28 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.doudizhu;
+				PRODUCT_MODULE_NAME = Doudizhu;
 				PRODUCT_NAME = "斗破乾坤";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5890703AC75931D01F0E60D2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.DoudizhuTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "";
 			};
 			name = Debug;
 		};
@@ -682,6 +748,23 @@
 			};
 			name = Release;
 		};
+		DBADCD70163B6390E215FFD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.DoudizhuTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -690,6 +773,15 @@
 			buildConfigurations = (
 				478C2A0CDA79ED1D0BFF4D35 /* Debug */,
 				A85BC2D45967C430EFCBB5FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		991B6B63D8D3C7A452560E37 /* Build configuration list for PBXNativeTarget "DoudizhuTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5890703AC75931D01F0E60D2 /* Debug */,
+				DBADCD70163B6390E215FFD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
