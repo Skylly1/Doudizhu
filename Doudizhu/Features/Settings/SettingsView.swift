@@ -159,6 +159,26 @@ struct SettingsView: View {
                             infoRow(L10n.settingsInspiration, value: L10n.isEnglish ? "Balatro × Doudizhu" : "Balatro × 斗地主")
                         }
 
+                        // 开发者工具（仅 Debug 构建可见）
+                        #if DEBUG
+                        settingSection("🛠 开发者工具") {
+                            NavigationLink {
+                                IconExporterView()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "app.badge.fill")
+                                        .foregroundColor(Theme.gold)
+                                    Text("导出 App Icon (1024×1024)")
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Theme.textTertiary)
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                        #endif
+
                         // 语言
                         settingSection(L10n.settingsLanguage) {
                             HStack {
