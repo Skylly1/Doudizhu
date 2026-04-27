@@ -15,6 +15,7 @@
 		28174BF5C639F3B8DE4DDF6A /* RogueRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DAC6F80E11117AD93A5763 /* RogueRun.swift */; };
 		2AEA63B2A49DC68F6D607E66 /* DailyChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11AD796221384033EC5262 /* DailyChallenge.swift */; };
 		32FEF27B31D06089225DB60E /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AC3C87E0E4B3888A6207525 /* BattleScene.swift */; };
+		33AD595D0C5DDCC7388AA140 /* GestureGuideOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */; };
 		36328BC68873189A9D6DF6CB /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
 		3FAE3C1D2D4F2580E3C05F7F /* GameSaveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D6C54990C380453D910DE /* GameSaveModel.swift */; };
 		446DD01D4220769F7DCFB9A1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
@@ -80,6 +81,7 @@
 		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4E768DAC1C33BB92B5E01DC5 /* PurchaseSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessView.swift; sourceTree = "<group>"; };
 		5016652485B0AE2298F2F3D9 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureGuideOverlay.swift; sourceTree = "<group>"; };
 		60D933644042A8A7F300A933 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -167,9 +169,18 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		58F9DAA494762C912D72EF3A /* Battle */ = {
+			isa = PBXGroup;
+			children = (
+				503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */,
+			);
+			path = Battle;
+			sourceTree = "<group>";
+		};
 		808F79DFA3CEC595527D252C /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				58F9DAA494762C912D72EF3A /* Battle */,
 				9AEE1B374110DFF24D84D407 /* Collection */,
 				58325A978A7C55C30EEE0ADE /* Home */,
 				C6C67A8224972B2F84DE9B03 /* Map */,
@@ -408,6 +419,7 @@
 				D5D494E5383E074FF405DA24 /* FeedbackManager.swift in Sources */,
 				CDF561F4B6CA7271CDECFD87 /* GameCenterManager.swift in Sources */,
 				3FAE3C1D2D4F2580E3C05F7F /* GameSaveModel.swift in Sources */,
+				33AD595D0C5DDCC7388AA140 /* GestureGuideOverlay.swift in Sources */,
 				5AF22B0F0CF52BD279E3D4EF /* HelpView.swift in Sources */,
 				ED300C39A3FAEF6F7DEA8D9F /* HomeView.swift in Sources */,
 				2303E48D108C2A3324BD857C /* Joker.swift in Sources */,

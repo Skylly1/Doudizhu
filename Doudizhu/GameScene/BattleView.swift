@@ -22,10 +22,15 @@ struct BattleView: View {
     @State private var jokersExpanded = false
     @State private var showPauseMenu = false
     @State private var showHelpSheet = false
+    @State private var showGestureGuide = false
     @ObservedObject private var hintManager = ContextualHintManager.shared
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("musicEnabled") private var musicEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
+
+    private var shouldShowGestureGuide: Bool {
+        !UserDefaults.standard.bool(forKey: "gestureGuideCompleted")
+    }
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
         self.rogueRun = rogueRun
@@ -168,6 +173,17 @@ struct BattleView: View {
                     }
                 }
             }
+
+            // 首次手势引导
+            if showGestureGuide {
+                GestureGuideOverlay {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        showGestureGuide = false
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(100)
+            }
         }
         .onAppear {
             if battleScene == nil {
@@ -195,6 +211,14 @@ struct BattleView: View {
             // Show initial hint for new players
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 showInitialHint()
+            }
+            // 首次手势引导
+            if shouldShowGestureGuide {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        showGestureGuide = true
+                    }
+                }
             }
         }
         .onChange(of: rogueRun.phase) { _, newPhase in
