@@ -24,12 +24,12 @@ settings:
     CURRENT_PROJECT_VERSION: 1
 
 # ┌─────────────────────────────────────────────────────────┐
-# │ Firebase — 一键开启：取消下方注释 + packages 区块即可   │
+# │ Firebase — 已启用                                       │
 # └─────────────────────────────────────────────────────────┘
-# packages:
-#   firebase-ios-sdk:
-#     url: https://github.com/firebase/firebase-ios-sdk
-#     from: "11.0.0"
+packages:
+  firebase-ios-sdk:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: "11.0.0"
 
 targets:
   Doudizhu:
@@ -56,23 +56,22 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_EMIT_LOC_STRINGS: true
-    dependencies: []
-      # Firebase — 取消注释 + 改 dependencies: 为有值列表:
-      # - package: firebase-ios-sdk
-      #   product: FirebaseAnalytics
-      # - package: firebase-ios-sdk
-      #   product: FirebaseCrashlytics
-    # postBuildScripts:  # Firebase — 取消注释以启用 dSYM 上传
-    #   - name: Upload dSYMs to Crashlytics
-    #     script: |
-    #       if [ "${CONFIGURATION}" = "Release" ]; then
-    #         "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
-    #       fi
-    #     inputFiles:
-    #       - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}
-    #       - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}
-    #       - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist
-    #       - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
+    dependencies:
+      - package: firebase-ios-sdk
+        product: FirebaseAnalytics
+      - package: firebase-ios-sdk
+        product: FirebaseCrashlytics
+    postBuildScripts:
+      - name: Upload dSYMs to Crashlytics
+        script: |
+          if [ "${CONFIGURATION}" = "Release" ]; then
+            "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+          fi
+        inputFiles:
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist
+          - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
   DoudizhuTests:
     type: bundle.unit-test
     platform: iOS
