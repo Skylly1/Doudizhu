@@ -170,6 +170,12 @@ extension GameSaveModel {
         case "shopping":
             // 在商店中 — 保持商店阶段，由调用方导航到商店页面
             run.phase = .shopping
+        case "floorFail":
+            // 关卡失败 — 恢复为失败阶段，让用户看到失败弹窗（重试/退出）
+            run.phase = .floorFail
+        case "victory":
+            // 通关胜利 — 恢复为胜利阶段，让用户看到胜利弹窗
+            run.phase = .victory
         default:
             // "selecting" / "dealing" 等 — 恢复为选牌状态
             // 越界保护（防止关卡配置变更导致崩溃）
@@ -184,9 +190,18 @@ extension GameSaveModel {
                 run.bossState = BossState(modifiers: floor.bossModifiers)
             }
             run.phase = .selecting
-            // 安全兜底：若手牌为空（异常存档），重新发牌
-            if run.handCards.isEmpty {
-                run.startFloor()
+
+            // 处理 mid-scoring 存档恢复（playCards 的 autoSave 在 onScoringComplete 之前触发）
+            // 如果分数已达标但阶段未推进，直接判定为过关
+            if run.isFloorCleared {
+                run.phase = .floorWin
+            } else if run.playsRemaining <= 0 || run.handCards.isEmpty {
+                // 出牌/手牌耗尽 — 判定为失败（与 onScoringComplete 逻辑一致）
+                if run.handCards.isEmpty {
+                    run.startFloor()
+                } else {
+                    run.phase = .floorFail
+                }
             }
         }
     }
