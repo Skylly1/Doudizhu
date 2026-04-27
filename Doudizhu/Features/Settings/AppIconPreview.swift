@@ -142,8 +142,18 @@ struct AppIconPreview: View {
 struct IconExporterView: View {
     @State private var exportState: ExportState = .idle
 
-    private enum ExportState {
+    enum ExportState {
         case idle, exporting, success, failed(String)
+    }
+
+    private var isSuccess: Bool {
+        if case .success = exportState { return true }
+        return false
+    }
+
+    private var isExporting: Bool {
+        if case .exporting = exportState { return true }
+        return false
     }
 
     var body: some View {
@@ -185,10 +195,10 @@ struct IconExporterView: View {
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 14)
-                        .fill(exportState.isSuccess ? Color.green : Color(red: 0.83, green: 0.64, blue: 0.22))
+                        .fill(isSuccess ? Color.green : Color(red: 0.83, green: 0.64, blue: 0.22))
                 )
             }
-            .disabled(exportState.isExporting)
+            .disabled(isExporting)
             .padding(.horizontal, 40)
 
             Text("保存后从相册获取图片，放入:\nAssets.xcassets/AppIcon.appiconset/AppIcon.png")
@@ -204,24 +214,13 @@ struct IconExporterView: View {
     private func exportIcon() {
         exportState = .exporting
         let renderer = ImageRenderer(content: AppIconPreview(size: 1024))
-        renderer.scale = 1.0 // 精确 1024×1024
+        renderer.scale = 1.0
         guard let uiImage = renderer.uiImage else {
             exportState = .failed("渲染失败")
             return
         }
         UIImageWriteToSavedPhotosAlbum(uiImage, nil, nil, nil)
         exportState = .success
-    }
-}
-
-extension IconExporterView.ExportState {
-    var isSuccess: Bool {
-        if case .success = self { return true }
-        return false
-    }
-    var isExporting: Bool {
-        if case .exporting = self { return true }
-        return false
     }
 }
 #endif
