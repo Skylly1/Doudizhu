@@ -48,9 +48,9 @@ enum SpecialEventType: String {
 @MainActor
 enum SpecialEventGenerator {
 
-    /// 过关后 20% 概率触发（商店层和Boss层不触发）
+    /// 过关后 30% 概率触发（商店层和Boss层不触发）
     static func maybeGenerate(floor: Int, gold: Int) -> SpecialEvent? {
-        guard Int.random(in: 0..<5) == 0 else { return nil }
+        guard Int.random(in: 0..<10) < 3 else { return nil }
         let pool = allEvents(gold: gold)
         return pool.randomElement()
     }

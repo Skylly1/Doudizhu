@@ -61,9 +61,9 @@ struct FloorConfig {
 
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
-        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 120, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 150, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor1Desc, isShop: false),
-        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 220, maxPlays: 5, maxDiscards: 3,
+        FloorConfig(floor: 2, name: L10n.floor2Name, targetScore: 250, maxPlays: 5, maxDiscards: 3,
                     description: L10n.floor2Desc, isShop: false),
         FloorConfig(floor: 3, name: L10n.floor3Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor3Desc, isShop: true),
@@ -88,14 +88,14 @@ struct FloorConfig {
                     description: L10n.floor11Desc, isShop: true),
         FloorConfig(floor: 12, name: L10n.floor12Name, targetScore: 2500, maxPlays: 4, maxDiscards: 1,
                     description: L10n.floor12Desc, isShop: false),
-        FloorConfig(floor: 13, name: L10n.floor13Name, targetScore: 3200, maxPlays: 3, maxDiscards: 1,
+        FloorConfig(floor: 13, name: L10n.floor13Name, targetScore: 2800, maxPlays: 4, maxDiscards: 1,
                     description: L10n.floor13Desc, isShop: false,
                     bossModifiers: [.escalating, .goldDrain]),
         FloorConfig(floor: 14, name: L10n.floor14Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
                     description: L10n.floor14Desc, isShop: true),
-        FloorConfig(floor: 15, name: L10n.floor15Name, targetScore: 5000, maxPlays: 3, maxDiscards: 0,
+        FloorConfig(floor: 15, name: L10n.floor15Name, targetScore: 4200, maxPlays: 3, maxDiscards: 0,
                     description: L10n.floor15Desc, isShop: false,
-                    bossModifiers: [.scoringDecay, .noDiscard, .phantomCards]),
+                    bossModifiers: [.escalating, .phantomCards]),
     ]
 }
 

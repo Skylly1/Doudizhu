@@ -26,9 +26,6 @@ struct DemoGateView: View {
     }
     private var isFirstView: Bool { paywallViewCount <= 1 }
 
-    /// 首次免费体验额度（一次性，只在第一次展示付费墙时可用）
-    @AppStorage("demoGateFreePeekUsed") private var freePeekUsed = false
-
     @State private var showContent = false
     @State private var pulseButton = false
     @State private var congratsScale: CGFloat = 0.6
@@ -386,34 +383,6 @@ struct DemoGateView: View {
                 .scaleEffect(pulseButton ? 1.02 : 1.0)
             }
             .disabled(purchaseManager.purchaseState == .purchasing)
-
-            // 免费体验一层（仅首次展示且未使用过）
-            if !freePeekUsed && isFirstView {
-                Button {
-                    freePeekUsed = true
-                    Analytics.shared.track(.paywallDismissed, params: [
-                        "floor_reached": "\(floorsCleared)",
-                        "action": "free_peek"
-                    ])
-                    onContinue()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "gift.fill")
-                            .font(.subheadline)
-                        Text(L10n.isEnglish ? "Try 1 More Floor Free" : "免费体验下一层")
-                            .font(.subheadline.bold())
-                    }
-                    .foregroundColor(Theme.cyan)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(Theme.cyanDim)
-                            .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                .stroke(Theme.cyan.opacity(0.3)))
-                    )
-                }
-            }
 
             // 恢复购买
             Button(L10n.restorePurchase) {

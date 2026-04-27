@@ -15,8 +15,8 @@ final class PurchaseManager: ObservableObject {
         case idle, loading, purchasing, purchased, failed(String)
     }
 
-    /// 免费试玩可到达的最高层数（含）
-    static let demoMaxFloor = 5
+    /// 免费试玩可到达的最高层数（含）— 前6层含2次商店+2次Boss，充分展示核心循环
+    static let demoMaxFloor = 6
 
     /// 完整版产品 ID — 需在 App Store Connect 配置
     static let fullVersionProductID = "com.hongzeng.doudizhu.fullversion"
@@ -38,16 +38,10 @@ final class PurchaseManager: ObservableObject {
 
     // MARK: - Public API
 
-    /// 免费体验额度（一次性加1层）
-    private var freePeekUsed: Bool {
-        UserDefaults.standard.bool(forKey: "demoGateFreePeekUsed")
-    }
-
     /// 检查当前层是否在试玩范围内
     func canAccessFloor(_ floorIndex: Int) -> Bool {
         if isFullVersion { return true }
-        let effectiveMax = freePeekUsed ? Self.demoMaxFloor + 1 : Self.demoMaxFloor
-        return floorIndex < effectiveMax
+        return floorIndex < Self.demoMaxFloor
     }
 
     /// 加载产品信息

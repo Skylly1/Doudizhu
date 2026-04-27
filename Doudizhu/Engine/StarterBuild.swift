@@ -64,7 +64,7 @@ struct StarterBuild: Identifiable {
             description: L10n.buildAllInDesc,
             startingJoker: Joker.allJokers.first { $0.effect == .lastStandBonus },
             startingBuff: nil,
-            goldAdjustment: -70
+            goldAdjustment: -50
         ),
         StarterBuild(
             id: "straightMaster",
@@ -73,7 +73,7 @@ struct StarterBuild: Identifiable {
             description: L10n.buildStraightMasterDesc,
             startingJoker: Joker.allJokers.first { $0.effect == .sequenceBonus },
             startingBuff: Buff.allBuffs.first { $0.type == .straightBonus },
-            goldAdjustment: 30
+            goldAdjustment: 0
         ),
         StarterBuild(
             id: "defensive",
@@ -91,7 +91,7 @@ struct StarterBuild: Identifiable {
             description: L10n.buildGamblerDesc,
             startingJoker: Joker.allJokers.first { $0.effect == .gambler },
             startingBuff: nil,
-            goldAdjustment: -50
+            goldAdjustment: -20
         ),
     ]
 }
