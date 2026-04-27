@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var resetTarget: ResetTarget? = nil
     @State private var showHelpSheet = false
     @State private var showHintResetBanner = false
+    @State private var showTutorialResetBanner = false
 
     private enum ResetTarget: Identifiable {
         case saves, stats, all
@@ -73,6 +74,12 @@ struct SettingsView: View {
                         settingSection(L10n.settingsGame) {
                             Button {
                                 tutorialPhase = 0
+                                // 同步清除旧版迁移标记，否则 TutorialManager.init 会把 tutorialPhase 覆盖回 3
+                                UserDefaults.standard.removeObject(forKey: "hasCompletedTutorial")
+                                withAnimation { showTutorialResetBanner = true }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    withAnimation { showTutorialResetBanner = false }
+                                }
                             } label: {
                                 HStack {
                                     Text(L10n.resetTutorial)
@@ -173,13 +180,33 @@ struct SettingsView: View {
                 }
             }
 
-            // 重置成功横幅
+            // 重置成功横幅（引导提示）
             if showHintResetBanner {
                 VStack {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(Theme.success)
                         Text(L10n.hintResetDone)
+                            .font(.subheadline.bold())
+                            .foregroundColor(Theme.textPrimary)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(Theme.bgPrimary.opacity(0.95)))
+                    .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
+                    .padding(.top, 80)
+                    Spacer()
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
+            // 重置成功横幅（教程）
+            if showTutorialResetBanner {
+                VStack {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Theme.success)
+                        Text(L10n.isEnglish ? "Tutorial reset!" : "教程已重置！")
                             .font(.subheadline.bold())
                             .foregroundColor(Theme.textPrimary)
                     }
@@ -251,6 +278,7 @@ struct SettingsView: View {
             PatternUpgradeManager.shared.resetAll()
             ContextualHintManager.shared.resetAll()
             tutorialPhase = 0
+            UserDefaults.standard.removeObject(forKey: "hasCompletedTutorial")
             UserDefaults.standard.removeObject(forKey: "hasSeenShopIntro")
             UserDefaults.standard.removeObject(forKey: "hasSeenFirstJokerGuide")
         }
