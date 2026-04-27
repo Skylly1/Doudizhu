@@ -34,3 +34,4 @@ Pods/
 *.ipa
 *.dSYM.zip
 *.dSYM
+generate_app_icon.swift
