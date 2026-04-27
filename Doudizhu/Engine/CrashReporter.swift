@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FirebaseCrashlytics)
+import FirebaseCrashlytics
+#endif
 import os.log
 
 /// 轻量级崩溃/错误报告 — os_log + 本地文件持久化
@@ -26,6 +29,9 @@ import os.log
         if breadcrumbs.count > maxBreadcrumbs {
             breadcrumbs.removeFirst()
         }
+        #if canImport(FirebaseCrashlytics)
+        Crashlytics.crashlytics().log(message)
+        #endif
     }
 
     func log(_ message: String, level: Level = .info, file: String = #file, line: Int = #line) {
@@ -39,6 +45,16 @@ import os.log
         case .error:   logger.error("❌ \(entry)")
         case .fatal:   logger.critical("🔥 \(entry)")
         }
+
+        // Crashlytics 转发
+        #if canImport(FirebaseCrashlytics)
+        Crashlytics.crashlytics().log("\(level.rawValue): \(message)")
+        if level == .error || level == .fatal {
+            let error = NSError(domain: "com.hongzeng.doudizhu", code: level == .fatal ? -1 : -2,
+                              userInfo: [NSLocalizedDescriptionKey: message])
+            Crashlytics.crashlytics().record(error: error)
+        }
+        #endif
 
         // 文件持久化
         if let data = entry.data(using: .utf8) {

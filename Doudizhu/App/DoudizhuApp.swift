@@ -1,12 +1,20 @@
 import SwiftUI
 import SwiftData
 import UIKit
+#if canImport(FirebaseCore)
+import FirebaseCore
+#endif
 
 @main
 struct DoudizhuApp: App {
     let modelContainer: ModelContainer
 
     init() {
+        // Firebase 初始化（需要 GoogleService-Info.plist）
+        #if canImport(FirebaseCore)
+        FirebaseApp.configure()
+        #endif
+
         // SwiftData 存档容器（Schema 变更时自动重建）
         do {
             modelContainer = try ModelContainer(for: GameSaveModel.self)
