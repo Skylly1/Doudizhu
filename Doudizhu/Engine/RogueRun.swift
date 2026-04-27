@@ -674,7 +674,7 @@ enum HandSortMode: String, CaseIterable {
 
         // PlayerStats tracking
         let stats = PlayerStats.shared
-        stats.totalCardsPlayed += cards.count
+        stats.totalCardsPlayed += 1  // 计数一次出牌（非单张卡牌数）
         if combo > stats.highestCombo { stats.highestCombo = combo }
         if earned > stats.highestSingleScore { stats.highestSingleScore = earned }
         stats.save()
@@ -847,7 +847,7 @@ enum HandSortMode: String, CaseIterable {
             // PlayerStats: record win and play time
             PlayerStats.shared.totalWins += 1
             if let start = runStartTime {
-                PlayerStats.shared.totalPlayTime += Date().timeIntervalSince(start)
+                PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
                 runStartTime = nil
             }
             PlayerStats.shared.save()
@@ -961,6 +961,7 @@ enum HandSortMode: String, CaseIterable {
         runStartTime = Date()
         currentBuildId = "daily"
         PlayerStats.shared.totalRuns += 1
+        PlayerStats.shared.save()  // 确保每日挑战的 totalRuns 增量被持久化
 
         Analytics.shared.track(.dailyChallengeStart, params: [
             "modifier": challenge.modifiers.map(\.rawValue).joined(separator: ",")
@@ -1082,6 +1083,7 @@ enum HandSortMode: String, CaseIterable {
         switch choice.effect {
         case .gainGold(let amount):
             gold += amount
+            PlayerStats.shared.totalGoldEarned += amount
         case .loseGold(let amount):
             gold = max(0, gold - amount)
         case .gainRandomJoker:
@@ -1091,6 +1093,7 @@ enum HandSortMode: String, CaseIterable {
                 activeJokers.append(pick)
             } else {
                 gold += 30
+                PlayerStats.shared.totalGoldEarned += 30
             }
         case .buyRandomJoker(let cost):
             guard gold >= cost else { break }
@@ -1100,7 +1103,8 @@ enum HandSortMode: String, CaseIterable {
             if let pick = available2.randomElement(), activeJokers.count < Joker.maxSlots {
                 activeJokers.append(pick)
             } else {
-                gold += cost
+                gold += cost  // 无可用Joker，退还金币
+                PlayerStats.shared.totalGoldEarned += cost
             }
         case .gainRandomBuff:
             let pick = Buff.allBuffs.randomElement()!
@@ -1119,6 +1123,7 @@ enum HandSortMode: String, CaseIterable {
         case .nothing:
             break
         }
+        PlayerStats.shared.save()  // 持久化事件中的金币变动
         phase = .floorWin
     }
 
