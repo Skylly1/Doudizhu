@@ -3,10 +3,12 @@ import SwiftUI
 /// Daily challenge detail screen — shows today's modifiers and lets the player start
 struct DailyChallengeView: View {
     let onStart: (DailyChallenge) -> Void
+    let onResume: (() -> Void)?
     let onBack: () -> Void
 
     private let challenge = DailyChallenge.today
-    private var played: Bool { DailyChallenge.hasPlayedToday }
+    private var completed: Bool { DailyChallenge.hasCompletedToday }
+    private var inProgress: Bool { DailyChallenge.hasInProgressToday }
 
     var body: some View {
         ZStack {
@@ -27,8 +29,8 @@ struct DailyChallengeView: View {
                         // Rewards section
                         rewardsSection
 
-                        // Best score (if played)
-                        if played {
+                        // Best score (if completed)
+                        if completed {
                             bestScoreCard
                         }
 
@@ -54,11 +56,11 @@ struct DailyChallengeView: View {
                 Text(dateString)
                     .font(.headline)
                     .foregroundColor(Theme.textPrimary)
-                Text(played
+                Text(completed
                      ? L10n.dailyChallengeCompleted
-                     : L10n.dailyChallenge)
+                     : (inProgress ? (L10n.isEnglish ? "In Progress" : "挑战进行中") : L10n.dailyChallenge))
                     .font(.subheadline)
-                    .foregroundColor(played ? Theme.success : Theme.gold)
+                    .foregroundColor(completed ? Theme.success : (inProgress ? Theme.flame : Theme.gold))
             }
 
             Spacer()
@@ -166,13 +168,17 @@ struct DailyChallengeView: View {
 
     private var startButton: some View {
         Group {
-            if played {
+            if completed {
                 SecondaryButton(
                     title: L10n.dailyChallengeCompleted,
                     icon: "checkmark.circle.fill",
                     color: Theme.textDisabled
                 ) { }
                 .disabled(true)
+            } else if inProgress, let onResume {
+                PrimaryButton(title: L10n.isEnglish ? "Resume Challenge" : "继续挑战", icon: "play.fill") {
+                    onResume()
+                }
             } else {
                 PrimaryButton(title: L10n.startDailyChallenge, icon: "play.fill") {
                     onStart(challenge)
@@ -214,5 +220,5 @@ struct DailyChallengeView: View {
 }
 
 #Preview {
-    DailyChallengeView(onStart: { _ in }, onBack: { })
+    DailyChallengeView(onStart: { _ in }, onResume: nil, onBack: { })
 }

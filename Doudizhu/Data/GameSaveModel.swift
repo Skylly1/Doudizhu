@@ -37,6 +37,9 @@ final class GameSaveModel {
     // MARK: 游戏阶段
     var phaseRaw: String         // "selecting" / "dealing" / etc.
 
+    // MARK: 每日挑战
+    var isDailyChallenge: Bool
+
     init(
         runId: String = UUID().uuidString,
         timestamp: Date = Date(),
@@ -57,7 +60,8 @@ final class GameSaveModel {
         activeBuffsData: Data = Data(),
         handSortModeRaw: String = "rank",
         starterBuildId: String = "",
-        phaseRaw: String = "selecting"
+        phaseRaw: String = "selecting",
+        isDailyChallenge: Bool = false
     ) {
         self.runId = runId
         self.timestamp = timestamp
@@ -79,6 +83,7 @@ final class GameSaveModel {
         self.handSortModeRaw = handSortModeRaw
         self.starterBuildId = starterBuildId
         self.phaseRaw = phaseRaw
+        self.isDailyChallenge = isDailyChallenge
     }
 }
 
@@ -122,7 +127,8 @@ extension GameSaveModel {
             activeBuffsData: buffsData,
             handSortModeRaw: run.handSortMode.rawValue,
             starterBuildId: buildId,
-            phaseRaw: phaseString
+            phaseRaw: phaseString,
+            isDailyChallenge: run.dailyChallenge != nil
         )
     }
 
@@ -147,6 +153,9 @@ extension GameSaveModel {
         run.drawPile = (try? decoder.decode([Card].self, from: drawPileData)) ?? []
         run.activeJokers = (try? decoder.decode([Joker].self, from: activeJokersData)) ?? []
         run.activeBuffs = (try? decoder.decode([Buff].self, from: activeBuffsData)) ?? []
+
+        // 每日挑战恢复
+        run.dailyChallenge = isDailyChallenge ? DailyChallenge.today : nil
 
         // Boss 关需要重新初始化 BossState
         let floor = FloorConfig.allFloors[currentFloorIndex]

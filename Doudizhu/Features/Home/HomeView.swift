@@ -172,38 +172,42 @@ struct HomeView: View {
     let onContinue: () -> Void
     @State private var titleScale: CGFloat = 0.8
     @State private var titleOpacity: Double = 0
-    @State private var showButtons = [false, false, false, false, false]
+    @State private var showButtons = [false, false, false, false]
     @State private var dailyPulse = false
+    @State private var sealGlow = false
 
     private var dailyChallengeButton: some View {
         let daily = DailyChallenge.today
-        let played = DailyChallenge.hasPlayedToday
+        let completed = DailyChallenge.hasCompletedToday
+        let inProgress = DailyChallenge.hasInProgressToday
         return Button {
-            if !played { onNavigate(.dailyChallenge) }
+            if !completed { onNavigate(.dailyChallenge) }
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: daily.modifiers.first?.icon ?? "calendar")
                     .font(.body)
                     .foregroundColor(Theme.flame)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(played
+                    Text(completed
                          ? (L10n.isEnglish ? "Completed" : "已完成")
-                         : L10n.dailyChallenge)
+                         : (inProgress
+                            ? (L10n.isEnglish ? "Resume Challenge" : "继续挑战")
+                            : L10n.dailyChallenge))
                         .font(.subheadline.bold())
-                    Text(played
+                    Text(completed
                          ? (L10n.isEnglish ? "Best: \(DailyChallenge.todayBest)" : "最高: \(DailyChallenge.todayBest)")
                          : (daily.modifiers.first?.name ?? ""))
                         .font(.caption2)
                         .foregroundColor(Theme.textTertiary)
                 }
                 Spacer()
-                if !played {
-                    Image(systemName: "chevron.right")
+                if !completed {
+                    Image(systemName: inProgress ? "play.fill" : "chevron.right")
                         .font(.caption)
-                        .foregroundColor(Theme.textTertiary)
+                        .foregroundColor(inProgress ? Theme.flame : Theme.textTertiary)
                 }
             }
-            .foregroundColor(played ? Theme.textDisabled : Theme.textPrimary)
+            .foregroundColor(completed ? Theme.textDisabled : Theme.textPrimary)
             .padding(.horizontal, Theme.spacingMD)
             .padding(.vertical, 10)
             .background(
@@ -211,13 +215,13 @@ struct HomeView: View {
                     .fill(.ultraThinMaterial)
                     .overlay(
                         RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .stroke(played ? Theme.borderLight : (dailyPulse ? Theme.gold : Theme.gold.opacity(0.15)),
-                                    lineWidth: played ? 0.5 : (dailyPulse ? 1.5 : 0.5))
+                            .stroke(completed ? Theme.borderLight : (dailyPulse ? Theme.gold : Theme.gold.opacity(0.15)),
+                                    lineWidth: completed ? 0.5 : (dailyPulse ? 1.5 : 0.5))
                     )
             )
             .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
         }
-        .disabled(played)
+        .disabled(completed)
     }
 
     var body: some View {
@@ -236,13 +240,13 @@ struct HomeView: View {
             // 顶部金色光晕 — 温暖聚焦
             RadialGradient(
                 colors: [
-                    Color(red: 0.90, green: 0.72, blue: 0.30).opacity(0.30),
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.10),
+                    Color(red: 0.90, green: 0.72, blue: 0.30).opacity(0.25),
+                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.08),
                     Color.clear
                 ],
-                center: .init(x: 0.5, y: 0.15),
+                center: .init(x: 0.5, y: 0.12),
                 startRadius: 0,
-                endRadius: 300
+                endRadius: 320
             )
             .ignoresSafeArea()
 
@@ -260,20 +264,20 @@ struct HomeView: View {
 
             // 主内容
             VStack(spacing: 0) {
-                Spacer().frame(height: 40)
+                Spacer().frame(height: Theme.isCompactScreen ? 30 : 44)
 
-                // 标题区
-                VStack(spacing: 14) {
-                    // 国潮印章式标识 — "斗"字
+                // 标题区 — 印章式 Logo
+                VStack(spacing: 12) {
                     ZStack {
-                        // 大辉光圈
+                        // 辉光呼吸圈
                         Circle()
-                            .fill(Theme.gold.opacity(0.12))
-                            .frame(width: 120, height: 120)
-                            .blur(radius: 25)
+                            .fill(Theme.gold.opacity(sealGlow ? 0.18 : 0.08))
+                            .frame(width: 130, height: 130)
+                            .blur(radius: 30)
+
                         // 外菱形框
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Theme.gold.opacity(0.50), lineWidth: 2)
+                            .stroke(Theme.gold.opacity(0.55), lineWidth: 2.2)
                             .frame(width: 72, height: 72)
                             .rotationEffect(.degrees(45))
                         // 内菱形框
@@ -281,16 +285,17 @@ struct HomeView: View {
                             .stroke(Theme.gold.opacity(0.22), lineWidth: 1)
                             .frame(width: 58, height: 58)
                             .rotationEffect(.degrees(45))
+
                         Text("斗")
                             .font(.system(size: 48, weight: .black, design: .serif))
                             .foregroundStyle(Theme.goldGradient)
                     }
-                    .shadow(color: Theme.gold.opacity(0.5), radius: 20)
+                    .shadow(color: Theme.gold.opacity(0.4), radius: 16)
 
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
                         .foregroundStyle(Theme.goldGradient)
-                        .shadow(color: Theme.gold.opacity(0.5), radius: 12, y: 0)
+                        .shadow(color: Theme.gold.opacity(0.4), radius: 10, y: 0)
 
                     Text(L10n.appSubtitle)
                         .font(Theme.subtitleFont)
@@ -309,26 +314,26 @@ struct HomeView: View {
                 .scaleEffect(titleScale)
                 .opacity(titleOpacity)
 
-                Spacer().frame(height: Theme.isCompactScreen ? 16 : 24)
+                Spacer().frame(height: Theme.isCompactScreen ? 12 : 20)
 
                 // Ascension 等级展示
                 let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
                 if highestAsc > 0 {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         Image(systemName: "flame.fill")
                             .foregroundColor(Theme.flame)
                         Text(L10n.highestAscLabel(highestAsc))
-                            .font(.subheadline.bold().monospacedDigit())
+                            .font(.caption.bold().monospacedDigit())
                             .foregroundColor(Theme.flame)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 5)
                     .background(Capsule().fill(Theme.flameDim))
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 6)
                 }
 
                 // 菜单按钮
-                VStack(spacing: 12) {
+                VStack(spacing: 10) {
                     // 继续冒险（有存档时显示）
                     if hasSavedGame {
                         PrimaryButton(
@@ -342,7 +347,7 @@ struct HomeView: View {
                             onContinue()
                         }
                         .padding(.horizontal, 40)
-                        .offset(y: showButtons[0] ? 0 : 40)
+                        .offset(y: showButtons[0] ? 0 : 30)
                         .opacity(showButtons[0] ? 1.0 : 0)
                     }
 
@@ -353,23 +358,21 @@ struct HomeView: View {
                         onNavigate(.map)
                     }
                     .padding(.horizontal, 40)
-                    .offset(y: showButtons[1] ? 0 : 40)
+                    .offset(y: showButtons[1] ? 0 : 30)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
-                    SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
-                        onNavigate(.buildSelect)
+                    // 快速开始 + 每日挑战 — 并排
+                    HStack(spacing: 10) {
+                        SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
+                            onNavigate(.buildSelect)
+                        }
+                        dailyChallengeButton
                     }
                     .padding(.horizontal, 40)
-                    .offset(y: showButtons[2] ? 0 : 40)
+                    .offset(y: showButtons[2] ? 0 : 30)
                     .opacity(showButtons[2] ? 1.0 : 0)
 
-                    // 每日挑战
-                    dailyChallengeButton
-                        .padding(.horizontal, 40)
-                        .offset(y: showButtons[3] ? 0 : 40)
-                        .opacity(showButtons[3] ? 1.0 : 0)
-
-                    HStack(spacing: 12) {
+                    HStack(spacing: 10) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)
                         }
@@ -378,8 +381,8 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 40)
-                    .offset(y: showButtons[4] ? 0 : 40)
-                    .opacity(showButtons[4] ? 1.0 : 0)
+                    .offset(y: showButtons[3] ? 0 : 30)
+                    .opacity(showButtons[3] ? 1.0 : 0)
                 }
 
                 Spacer()
@@ -387,7 +390,13 @@ struct HomeView: View {
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 12)
+
+                // 版本号
+                Text("v1.0")
+                    .font(.system(size: 9))
+                    .foregroundColor(Theme.textDisabled.opacity(0.5))
+                    .padding(.bottom, 6)
             }
         }
         .onAppear {
@@ -395,20 +404,13 @@ struct HomeView: View {
                 titleScale = 1.0
                 titleOpacity = 1.0
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.35)) {
-                showButtons[0] = true
+            for i in 0..<showButtons.count {
+                withAnimation(.easeOut(duration: 0.45).delay(0.3 + Double(i) * 0.1)) {
+                    showButtons[i] = true
+                }
             }
-            withAnimation(.easeOut(duration: 0.5).delay(0.45)) {
-                showButtons[1] = true
-            }
-            withAnimation(.easeOut(duration: 0.5).delay(0.55)) {
-                showButtons[2] = true
-            }
-            withAnimation(.easeOut(duration: 0.5).delay(0.65)) {
-                showButtons[3] = true
-            }
-            withAnimation(.easeOut(duration: 0.5).delay(0.75)) {
-                showButtons[4] = true
+            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true).delay(0.5)) {
+                sealGlow = true
             }
             withAnimation(.easeInOut(duration: 1.5).repeatForever().delay(0.8)) {
                 dailyPulse = true

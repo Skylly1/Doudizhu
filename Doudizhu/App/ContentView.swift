@@ -69,6 +69,11 @@ struct ContentView: View {
                             rogueRun.startDailyChallenge(challenge)
                             navigate(to: .battle)
                         },
+                        onResume: DailyChallenge.hasInProgressToday ? {
+                            if rogueRun.restoreFromSave() {
+                                navigate(to: .battle)
+                            }
+                        } : nil,
                         onBack: { goBack() }
                     )
                     .swipeBack { goBack() }
@@ -115,7 +120,9 @@ struct ContentView: View {
                         onBack: {
                             SoundManager.shared.stopBGM()
                             goHome()
-                        }
+                        },
+                        equippedJokers: rogueRun.activeJokers,
+                        equippedBuffs: rogueRun.activeBuffs
                     )
                     .swipeBack {
                         SoundManager.shared.stopBGM()

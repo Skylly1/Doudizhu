@@ -105,8 +105,13 @@ class BattleScene: SKScene {
 
         let count = cards.count
 
-        // Dynamic card sizing: shrink cards when hand is large
-        let scaleFactor: CGFloat = count <= 7 ? 1.0 : max(0.65, 1.0 - CGFloat(count - 7) * 0.05)
+        // Dynamic card sizing: smoother curve, higher minimum for readability
+        let scaleFactor: CGFloat
+        if count <= 8 {
+            scaleFactor = 1.0
+        } else {
+            scaleFactor = max(0.70, 1.0 - CGFloat(count - 8) * 0.04)
+        }
         let cardWidth = baseCardWidth * scaleFactor
         let cardHeight = baseCardHeight * scaleFactor
 
@@ -116,8 +121,9 @@ class BattleScene: SKScene {
         let overlap = min(idealOverlap, (maxWidth - cardWidth) / CGFloat(max(count - 1, 1)))
         let totalWidth = CGFloat(count - 1) * overlap + cardWidth
         let startX = (size.width - totalWidth) / 2 + cardWidth / 2
-        // Leave room for SwiftUI bottom panel
-        let baseY = cardHeight / 2 + 190
+        // Adaptive baseY: reserve proportional space for SwiftUI bottom overlay
+        let bottomReserve = size.height * 0.22
+        let baseY = bottomReserve + cardHeight / 2 + 8
 
         // 扇形弧度参数 — 温和弧度
         let maxAngle: CGFloat = count > 5 ? 0.022 : 0.012

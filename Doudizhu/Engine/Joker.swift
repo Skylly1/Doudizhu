@@ -77,6 +77,92 @@ enum JokerEffect: String, Codable, Hashable {
     case planeBonus         // 展翅高飞: 飞机类牌型+80%
     case straightFlush      // 同花连珠: 顺子且同花色时×3
     case endgameSurge       // 终局冲刺: 最后2次出牌机会+40%
+    // 第六批 15 种 — 牌面/花色策略
+    case heartCollector     // 红心猎手: 含♥牌时+0.3 mult
+    case spadeEdge          // 黑锋之刃: 含♠牌时+15 chips
+    case diamondMiner       // 钻石矿工: 含♦牌时过关额外+10金币
+    case clubShield         // 梅花护盾: 含♣牌时弃牌不减combo
+    case fullHouse          // 满堂红: 三带二+1.0 mult
+    case smallBlind         // 小盲注: 第2关前+50% mult
+    case bigBlind           // 大盲注: 第8关后+0.6 mult
+    case recycler           // 回收大师: 弃牌时每张+5 chips到下一手
+    case perfectHand        // 完美之手: 出5张牌且全部同花色时×4
+    case doubleDown         // 加倍下注: 连续出相同牌型时+0.5 mult
+    case jokerStacker       // 叠叠乐: 每多1张Joker, chips+10
+    case goldDigger         // 掘金者: 金币≥100时+1.0 mult
+    case mirrorImage        // 镜像: 对子牌型 chips 翻倍
+    case chainLightning     // 连锁闪电: combo≥4时全牌型+0.6 mult
+    case zenMaster          // 禅定大师: 不弃牌通关时+2.0 mult（该关首次出牌就生效）
+}
+
+// MARK: - SF Symbol 图标映射
+
+extension JokerEffect {
+    /// SF Symbol 图标名（替代 emoji，统一视觉风格）
+    var systemIcon: String {
+        switch self {
+        case .drawAfterPlay:      return "hand.point.up.fill"
+        case .doubleComboRate:    return "link"
+        case .lowHandBonus:       return "building.columns.fill"
+        case .explosiveBonus:     return "flame.fill"
+        case .sequenceBonus:      return "water.waves"
+        case .highCardBonus:      return "shield.lefthalf.filled"
+        case .extraDiscards:      return "moon.fill"
+        case .firstPlayBonus:     return "bolt.fill"
+        case .extraDrawOnDiscard: return "theatermasks.fill"
+        case .lastStandBonus:     return "flag.fill"
+        case .pairMastery:        return "heart.fill"
+        case .tripleThreat:       return "hurricane"
+        case .goldRush:           return "dollarsign.circle.fill"
+        case .secondWind:         return "wind"
+        case .cardCounter:        return "brain"
+        case .luckyDraw:          return "fish.fill"
+        case .scoreSurge:         return "chart.line.uptrend.xyaxis"
+        case .miniHandBonus:      return "target"
+        case .multiKill:          return "bolt.horizontal.fill"
+        case .shieldBreaker:      return "shield.slash.fill"
+        case .criticalHit:        return "dice.fill"
+        case .insurance:          return "shield.fill"
+        case .collector:          return "rectangle.stack.fill"
+        case .nightOwl:           return "moon.stars.fill"
+        case .earlyBird:          return "sunrise.fill"
+        case .miser:              return "banknote.fill"
+        case .gambler:            return "dice"
+        case .phoenix:            return "flame.circle.fill"
+        case .dragon:             return "star.fill"
+        case .tideTurner:         return "arrow.triangle.2.circlepath"
+        case .shadowClone:        return "person.2.fill"
+        case .cosmicShift:        return "arrow.left.arrow.right"
+        case .infiniteLoop:       return "infinity"
+        case .bloodPact:          return "drop.fill"
+        case .fortuneWheel:       return "arrow.clockwise.circle.fill"
+        case .bombChain:          return "sparkles"
+        case .handOverflow:       return "hand.raised.fill"
+        case .patternVariety:     return "wand.and.stars"
+        case .goldConverter:      return "testtube.2"
+        case .trashToTreasure:    return "arrow.3.trianglepath"
+        case .kingSlayer:         return "crown.fill"
+        case .aceHigh:            return "a.circle.fill"
+        case .planeBonus:         return "airplane"
+        case .straightFlush:      return "diamond.fill"
+        case .endgameSurge:       return "timer"
+        case .heartCollector:     return "suit.heart.fill"
+        case .spadeEdge:          return "suit.spade.fill"
+        case .diamondMiner:       return "suit.diamond.fill"
+        case .clubShield:         return "suit.club.fill"
+        case .fullHouse:          return "house.fill"
+        case .smallBlind:         return "eye.slash"
+        case .bigBlind:           return "circle.inset.filled"
+        case .recycler:           return "arrow.2.squarepath"
+        case .perfectHand:        return "sparkle"
+        case .doubleDown:         return "arrow.uturn.down.circle.fill"
+        case .jokerStacker:       return "square.stack.3d.up.fill"
+        case .goldDigger:         return "hammer.fill"
+        case .mirrorImage:        return "rectangle.on.rectangle"
+        case .chainLightning:     return "bolt.circle.fill"
+        case .zenMaster:          return "leaf.fill"
+        }
+    }
 }
 
 /// 规则牌
@@ -427,6 +513,112 @@ extension Joker {
             effect: .endgameSurge,
             icon: "⏰",
             rarity: .rare
+        ),
+        // ── 第六批 15 张 — 花色策略 & 高级机制 ──
+        Joker(
+            name: L10n.isEnglish ? "Heart Hunter" : "红心猎手",
+            description: L10n.isEnglish ? "+0.3 mult with ♥" : "含♥牌时+0.3倍率",
+            effect: .heartCollector,
+            icon: "❤️",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Spade Edge" : "黑锋之刃",
+            description: L10n.isEnglish ? "+15 chips with ♠" : "含♠牌时+15筹码",
+            effect: .spadeEdge,
+            icon: "♠️",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Diamond Miner" : "钻石矿工",
+            description: L10n.isEnglish ? "+10 gold on clear with ♦" : "含♦出牌过关额外+10金币",
+            effect: .diamondMiner,
+            icon: "💎",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Club Shield" : "梅花护盾",
+            description: L10n.isEnglish ? "♣ in discard keeps combo" : "弃牌含♣时不减连击",
+            effect: .clubShield,
+            icon: "🛡️",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Full House" : "满堂红",
+            description: L10n.isEnglish ? "Triple+pair +1.0 mult" : "三带二+1.0倍率",
+            effect: .fullHouse,
+            icon: "🏠",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Small Blind" : "小盲注",
+            description: L10n.isEnglish ? "+50% mult before floor 3" : "第2关前+50%倍率",
+            effect: .smallBlind,
+            icon: "🔮",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Big Blind" : "大盲注",
+            description: L10n.isEnglish ? "+0.6 mult after floor 8" : "第8关后+0.6倍率",
+            effect: .bigBlind,
+            icon: "🔴",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Recycler" : "回收大师",
+            description: L10n.isEnglish ? "+5 chips/card discarded" : "弃牌时每张+5筹码(下一手)",
+            effect: .recycler,
+            icon: "♻️",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Perfect Hand" : "完美之手",
+            description: L10n.isEnglish ? "5 same-suit cards ×4" : "出5张同花色×4倍",
+            effect: .perfectHand,
+            icon: "✨",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Double Down" : "加倍下注",
+            description: L10n.isEnglish ? "Same type twice +0.5 mult" : "连续出相同牌型+0.5倍率",
+            effect: .doubleDown,
+            icon: "🎯",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Joker Stacker" : "叠叠乐",
+            description: L10n.isEnglish ? "+10 chips per Joker" : "每张Joker+10筹码",
+            effect: .jokerStacker,
+            icon: "📚",
+            rarity: .common
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Gold Digger" : "掘金者",
+            description: L10n.isEnglish ? "+1.0 mult at 100+ gold" : "金币≥100时+1.0倍率",
+            effect: .goldDigger,
+            icon: "⛏️",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Mirror Image" : "镜像",
+            description: L10n.isEnglish ? "Pair chips ×2" : "对子筹码翻倍",
+            effect: .mirrorImage,
+            icon: "🪞",
+            rarity: .rare
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Chain Lightning" : "连锁闪电",
+            description: L10n.isEnglish ? "+0.6 mult at combo 4+" : "连击≥4时+0.6倍率",
+            effect: .chainLightning,
+            icon: "⚡",
+            rarity: .legendary
+        ),
+        Joker(
+            name: L10n.isEnglish ? "Zen Master" : "禅定大师",
+            description: L10n.isEnglish ? "+2.0 mult if no discards used" : "不弃牌时+2.0倍率",
+            effect: .zenMaster,
+            icon: "🧘",
+            rarity: .legendary
         ),
     ]
 }

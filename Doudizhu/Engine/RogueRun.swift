@@ -155,6 +155,8 @@ enum HandSortMode: String, CaseIterable {
     var justDiscarded: Bool = false             // 上一操作是否为弃牌（化腐为奇用）
     var usedPatternTypes: Set<PatternType> = [] // 本层已使用的牌型（博采众长用）
     var bonusPlays: Int = 0                     // 下层额外出牌次数（特殊事件奖励）
+    var lastPatternType: PatternType?           // 上一手牌型（加倍下注用）
+    var recyclerChipBonus: Int = 0              // 回收大师累积筹码（弃牌时填充）
 
     /// Run start time for play-time tracking
     private var runStartTime: Date?
@@ -169,7 +171,6 @@ enum HandSortMode: String, CaseIterable {
 
     /// 自动保存（每次出牌/弃牌后调用）
     private func autoSave() {
-        guard dailyChallenge == nil else { return } // 每日挑战不存档
         SaveManager.shared.save(run: self, buildId: currentBuildId)
     }
 
@@ -244,6 +245,8 @@ enum HandSortMode: String, CaseIterable {
         lastPatternWasBomb = false
         justDiscarded = false
         usedPatternTypes = []
+        lastPatternType = nil
+        recyclerChipBonus = 0
         
         // Ascension 调整
         if ascensionLevel >= 1 {
@@ -458,9 +461,32 @@ enum HandSortMode: String, CaseIterable {
         }
         if hasJoker(.endgameSurge) && playsRemaining <= 1 { mult += 0.4 }
 
+        // 第六批 Joker effects — 花色策略
+        if hasJoker(.heartCollector) && cards.contains(where: { $0.suit == .heart }) { mult += 0.3 }
+        if hasJoker(.spadeEdge) && cards.contains(where: { $0.suit == .spade }) { chips += 15.0 }
+        // diamondMiner: gold bonus handled in onScoringComplete
+        // clubShield: handled in discardCards
+        if hasJoker(.fullHouse) && pattern.type == .tripleWithPair { mult += 1.0 }
+        if hasJoker(.smallBlind) && currentFloor.floor <= 2 { mult += 0.5 }
+        if hasJoker(.bigBlind) && currentFloor.floor >= 8 { mult += 0.6 }
+        // recycler: bonus applied via recyclerChipBonus
+        chips += Double(recyclerChipBonus)
+        recyclerChipBonus = 0
+        if hasJoker(.perfectHand) && cards.count == 5 {
+            let suits = Set(cards.compactMap { $0.suit })
+            if suits.count == 1 { mult *= 4.0 }
+        }
+        if hasJoker(.doubleDown) && lastPatternType == pattern.type { mult += 0.5 }
+        if hasJoker(.jokerStacker) { chips += Double(activeJokers.count) * 10.0 }
+        if hasJoker(.goldDigger) && gold >= 100 { mult += 1.0 }
+        if hasJoker(.mirrorImage) && pattern.type == .pair { chips *= 2.0 }
+        if hasJoker(.chainLightning) && combo >= 4 { mult += 0.6 }
+        if hasJoker(.zenMaster) && discardsRemaining == currentFloor.maxDiscards { mult += 2.0 }
+
         // 更新状态追踪
         usedPatternTypes.insert(pattern.type)
         lastPatternWasBomb = (pattern.type == .bomb)
+        lastPatternType = pattern.type
         justDiscarded = false
 
         // Calculate final score
@@ -668,6 +694,10 @@ enum HandSortMode: String, CaseIterable {
             if activeBuffs.contains(where: { $0.type == .goldWindfall }) {
                 totalBonus = Int(Double(totalBonus) * 1.5)
             }
+            // 钻石矿工 Joker: 含♦出牌过关时额外+10金币
+            if hasJoker(.diamondMiner) {
+                totalBonus += 10
+            }
             gold += totalBonus
 
             // PlayerStats: floor cleared
@@ -712,6 +742,7 @@ enum HandSortMode: String, CaseIterable {
             // Record daily challenge score on fail
             if dailyChallenge != nil {
                 DailyChallenge.recordScore(totalScore)
+                DailyChallenge.markCompleted()
             }
             phase = .floorFail
             clearSave()
@@ -732,10 +763,16 @@ enum HandSortMode: String, CaseIterable {
 
         discardsRemaining -= 1
         // 冰封之心 Buff: 弃牌不打断连击
-        if activeBuffs.contains(where: { $0.type == .iceFrozen }) {
+        let hasClubInDiscard = hasJoker(.clubShield) && cards.contains(where: { $0.suit == .club })
+        if activeBuffs.contains(where: { $0.type == .iceFrozen }) || hasClubInDiscard {
             // 不减少 combo
         } else {
             combo = max(0, combo - 1)  // 换牌仅减少1点连击，不清零
+        }
+
+        // 回收大师 Joker: 弃牌时每张+5 chips到下一手
+        if hasJoker(.recycler) {
+            recyclerChipBonus += cards.count * 5
         }
 
         // 移除弃牌
@@ -801,6 +838,7 @@ enum HandSortMode: String, CaseIterable {
             // Record daily challenge score
             if dailyChallenge != nil {
                 DailyChallenge.recordScore(totalScore)
+                DailyChallenge.markCompleted()
             }
             Analytics.shared.track(.runComplete, params: [
                 "total_score": "\(totalScore)",
@@ -839,6 +877,8 @@ enum HandSortMode: String, CaseIterable {
         phoenixUsed = false
         dailyChallenge = nil
         bonusPlays = 0
+        lastPatternType = nil
+        recyclerChipBonus = 0
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
@@ -878,6 +918,8 @@ enum HandSortMode: String, CaseIterable {
         lastScoreEarned = 0
         phoenixUsed = false
         dailyChallenge = challenge
+        lastPatternType = nil
+        recyclerChipBonus = 0
 
         // Apply daily challenge modifiers
         for modifier in challenge.modifiers {
@@ -907,7 +949,7 @@ enum HandSortMode: String, CaseIterable {
             "modifier": challenge.modifiers.map(\.rawValue).joined(separator: ",")
         ])
 
-        DailyChallenge.markPlayed()
+        DailyChallenge.markStarted()
         startFloor()
     }
 
@@ -956,6 +998,11 @@ enum HandSortMode: String, CaseIterable {
                 "reason": "restart"
             ])
         }
+        // 每日挑战放弃也标记为完成（不可重入）
+        if dailyChallenge != nil {
+            DailyChallenge.recordScore(totalScore)
+            DailyChallenge.markCompleted()
+        }
         clearSave()
 
         // 游戏次数成就
@@ -977,6 +1024,8 @@ enum HandSortMode: String, CaseIterable {
         phoenixUsed = false
         dailyChallenge = nil
         bonusPlays = 0
+        lastPatternType = nil
+        recyclerChipBonus = 0
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
@@ -1219,6 +1268,37 @@ enum BuffType: String, Codable, Hashable {
     case goldWindfall        // 天降横财: 过关金币+50%
     case desperateStrike    // 破釜沉舟: 手数-2但mult+3
     case reshuffleOnce      // 洗牌大师: 策略类（标记用）
+
+    /// SF Symbol 图标名
+    var systemIcon: String {
+        switch self {
+        case .globalMultiplier:  return "wand.and.stars"
+        case .bombBonus:         return "flame.fill"
+        case .rocketBonus:       return "paperplane.fill"
+        case .straightBonus:     return "wind"
+        case .planeBonus:        return "airplane"
+        case .pairBonus:         return "heart.fill"
+        case .tripleBonus:       return "dice.fill"
+        case .comboMultiplier:   return "bolt.fill"
+        case .singleBonus:       return "person.fill"
+        case .pairStraightBonus: return "equal.circle.fill"
+        case .fourWithTwoBonus:  return "diamond.fill"
+        case .chipFlat:          return "square.fill"
+        case .multFlat:          return "sparkle"
+        case .highCardChip:      return "crown.fill"
+        case .lowCardChip:       return "leaf.fill"
+        case .burnHand:          return "flame"
+        case .iceFrozen:         return "snowflake"
+        case .eagleEye:          return "eye.fill"
+        case .alchemyStone:      return "testtube.2"
+        case .allInBomb:         return "star.circle.fill"
+        case .windStraight:      return "water.waves"
+        case .planeAscend:       return "trophy.fill"
+        case .goldWindfall:      return "banknote.fill"
+        case .desperateStrike:   return "shield.lefthalf.filled"
+        case .reshuffleOnce:     return "arrow.triangle.2.circlepath"
+        }
+    }
 }
 
 // MARK: - 预设 Buff

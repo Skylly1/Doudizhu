@@ -92,8 +92,9 @@ struct CollectionView: View {
                         .foregroundColor(Theme.textDisabled)
                 }
             } else {
-                Text(joker.icon)
+                Image(systemName: joker.effect.systemIcon)
                     .font(.title)
+                    .foregroundColor(rarityColor)
                     .frame(width: 44)
             }
 
@@ -142,8 +143,9 @@ struct CollectionView: View {
 
                 ForEach(Buff.allBuffs) { buff in
                     HStack(spacing: 12) {
-                        Text(buff.icon)
+                        Image(systemName: buff.type.systemIcon)
                             .font(.title)
+                            .foregroundColor(Theme.flame)
                             .frame(width: 44)
 
                         VStack(alignment: .leading, spacing: 3) {

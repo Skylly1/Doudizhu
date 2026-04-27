@@ -38,9 +38,16 @@ final class PurchaseManager: ObservableObject {
 
     // MARK: - Public API
 
+    /// 免费体验额度（一次性加1层）
+    private var freePeekUsed: Bool {
+        UserDefaults.standard.bool(forKey: "demoGateFreePeekUsed")
+    }
+
     /// 检查当前层是否在试玩范围内
     func canAccessFloor(_ floorIndex: Int) -> Bool {
-        isFullVersion || floorIndex < Self.demoMaxFloor
+        if isFullVersion { return true }
+        let effectiveMax = freePeekUsed ? Self.demoMaxFloor + 1 : Self.demoMaxFloor
+        return floorIndex < effectiveMax
     }
 
     /// 加载产品信息

@@ -43,6 +43,28 @@ struct BattleView: View {
             // SwiftUI 覆盖层
             VStack(spacing: 0) {
                 topBar
+                // 每日挑战修改器常驻提示
+                if let dc = rogueRun.dailyChallenge {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "calendar.badge.exclamationmark")
+                                .font(.caption2)
+                                .foregroundColor(Theme.gold)
+                            ForEach(dc.modifiers, id: \.rawValue) { mod in
+                                HStack(spacing: 3) {
+                                    Image(systemName: mod.icon)
+                                        .font(.caption2)
+                                    Text(mod.name)
+                                        .font(.caption2.bold())
+                                }
+                                .foregroundColor(Theme.flame)
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                    }
+                    .background(Theme.flame.opacity(0.08))
+                }
                 // 本层出牌记录
                 if !rogueRun.playHistory.isEmpty {
                     playHistoryBar
@@ -173,9 +195,22 @@ struct BattleView: View {
             }
         }
         .onChange(of: rogueRun.phase) { _, newPhase in
-            if case .scoring(_) = newPhase {
+            if case .scoring(let result) = newPhase {
                 // Score-up sound (card-play/bomb/combo feedback already in BattleScene)
                 SoundManager.shared.play(.scoreUp)
+
+                // allOrNothing 修改器提醒：出牌得 0 分时弹出提示
+                if result.score == 0,
+                   rogueRun.dailyChallenge?.modifiers.contains(.allOrNothing) == true {
+                    let hint = L10n.isEnglish
+                        ? "⚡ All or Nothing: Only Bombs & Rockets score!"
+                        : "⚡ 孤注一掷：仅炸弹和火箭可得分！"
+                    withAnimation { contextHint = hint }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        withAnimation { if contextHint == hint { contextHint = nil } }
+                    }
+                }
+
                 // 得分动画：延迟后切回选牌
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     rogueRun.onScoringComplete()
@@ -373,7 +408,7 @@ struct BattleView: View {
                             HStack(spacing: 4) {
                                 ForEach(rogueRun.activeJokers) { joker in
                                     HStack(spacing: 2) {
-                                        Text(joker.icon).font(.caption2)
+                                        Image(systemName: joker.effect.systemIcon).font(.caption2)
                                         Text(joker.name).font(.caption2)
                                     }
                                     .padding(.horizontal, 6)
@@ -383,7 +418,7 @@ struct BattleView: View {
                                 }
                                 ForEach(rogueRun.activeBuffs) { buff in
                                     HStack(spacing: 2) {
-                                        Text(buff.icon).font(.caption2)
+                                        Image(systemName: buff.type.systemIcon).font(.caption2)
                                         Text(buff.name).font(.caption2)
                                     }
                                     .padding(.horizontal, 6)

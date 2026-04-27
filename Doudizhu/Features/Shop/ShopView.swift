@@ -184,7 +184,7 @@ struct ShopView: View {
                         FlowLayout(spacing: 6) {
                             ForEach(rogueRun.activeJokers) { joker in
                                 HStack(spacing: 3) {
-                                    Text(joker.icon).font(.caption2)
+                                    Image(systemName: joker.effect.systemIcon).font(.caption2)
                                     Text(joker.name).font(.caption2)
                                 }
                                 .padding(.horizontal, 10)
@@ -205,7 +205,7 @@ struct ShopView: View {
                         FlowLayout(spacing: 6) {
                             ForEach(rogueRun.activeBuffs) { buff in
                                 HStack(spacing: 3) {
-                                    Text(buff.icon).font(.caption2)
+                                    Image(systemName: buff.type.systemIcon).font(.caption2)
                                     Text(buff.name).font(.caption2)
                                 }
                                 .padding(.horizontal, 10)
@@ -437,8 +437,9 @@ struct JokerShopRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text(item.joker.icon)
+            Image(systemName: item.joker.effect.systemIcon)
                 .font(.title)
+                .foregroundColor(rarityColor)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
@@ -498,8 +499,9 @@ struct ShopItemRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text(item.buff.icon)
+            Image(systemName: item.buff.type.systemIcon)
                 .font(.title)
+                .foregroundColor(Theme.flame)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.buff.name)

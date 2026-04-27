@@ -34,17 +34,38 @@ struct DailyChallenge {
         return DailyChallenge(date: Date(), seed: seed, modifiers: mods, bonusGold: 50)
     }
 
-    /// Has today's challenge been attempted?
-    static var hasPlayedToday: Bool {
-        let key = "dailyChallengeDate"
+    /// Has today's challenge been completed (won or lost)?
+    static var hasCompletedToday: Bool {
+        let key = "dailyChallengeCompleted"
         guard let lastDate = UserDefaults.standard.string(forKey: key) else { return false }
-        let today = Self.todayString
-        return lastDate == today
+        return lastDate == todayString
     }
 
-    /// Record that today's challenge was attempted
+    /// Is there an in-progress daily challenge that can be resumed?
+    static var hasInProgressToday: Bool {
+        let startKey = "dailyChallengeStarted"
+        guard let startDate = UserDefaults.standard.string(forKey: startKey) else { return false }
+        return startDate == todayString && !hasCompletedToday
+    }
+
+    /// Has today's challenge been attempted? (backward compat: completed OR started)
+    static var hasPlayedToday: Bool {
+        hasCompletedToday
+    }
+
+    /// Record that today's challenge was started
+    static func markStarted() {
+        UserDefaults.standard.set(todayString, forKey: "dailyChallengeStarted")
+    }
+
+    /// Record that today's challenge was completed (won, failed, or abandoned)
+    static func markCompleted() {
+        UserDefaults.standard.set(todayString, forKey: "dailyChallengeCompleted")
+    }
+
+    /// Record that today's challenge was attempted (legacy, calls markStarted)
     static func markPlayed() {
-        UserDefaults.standard.set(todayString, forKey: "dailyChallengeDate")
+        markStarted()
     }
 
     /// Record high score for daily
