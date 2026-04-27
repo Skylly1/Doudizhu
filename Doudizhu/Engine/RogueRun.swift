@@ -734,6 +734,7 @@ enum HandSortMode: String, CaseIterable {
                 }
             }
             phase = .floorWin
+            autoSave()  // 覆盖 playCards 中的 mid-scoring 存档，确保 floorWin 状态被保存
         } else if playsRemaining <= 0 || handCards.isEmpty {
             // 规则牌：保险单 — 失败时保留50%分数到下一次
             if hasJoker(.insurance) {
@@ -762,6 +763,7 @@ enum HandSortMode: String, CaseIterable {
             autoSave()
         } else {
             phase = .selecting
+            autoSave()  // 覆盖 playCards 中的 mid-scoring 存档，确保存档状态稳定
         }
     }
 
