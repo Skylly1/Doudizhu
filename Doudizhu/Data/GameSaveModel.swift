@@ -182,47 +182,77 @@ final class SaveManager {
         self.modelContext = context
     }
 
-    /// 保存当前游戏状态
+    /// 保存当前游戏状态（按槽位隔离：主线 vs 每日挑战）
     func save(run: RogueRun, buildId: String) {
         guard let context = modelContext else { return }
-        // 删除旧存档（只保留一个）
-        let descriptor = FetchDescriptor<GameSaveModel>()
-        if let existing = try? context.fetch(descriptor) {
-            for old in existing {
-                context.delete(old)
-            }
+        let isDaily = run.dailyChallenge != nil
+        // 只删除同槽位旧存档
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        for old in all where old.isDailyChallenge == isDaily {
+            context.delete(old)
         }
         let save = GameSaveModel.snapshot(from: run, buildId: buildId)
         context.insert(save)
         try? context.save()
     }
 
-    /// 检查是否有存档
+    /// 检查是否有主线存档
     var hasSavedGame: Bool {
         guard let context = modelContext else { return false }
-        let descriptor = FetchDescriptor<GameSaveModel>()
-        return (try? context.fetchCount(descriptor)) ?? 0 > 0
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        return all.contains { !$0.isDailyChallenge }
     }
 
-    /// 读取最新存档
+    /// 检查是否有每日挑战存档
+    var hasDailySave: Bool {
+        guard let context = modelContext else { return false }
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        return all.contains { $0.isDailyChallenge }
+    }
+
+    /// 读取主线存档
     func loadSave() -> GameSaveModel? {
         guard let context = modelContext else { return nil }
-        var descriptor = FetchDescriptor<GameSaveModel>(
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>(
             sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-        )
-        descriptor.fetchLimit = 1
-        return try? context.fetch(descriptor).first
+        ))) ?? []
+        return all.first { !$0.isDailyChallenge }
     }
 
-    /// 删除所有存档
+    /// 读取每日挑战存档
+    func loadDailySave() -> GameSaveModel? {
+        guard let context = modelContext else { return nil }
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>(
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        ))) ?? []
+        return all.first { $0.isDailyChallenge }
+    }
+
+    /// 删除主线存档
     func clearSaves() {
         guard let context = modelContext else { return }
-        let descriptor = FetchDescriptor<GameSaveModel>()
-        if let existing = try? context.fetch(descriptor) {
-            for old in existing {
-                context.delete(old)
-            }
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        for old in all where !old.isDailyChallenge {
+            context.delete(old)
         }
+        try? context.save()
+    }
+
+    /// 删除每日挑战存档
+    func clearDailySaves() {
+        guard let context = modelContext else { return }
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        for old in all where old.isDailyChallenge {
+            context.delete(old)
+        }
+        try? context.save()
+    }
+
+    /// 删除所有存档（重置用）
+    func clearAllSaves() {
+        guard let context = modelContext else { return }
+        let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
+        for old in all { context.delete(old) }
         try? context.save()
     }
 }

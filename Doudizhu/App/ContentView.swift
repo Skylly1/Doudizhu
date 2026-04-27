@@ -70,7 +70,7 @@ struct ContentView: View {
                             navigate(to: .battle)
                         },
                         onResume: DailyChallenge.hasInProgressToday ? {
-                            if rogueRun.restoreFromSave() {
+                            if rogueRun.restoreFromDailySave() {
                                 navigate(to: .battle)
                             }
                         } : nil,
@@ -100,6 +100,8 @@ struct ContentView: View {
                         rogueRun.leaveShop()
                         goBack()
                     }, onQuit: {
+                        // 从商店退出时自动保存进度
+                        SaveManager.shared.save(run: rogueRun, buildId: "")
                         SoundManager.shared.stopBGM()
                         goHome()
                     })
@@ -118,6 +120,8 @@ struct ContentView: View {
                             goBack()
                         },
                         onBack: {
+                            // 从付费墙退出时自动保存进度
+                            SaveManager.shared.save(run: rogueRun, buildId: "")
                             SoundManager.shared.stopBGM()
                             goHome()
                         },
@@ -125,6 +129,7 @@ struct ContentView: View {
                         equippedBuffs: rogueRun.activeBuffs
                     )
                     .swipeBack {
+                        SaveManager.shared.save(run: rogueRun, buildId: "")
                         SoundManager.shared.stopBGM()
                         goHome()
                     }
@@ -153,7 +158,8 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .background || newPhase == .inactive {
-                if currentScreen == .battle {
+                // 在战斗、商店、付费墙等游戏进行中的页面都自动保存
+                if [.battle, .shop, .demoGate].contains(currentScreen) {
                     SaveManager.shared.save(run: rogueRun, buildId: "")
                 }
             }
