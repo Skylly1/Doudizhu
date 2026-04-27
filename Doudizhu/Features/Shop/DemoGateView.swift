@@ -26,6 +26,7 @@ struct DemoGateView: View {
     }
     private var isFirstView: Bool { paywallViewCount <= 1 }
 
+    @AppStorage("demo_gate_free_peek_used") private var freePeekUsed = false
     @State private var showContent = false
     @State private var pulseButton = false
     @State private var congratsScale: CGFloat = 0.6
