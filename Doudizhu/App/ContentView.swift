@@ -55,6 +55,9 @@ struct ContentView: View {
                                 if rogueRun.phase == .shopping {
                                     navigate(to: .shop)
                                 }
+                            } else {
+                                // 存档丢失，清理残留状态
+                                SaveManager.shared.clearSaves()
                             }
                         }
                     )
@@ -80,6 +83,13 @@ struct ContentView: View {
                                 if rogueRun.phase == .shopping {
                                     navigate(to: .shop)
                                 }
+                            } else {
+                                // 存档丢失（SwiftData 重建等），清除过期标记后重新开始
+                                DailyChallenge.markCompleted()
+                                SaveManager.shared.clearDailySaves()
+                                let challenge = DailyChallenge.today
+                                rogueRun.startDailyChallenge(challenge)
+                                navigate(to: .battle)
                             }
                         } : nil,
                         onBack: { goBack() }
