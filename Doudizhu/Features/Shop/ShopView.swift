@@ -105,6 +105,12 @@ struct ShopView: View {
                     }
                 }
 
+                // 锁定的高级规则牌预览（仅试玩用户可见）
+                if !PurchaseManager.shared.isFullVersion {
+                    lockedJokerTeaser
+                        .padding(.horizontal, Theme.spacingLG)
+                }
+
                 // 增益道具区
                 if !shopItems.isEmpty {
                     VStack(alignment: .leading, spacing: Theme.spacingSM) {
@@ -250,6 +256,46 @@ struct ShopView: View {
                 }
             }
         }
+    }
+
+    // MARK: - 锁定规则牌预览
+
+    private var lockedJokerTeaser: some View {
+        HStack(spacing: 12) {
+            // 半透明锁定图标
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Theme.bgInset)
+                    .frame(width: 44, height: 44)
+                Image(systemName: "lock.fill")
+                    .font(.title3)
+                    .foregroundColor(Theme.gold.opacity(0.5))
+            }
+            
+            VStack(alignment: .leading, spacing: 3) {
+                Text(L10n.isEnglish ? "Premium Jokers" : "高级规则牌")
+                    .font(.subheadline.bold())
+                    .foregroundColor(Theme.gold)
+                Text(L10n.isEnglish ? "Unlock 50+ unique Jokers in full version" : "完整版解锁 50+ 独特规则牌")
+                    .font(.caption)
+                    .foregroundColor(Theme.textTertiary)
+            }
+            
+            Spacer()
+            
+            Image(systemName: "crown.fill")
+                .font(.caption)
+                .foregroundColor(Theme.gold.opacity(0.6))
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .fill(Theme.bgCard.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .stroke(Theme.gold.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [6, 3]))
+                )
+        )
     }
 
     // MARK: - 首次商店引导
