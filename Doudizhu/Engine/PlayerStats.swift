@@ -30,16 +30,6 @@ import Foundation
         totalPlayTime = defaults.double(forKey: "stats_totalPlayTime")
     }
 
-    func recordRun(won: Bool, floorsCleared: Int, cardsPlayed: Int, goldEarned: Int, build: String) {
-        totalRuns += 1
-        if won { totalWins += 1 }
-        totalFloors += floorsCleared
-        totalCardsPlayed += cardsPlayed
-        totalGoldEarned += goldEarned
-        favoriteBuild = build
-        save()
-    }
-
     func recordCombo(_ combo: Int) {
         if combo > highestCombo {
             highestCombo = combo
