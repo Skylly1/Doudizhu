@@ -224,6 +224,8 @@ struct HomeView: View {
             .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
         }
         .disabled(completed)
+        .accessibilityLabel(completed ? "每日挑战已完成" : "每日挑战")
+        .accessibilityHint(completed ? "今日挑战已完成" : "开始今日限定挑战")
     }
 
     var body: some View {
@@ -349,6 +351,8 @@ struct HomeView: View {
                             onContinue()
                         }
                         .padding(.horizontal, 40)
+                        .accessibilityLabel("继续冒险")
+                        .accessibilityHint("继续上次保存的冒险进度")
                         .offset(y: showButtons[0] ? 0 : 30)
                         .opacity(showButtons[0] ? 1.0 : 0)
                     }
@@ -365,6 +369,8 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 40)
+                    .accessibilityLabel(hasSavedGame ? "新的冒险" : "开始冒险")
+                    .accessibilityHint("开始新的一局游戏")
                     .offset(y: showButtons[1] ? 0 : 30)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
@@ -378,6 +384,8 @@ struct HomeView: View {
                                 onNavigate(.buildSelect)
                             }
                         }
+                        .accessibilityLabel("快速开始")
+                        .accessibilityHint("跳过地图直接开始游戏")
                         dailyChallengeButton
                     }
                     .padding(.horizontal, 40)
@@ -388,9 +396,13 @@ struct HomeView: View {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)
                         }
+                        .accessibilityLabel("卡牌收集")
+                        .accessibilityHint("查看卡牌图鉴和成就")
                         SecondaryButton(title: L10n.settings, icon: "gearshape.fill") {
                             onNavigate(.settings)
                         }
+                        .accessibilityLabel("设置")
+                        .accessibilityHint("打开游戏设置")
                     }
                     .padding(.horizontal, 40)
                     .offset(y: showButtons[3] ? 0 : 30)
@@ -475,6 +487,8 @@ private struct TodayStatsBanner: View {
                 )
         )
         .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("今日数据")
     }
 
     private var divider: some View {
@@ -496,6 +510,9 @@ private struct TodayStatsBanner: View {
                 .foregroundColor(Theme.textTertiary)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(label)
+        .accessibilityValue(value)
     }
 }
 

@@ -88,5 +88,7 @@ private struct BuildCard: View {
                     .stroke(Theme.border)
             )
         }
+        .accessibilityLabel("\(build.name)，\(build.description)")
+        .accessibilityHint("选择此构筑开始游戏")
     }
 }

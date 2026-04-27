@@ -29,6 +29,9 @@ struct ShopView: View {
                                     .font(.title3.bold().monospacedDigit())
                                     .foregroundColor(Theme.gold)
                             }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("金币")
+                            .accessibilityValue("\(rogueRun.gold)")
                         )
                     )
                     .padding(.top, Theme.spacingSM)
@@ -60,6 +63,8 @@ struct ShopView: View {
                     )
                 }
                 .disabled(rogueRun.gold < refreshCost)
+                .accessibilityLabel("刷新商店")
+                .accessibilityHint("花费\(refreshCost)金币刷新商品")
 
                 // 规则牌区
                 if !jokerItems.isEmpty {
@@ -336,6 +341,8 @@ struct ShopView: View {
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))
                 }
+                .accessibilityLabel("我知道了")
+                .accessibilityHint("关闭商店介绍")
             }
             .padding(Theme.spacingXL)
             .frame(maxWidth: 340)
@@ -403,6 +410,8 @@ struct ShopView: View {
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))
                 }
+                .accessibilityLabel("我知道了")
+                .accessibilityHint("关闭规则牌介绍")
             }
             .padding(Theme.spacingXL)
             .frame(maxWidth: 320)
@@ -522,6 +531,8 @@ struct JokerShopRow: View {
                 )
             }
             .disabled(!canAfford || slotsFull)
+            .accessibilityLabel("购买\(item.joker.name)")
+            .accessibilityHint("花费\(item.cost)金币购买此规则牌")
         }
         .padding(Theme.spacingMD)
         .background(
@@ -535,6 +546,8 @@ struct JokerShopRow: View {
         .shadow(color: rarityColor.opacity(item.joker.rarity == .legendary ? 0.35 : 0.15),
                 radius: item.joker.rarity == .legendary ? 12 : 6)
         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(item.joker.name)，\(item.joker.rarity.displayName)，\(item.joker.description)")
     }
 }
 
@@ -576,6 +589,8 @@ struct ShopItemRow: View {
                 )
             }
             .disabled(!canAfford)
+            .accessibilityLabel("购买\(item.buff.name)")
+            .accessibilityHint("花费\(item.cost)金币购买此增益")
         }
         .padding(Theme.spacingMD)
         .background(
@@ -587,6 +602,8 @@ struct ShopItemRow: View {
                 )
         )
         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(item.buff.name)，\(item.buff.description)")
     }
 }
 

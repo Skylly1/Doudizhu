@@ -200,6 +200,8 @@ struct DemoGateView: View {
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(value)
     }
 
     // MARK: - 当前装备（损失规避）
@@ -325,6 +327,8 @@ struct DemoGateView: View {
                 .foregroundColor(Theme.textDisabled)
         }
         .padding(.vertical, 6)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(name)，\(desc)")
     }
 
     // MARK: - 完整版特权
@@ -430,6 +434,8 @@ struct DemoGateView: View {
                 .scaleEffect(pulseButton ? 1.02 : 1.0)
             }
             .disabled(purchaseManager.purchaseState == .purchasing)
+            .accessibilityLabel("解锁完整版")
+            .accessibilityHint("购买完整版游戏，价格\(purchaseManager.formattedPrice)")
 
             // 免费体验一层（仅首次展示且未使用过）
             if !freePeekUsed && isFirstView {
@@ -457,6 +463,8 @@ struct DemoGateView: View {
                                 .stroke(Theme.cyan.opacity(0.3)))
                     )
                 }
+                .accessibilityLabel("免费体验下一层")
+                .accessibilityHint("免费体验一层，不需要付费")
             }
 
             // 恢复购买
@@ -465,6 +473,8 @@ struct DemoGateView: View {
             }
             .font(Theme.fontCaption)
             .foregroundColor(Theme.textDisabled)
+            .accessibilityLabel("恢复购买")
+            .accessibilityHint("恢复之前的购买记录")
 
             // 每日挑战免费提示 + 返回
             HStack(spacing: 16) {
@@ -481,6 +491,8 @@ struct DemoGateView: View {
                 }
                 .font(.caption.bold())
                 .foregroundColor(Theme.textTertiary)
+                .accessibilityLabel("返回主菜单")
+                .accessibilityHint("不购买，返回主菜单")
             }
             .padding(.top, 4)
 
@@ -509,5 +521,7 @@ struct DemoGateView: View {
                 .font(.subheadline)
                 .foregroundColor(Theme.textSecondary)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(text)
     }
 }

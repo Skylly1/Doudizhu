@@ -52,6 +52,9 @@ struct CollectionView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .accessibilityLabel(title)
+        .accessibilityHint("切换到\(title)标签页")
+        .accessibilityValue(selectedTab == index ? "已选中" : "")
     }
 
     // MARK: - 规则牌收藏
@@ -129,6 +132,9 @@ struct CollectionView: View {
                 .stroke(rarityColor.opacity(isLocked ? 0.08 : 0.2))
         )
         .opacity(isLocked ? 0.6 : 1.0)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(isLocked ? "\(joker.name)，已锁定" : "\(joker.name)，\(joker.rarity.displayName)")
+        .accessibilityValue(isLocked ? "通过成就解锁" : joker.description)
     }
 
     // MARK: - 增益收藏
@@ -165,6 +171,9 @@ struct CollectionView: View {
                             .fill(Theme.bgCard)
                             .stroke(Theme.flame.opacity(0.15))
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(buff.name)")
+                    .accessibilityValue(buff.description)
                 }
             }
             .padding(.horizontal, Theme.spacingMD)

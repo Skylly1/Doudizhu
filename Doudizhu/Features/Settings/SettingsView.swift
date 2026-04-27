@@ -48,6 +48,8 @@ struct SettingsView: View {
                                 }
                                 .padding(.vertical, 6)
                             }
+                            .accessibilityLabel("帮助与常见问题")
+                            .accessibilityHint("查看游戏帮助和FAQ")
                         }
 
                         // 音效组
@@ -61,6 +63,8 @@ struct SettingsView: View {
                                 Slider(value: $soundVolume, in: 0...1, step: 0.05)
                                     .tint(Theme.gold)
                                     .disabled(!soundEnabled)
+                                    .accessibilityLabel("音量")
+                                    .accessibilityValue("\(Int(soundVolume * 100))%")
                             }
                             .padding(.vertical, 2)
                             Divider().background(Theme.border)
@@ -83,6 +87,8 @@ struct SettingsView: View {
                                 }
                                 .padding(.vertical, 6)
                             }
+                            .accessibilityLabel("重置新手引导")
+                            .accessibilityHint("双击重新开始新手教程")
                             Divider().background(Theme.border)
                             Button {
                                 ContextualHintManager.shared.resetAll()
@@ -286,6 +292,7 @@ struct SettingsView: View {
             .foregroundColor(Theme.textPrimary)
             .tint(Theme.gold)
             .padding(.vertical, 2)
+            .accessibilityHint("双击切换开关")
     }
 
     private func infoRow(_ title: String, value: String) -> some View {
@@ -316,6 +323,8 @@ struct SettingsView: View {
             }
             .padding(.vertical, 4)
         }
+        .accessibilityLabel(title)
+        .accessibilityHint(subtitle)
     }
 }
 

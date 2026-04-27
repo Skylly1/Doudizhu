@@ -31,6 +31,9 @@ struct AchievementView: View {
                     .frame(height: 8)
                 }
                 .padding(.horizontal, Theme.spacingLG)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("成就进度")
+                .accessibilityValue("\(prog.unlocked)已解锁，共\(prog.total)个")
 
                 if prog.unlocked == 0 {
                     // Empty state
@@ -136,5 +139,8 @@ struct AchievementView: View {
         )
         .shadow(color: unlocked ? accentColor.opacity(0.1) : .clear, radius: 4, y: 2)
         .padding(.horizontal, Theme.spacingMD)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(ach.name)")
+        .accessibilityValue(unlocked ? "已解锁，\(ach.description)" : "未解锁")
     }
 }
