@@ -949,25 +949,27 @@ struct BattleView: View {
                 }
                 .frame(maxWidth: 280)
 
-                Button(L10n.restart) {
-                    showRestartConfirm = true
-                }
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(width: 220, height: 50)
-                .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
-                .buttonStyle(GameButtonStyle())
-                .alert(
-                    L10n.battleRestartRunTitle,
-                    isPresented: $showRestartConfirm
-                ) {
-                    Button(L10n.cancel, role: .cancel) { }
-                    Button(L10n.restart, role: .destructive) {
-                        rogueRun.restart()
-                        battleScene?.refreshHand()
+                if rogueRun.dailyChallenge == nil {
+                    Button(L10n.restart) {
+                        showRestartConfirm = true
                     }
-                } message: {
-                    Text(L10n.battleRestartRunMessage)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(width: 220, height: 50)
+                    .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
+                    .buttonStyle(GameButtonStyle())
+                    .alert(
+                        L10n.battleRestartRunTitle,
+                        isPresented: $showRestartConfirm
+                    ) {
+                        Button(L10n.cancel, role: .cancel) { }
+                        Button(L10n.restart, role: .destructive) {
+                            rogueRun.restart()
+                            battleScene?.refreshHand()
+                        }
+                    } message: {
+                        Text(L10n.battleRestartRunMessage)
+                    }
                 }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
@@ -1026,39 +1028,41 @@ struct BattleView: View {
                         .fill(.ultraThinMaterial)
                 )
 
-                PrimaryButton(title: L10n.playAgain, icon: "arrow.clockwise") {
-                    rogueRun.restart()
-                    battleScene?.refreshHand()
-                }
-                .frame(maxWidth: 280)
-                .accessibilityLabel(L10n.playAgain)
-
-                // Ascension 升级提示
-                if rogueRun.ascensionLevel < 10 {
-                    Button {
-                        rogueRun.ascensionLevel += 1
+                if rogueRun.dailyChallenge == nil {
+                    PrimaryButton(title: L10n.playAgain, icon: "arrow.clockwise") {
                         rogueRun.restart()
                         battleScene?.refreshHand()
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "flame.fill")
-                            Text(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
-                        }
-                        .font(.headline)
-                        .foregroundColor(Theme.flame)
-                        .frame(width: 220, height: 46)
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                .fill(.ultraThinMaterial)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                        .stroke(Theme.flame.opacity(0.4))
-                                )
-                        )
-                        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                     }
-                    .buttonStyle(GameButtonStyle())
-                    .accessibilityLabel(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
+                    .frame(maxWidth: 280)
+                    .accessibilityLabel(L10n.playAgain)
+
+                    // Ascension 升级提示
+                    if rogueRun.ascensionLevel < 10 {
+                        Button {
+                            rogueRun.ascensionLevel += 1
+                            rogueRun.restart()
+                            battleScene?.refreshHand()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "flame.fill")
+                                Text(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
+                            }
+                            .font(.headline)
+                            .foregroundColor(Theme.flame)
+                            .frame(width: 220, height: 46)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .fill(.ultraThinMaterial)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                            .stroke(Theme.flame.opacity(0.4))
+                                    )
+                            )
+                            .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                        }
+                        .buttonStyle(GameButtonStyle())
+                        .accessibilityLabel(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
+                    }
                 }
 
                 // Share button

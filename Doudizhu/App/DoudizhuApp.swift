@@ -20,6 +20,9 @@ struct DoudizhuApp: App {
         // SwiftData 存档容器（Schema 变更时自动重建）
         modelContainer = Self.makeModelContainer()
 
+        // 注入 ModelContext 到 SaveManager（在 ContentView 构建前，避免丢失早期存档）
+        SaveManager.shared.configure(with: modelContainer.mainContext)
+
         GameCenterManager.shared.authenticate()
         LocalNotificationManager.requestPermissionIfNeeded()
         // 首次打开标记 — 漏斗首端
@@ -80,11 +83,7 @@ struct DoudizhuApp: App {
             ContentView()
                 .preferredColorScheme(.dark)
                 .modelContainer(modelContainer)
-                .onAppear {
-                    // 注入 ModelContext 到 SaveManager
-                    let context = modelContainer.mainContext
-                    SaveManager.shared.configure(with: context)
-                }
+
         }
     }
 }

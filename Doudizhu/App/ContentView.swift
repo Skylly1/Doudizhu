@@ -6,7 +6,7 @@ struct ContentView: View {
     @State private var navigationStack: [AppScreen] = []
     @StateObject private var rogueRun = RogueRun()
     @StateObject private var tutorialManager = TutorialManager()
-    @StateObject private var purchaseManager = PurchaseManager.shared
+    @ObservedObject private var purchaseManager = PurchaseManager.shared
     @Environment(\.scenePhase) private var scenePhase
 
     // MARK: - 导航方法

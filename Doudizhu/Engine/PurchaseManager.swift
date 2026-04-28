@@ -41,8 +41,7 @@ final class PurchaseManager: ObservableObject {
         let kcValue = Self.readKeychain()
         self.isFullVersion = udValue && kcValue
         transactionListener = listenForTransactions()
-        Task { await loadProduct() }
-        Task { await verifyEntitlements() }
+        Task { await loadProduct(); await verifyEntitlements() }
     }
 
     deinit {
