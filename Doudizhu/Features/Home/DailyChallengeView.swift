@@ -145,6 +145,12 @@ struct DailyChallengeView: View {
                 .foregroundColor(Theme.textPrimary)
                 .accessibilityAddTraits(.isHeader)
 
+            Text(L10n.isEnglish
+                 ? "Today's special rules that change the challenge"
+                 : "今日挑战的特殊规则，改变游戏玩法")
+                .font(.caption)
+                .foregroundColor(Theme.textSecondary)
+
             ForEach(challenge.modifiers, id: \.rawValue) { modifier in
                 HStack(spacing: 12) {
                     Image(systemName: modifier.icon)

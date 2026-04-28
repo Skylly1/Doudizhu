@@ -13,6 +13,16 @@ struct BuildSelectView: View {
             )
 
             ScrollView(showsIndicators: false) {
+                // 说明文字 — 帮助新手理解"构筑"概念
+                Text(L10n.isEnglish
+                     ? "Each build starts with different abilities. Pick your playstyle!"
+                     : "每种流派有不同的初始能力，选择你的战斗风格！")
+                    .font(.caption)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, Theme.spacingLG)
+                    .padding(.top, Theme.spacingSM)
+
                 LazyVGrid(columns: [
                     GridItem(.flexible(), spacing: 10),
                     GridItem(.flexible(), spacing: 10)
@@ -49,7 +59,7 @@ private struct BuildCard: View {
                 Text(build.description)
                     .font(.caption2)
                     .foregroundColor(Theme.textTertiary)
-                    .lineLimit(2)
+                    .lineLimit(3)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -89,6 +99,6 @@ private struct BuildCard: View {
             )
         }
         .accessibilityLabel("\(build.name)，\(build.description)")
-        .accessibilityHint("选择此构筑开始游戏")
+        .accessibilityHint(L10n.isEnglish ? "Select this build to start" : "选择此构筑开始游戏")
     }
 }

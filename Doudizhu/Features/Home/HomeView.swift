@@ -50,9 +50,11 @@ struct CardFanDecor: View {
             let w = geo.size.width
             let h = geo.size.height
             let centerX = w / 2
-            let baseY = h * 0.80
-            let cardW: CGFloat = 52
-            let cardH: CGFloat = 76
+            // 将卡牌推到更底部，避免遮挡按钮区域
+            let baseY = h * 0.92
+            let scale = Theme.screenScale
+            let cardW: CGFloat = 48 * scale
+            let cardH: CGFloat = 68 * scale
 
             // 5 张扇形排列的卡牌
             let cards: [(rank: String, suit: String, color: Color, angle: Double, offsetX: CGFloat)] = [

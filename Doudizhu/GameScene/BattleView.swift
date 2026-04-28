@@ -854,7 +854,7 @@ struct BattleView: View {
                     rogueRun.advanceToNextFloor()
                     battleScene?.refreshHand()
                 }
-                .frame(width: 220)
+                .frame(maxWidth: 280)
             }
         }
     }
@@ -920,7 +920,7 @@ struct BattleView: View {
                                     .stroke(Theme.gold.opacity(0.2)))
                         )
                     }
-                    .frame(width: 280)
+                    .frame(maxWidth: 280)
                 }
 
                 // 重试本关按钮
@@ -928,7 +928,7 @@ struct BattleView: View {
                     rogueRun.retryCurrentFloor()
                     battleScene?.refreshHand()
                 }
-                .frame(width: 220)
+                .frame(maxWidth: 280)
 
                 Button(L10n.restart) {
                     showRestartConfirm = true
@@ -1014,7 +1014,7 @@ struct BattleView: View {
                     rogueRun.restart()
                     battleScene?.refreshHand()
                 }
-                .frame(width: 220)
+                .frame(maxWidth: 280)
 
                 // Ascension 升级提示
                 if rogueRun.ascensionLevel < 10 {
@@ -1194,21 +1194,24 @@ struct BattleView: View {
     private func overlayBase<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         ZStack {
             Color.black.opacity(0.6).ignoresSafeArea()
-            VStack {
-                content()
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack {
+                    content()
+                }
+                .padding(Theme.spacingXL)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusLG)
+                        .fill(.ultraThinMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.radiusLG)
+                                .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
+                        )
+                )
+                .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
+                .shadow(color: Theme.gold.opacity(0.1), radius: 30)
+                .padding(Theme.spacingXL)
             }
-            .padding(Theme.spacingXL)
-            .background(
-                RoundedRectangle(cornerRadius: Theme.radiusLG)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Theme.radiusLG)
-                            .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
-                    )
-            )
-            .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
-            .shadow(color: Theme.gold.opacity(0.1), radius: 30)
-            .padding(Theme.spacingXL)
+            .frame(maxHeight: .infinity)
             .transition(.scale(scale: 0.8).combined(with: .opacity))
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.75), value: rogueRun.phase)
@@ -1259,7 +1262,7 @@ struct BattleView: View {
                 ) {
                     showPauseMenu = false
                 }
-                .frame(width: 220)
+                .frame(maxWidth: 280)
 
                 // 重试本关（需二次确认，因为会丢失本层进度）
                 SecondaryButton(
@@ -1268,7 +1271,7 @@ struct BattleView: View {
                 ) {
                     showRetryConfirm = true
                 }
-                .frame(width: 220)
+                .frame(maxWidth: 280)
                 .alert(
                     L10n.isEnglish ? "Retry Floor?" : "重试本关？",
                     isPresented: $showRetryConfirm
@@ -1337,7 +1340,7 @@ struct BattleView: View {
                                 .stroke(Theme.border)
                         )
                 )
-                .frame(width: 220)
+                .frame(maxWidth: 280)
 
                 // 手牌排序
                 Button {

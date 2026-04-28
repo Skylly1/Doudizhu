@@ -467,9 +467,9 @@ struct DemoGateView: View {
             }
 
             // 价格锚定 + 倒计时限时优惠
-            HStack(spacing: 6) {
+            VStack(spacing: 6) {
+                // 倒计时或限时标签
                 if isLaunchOfferActive {
-                    // 倒计时标签（紧迫感）
                     HStack(spacing: 4) {
                         Image(systemName: "timer")
                             .font(.caption2)
@@ -489,27 +489,28 @@ struct DemoGateView: View {
                         .background(Capsule().fill(Theme.gold))
                 }
 
-                // 原价删除线（锚定效果）
-                Text(originalPriceText)
-                    .font(.caption.bold())
-                    .strikethrough(true, color: Theme.flame)
-                    .foregroundColor(Theme.textDisabled)
+                // 价格行
+                HStack(spacing: 6) {
+                    Text(originalPriceText)
+                        .font(.caption.bold())
+                        .strikethrough(true, color: Theme.flame)
+                        .foregroundColor(Theme.textDisabled)
 
-                Image(systemName: "arrow.right")
-                    .font(.caption2)
-                    .foregroundColor(Theme.gold.opacity(0.6))
+                    Image(systemName: "arrow.right")
+                        .font(.caption2)
+                        .foregroundColor(Theme.gold.opacity(0.6))
 
-                Text(purchaseManager.formattedPrice)
-                    .font(.caption.bold())
-                    .foregroundColor(Theme.gold)
+                    Text(purchaseManager.formattedPrice)
+                        .font(.caption.bold())
+                        .foregroundColor(Theme.gold)
 
-                // 折扣百分比标签
-                Text(L10n.isEnglish ? "37% OFF" : "省37%")
-                    .font(.system(size: 10, weight: .heavy))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(Theme.flame))
+                    Text(L10n.isEnglish ? "37% OFF" : "省37%")
+                        .font(.system(size: 10, weight: .heavy))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Theme.flame))
+                }
 
                 if !isFirstView {
                     Text(L10n.isEnglish ? "Your progress awaits" : "你的进度还在")
@@ -562,7 +563,7 @@ struct DemoGateView: View {
                 .font(.headline)
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity)
-                .frame(height: 54)
+                .frame(minHeight: 54)
                 .background(
                     RoundedRectangle(cornerRadius: Theme.radiusMD)
                         .fill(Theme.goldGradient)
@@ -600,7 +601,7 @@ struct DemoGateView: View {
                     }
                     .foregroundColor(Theme.cyan)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 44)
+                    .frame(minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusMD)
                             .fill(Theme.cyanDim)

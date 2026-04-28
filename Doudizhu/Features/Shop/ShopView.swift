@@ -148,13 +148,20 @@ struct ShopView: View {
 
                 // 武功秘籍区
                 VStack(alignment: .leading, spacing: Theme.spacingSM) {
-                    Label(L10n.isEnglish ? "Martial Arts Manuals" : "武功秘籍", systemImage: "book.closed.fill")
-                        .font(Theme.fontSection)
-                        .foregroundColor(Theme.gold)
-                        .padding(.horizontal, Theme.spacingLG)
-                        .onAppear {
-                            ContextualHintManager.shared.onUpgradeSectionViewed()
-                        }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Label(L10n.isEnglish ? "Martial Arts Manuals" : "武功秘籍", systemImage: "book.closed.fill")
+                            .font(Theme.fontSection)
+                            .foregroundColor(Theme.gold)
+                        Text(L10n.isEnglish
+                             ? "Upgrade pattern base scores for higher combos"
+                             : "升级牌型基础分，提高得分上限")
+                            .font(.caption)
+                            .foregroundColor(Theme.textSecondary)
+                    }
+                    .padding(.horizontal, Theme.spacingLG)
+                    .onAppear {
+                        ContextualHintManager.shared.onUpgradeSectionViewed()
+                    }
 
                     VStack(spacing: 6) {
                         ForEach(PatternType.allCases, id: \.self) { type in
@@ -683,7 +690,9 @@ struct PatternUpgradeRow: View {
             }
 
             if level > 0 {
-                Text("+\(level * PatternUpgradeManager.chipPerLevel)🔵 +\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))×")
+                Text(L10n.isEnglish
+                     ? "Chips+\(level * PatternUpgradeManager.chipPerLevel)  Mult+\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))"
+                     : "筹码+\(level * PatternUpgradeManager.chipPerLevel)  倍率+\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))")
                     .font(.caption2)
                     .foregroundColor(Theme.textSecondary)
             }

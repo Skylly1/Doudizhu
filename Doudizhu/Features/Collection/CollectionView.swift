@@ -11,12 +11,15 @@ struct CollectionView: View {
                 GameNavBar(title: L10n.collection, onBack: onBack)
 
                 // Tab 切换
-                HStack(spacing: 0) {
-                    tabButton(L10n.jokerSection, systemIcon: "suit.spade.fill", index: 0)
-                    tabButton(L10n.buffSection, systemIcon: "sparkles", index: 1)
-                    tabButton(L10n.patternTab, systemIcon: "book.fill", index: 2)
-                    tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
-                    tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 0) {
+                        tabButton(L10n.jokerSection, systemIcon: "suit.spade.fill", index: 0)
+                        tabButton(L10n.buffSection, systemIcon: "sparkles", index: 1)
+                        tabButton(L10n.patternTab, systemIcon: "book.fill", index: 2)
+                        tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
+                        tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
+                    }
+                    .frame(minWidth: UIScreen.main.bounds.width - Theme.spacingMD * 2)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -44,7 +47,11 @@ struct CollectionView: View {
                 HStack(spacing: 4) {
                     Image(systemName: systemIcon)
                         .font(.caption)
-                    Text(title)
+                    if !Theme.isCompactScreen {
+                        Text(title)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
                 }
                 .font(.subheadline.weight(selectedTab == index ? .bold : .medium))
                 .foregroundColor(selectedTab == index ? Theme.gold : Theme.textTertiary)
@@ -55,8 +62,8 @@ struct CollectionView: View {
             .frame(maxWidth: .infinity)
         }
         .accessibilityLabel(title)
-        .accessibilityHint("切换到\(title)标签页")
-        .accessibilityValue(selectedTab == index ? "已选中" : "")
+        .accessibilityHint(L10n.isEnglish ? "Switch to \(title) tab" : "切换到\(title)标签页")
+        .accessibilityValue(selectedTab == index ? (L10n.isEnglish ? "Selected" : "已选中") : "")
     }
 
     // MARK: - 规则牌收藏
@@ -64,10 +71,19 @@ struct CollectionView: View {
     private var jokerCollection: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
+                // 新手说明
+                Text(L10n.isEnglish
+                     ? "Jokers are permanent abilities that change game rules"
+                     : "规则牌 — 永久改变游戏规则的特殊能力卡")
+                    .font(.caption)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, Theme.spacingMD)
+                    .padding(.top, Theme.spacingSM)
+
                 Text(L10n.jokerCount(Joker.allJokers.count))
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textTertiary)
-                    .padding(.top, Theme.spacingSM)
 
                 ForEach(Joker.allJokers) { joker in
                     jokerCard(joker)
@@ -144,10 +160,18 @@ struct CollectionView: View {
     private var buffCollection: some View {
         ScrollView {
             LazyVStack(spacing: 10) {
+                Text(L10n.isEnglish
+                     ? "Buffs are temporary boosts that last for the current run"
+                     : "增益 — 本局冒险中的临时强化效果")
+                    .font(.caption)
+                    .foregroundColor(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, Theme.spacingMD)
+                    .padding(.top, Theme.spacingSM)
+
                 Text(L10n.buffCount(Buff.allBuffs.count))
                     .font(Theme.fontCaption)
                     .foregroundColor(Theme.textTertiary)
-                    .padding(.top, Theme.spacingSM)
 
                 ForEach(Buff.allBuffs) { buff in
                     HStack(spacing: 12) {

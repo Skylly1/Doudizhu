@@ -214,7 +214,7 @@ struct PrimaryButton: View {
             }
             .foregroundColor(.black)
             .frame(maxWidth: .infinity)
-            .frame(height: 52)
+            .frame(minHeight: 52)
             .background(
                 RoundedRectangle(cornerRadius: Theme.radiusMD)
                     .fill(gradient)
