@@ -12,6 +12,7 @@ struct BattleView: View {
     @StateObject private var achievementTracker = AchievementTracker.shared
     /// Bumped by BattleScene.selectionChanged to force SwiftUI re-evaluation
     @State private var selectionVersion = 0
+    @State private var cachedSelectedPattern: CardPattern? = nil
     @State private var showNoSelectionHint = false
     /// Progressive hint system
     @State private var contextHint: String? = nil
@@ -254,6 +255,13 @@ struct BattleView: View {
                 ?? Empty<Void, Never>().eraseToAnyPublisher()
         ) { _ in
             selectionVersion += 1
+            // PERF-05: recognize pattern only when selection changes, not every render
+            if let scene = battleScene {
+                let selected = scene.getSelectedCards()
+                cachedSelectedPattern = selected.isEmpty ? nil : PatternRecognizer.recognize(selected)
+            } else {
+                cachedSelectedPattern = nil
+            }
         }
     }
 
@@ -571,14 +579,8 @@ struct BattleView: View {
         return Theme.danger.opacity(0.5)
     }
 
-    /// 实时识别选中牌的牌型（selectionVersion 触发 SwiftUI 重算）
-    private var selectedPattern: CardPattern? {
-        _ = selectionVersion // read to create SwiftUI dependency
-        guard let scene = battleScene else { return nil }
-        let selected = scene.getSelectedCards()
-        guard !selected.isEmpty else { return nil }
-        return PatternRecognizer.recognize(selected)
-    }
+    /// Pattern recognition cached; updated only when selection changes (PERF-05)
+    private var selectedPattern: CardPattern? { cachedSelectedPattern }
 
     private var actionButtons: some View {
         VStack(spacing: 8) {

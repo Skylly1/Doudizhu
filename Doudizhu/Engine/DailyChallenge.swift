@@ -126,8 +126,9 @@ struct DailyChallenge {
             streak = 1 // 重新开始
         }
 
-        UserDefaults.standard.set(streak, forKey: streakCountKey)
-        UserDefaults.standard.set(today, forKey: streakLastDateKey)
+        // Atomic write: bundle streak data to avoid corruption on app kill between writes
+        let streakData: [String: Any] = [streakCountKey: streak, streakLastDateKey: today]
+        streakData.forEach { UserDefaults.standard.set($0.value, forKey: $0.key) }
 
         // 连续挑战成就
         Task { @MainActor in

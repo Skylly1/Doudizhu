@@ -596,6 +596,21 @@ class BattleScene: SKScene {
         ]))
     }
 
+    // PERF-03: Static cached texture avoids bitmap allocation per card play
+    private static let circleParticleTexture: SKTexture = {
+        let size = CGSize(width: 8, height: 8)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        guard let ctx = UIGraphicsGetCurrentContext() else {
+            UIGraphicsEndImageContext()
+            return SKTexture()
+        }
+        ctx.setFillColor(UIColor.white.cgColor)
+        ctx.fillEllipse(in: CGRect(origin: .zero, size: size))
+        let image = UIGraphicsGetImageFromCurrentImageContext() ?? UIImage()
+        UIGraphicsEndImageContext()
+        return SKTexture(image: image)
+    }()
+
     private func createPlayParticleEffect() -> SKEmitterNode {
         let emitter = SKEmitterNode()
         emitter.particleBirthRate = 40
@@ -612,20 +627,7 @@ class BattleScene: SKScene {
         emitter.particleAlphaSpeed = -1.0
         emitter.particleColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1.0)
         emitter.particleColorBlendFactor = 1.0
-        let circleSize = CGSize(width: 8, height: 8)
-        UIGraphicsBeginImageContextWithOptions(circleSize, false, 0)
-        guard let ctx = UIGraphicsGetCurrentContext() else {
-            UIGraphicsEndImageContext()
-            return emitter
-        }
-        ctx.setFillColor(UIColor.white.cgColor)
-        ctx.fillEllipse(in: CGRect(origin: .zero, size: circleSize))
-        guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
-            UIGraphicsEndImageContext()
-            return emitter
-        }
-        UIGraphicsEndImageContext()
-        emitter.particleTexture = SKTexture(image: image)
+        emitter.particleTexture = Self.circleParticleTexture
         return emitter
     }
 
