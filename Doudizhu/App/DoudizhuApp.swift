@@ -21,6 +21,7 @@ struct DoudizhuApp: App {
         modelContainer = Self.makeModelContainer()
 
         GameCenterManager.shared.authenticate()
+        LocalNotificationManager.requestPermissionIfNeeded()
         // 首次打开标记 — 漏斗首端
         let firstOpenKey = "has_opened_before"
         if !UserDefaults.standard.bool(forKey: firstOpenKey) {

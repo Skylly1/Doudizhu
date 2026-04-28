@@ -44,6 +44,7 @@
 		AD5E2D3093C14746800E6B9B /* ShareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2AE77369C90C482B24051C /* ShareManager.swift */; };
 		B7B34C7047639B55A805790C /* TutorialOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCABC68FC662C3EAB5225D88 /* TutorialOverlay.swift */; };
 		BAB6BBEF94D7E825D9CC94E4 /* SpecialEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C46BB1C41DFDBB2F94799C5 /* SpecialEvent.swift */; };
+		BB51AE061B8A5274ED2B937C /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ECA87E2EDA0954C3E09D9B /* LocalNotificationManager.swift */; };
 		BD2771C4F1C115C1DE4CB2B5 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA013CA84673129FD536088 /* SoundManager.swift */; };
 		BFFD8B267CE9FDEAD418BF43 /* ContextualHintManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A1117E7198534513E0AEB /* ContextualHintManager.swift */; };
 		C11F60FFA2D598CBF3B1F0F1 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9DE6E35AEACD0A885ECEB0D6 /* FirebaseCrashlytics */; };
@@ -75,7 +76,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "斗破乾坤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02B7561C354AAEBCFCF1A20E /* Doudizhu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Doudizhu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		071990CD18A7AE4833D35611 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		146704F64E5700B454564B2A /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		1AC3C87E0E4B3888A6207525 /* BattleScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleScene.swift; sourceTree = "<group>"; };
@@ -92,7 +93,7 @@
 		3F78DD5F2D0AB4C6C79C9A15 /* BossModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossModifier.swift; sourceTree = "<group>"; };
 		3FA4F448DB514BC1590E8F0C /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		4005D6AE14836445A50CEC38 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
-		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4E768DAC1C33BB92B5E01DC5 /* PurchaseSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessView.swift; sourceTree = "<group>"; };
 		5016652485B0AE2298F2F3D9 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureGuideOverlay.swift; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 		8D3EC8A91741A8E076AAA4C1 /* PlayerStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStats.swift; sourceTree = "<group>"; };
 		8EA2A1CDC0757261ED0E545D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8F5FC34D9EBDA2FC5221697F /* ReviewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewManager.swift; sourceTree = "<group>"; };
+		96ECA87E2EDA0954C3E09D9B /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		9C46BB1C41DFDBB2F94799C5 /* SpecialEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialEvent.swift; sourceTree = "<group>"; };
 		9E37291A94EBC72B683F9D15 /* DailyChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChallengeView.swift; sourceTree = "<group>"; };
 		9F7B44BF5B0718C7FCFCE0B6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -123,7 +125,7 @@
 		C004536BF49C1AC16F07AF1E /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		C0DAC6F80E11117AD93A5763 /* RogueRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RogueRun.swift; sourceTree = "<group>"; };
 		C0E399DF2AFC95FADFDC15CA /* PrivacyPolicy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicy.md; sourceTree = "<group>"; };
-		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
+		C5A519A3433C95966762B382 /* Configuration.storekit */ = {isa = PBXFileReference; path = Configuration.storekit; sourceTree = "<group>"; };
 		C679C44488D1A397CF510FCE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D465F6AC2C63574A53FDFB8F /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		D6AE5DC94BF072C61043362C /* CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionView.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 				60D933644042A8A7F300A933 /* GameCenterManager.swift */,
 				BF62D06D635A1BDDFA6F2D58 /* Joker.swift */,
 				C004536BF49C1AC16F07AF1E /* L10n.swift */,
+				96ECA87E2EDA0954C3E09D9B /* LocalNotificationManager.swift */,
 				DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */,
 				8D3EC8A91741A8E076AAA4C1 /* PlayerStats.swift */,
 				781A117C670FF3910C3321E7 /* PurchaseManager.swift */,
@@ -334,7 +337,7 @@
 		DF3626A1158A267437FA23AC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */,
+				02B7561C354AAEBCFCF1A20E /* Doudizhu.app */,
 				BF312B11526B28C5120B2348 /* DoudizhuTests.xctest */,
 			);
 			name = Products;
@@ -399,7 +402,7 @@
 				9DE6E35AEACD0A885ECEB0D6 /* FirebaseCrashlytics */,
 			);
 			productName = Doudizhu;
-			productReference = 02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */;
+			productReference = 02B7561C354AAEBCFCF1A20E /* Doudizhu.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -410,6 +413,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 4D0A6D61F1041C44F1306D61 /* Build configuration list for PBXProject "Doudizhu" */;
 			developmentRegion = "zh-Hans";
@@ -516,6 +521,7 @@
 				ED300C39A3FAEF6F7DEA8D9F /* HomeView.swift in Sources */,
 				2303E48D108C2A3324BD857C /* Joker.swift in Sources */,
 				F41A8BE2818E4F9F2A1F431C /* L10n.swift in Sources */,
+				BB51AE061B8A5274ED2B937C /* LocalNotificationManager.swift in Sources */,
 				96049DD3D9B82908F3FBFA4D /* MapView.swift in Sources */,
 				14667930FF82DF75F427E36B /* PatternGuideView.swift in Sources */,
 				F53FE7A0EEAEF69EA90D3BE0 /* PatternUpgradeManager.swift in Sources */,
@@ -581,7 +587,6 @@
 				CODE_SIGN_ENTITLEMENTS = Doudizhu/Doudizhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -679,7 +684,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Doudizhu/Doudizhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = Q43DRF894U;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

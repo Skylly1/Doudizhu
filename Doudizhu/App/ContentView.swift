@@ -184,11 +184,17 @@ struct ContentView: View {
                 .animation(.easeInOut, value: tutorialManager.currentStep != nil)
         }
         .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .background || newPhase == .inactive {
+            switch newPhase {
+            case .background:
                 // 在战斗、商店、付费墙等游戏进行中的页面都自动保存
                 if [.battle, .shop, .demoGate].contains(currentScreen) {
                     SaveManager.shared.save(run: rogueRun, buildId: "")
                 }
+                LocalNotificationManager.scheduleReEngagement()
+            case .active:
+                LocalNotificationManager.cancelReEngagement()
+            default:
+                break
             }
         }
     }

@@ -65,6 +65,7 @@ struct DailyChallenge {
     static func markCompleted() {
         UserDefaults.standard.set(todayString, forKey: "dailyChallengeCompleted")
         updateStreak()
+        Task { @MainActor in LocalNotificationManager.scheduleDailyReminder() }
     }
 
     /// Record that today's challenge was attempted (legacy, calls markStarted)
