@@ -134,12 +134,16 @@ struct ContentView: View {
                     DemoGateView(
                         purchaseManager: purchaseManager,
                         onContinue: {
-                            // 首购奖励：仅购买后首次继续时应用
-                            if purchaseManager.isFullVersion {
+                            // 从首页横幅进入 → 购买后回首页开始新冒险
+                            // 从游戏中进入 → 购买后继续冒险
+                            let cameFromHome = navigationStack.last == .home
+                            if purchaseManager.isFullVersion && !cameFromHome {
                                 rogueRun.applyFirstPurchaseBonus()
+                                rogueRun.advanceToNextFloor()
+                                goBack()
+                            } else {
+                                goHome()
                             }
-                            rogueRun.advanceToNextFloor()
-                            goBack()
                         },
                         onBack: {
                             // 从付费墙退出时自动保存进度

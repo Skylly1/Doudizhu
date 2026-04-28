@@ -478,7 +478,7 @@ struct HomeView: View {
         let demoPercent = Int(Double(PurchaseManager.demoMaxFloor) / Double(totalFloors) * 100)
 
         return Button {
-            onNavigate(.shop)
+            onNavigate(.demoGate)
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "lock.open.fill")
