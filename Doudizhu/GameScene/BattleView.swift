@@ -1201,26 +1201,31 @@ struct BattleView: View {
     // MARK: - Helpers
 
     private func overlayBase<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        ZStack {
+        let innerContent = content()
+        return ZStack {
             Color.black.opacity(0.6).ignoresSafeArea()
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    content()
+            GeometryReader { geo in
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        innerContent
+                    }
+                    .padding(Theme.spacingXL)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.radiusLG)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.radiusLG)
+                                    .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
+                            )
+                    )
+                    .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
+                    .shadow(color: Theme.gold.opacity(0.1), radius: 30)
+                    .frame(maxWidth: 500)
+                    .padding(Theme.spacingXL)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: geo.size.height)
                 }
-                .padding(Theme.spacingXL)
-                .background(
-                    RoundedRectangle(cornerRadius: Theme.radiusLG)
-                        .fill(.ultraThinMaterial)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.radiusLG)
-                                .stroke(Theme.gold.opacity(0.2), lineWidth: 0.5)
-                        )
-                )
-                .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
-                .shadow(color: Theme.gold.opacity(0.1), radius: 30)
-                .padding(Theme.spacingXL)
             }
-            .frame(maxHeight: .infinity)
             .transition(.scale(scale: 0.8).combined(with: .opacity))
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.75), value: rogueRun.phase)
@@ -1244,6 +1249,21 @@ struct BattleView: View {
             Color.black.opacity(0.6).ignoresSafeArea()
                 .onTapGesture { showPauseMenu = false }
 
+            GeometryReader { geo in
+                ScrollView(.vertical, showsIndicators: false) {
+                    pauseMenuContent
+                        .frame(maxWidth: 500)
+                        .padding(Theme.spacingXL)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: geo.size.height)
+                }
+            }
+            .transition(.scale(scale: 0.8).combined(with: .opacity))
+        }
+        .animation(.spring(response: 0.4, dampingFraction: 0.75), value: showPauseMenu)
+    }
+
+    private var pauseMenuContent: some View {
             VStack(spacing: Theme.spacingLG) {
                 Text(L10n.isEnglish ? "Paused" : "已暂停")
                     .font(.largeTitle.bold())
@@ -1498,10 +1518,6 @@ struct BattleView: View {
                     )
             )
             .shadow(color: .black.opacity(0.35), radius: 20, y: 8)
-            .padding(Theme.spacingXL)
-            .transition(.scale(scale: 0.8).combined(with: .opacity))
-        }
-        .animation(.spring(response: 0.4, dampingFraction: 0.75), value: showPauseMenu)
     }
 
     // MARK: - Progressive Hints
