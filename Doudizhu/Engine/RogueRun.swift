@@ -59,6 +59,22 @@ struct FloorConfig {
     
     var isBoss: Bool { !bossModifiers.isEmpty }
 
+    /// 日挑战精选5层：热身→普通→商店→Boss→终极Boss，10-15分钟体验
+    static let dailyChallengeFloors: [FloorConfig] = [
+        FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 200, maxPlays: 5, maxDiscards: 3,
+                    description: L10n.floor1Desc, isShop: false),
+        FloorConfig(floor: 2, name: L10n.floor5Name, targetScore: 500, maxPlays: 5, maxDiscards: 2,
+                    description: L10n.floor5Desc, isShop: false),
+        FloorConfig(floor: 3, name: L10n.floor7Name, targetScore: 0, maxPlays: 0, maxDiscards: 0,
+                    description: L10n.floor7Desc, isShop: true),
+        FloorConfig(floor: 4, name: L10n.floor8Name, targetScore: 900, maxPlays: 4, maxDiscards: 2,
+                    description: L10n.floor8Desc, isShop: false,
+                    bossModifiers: [.bannedPattern]),
+        FloorConfig(floor: 5, name: L10n.floor15Name, targetScore: 1800, maxPlays: 3, maxDiscards: 1,
+                    description: L10n.floor15Desc, isShop: false,
+                    bossModifiers: [.escalating, .phantomCards]),
+    ]
+
     static let allFloors: [FloorConfig] = [
         // === 第一章：乡野篇 ===
         FloorConfig(floor: 1, name: L10n.floor1Name, targetScore: 150, maxPlays: 5, maxDiscards: 3,
@@ -201,17 +217,23 @@ enum HandSortMode: String, CaseIterable {
         }
     }
 
+    /// 当前模式的关卡列表
+    private var activeFloors: [FloorConfig] {
+        dailyChallenge != nil ? FloorConfig.dailyChallengeFloors : FloorConfig.allFloors
+    }
+
     var currentFloor: FloorConfig {
+        let floors = activeFloors
         guard currentFloorIndex >= 0,
-              currentFloorIndex < FloorConfig.allFloors.count else {
+              currentFloorIndex < floors.count else {
             CrashReporter.shared.log(
-                "currentFloorIndex \(currentFloorIndex) out of bounds (0..<\(FloorConfig.allFloors.count))",
+                "currentFloorIndex \(currentFloorIndex) out of bounds (0..<\(floors.count))",
                 level: .error)
-            return FloorConfig.allFloors.last ?? FloorConfig(
+            return floors.last ?? FloorConfig(
                 floor: 1, name: "???", targetScore: 100,
                 maxPlays: 3, maxDiscards: 1, description: "", isShop: false)
         }
-        return FloorConfig.allFloors[currentFloorIndex]
+        return floors[currentFloorIndex]
     }
 
     var floorProgress: Double {
@@ -346,12 +368,14 @@ enum HandSortMode: String, CaseIterable {
             }
         }
 
-        // 发牌
+        // 发牌 — 日挑战使用种子+层号确保确定性
         let giantHandBonus = (dailyChallenge?.modifiers.contains(.giantHand) == true) ? 5 : 0
         let baseHandSize = hasJoker(.bloodPact) ? 9 : 10
         let dealSize = baseHandSize + giantHandBonus
         let tinyDeck = dailyChallenge?.modifiers.contains(.tinyDeck) == true
-        let deal = tinyDeck ? Deck.dealRoguelike(handSize: dealSize, deckSize: 36) : Deck.dealRoguelike(handSize: dealSize)
+        let floorSeed: UInt64? = dailyChallenge.map { $0.seed &+ UInt64(currentFloorIndex) }
+        let deckSizeParam: Int? = tinyDeck ? 36 : nil
+        let deal = Deck.dealRoguelike(handSize: dealSize, deckSize: deckSizeParam, seed: floorSeed)
         handCards = deal.hand
         drawPile = deal.drawPile
 
@@ -776,6 +800,7 @@ enum HandSortMode: String, CaseIterable {
             if dailyChallenge != nil {
                 DailyChallenge.recordScore(totalScore)
                 DailyChallenge.markCompleted()
+                GameCenterManager.shared.reportDailyChallengeScore(totalScore)
             }
             phase = .floorFail
             // 不自动删除存档 — 用户可从失败界面重试或保存退出
@@ -851,7 +876,7 @@ enum HandSortMode: String, CaseIterable {
     func advanceToNextFloor() {
         currentFloorIndex += 1
         PlayerStats.shared.recordHighestFloor(currentFloorIndex)
-        if currentFloorIndex >= FloorConfig.allFloors.count {
+        if currentFloorIndex >= activeFloors.count {
             AchievementTracker.shared.tryUnlock("full_clear")
             AchievementTracker.shared.tryUnlock("wins_5")
             // 保存最高Ascension记录
@@ -874,6 +899,7 @@ enum HandSortMode: String, CaseIterable {
             if dailyChallenge != nil {
                 DailyChallenge.recordScore(totalScore)
                 DailyChallenge.markCompleted()
+                GameCenterManager.shared.reportDailyChallengeScore(totalScore)
             }
             Analytics.shared.track(.runComplete, params: [
                 "total_score": "\(totalScore)",
@@ -973,6 +999,14 @@ enum HandSortMode: String, CaseIterable {
             }
         }
 
+        // 日挑战赠送1个种子确定的Joker — 所有玩家同天同Joker
+        let commonJokers = Joker.allJokers.filter { $0.rarity == .common }
+        if !commonJokers.isEmpty {
+            var rng = SeededRandomNumberGenerator(seed: challenge.seed &+ 777)
+            let idx = Int(rng.next() % UInt64(commonJokers.count))
+            activeJokers.append(commonJokers[idx])
+        }
+
         // PlayerStats
         if let start = runStartTime {
             PlayerStats.shared.addPlayTime(Date().timeIntervalSince(start))
@@ -1038,10 +1072,14 @@ enum HandSortMode: String, CaseIterable {
                 "reason": "restart"
             ])
         }
-        // 每日挑战放弃也标记为完成（不可重入）
+        // 每日挑战：必须实际游玩才算完成（防止进入即退出刷完成）
         if dailyChallenge != nil {
-            DailyChallenge.recordScore(totalScore)
-            DailyChallenge.markCompleted()
+            if totalScore > 0 || currentFloorIndex > 0 {
+                DailyChallenge.recordScore(totalScore)
+                DailyChallenge.markCompleted()
+                GameCenterManager.shared.reportDailyChallengeScore(totalScore)
+            }
+            // score=0 且 floor=0 → 未实际游玩，不标记完成，允许重新挑战
         }
         clearSave()
 

@@ -127,6 +127,20 @@ struct DailyChallengeView: View {
                     value: "+\(challenge.bonusGold)"
                 )
             }
+            HStack(spacing: Theme.spacingSM) {
+                rewardItem(
+                    systemIcon: "map.fill",
+                    iconColor: Theme.flame,
+                    title: L10n.isEnglish ? "Floors" : "关卡数",
+                    value: "\(challenge.floorCount)"
+                )
+                rewardItem(
+                    systemIcon: "suit.spade.fill",
+                    iconColor: Theme.cyan,
+                    title: L10n.isEnglish ? "Starter Joker" : "赠送规则牌",
+                    value: "×1"
+                )
+            }
         }
     }
 
@@ -216,7 +230,7 @@ struct DailyChallengeView: View {
         case .noDiscards: return L10n.dailyChallengeNoDiscards
         case .doubleScore: return L10n.isEnglish ? "All scores are doubled" : "所有得分翻倍"
         case .speedRun: return L10n.isEnglish ? "Max 3 plays per floor" : "每层最多 3 次出牌"
-        case .bossRush: return L10n.isEnglish ? "Every 3rd floor is a boss" : "每 3 层出现 Boss"
+        case .bossRush: return L10n.isEnglish ? "Every non-shop floor has a boss" : "每层非商店关卡都有Boss"
         case .giantHand: return L10n.isEnglish ? "Hand size +5 cards" : "手牌数量 +5 张"
         case .tinyDeck: return L10n.isEnglish ? "Deck reduced to 36 cards" : "牌堆缩减至 36 张"
         case .allOrNothing: return L10n.isEnglish ? "Only bombs & rockets score" : "仅炸弹和火箭可得分"

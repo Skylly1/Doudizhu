@@ -108,8 +108,15 @@ struct Deck {
     }
 
     /// Roguelike 模式发牌：发指定数量手牌，剩余作为牌堆
-    static func dealRoguelike(handSize: Int = 10, deckSize: Int? = nil) -> (hand: [Card], drawPile: [Card]) {
-        var cards = standard().shuffled()
+    /// - Parameter seed: 若提供种子，使用确定性洗牌（日挑战同天同牌序）
+    static func dealRoguelike(handSize: Int = 10, deckSize: Int? = nil, seed: UInt64? = nil) -> (hand: [Card], drawPile: [Card]) {
+        var cards: [Card]
+        if let seed {
+            var rng = SeededRandomNumberGenerator(seed: seed)
+            cards = standard().shuffled(using: &rng)
+        } else {
+            cards = standard().shuffled()
+        }
         // 精简牌组：仅保留前 N 张
         if let size = deckSize, size < cards.count {
             cards = Array(cards.prefix(size))
@@ -118,5 +125,24 @@ struct Deck {
         let hand = Array(cards.prefix(actualHandSize)).sorted { $0.rank < $1.rank }
         let drawPile = Array(cards.dropFirst(actualHandSize))
         return (hand, drawPile)
+    }
+}
+
+// MARK: - 确定性随机数生成器（日挑战种子洗牌）
+
+/// SplitMix64 — 快速、确定性的 PRNG，保证同种子同序列
+struct SeededRandomNumberGenerator: RandomNumberGenerator {
+    private var state: UInt64
+
+    init(seed: UInt64) {
+        state = seed
+    }
+
+    mutating func next() -> UInt64 {
+        state &+= 0x9e3779b97f4a7c15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xbf58476d1ce4e5b9
+        z = (z ^ (z >> 27)) &* 0x94d049bb133111eb
+        return z ^ (z >> 31)
     }
 }

@@ -39,6 +39,23 @@ final class GameCenterManager: ObservableObject {
         }
     }
 
+    // Leaderboard: Daily challenge score
+    func reportDailyChallengeScore(_ score: Int) {
+        guard isAuthenticated, score > 0 else { return }
+        Task {
+            do {
+                try await GKLeaderboard.submitScore(
+                    score,
+                    context: 0,
+                    player: GKLocalPlayer.local,
+                    leaderboardIDs: ["com.hongzeng.doudizhu.daily"]
+                )
+            } catch {
+                CrashReporter.shared.log("GameCenter daily score submit failed: \(error.localizedDescription)", level: .warning)
+            }
+        }
+    }
+
     // Achievement reporting bridge
     func reportAchievement(id: String, percent: Double = 100.0) {
         guard isAuthenticated else { return }

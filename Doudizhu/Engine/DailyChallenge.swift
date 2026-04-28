@@ -7,6 +7,7 @@ struct DailyChallenge {
     let seed: UInt64
     let modifiers: [DailyChallengeModifier]
     let bonusGold: Int
+    let floorCount: Int
 
     /// Today's challenge
     static var today: DailyChallenge {
@@ -31,7 +32,8 @@ struct DailyChallenge {
             }
         }()
 
-        return DailyChallenge(date: Date(), seed: seed, modifiers: mods, bonusGold: 50)
+        return DailyChallenge(date: Date(), seed: seed, modifiers: mods, bonusGold: 50,
+                              floorCount: FloorConfig.dailyChallengeFloors.count)
     }
 
     /// Has today's challenge been completed (won or lost)?

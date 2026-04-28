@@ -194,13 +194,14 @@ extension GameSaveModel {
         default:
             // "selecting" / "dealing" 等 — 恢复为选牌状态
             // 越界保护（防止关卡配置变更导致崩溃）
+            let floors = run.dailyChallenge != nil ? FloorConfig.dailyChallengeFloors : FloorConfig.allFloors
             guard currentFloorIndex >= 0,
-                  currentFloorIndex < FloorConfig.allFloors.count else {
+                  currentFloorIndex < floors.count else {
                 run.phase = .victory
                 return
             }
             // Boss 关需要重新初始化 BossState
-            let floor = FloorConfig.allFloors[currentFloorIndex]
+            let floor = floors[currentFloorIndex]
             if floor.isBoss {
                 run.bossState = BossState(modifiers: floor.bossModifiers)
             }
