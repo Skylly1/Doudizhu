@@ -48,6 +48,7 @@ import Foundation
         if score > highestSingleScore {
             highestSingleScore = score
             save()
+            ReviewManager.recordHighScore(score: score)
         }
     }
 

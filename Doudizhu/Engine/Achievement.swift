@@ -134,6 +134,8 @@ extension Achievement {
             JokerUnlockManager.unlockAllLegendary()
         }
 
+        ReviewManager.recordAchievementUnlocked()
+
         return true
     }
 
