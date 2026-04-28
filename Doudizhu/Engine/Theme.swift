@@ -286,6 +286,39 @@ struct SecondaryButton: View {
     }
 }
 
+// MARK: - 三级按钮（暂停菜单等场景）
+
+struct TertiaryButton: View {
+    let title: String
+    var icon: String? = nil
+    var color: Color = Theme.textSecondary
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let icon {
+                    Image(systemName: icon)
+                }
+                Text(title)
+            }
+            .font(.headline)
+            .foregroundColor(color)
+            .frame(width: 220, height: 46)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .stroke(color.opacity(0.3))
+                    )
+            )
+            .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        }
+        .buttonStyle(GameButtonStyle())
+    }
+}
+
 // MARK: - Button Press Animation
 
 struct GameButtonStyle: ButtonStyle {

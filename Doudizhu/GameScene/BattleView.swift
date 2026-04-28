@@ -1399,136 +1399,63 @@ struct BattleView: View {
                 .frame(maxWidth: 280)
 
                 // 手牌排序
-                Button {
+                TertiaryButton(
+                    title: rogueRun.handSortMode == .byRank
+                        ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
+                        : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"),
+                    icon: rogueRun.handSortMode.icon,
+                    color: Theme.gold
+                ) {
                     rogueRun.toggleSortMode()
                     battleScene?.refreshHand()
                     FeedbackManager.shared.cardTap()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: rogueRun.handSortMode.icon)
-                        Text(rogueRun.handSortMode == .byRank
-                             ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
-                             : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
-                    }
-                    .font(.headline)
-                    .foregroundColor(Theme.gold)
-                    .frame(width: 220, height: 46)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.gold.opacity(0.3))
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
-                .buttonStyle(GameButtonStyle())
                 .accessibilityLabel(rogueRun.handSortMode == .byRank
                     ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
                     : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
 
                 // 游戏指南
-                Button {
+                TertiaryButton(
+                    title: L10n.gameGuide,
+                    icon: "book.fill",
+                    color: Theme.cyan
+                ) {
                     showPauseMenu = false
                     showPatternGuide = true
                     Analytics.shared.track(.guideOpened, params: ["source": "pause_menu"])
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "book.fill")
-                        Text(L10n.gameGuide)
-                    }
-                    .font(.headline)
-                    .foregroundColor(Theme.cyan)
-                    .frame(width: 220, height: 46)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.cyan.opacity(0.3))
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
-                .buttonStyle(GameButtonStyle())
                 .accessibilityLabel(L10n.gameGuide)
 
                 // 帮助与FAQ
-                Button {
+                TertiaryButton(
+                    title: L10n.helpAndFaq,
+                    icon: "questionmark.circle.fill"
+                ) {
                     showPauseMenu = false
                     showHelpSheet = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "questionmark.circle.fill")
-                        Text(L10n.helpAndFaq)
-                    }
-                    .font(.headline)
-                    .foregroundColor(Theme.textSecondary)
-                    .frame(width: 220, height: 46)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.textTertiary.opacity(0.3))
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
-                .buttonStyle(GameButtonStyle())
                 .accessibilityLabel(L10n.helpAndFaq)
 
                 // 暂离保存（保留存档回主菜单）
-                Button {
+                TertiaryButton(
+                    title: L10n.isEnglish ? "Save & Quit" : "暂离保存",
+                    icon: "rectangle.portrait.and.arrow.right"
+                ) {
                     showPauseMenu = false
-                    // 自动存档已由 autoSave 和 scenePhase 处理
                     SaveManager.shared.save(run: rogueRun, buildId: "")
                     SoundManager.shared.stopBGM()
                     onBack()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                        Text(L10n.isEnglish ? "Save & Quit" : "暂离保存")
-                    }
-                    .font(.headline)
-                    .foregroundColor(Theme.textSecondary)
-                    .frame(width: 220, height: 46)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.textTertiary.opacity(0.3))
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
-                .buttonStyle(GameButtonStyle())
                 .accessibilityLabel(L10n.isEnglish ? "Save & Quit" : "暂离保存")
 
                 // 放弃冒险（删档，需二次确认）
-                Button {
+                TertiaryButton(
+                    title: L10n.isEnglish ? "Abandon Run" : "放弃冒险",
+                    icon: "xmark.circle.fill",
+                    color: Theme.danger.opacity(0.7)
+                ) {
                     showExitConfirm = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "xmark.circle.fill")
-                        Text(L10n.isEnglish ? "Abandon Run" : "放弃冒险")
-                    }
-                    .font(.headline)
-                    .foregroundColor(Theme.danger.opacity(0.7))
-                    .frame(width: 220, height: 46)
-                    .background(
-                        RoundedRectangle(cornerRadius: Theme.radiusMD)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.danger.opacity(0.2))
-                            )
-                    )
-                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
-                .buttonStyle(GameButtonStyle())
                 .accessibilityLabel(L10n.isEnglish ? "Abandon Run" : "放弃冒险")
                 .alert(
                     L10n.isEnglish ? "Abandon Run?" : "确认放弃？",
