@@ -53,6 +53,8 @@ struct MapView: View {
                         .padding(.top, Theme.spacingLG)
                         .padding(.bottom, 100)
                     }
+                    .frame(maxWidth: 600)
+                    .frame(maxWidth: .infinity)
                     .onAppear {
                         appeared = true
                         if highestFloor > 5 {

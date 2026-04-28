@@ -398,6 +398,7 @@ struct HomeView: View {
                     .offset(y: showButtons[3] ? 0 : 30)
                     .opacity(showButtons[3] ? 1.0 : 0)
                 }
+                .frame(maxWidth: 500)
 
                 // 内联卡牌扇形装饰 — 按钮与横幅之间
                 CardFanDecor()
@@ -408,12 +409,14 @@ struct HomeView: View {
                 if !PurchaseManager.shared.isFullVersion {
                     upgradePromptBanner
                         .padding(.horizontal, 40)
+                        .frame(maxWidth: 500)
                         .padding(.bottom, 8)
                 }
 
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
+                    .frame(maxWidth: 500)
                     .padding(.bottom, 12)
                 Text("v1.0")
                     .font(.system(size: 9))

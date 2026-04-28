@@ -132,6 +132,7 @@ struct PurchaseSuccessView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 40)
             }
+            .frame(maxWidth: 500)
         }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {

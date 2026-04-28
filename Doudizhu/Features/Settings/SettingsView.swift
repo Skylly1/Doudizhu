@@ -253,6 +253,8 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.bottom, Theme.spacingXXL)
                 }
+                .frame(maxWidth: 600)
+                .frame(maxWidth: .infinity)
             }
 
             // 重置成功横幅（引导提示）

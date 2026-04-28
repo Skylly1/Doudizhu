@@ -19,7 +19,7 @@ struct CollectionView: View {
                         tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
                         tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
                     }
-                    .frame(minWidth: UIScreen.main.bounds.width - Theme.spacingMD * 2)
+                    .frame(minWidth: min(UIScreen.main.bounds.width - Theme.spacingMD * 2, 600))
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
@@ -34,6 +34,8 @@ struct CollectionView: View {
                     StatsView().tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxWidth: 700)
+                .frame(maxWidth: .infinity)
             }
         }
         .gameBackground()

@@ -105,6 +105,8 @@ struct DemoGateView: View {
                     Spacer().frame(height: 16)
                 }
                 .padding(.horizontal, 20)
+                .frame(maxWidth: 600)
+                .frame(maxWidth: .infinity)
             }
         }
         .onAppear {

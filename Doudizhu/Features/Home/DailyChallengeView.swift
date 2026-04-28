@@ -45,6 +45,8 @@ struct DailyChallengeView: View {
                     .padding(.horizontal, Theme.spacingMD)
                     .padding(.top, Theme.spacingSM)
                     .padding(.bottom, Theme.spacingXXL)
+                    .frame(maxWidth: 600)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }

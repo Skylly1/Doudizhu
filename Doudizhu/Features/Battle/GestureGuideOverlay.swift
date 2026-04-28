@@ -100,6 +100,7 @@ struct GestureGuideOverlay: View {
                 
                 Spacer()
             }
+            .frame(maxWidth: 400)
         }
         .onAppear {
             startAnimation()

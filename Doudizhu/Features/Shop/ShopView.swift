@@ -244,6 +244,8 @@ struct ShopView: View {
                 .padding(.horizontal, Theme.spacingXXL)
                 .padding(.bottom, Theme.spacingXL)
             }
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
             } // end ScrollView
             } // end outer VStack
 
