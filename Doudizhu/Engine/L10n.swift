@@ -774,6 +774,95 @@ enum L10n {
     static var done: String { localized("完成", en: "Done", ja: "完了", ko: "완료", fr: "Terminé", de: "Fertig", es: "Listo", pt: "Concluído") }
     static var hintResetDone: String { localized("已重置", en: "Reset Done", ja: "リセット完了", ko: "초기화 완료", fr: "Réinitialisé", de: "Zurückgesetzt", es: "Restablecido", pt: "Redefinido") }
 
+    // MARK: - 成就
+
+    static var achievementFirstWinName: String { localized("初出茅庐", en: "First Steps") }
+    static var achievementFirstWinDesc: String { localized("首次通关第1层", en: "Clear Floor 1 for the first time") }
+
+    static var achievementMidRunName: String { localized("渐入佳境", en: "Getting Warmed Up") }
+    static var achievementMidRunDesc: String { localized("到达第5层", en: "Reach Floor 5") }
+
+    static var achievementFullClearName: String { localized("斗破乾坤", en: "World Breaker") }
+    static var achievementFullClearDesc: String { localized("首次通关全部关卡", en: "Clear all floors for the first time") }
+
+    static var achievementGames10Name: String { localized("常客", en: "Regular") }
+    static var achievementGames10Desc: String { localized("累计游戏10局", en: "Play 10 games total") }
+
+    static var achievementGames50Name: String { localized("老牌手", en: "Veteran") }
+    static var achievementGames50Desc: String { localized("累计游戏50局", en: "Play 50 games total") }
+
+    static var achievementScore500Name: String { localized("小试牛刀", en: "Warming Up") }
+    static var achievementScore500Desc: String { localized("单局累计500分", en: "Score 500 in a single run") }
+
+    static var achievementScore2000Name: String { localized("一骑当千", en: "Unstoppable") }
+    static var achievementScore2000Desc: String { localized("单局累计2000分", en: "Score 2000 in a single run") }
+
+    static var achievementScore5000Name: String { localized("登峰造极", en: "Peak Performance") }
+    static var achievementScore5000Desc: String { localized("单局累计5000分", en: "Score 5000 in a single run") }
+
+    static var achievementSingle200Name: String { localized("一击必杀", en: "One-Shot") }
+    static var achievementSingle200Desc: String { localized("单次出牌得分≥200", en: "Score 200+ in a single play") }
+
+    static var achievementSingle500Name: String { localized("天崩地裂", en: "Earth-Shaking") }
+    static var achievementSingle500Desc: String { localized("单次出牌得分≥500", en: "Score 500+ in a single play") }
+
+    static var achievementCombo5Name: String { localized("连击大师", en: "Combo Master") }
+    static var achievementCombo5Desc: String { localized("达成5连击", en: "Achieve a 5-hit combo") }
+
+    static var achievementBombs10Name: String { localized("爆破专家", en: "Demolition Expert") }
+    static var achievementBombs10Desc: String { localized("累计使用10次炸弹", en: "Use bombs 10 times total") }
+
+    static var achievementRockets5Name: String { localized("火箭狂人", en: "Rocket Maniac") }
+    static var achievementRockets5Desc: String { localized("累计使用5次火箭", en: "Use rockets 5 times total") }
+
+    static var achievementJokersCollect5Name: String { localized("规则收藏家", en: "Rule Collector") }
+    static var achievementJokersCollect5Desc: String { localized("单局装备5张规则牌", en: "Equip 5 Joker cards in one run") }
+
+    static var achievementNoDiscardWinName: String { localized("完美牌局", en: "Perfect Hand") }
+    static var achievementNoDiscardWinDesc: String { localized("不换牌通过一层", en: "Clear a floor without discarding") }
+
+    static var achievementGold300Name: String { localized("富甲一方", en: "Wealthy") }
+    static var achievementGold300Desc: String { localized("持有300+金币", en: "Hold 300+ gold") }
+
+    static var achievementWins5Name: String { localized("常胜将军", en: "Victorious") }
+    static var achievementWins5Desc: String { localized("累计通关5次", en: "Clear the game 5 times") }
+
+    static var achievementAscension1Name: String { localized("初入挑战", en: "Challenger") }
+    static var achievementAscension1Desc: String { localized("达到挑战等级1", en: "Reach Ascension Level 1") }
+
+    static var achievementAscension5Name: String { localized("挑战强者", en: "Elite Challenger") }
+    static var achievementAscension5Desc: String { localized("达到挑战等级5", en: "Reach Ascension Level 5") }
+
+    static var achievementAscension10Name: String { localized("绝世高手", en: "Grandmaster") }
+    static var achievementAscension10Desc: String { localized("达到挑战等级10", en: "Reach Ascension Level 10") }
+
+    static var achievementDailyStreak3Name: String { localized("三日不辍", en: "Three-Day Streak") }
+    static var achievementDailyStreak3Desc: String { localized("每日挑战连续3天", en: "3-day Daily Challenge streak") }
+
+    static var achievementDailyStreak7Name: String { localized("周周坚持", en: "Weekly Warrior") }
+    static var achievementDailyStreak7Desc: String { localized("每日挑战连续7天", en: "7-day Daily Challenge streak") }
+
+    static var achievementDailyStreak30Name: String { localized("月度传奇", en: "Monthly Legend") }
+    static var achievementDailyStreak30Desc: String { localized("每日挑战连续30天", en: "30-day Daily Challenge streak") }
+
+    static var achievementBuilds3Name: String { localized("多面手", en: "Versatile") }
+    static var achievementBuilds3Desc: String { localized("使用3种不同构筑通关", en: "Clear with 3 different builds") }
+
+    static var achievementBuilds9Name: String { localized("全能大师", en: "Master of All") }
+    static var achievementBuilds9Desc: String { localized("使用所有9种构筑通关", en: "Clear with all 9 builds") }
+
+    static var achievementStraights20Name: String { localized("顺子达人", en: "Straight Expert") }
+    static var achievementStraights20Desc: String { localized("累计打出20次顺子", en: "Play 20 straights total") }
+
+    static var achievementBombs50Name: String { localized("炸弹狂魔", en: "Bomb Maniac") }
+    static var achievementBombs50Desc: String { localized("累计使用50次炸弹", en: "Use bombs 50 times total") }
+
+    static var achievementScore10000Name: String { localized("万分俱乐部", en: "10K Club") }
+    static var achievementScore10000Desc: String { localized("单局累计10000分", en: "Score 10000 in a single run") }
+
+    static var achievementSingle1000Name: String { localized("毁天灭地", en: "Annihilation") }
+    static var achievementSingle1000Desc: String { localized("单次出牌得分≥1000", en: "Score 1000+ in a single play") }
+
     // MARK: - 本地化引擎
 
     private static func localized(

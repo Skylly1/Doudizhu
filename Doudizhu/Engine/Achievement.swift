@@ -36,51 +36,51 @@ struct Achievement: Identifiable, Codable, Hashable {
 extension Achievement {
     static let all: [Achievement] = [
         // 冒险
-        Achievement(id: "first_win",       name: "初出茅庐",   description: "首次通关第1层",       icon: "leaf.fill", requirement: 1, category: .progress),
-        Achievement(id: "mid_run",         name: "渐入佳境",   description: "到达第5层",           icon: "bolt.shield.fill", requirement: 5, category: .progress),
-        Achievement(id: "full_clear",      name: "斗破乾坤",   description: "首次通关全部关卡",      icon: "trophy.fill", requirement: 15, category: .progress),
-        Achievement(id: "games_10",        name: "常客",       description: "累计游戏10局",         icon: "gamecontroller.fill", requirement: 10, category: .progress),
-        Achievement(id: "games_50",        name: "老牌手",     description: "累计游戏50局",         icon: "suit.spade.fill", requirement: 50, category: .progress),
+        Achievement(id: "first_win",       name: L10n.achievementFirstWinName,       description: L10n.achievementFirstWinDesc,       icon: "leaf.fill", requirement: 1, category: .progress),
+        Achievement(id: "mid_run",         name: L10n.achievementMidRunName,         description: L10n.achievementMidRunDesc,         icon: "bolt.shield.fill", requirement: 5, category: .progress),
+        Achievement(id: "full_clear",      name: L10n.achievementFullClearName,      description: L10n.achievementFullClearDesc,      icon: "trophy.fill", requirement: 15, category: .progress),
+        Achievement(id: "games_10",        name: L10n.achievementGames10Name,        description: L10n.achievementGames10Desc,        icon: "gamecontroller.fill", requirement: 10, category: .progress),
+        Achievement(id: "games_50",        name: L10n.achievementGames50Name,        description: L10n.achievementGames50Desc,        icon: "suit.spade.fill", requirement: 50, category: .progress),
 
         // 得分
-        Achievement(id: "score_500",       name: "小试牛刀",   description: "单局累计500分",        icon: "chart.line.uptrend.xyaxis", requirement: 500, category: .scoring),
-        Achievement(id: "score_2000",      name: "一骑当千",   description: "单局累计2000分",       icon: "flame.fill", requirement: 2000, category: .scoring),
-        Achievement(id: "score_5000",      name: "登峰造极",   description: "单局累计5000分",       icon: "star.fill", requirement: 5000, category: .scoring),
-        Achievement(id: "single_200",      name: "一击必杀",   description: "单次出牌得分≥200",     icon: "burst.fill", requirement: 200, category: .scoring),
-        Achievement(id: "single_500",      name: "天崩地裂",   description: "单次出牌得分≥500",     icon: "sparkle", requirement: 500, category: .scoring),
+        Achievement(id: "score_500",       name: L10n.achievementScore500Name,       description: L10n.achievementScore500Desc,       icon: "chart.line.uptrend.xyaxis", requirement: 500, category: .scoring),
+        Achievement(id: "score_2000",      name: L10n.achievementScore2000Name,      description: L10n.achievementScore2000Desc,      icon: "flame.fill", requirement: 2000, category: .scoring),
+        Achievement(id: "score_5000",      name: L10n.achievementScore5000Name,      description: L10n.achievementScore5000Desc,      icon: "star.fill", requirement: 5000, category: .scoring),
+        Achievement(id: "single_200",      name: L10n.achievementSingle200Name,      description: L10n.achievementSingle200Desc,      icon: "burst.fill", requirement: 200, category: .scoring),
+        Achievement(id: "single_500",      name: L10n.achievementSingle500Name,      description: L10n.achievementSingle500Desc,      icon: "sparkle", requirement: 500, category: .scoring),
 
         // 精通
-        Achievement(id: "combo_5",         name: "连击大师",   description: "达成5连击",            icon: "link", requirement: 5, category: .mastery),
-        Achievement(id: "bombs_10",        name: "爆破专家",   description: "累计使用10次炸弹",     icon: "circle.circle.fill", requirement: 10, category: .mastery),
-        Achievement(id: "rockets_5",       name: "火箭狂人",   description: "累计使用5次火箭",      icon: "arrow.up.circle.fill", requirement: 5, category: .mastery),
-        Achievement(id: "jokers_collect_5", name: "规则收藏家", description: "单局装备5张规则牌",    icon: "rectangle.stack.fill", requirement: 5, category: .mastery),
+        Achievement(id: "combo_5",         name: L10n.achievementCombo5Name,         description: L10n.achievementCombo5Desc,         icon: "link", requirement: 5, category: .mastery),
+        Achievement(id: "bombs_10",        name: L10n.achievementBombs10Name,        description: L10n.achievementBombs10Desc,        icon: "circle.circle.fill", requirement: 10, category: .mastery),
+        Achievement(id: "rockets_5",       name: L10n.achievementRockets5Name,       description: L10n.achievementRockets5Desc,       icon: "arrow.up.circle.fill", requirement: 5, category: .mastery),
+        Achievement(id: "jokers_collect_5", name: L10n.achievementJokersCollect5Name, description: L10n.achievementJokersCollect5Desc, icon: "rectangle.stack.fill", requirement: 5, category: .mastery),
 
         // 风格
-        Achievement(id: "no_discard_win",  name: "完美牌局",   description: "不换牌通过一层",       icon: "sparkles", requirement: 1, category: .style),
-        Achievement(id: "gold_300",        name: "富甲一方",   description: "持有300+金币",         icon: "dollarsign.circle.fill", requirement: 300, category: .style),
-        Achievement(id: "wins_5",          name: "常胜将军",   description: "累计通关5次",           icon: "crown.fill", requirement: 5, category: .style),
+        Achievement(id: "no_discard_win",  name: L10n.achievementNoDiscardWinName,   description: L10n.achievementNoDiscardWinDesc,   icon: "sparkles", requirement: 1, category: .style),
+        Achievement(id: "gold_300",        name: L10n.achievementGold300Name,        description: L10n.achievementGold300Desc,        icon: "dollarsign.circle.fill", requirement: 300, category: .style),
+        Achievement(id: "wins_5",          name: L10n.achievementWins5Name,          description: L10n.achievementWins5Desc,          icon: "crown.fill", requirement: 5, category: .style),
 
         // 挑战等级
-        Achievement(id: "ascension_1",     name: "初入挑战",   description: "达到挑战等级1",         icon: "arrow.up.circle.fill", requirement: 1, category: .progress),
-        Achievement(id: "ascension_5",     name: "挑战强者",   description: "达到挑战等级5",         icon: "arrow.up.forward.circle.fill", requirement: 5, category: .progress),
-        Achievement(id: "ascension_10",    name: "绝世高手",   description: "达到挑战等级10",        icon: "seal.fill", requirement: 10, category: .progress),
+        Achievement(id: "ascension_1",     name: L10n.achievementAscension1Name,     description: L10n.achievementAscension1Desc,     icon: "arrow.up.circle.fill", requirement: 1, category: .progress),
+        Achievement(id: "ascension_5",     name: L10n.achievementAscension5Name,     description: L10n.achievementAscension5Desc,     icon: "arrow.up.forward.circle.fill", requirement: 5, category: .progress),
+        Achievement(id: "ascension_10",    name: L10n.achievementAscension10Name,    description: L10n.achievementAscension10Desc,    icon: "seal.fill", requirement: 10, category: .progress),
 
         // 每日挑战
-        Achievement(id: "daily_streak_3",  name: "三日不辍",   description: "每日挑战连续3天",       icon: "flame.fill", requirement: 3, category: .mastery),
-        Achievement(id: "daily_streak_7",  name: "周周坚持",   description: "每日挑战连续7天",       icon: "flame.circle.fill", requirement: 7, category: .mastery),
-        Achievement(id: "daily_streak_30", name: "月度传奇",   description: "每日挑战连续30天",      icon: "calendar.badge.checkmark", requirement: 30, category: .mastery),
+        Achievement(id: "daily_streak_3",  name: L10n.achievementDailyStreak3Name,   description: L10n.achievementDailyStreak3Desc,   icon: "flame.fill", requirement: 3, category: .mastery),
+        Achievement(id: "daily_streak_7",  name: L10n.achievementDailyStreak7Name,   description: L10n.achievementDailyStreak7Desc,   icon: "flame.circle.fill", requirement: 7, category: .mastery),
+        Achievement(id: "daily_streak_30", name: L10n.achievementDailyStreak30Name,  description: L10n.achievementDailyStreak30Desc,  icon: "calendar.badge.checkmark", requirement: 30, category: .mastery),
 
         // 构筑精通
-        Achievement(id: "builds_3",        name: "多面手",     description: "使用3种不同构筑通关",    icon: "square.stack.3d.up.fill", requirement: 3, category: .style),
-        Achievement(id: "builds_9",        name: "全能大师",   description: "使用所有9种构筑通关",    icon: "star.circle.fill", requirement: 9, category: .style),
+        Achievement(id: "builds_3",        name: L10n.achievementBuilds3Name,        description: L10n.achievementBuilds3Desc,        icon: "square.stack.3d.up.fill", requirement: 3, category: .style),
+        Achievement(id: "builds_9",        name: L10n.achievementBuilds9Name,        description: L10n.achievementBuilds9Desc,        icon: "star.circle.fill", requirement: 9, category: .style),
 
         // 牌型精通
-        Achievement(id: "straights_20",    name: "顺子达人",   description: "累计打出20次顺子",      icon: "arrow.right.circle.fill", requirement: 20, category: .mastery),
-        Achievement(id: "bombs_50",        name: "炸弹狂魔",   description: "累计使用50次炸弹",      icon: "circle.circle.fill", requirement: 50, category: .mastery),
+        Achievement(id: "straights_20",    name: L10n.achievementStraights20Name,    description: L10n.achievementStraights20Desc,    icon: "arrow.right.circle.fill", requirement: 20, category: .mastery),
+        Achievement(id: "bombs_50",        name: L10n.achievementBombs50Name,        description: L10n.achievementBombs50Desc,        icon: "circle.circle.fill", requirement: 50, category: .mastery),
 
         // 得分里程碑
-        Achievement(id: "score_10000",     name: "万分俱乐部", description: "单局累计10000分",       icon: "star.square.fill", requirement: 10000, category: .scoring),
-        Achievement(id: "single_1000",     name: "毁天灭地",   description: "单次出牌得分≥1000",     icon: "wand.and.stars", requirement: 1000, category: .scoring),
+        Achievement(id: "score_10000",     name: L10n.achievementScore10000Name,     description: L10n.achievementScore10000Desc,     icon: "star.square.fill", requirement: 10000, category: .scoring),
+        Achievement(id: "single_1000",     name: L10n.achievementSingle1000Name,     description: L10n.achievementSingle1000Desc,     icon: "wand.and.stars", requirement: 1000, category: .scoring),
     ]
 
     /// 成就分类对应的图标颜色
