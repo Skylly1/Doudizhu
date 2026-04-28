@@ -169,8 +169,8 @@ struct DemoGateView: View {
     private var socialProofSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             ForEach(L10n.isEnglish
-                    ? ["All 20 floor levels", "30+ Joker rule cards", "Unlimited plays per run", "One purchase, yours forever"]
-                    : ["全部 20 层关卡", "30+ 丑角规则牌", "无限出牌次数", "一次购买，永久拥有"],
+                    ? ["All \(FloorConfig.allFloors.count) floor levels", "\(Joker.allJokers.count)+ Joker rule cards", "Unlimited plays per run", "One purchase, yours forever"]
+                    : ["全部 \(FloorConfig.allFloors.count) 层关卡", "\(Joker.allJokers.count)+ 丑角规则牌", "无限出牌次数", "一次购买，永久拥有"],
                     id: \.self) { feature in
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
@@ -534,15 +534,17 @@ struct DemoGateView: View {
                 }
             } label: {
                 HStack(spacing: 8) {
-                    if purchaseManager.purchaseState == .purchasing {
+                    if purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading {
                         ProgressView()
                             .tint(.black)
                     } else {
                         Image(systemName: "crown.fill")
                     }
-                    Text(purchaseManager.purchaseState == .purchasing
+                    Text(purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading
                          ? (L10n.isEnglish ? "Processing..." : "处理中...")
-                         : isFirstView
+                         : purchaseManager.purchaseState == .pending
+                            ? (L10n.isEnglish ? "Pending Approval" : "等待审批")
+                            : isFirstView
                             ? L10n.unlockFullPrice(purchaseManager.formattedPrice)
                             : (L10n.isEnglish
                                ? "Continue Your Adventure — \(purchaseManager.formattedPrice)"
@@ -559,7 +561,7 @@ struct DemoGateView: View {
                 .shadow(color: Theme.gold.opacity(pulseButton ? 0.5 : 0.2), radius: pulseButton ? 16 : 8, y: 4)
                 .scaleEffect(pulseButton ? 1.02 : 1.0)
             }
-            .disabled(purchaseManager.purchaseState == .purchasing)
+            .disabled(purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading || purchaseManager.purchaseState == .pending)
             .accessibilityLabel("解锁完整版")
             .accessibilityHint("购买完整版游戏，价格\(purchaseManager.formattedPrice)")
 
@@ -568,6 +570,15 @@ struct DemoGateView: View {
                 Text(msg)
                     .font(.caption)
                     .foregroundColor(Theme.flame)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+            }
+
+            // 待审批提示（家长控制等）
+            if purchaseManager.purchaseState == .pending {
+                Text(L10n.isEnglish ? "Purchase pending approval (e.g. Ask to Buy)" : "购买待审批（如家长控制）")
+                    .font(.caption)
+                    .foregroundColor(Theme.gold)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
             }

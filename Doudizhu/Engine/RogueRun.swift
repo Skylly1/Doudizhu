@@ -1179,9 +1179,11 @@ enum HandSortMode: String, CaseIterable {
                 gold = max(0, gold - goldCost)
             }
             bonusPlays += count
-        case .upgradeRandomJoker:
-            guard gold >= 50 else { break }
-            gold -= 50
+        case .upgradeRandomJoker(let goldCost):
+            if goldCost > 0 {
+                guard gold >= goldCost else { break }
+                gold -= goldCost
+            }
             gold += 30  // 简化补偿
         case .skipNextShop:
             break
@@ -1189,6 +1191,11 @@ enum HandSortMode: String, CaseIterable {
             break
         }
         PlayerStats.shared.save()  // 持久化事件中的金币变动
+        phase = .floorWin
+    }
+
+    /// 跳过特殊事件（无选项时的安全出口）
+    func skipSpecialEvent() {
         phase = .floorWin
     }
 

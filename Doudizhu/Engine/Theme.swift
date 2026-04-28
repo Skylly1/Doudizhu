@@ -339,7 +339,7 @@ struct GameNavBar: View {
                     Image(systemName: "chevron.left")
                         .font(.body.weight(.semibold))
                         .foregroundColor(Theme.textSecondary)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 44, height: 44)
                         .background(
                             Circle()
                                 .fill(.ultraThinMaterial)
@@ -361,7 +361,7 @@ struct GameNavBar: View {
             if let trailing {
                 trailing
             } else if onBack != nil {
-                Color.clear.frame(width: 36, height: 36)
+                Color.clear.frame(width: 44, height: 44)
             }
         }
         .padding(.horizontal, Theme.spacingMD)

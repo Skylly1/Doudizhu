@@ -41,7 +41,8 @@ struct ContentView: View {
                         hasSavedGame: rogueRun.hasSavedRun,
                         onNavigate: { screen in
                             if screen == .map && PlayerStats.shared.totalRuns == 0 {
-                                rogueRun.startWithBuild(StarterBuild.allBuilds.first!)
+                                guard let firstBuild = StarterBuild.allBuilds.first else { return }
+                                rogueRun.startWithBuild(firstBuild)
                                 navigate(to: .battle)
                                 tutorialManager.startIfNeeded()
                             } else {

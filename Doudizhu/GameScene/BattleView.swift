@@ -855,6 +855,16 @@ struct BattleView: View {
                     battleScene?.refreshHand()
                 }
                 .frame(maxWidth: 280)
+
+                SecondaryButton(
+                    title: L10n.isEnglish ? "Save & Quit" : "暂离保存",
+                    icon: "rectangle.portrait.and.arrow.right"
+                ) {
+                    SaveManager.shared.save(run: rogueRun, buildId: "")
+                    SoundManager.shared.stopBGM()
+                    onBack()
+                }
+                .frame(maxWidth: 280)
             }
         }
     }
@@ -946,6 +956,7 @@ struct BattleView: View {
                 .foregroundColor(.white)
                 .frame(width: 220, height: 50)
                 .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
+                .buttonStyle(GameButtonStyle())
                 .alert(
                     L10n.isEnglish ? "Restart Run?" : "重新开始？",
                     isPresented: $showRestartConfirm
@@ -1049,6 +1060,7 @@ struct BattleView: View {
                         )
                         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                     }
+                    .buttonStyle(GameButtonStyle())
                 }
 
                 // Share button
@@ -1082,6 +1094,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     SoundManager.shared.stopBGM()
@@ -1143,6 +1156,17 @@ struct BattleView: View {
                                             .stroke(Theme.gold.opacity(0.2))
                                     )
                             )
+                        }
+                    }
+                    if event.choices.isEmpty {
+                        Button {
+                            FeedbackManager.shared.buttonTap()
+                            SoundManager.shared.play(.buttonTap)
+                            rogueRun.skipSpecialEvent()
+                        } label: {
+                            Text(L10n.isEnglish ? "Skip" : "跳过")
+                                .font(.headline)
+                                .foregroundColor(Theme.textSecondary)
                         }
                     }
                 }
@@ -1396,6 +1420,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
 
                 // 游戏指南
                 Button {
@@ -1420,6 +1445,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
 
                 // 帮助与FAQ
                 Button {
@@ -1443,6 +1469,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
 
                 // 暂离保存（保留存档回主菜单）
                 Button {
@@ -1469,6 +1496,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
 
                 // 放弃冒险（删档，需二次确认）
                 Button {
@@ -1491,6 +1519,7 @@ struct BattleView: View {
                     )
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
+                .buttonStyle(GameButtonStyle())
                 .alert(
                     L10n.isEnglish ? "Abandon Run?" : "确认放弃？",
                     isPresented: $showExitConfirm

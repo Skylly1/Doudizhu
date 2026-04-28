@@ -27,7 +27,7 @@ enum EventEffect {
     case buyRandomJoker(cost: Int)  // 花费金币获得Joker
     case gainRandomBuff
     case healPlays(Int, goldCost: Int = 0)  // 恢复出牌次数，可选金币消耗
-    case upgradeRandomJoker    // 现有Joker效果翻倍（标记用）
+    case upgradeRandomJoker(goldCost: Int = 0)    // 现有Joker效果翻倍，可选金币消耗
     case skipNextShop          // 跳过下一个商店
     case nothing               // 无事发生
 }
@@ -209,7 +209,7 @@ enum SpecialEventGenerator {
                     label: L10n.isEnglish ? "Pay 50 gold" : "付50金币",
                     description: L10n.isEnglish ? "Upgrade a Joker" : "升级一张规则牌",
                     icon: "arrow.up.circle.fill",
-                    effect: .upgradeRandomJoker
+                    effect: .upgradeRandomJoker(goldCost: 50)
                 ),
                 EventChoice(
                     label: L10n.isEnglish ? "Decline" : "拒绝",
@@ -530,7 +530,7 @@ enum SpecialEventGenerator {
                     label: L10n.isEnglish ? "Study scrolls" : "研读秘籍",
                     description: L10n.isEnglish ? "Upgrade a Joker" : "升级一张规则牌",
                     icon: "scroll.fill",
-                    effect: .upgradeRandomJoker
+                    effect: .upgradeRandomJoker()
                 ),
                 EventChoice(
                     label: L10n.isEnglish ? "Meditate" : "闭关参悟",
