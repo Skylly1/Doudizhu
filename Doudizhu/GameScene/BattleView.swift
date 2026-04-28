@@ -889,35 +889,44 @@ struct BattleView: View {
                         .fill(.ultraThinMaterial)
                 )
 
-                // 免费用户在高层失败 → 软付费提示（情感高点）
-                if !PurchaseManager.shared.isFullVersion && rogueRun.currentFloorIndex >= 4, let onUpgrade = onUpgrade {
+                // 免费用户玩过2局以上 → 价值导向付费提示（验证好玩后推）
+                if !PurchaseManager.shared.isFullVersion && PlayerStats.shared.totalRuns >= 2, let onUpgrade = onUpgrade {
+                    let totalFloors = FloorConfig.allFloors.count
+                    let lockedFloors = totalFloors - PurchaseManager.demoMaxFloor
                     Button {
+                        Analytics.shared.track(.paywallShown, params: ["source": "post_game_nudge", "runs": "\(PlayerStats.shared.totalRuns)"])
                         onUpgrade()
                     } label: {
                         HStack(spacing: 8) {
-                            Image(systemName: "crown.fill")
+                            Image(systemName: "sparkles")
                                 .foregroundColor(Theme.gold)
-                            VStack(alignment: .leading, spacing: 2) {
+                                .font(.body)
+                            VStack(alignment: .leading, spacing: 3) {
                                 Text(L10n.isEnglish
-                                     ? "You were SO close! Unlock full adventure"
-                                     : "就差一点！解锁完整冒险继续挑战")
+                                     ? "Enjoying the game? There's so much more!"
+                                     : "玩得开心？还有更多精彩！")
                                     .font(.caption.bold())
                                     .foregroundColor(Theme.textPrimary)
-                                Text(L10n.isEnglish ? "37% OFF — Launch Price" : "首发价 省37%")
+                                Text(L10n.isEnglish
+                                     ? "\(lockedFloors) more floors · Rare Jokers · Endless mode"
+                                     : "还有\(lockedFloors)层关卡 · 稀有丑角 · 无尽模式")
                                     .font(.system(size: 10))
-                                    .foregroundColor(Theme.gold)
+                                    .foregroundColor(Theme.textSecondary)
                             }
                             Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption2)
-                                .foregroundColor(Theme.gold.opacity(0.6))
+                            Text(L10n.isEnglish ? "See More" : "了解更多")
+                                .font(.caption2.bold())
+                                .foregroundColor(Theme.gold)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Theme.gold.opacity(0.15)))
                         }
-                        .padding(10)
+                        .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                .fill(Theme.gold.opacity(0.08))
+                                .fill(Theme.gold.opacity(0.06))
                                 .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
-                                    .stroke(Theme.gold.opacity(0.2)))
+                                    .stroke(Theme.gold.opacity(0.18)))
                         )
                     }
                     .frame(maxWidth: 280)

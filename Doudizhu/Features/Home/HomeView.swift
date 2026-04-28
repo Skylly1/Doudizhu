@@ -461,39 +461,30 @@ struct HomeView: View {
     // MARK: - 升级提示横幅（免费用户可见）
     private var upgradePromptBanner: some View {
         let totalFloors = FloorConfig.allFloors.count
-        let demoPercent = Int(Double(PurchaseManager.demoMaxFloor) / Double(totalFloors) * 100)
+        let unlockedFloors = PurchaseManager.demoMaxFloor
+        let lockedFloors = totalFloors - unlockedFloors
 
         return Button {
             Analytics.shared.track(.paywallShown, params: ["source": "home_banner"])
             onNavigate(.demoGate)
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: "lock.open.fill")
+                Image(systemName: "sparkles")
                     .font(.caption)
                     .foregroundColor(Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L10n.isEnglish
-                         ? "You've explored \(demoPercent)% — unlock the full adventure"
-                         : "已探索\(demoPercent)% — 解锁完整冒险")
+                         ? "Unlock \(lockedFloors) more floors & all Jokers"
+                         : "解锁余下\(lockedFloors)层关卡 & 全部丑角牌")
                         .font(.caption2.bold())
                         .foregroundColor(Theme.textPrimary)
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Theme.bgInset)
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Theme.goldGradient)
-                                .frame(width: geo.size.width * CGFloat(demoPercent) / 100.0)
-                        }
-                    }
-                    .frame(height: 4)
+                    Text(L10n.isEnglish
+                         ? "More builds · More strategies · Endless fun"
+                         : "更多流派 · 更多策略 · 无限乐趣")
+                        .font(.system(size: 9))
+                        .foregroundColor(Theme.textSecondary)
                 }
-                Text(L10n.isEnglish ? "37%OFF" : "省37%")
-                    .font(.system(size: 9, weight: .heavy))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
-                    .background(Capsule().fill(Theme.flame))
+                Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption2)
                     .foregroundColor(Theme.gold.opacity(0.6))
@@ -507,7 +498,7 @@ struct HomeView: View {
                         .stroke(Theme.gold.opacity(0.15)))
             )
         }
-        .accessibilityLabel(L10n.isEnglish ? "Unlock full version" : "解锁完整版")
+        .accessibilityLabel(L10n.isEnglish ? "See full version details" : "查看完整版内容")
     }
 }
 
