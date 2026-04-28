@@ -53,8 +53,8 @@ struct CardFanDecor: View {
             let scale = Theme.screenScale
             let cardW: CGFloat = 48 * scale
             let cardH: CGFloat = 68 * scale
-            // 锚定到屏幕最底部，卡牌半露出作为装饰
-            let baseY = h + cardH * 0.15
+            // 卡牌位于按钮区和底部横幅之间，填充视觉空隙
+            let baseY = h * 0.73
 
             // 5 张扇形排列的卡牌
             let cards: [(rank: String, suit: String, color: Color, angle: Double, offsetX: CGFloat)] = [
@@ -122,7 +122,7 @@ struct CardFanDecor: View {
             }
         }
         .allowsHitTesting(false)
-        .opacity(0.7)
+        .opacity(0.55)
         .onAppear { appeared = true }
     }
 }
@@ -417,7 +417,8 @@ struct HomeView: View {
                     .opacity(showButtons[3] ? 1.0 : 0)
                 }
 
-                Spacer()
+                Spacer(minLength: 16)
+                    .frame(maxHeight: Theme.isCompactScreen ? 40 : 70)
 
                 // 免费用户 — 升级提示横幅（菜单按钮下方，高可见度位置）
                 if !PurchaseManager.shared.isFullVersion {
