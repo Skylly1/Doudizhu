@@ -47,7 +47,7 @@ struct BattleView: View {
             if let scene = battleScene {
                 SpriteView(scene: scene)
                     .ignoresSafeArea()
-                    .accessibilityLabel(L10n.isEnglish ? "Card table" : "牌桌")
+                    .accessibilityLabel(L10n.battleCardTable)
             } else {
                 Theme.bgPrimary.ignoresSafeArea()
             }
@@ -586,7 +586,7 @@ struct BattleView: View {
             if rogueRun.playsRemaining == 1 && rogueRun.floorScore < rogueRun.effectiveTargetScore && rogueRun.phase == .selecting {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                    Text(L10n.isEnglish ? "Last play! Need \(rogueRun.effectiveTargetScore - rogueRun.floorScore) more" : "最后一次出牌！还差 \(rogueRun.effectiveTargetScore - rogueRun.floorScore) 分")
+                    Text(L10n.battleLastPlayWarning(rogueRun.effectiveTargetScore - rogueRun.floorScore))
                 }
                 .font(.caption.bold())
                 .foregroundColor(Theme.danger)
@@ -623,11 +623,11 @@ struct BattleView: View {
                 let count = selected.count
                 let hint: String = {
                     switch count {
-                    case 1: return L10n.isEnglish ? "Play single cards" : "单张可以直接出"
-                    case 2: return L10n.isEnglish ? "Need a pair (same rank)" : "需要两张相同点数组成对子"
-                    case 3: return L10n.isEnglish ? "Need three of a kind" : "需要三张相同点数"
-                    case 4: return L10n.isEnglish ? "Try 3+1, bomb, or extend to straight" : "试试三带一、炸弹，或凑顺子"
-                    case 5...: return L10n.isEnglish ? "Try a straight (5+ consecutive)" : "试试顺子（5张以上连续）"
+                    case 1: return L10n.battleHintSingle
+                    case 2: return L10n.battleHintPair
+                    case 3: return L10n.battleHintTriple
+                    case 4: return L10n.battleHintFour
+                    case 5...: return L10n.battleHintFivePlus
                     default: return L10n.invalidPattern
                     }
                 }()
@@ -774,7 +774,7 @@ struct BattleView: View {
                 let bonus = result.score - result.pattern.baseScore
                 if bonus > 0 {
                     HStack {
-                        Text(L10n.isEnglish ? "Bonus" : "加成")
+                        Text(L10n.battleBonus)
                             .font(.caption)
                             .foregroundColor(Theme.gold.opacity(0.8))
                         Spacer()
@@ -784,7 +784,7 @@ struct BattleView: View {
                     }
                 } else if bonus < 0 {
                     HStack {
-                        Text(L10n.isEnglish ? "Penalty" : "减益")
+                        Text(L10n.battlePenalty)
                             .font(.caption)
                             .foregroundColor(Theme.danger.opacity(0.8))
                         Spacer()
@@ -795,7 +795,7 @@ struct BattleView: View {
                 }
                 Divider().background(Theme.border)
                 HStack {
-                    Text(L10n.isEnglish ? "Earned" : "得分")
+                    Text(L10n.battleEarned)
                         .font(.caption.bold())
                         .foregroundColor(Theme.textPrimary)
                     Spacer()
@@ -857,7 +857,7 @@ struct BattleView: View {
                 .frame(maxWidth: 280)
 
                 SecondaryButton(
-                    title: L10n.isEnglish ? "Save & Quit" : "暂离保存",
+                    title: L10n.battleSaveQuit,
                     icon: "rectangle.portrait.and.arrow.right"
                 ) {
                     SaveManager.shared.save(run: rogueRun, buildId: "")
@@ -884,14 +884,14 @@ struct BattleView: View {
                     statRow(L10n.targetScoreLabel, value: "\(rogueRun.currentFloor.targetScore)")
                     let gap = rogueRun.effectiveTargetScore - rogueRun.floorScore
                     if gap > 0 {
-                        statRow(L10n.isEnglish ? "Gap" : "差距", value: "-\(gap)")
+                        statRow(L10n.battleGap, value: "-\(gap)")
                     }
                     statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
-                    statRow(L10n.isEnglish ? "Cards Played" : "出牌数", value: "\(rogueRun.playHistory.count)")
+                    statRow(L10n.battleCardsPlayed, value: "\(rogueRun.playHistory.count)")
                     if let bestPlay = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
-                        statRow(L10n.isEnglish ? "Best Hand" : "最佳一手", value: "\(bestPlay.score)")
+                        statRow(L10n.battleBestHand, value: "\(bestPlay.score)")
                     }
-                    statRow(L10n.isEnglish ? "Best Combo" : "最高连击", value: "×\(rogueRun.playHistory.map(\.combo).max() ?? 0)")
+                    statRow(L10n.battleBestCombo, value: "×\(rogueRun.playHistory.map(\.combo).max() ?? 0)")
                 }
                 .padding(Theme.spacingMD)
                 .background(
@@ -917,14 +917,12 @@ struct BattleView: View {
                                      : "玩得开心？还有更多精彩！")
                                     .font(.caption.bold())
                                     .foregroundColor(Theme.textPrimary)
-                                Text(L10n.isEnglish
-                                     ? "\(lockedFloors) more floors · Rare Jokers · Endless mode"
-                                     : "还有\(lockedFloors)层关卡 · 稀有丑角 · 无尽模式")
+                                Text(L10n.battleLockedContent(lockedFloors))
                                     .font(Theme.fontSmall)
                                     .foregroundColor(Theme.textSecondary)
                             }
                             Spacer()
-                            Text(L10n.isEnglish ? "See More" : "了解更多")
+                            Text(L10n.battleSeeMore)
                                 .font(.caption2.bold())
                                 .foregroundColor(Theme.gold)
                                 .padding(.horizontal, 10)
@@ -958,7 +956,7 @@ struct BattleView: View {
                 .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
                 .buttonStyle(GameButtonStyle())
                 .alert(
-                    L10n.isEnglish ? "Restart Run?" : "重新开始？",
+                    L10n.battleRestartRunTitle,
                     isPresented: $showRestartConfirm
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
@@ -967,33 +965,29 @@ struct BattleView: View {
                         battleScene?.refreshHand()
                     }
                 } message: {
-                    Text(L10n.isEnglish
-                         ? "Current run progress will be lost. Start a fresh run from Floor 1."
-                         : "当前冒险进度将丢失，从第1层重新开始。")
+                    Text(L10n.battleRestartRunMessage)
                 }
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     showFailExitConfirm = true
                 }
                 .alert(
-                    L10n.isEnglish ? "Back to Menu?" : "返回主菜单？",
+                    L10n.battleBackToMenuTitle,
                     isPresented: $showFailExitConfirm
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
-                    Button(L10n.isEnglish ? "Save & Quit" : "保存并退出", role: .none) {
+                    Button(L10n.battleSaveAndQuit, role: .none) {
                         SaveManager.shared.save(run: rogueRun, buildId: "")
                         SoundManager.shared.stopBGM()
                         onBack()
                     }
-                    Button(L10n.isEnglish ? "Quit without saving" : "不保存退出", role: .destructive) {
+                    Button(L10n.battleQuitNoSave, role: .destructive) {
                         rogueRun.clearSave()
                         SoundManager.shared.stopBGM()
                         onBack()
                     }
                 } message: {
-                    Text(L10n.isEnglish
-                         ? "Save your run to retry later, or quit without saving."
-                         : "保存后可以下次继续重试，不保存将丢失本局进度。")
+                    Text(L10n.battleBackToMenuMessage)
                 }
             }
         }
@@ -1016,13 +1010,13 @@ struct BattleView: View {
 
                 // 战绩统计
                 VStack(spacing: Theme.spacingSM) {
-                    statRow(L10n.isEnglish ? "Floors Cleared" : "通过层数", value: "\(rogueRun.currentFloorIndex + 1)")
-                    statRow(L10n.isEnglish ? "Cards Played" : "出牌总数", value: "\(rogueRun.playHistory.count)")
+                    statRow(L10n.battleFloorsCleared, value: "\(rogueRun.currentFloorIndex + 1)")
+                    statRow(L10n.battleTotalCardsPlayed, value: "\(rogueRun.playHistory.count)")
                     if let best = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
-                        statRow(L10n.isEnglish ? "Best Hand" : "最佳一手", value: "\(best.score)")
+                        statRow(L10n.battleBestHand, value: "\(best.score)")
                     }
-                    statRow(L10n.isEnglish ? "Jokers" : "规则牌", value: "\(rogueRun.activeJokers.count)")
-                    statRow(L10n.isEnglish ? "Gold Remaining" : "剩余金币", value: "\(rogueRun.gold)")
+                    statRow(L10n.battleJokers, value: "\(rogueRun.activeJokers.count)")
+                    statRow(L10n.battleGoldRemaining, value: "\(rogueRun.gold)")
                 }
                 .padding(Theme.spacingMD)
                 .background(
@@ -1068,20 +1062,18 @@ struct BattleView: View {
                 // Share button
                 Button {
                     let image = ShareManager.generateShareImage(
-                        title: L10n.isEnglish ? "Victory!" : "斗破乾坤",
+                        title: L10n.battleVictoryTitle,
                         score: rogueRun.totalScore,
                         floor: rogueRun.currentFloorIndex + 1,
                         jokerCount: rogueRun.activeJokers.count,
                         ascension: rogueRun.ascensionLevel
                     )
-                    let text = L10n.isEnglish
-                        ? "I scored \(rogueRun.totalScore) in Dou Po Qian Kun! 🏆"
-                        : "我在斗破乾坤中取得了 \(rogueRun.totalScore) 分！🏆"
+                    let text = L10n.battleShareText(rogueRun.totalScore)
                     ShareManager.share(image: image, text: text)
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "square.and.arrow.up")
-                        Text(L10n.isEnglish ? "Share" : "分享战绩")
+                        Text(L10n.battleShare)
                     }
                     .font(.subheadline.bold())
                     .foregroundColor(Theme.cyan)
@@ -1097,7 +1089,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
-                .accessibilityLabel(L10n.isEnglish ? "Share" : "分享战绩")
+                .accessibilityLabel(L10n.battleShare)
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     SoundManager.shared.stopBGM()
@@ -1167,7 +1159,7 @@ struct BattleView: View {
                             SoundManager.shared.play(.buttonTap)
                             rogueRun.skipSpecialEvent()
                         } label: {
-                            Text(L10n.isEnglish ? "Skip" : "跳过")
+                            Text(L10n.battleSkip)
                                 .font(.headline)
                                 .foregroundColor(Theme.textSecondary)
                         }
@@ -1292,7 +1284,7 @@ struct BattleView: View {
 
     private var pauseMenuContent: some View {
             VStack(spacing: Theme.spacingLG) {
-                Text(L10n.isEnglish ? "Paused" : "已暂停")
+                Text(L10n.battlePaused)
                     .font(.largeTitle.bold())
                     .foregroundStyle(Theme.goldGradient)
 
@@ -1300,9 +1292,9 @@ struct BattleView: View {
                 VStack(spacing: Theme.spacingSM) {
                     statRow(L10n.floorNumber(rogueRun.currentFloorIndex + 1),
                             value: rogueRun.currentFloor.name)
-                    statRow(L10n.isEnglish ? "Score" : "得分",
+                    statRow(L10n.battleScore,
                             value: "\(rogueRun.floorScore) / \(rogueRun.effectiveTargetScore)")
-                    statRow(L10n.isEnglish ? "Gold" : "金币",
+                    statRow(L10n.battleGold,
                             value: "\(rogueRun.gold)")
                 }
                 .padding(Theme.spacingMD)
@@ -1313,7 +1305,7 @@ struct BattleView: View {
 
                 // 继续
                 PrimaryButton(
-                    title: L10n.isEnglish ? "Resume" : "继续游戏",
+                    title: L10n.battleResume,
                     icon: "play.fill"
                 ) {
                     showPauseMenu = false
@@ -1329,19 +1321,17 @@ struct BattleView: View {
                 }
                 .frame(maxWidth: 280)
                 .alert(
-                    L10n.isEnglish ? "Retry Floor?" : "重试本关？",
+                    L10n.battleRetryFloorTitle,
                     isPresented: $showRetryConfirm
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
-                    Button(L10n.isEnglish ? "Retry" : "重试", role: .destructive) {
+                    Button(L10n.battleRetry, role: .destructive) {
                         showPauseMenu = false
                         rogueRun.retryCurrentFloor()
                         battleScene?.refreshHand()
                     }
                 } message: {
-                    Text(L10n.isEnglish
-                         ? "Your progress on this floor will be reset."
-                         : "本层进度将被重置。")
+                    Text(L10n.battleRetryMessage)
                 }
 
                 // 内联设置面板
@@ -1350,7 +1340,7 @@ struct BattleView: View {
                         Image(systemName: soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                             .foregroundColor(soundEnabled ? Theme.gold : Theme.textDisabled)
                             .frame(width: 24)
-                        Text(L10n.isEnglish ? "Sound" : "音效")
+                        Text(L10n.battleSound)
                             .foregroundColor(Theme.textPrimary)
                         Spacer()
                         Toggle("", isOn: $soundEnabled)
@@ -1361,7 +1351,7 @@ struct BattleView: View {
                         Image(systemName: musicEnabled ? "music.note" : "music.note.slash")
                             .foregroundColor(musicEnabled ? Theme.gold : Theme.textDisabled)
                             .frame(width: 24)
-                        Text(L10n.isEnglish ? "Music" : "音乐")
+                        Text(L10n.battleMusic)
                             .foregroundColor(Theme.textPrimary)
                         Spacer()
                         Toggle("", isOn: $musicEnabled)
@@ -1379,7 +1369,7 @@ struct BattleView: View {
                         Image(systemName: hapticEnabled ? "hand.tap.fill" : "hand.raised.slash.fill")
                             .foregroundColor(hapticEnabled ? Theme.gold : Theme.textDisabled)
                             .frame(width: 24)
-                        Text(L10n.isEnglish ? "Haptics" : "震动")
+                        Text(L10n.battleHaptics)
                             .foregroundColor(Theme.textPrimary)
                         Spacer()
                         Toggle("", isOn: $hapticEnabled)
@@ -1401,8 +1391,8 @@ struct BattleView: View {
                 // 手牌排序
                 TertiaryButton(
                     title: rogueRun.handSortMode == .byRank
-                        ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
-                        : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"),
+                        ? L10n.battleSortBySuit
+                        : L10n.battleSortByRank,
                     icon: rogueRun.handSortMode.icon,
                     color: Theme.gold
                 ) {
@@ -1411,8 +1401,8 @@ struct BattleView: View {
                     FeedbackManager.shared.cardTap()
                 }
                 .accessibilityLabel(rogueRun.handSortMode == .byRank
-                    ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
-                    : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
+                    ? L10n.battleSortBySuit
+                    : L10n.battleSortByRank)
 
                 // 游戏指南
                 TertiaryButton(
@@ -1438,7 +1428,7 @@ struct BattleView: View {
 
                 // 暂离保存（保留存档回主菜单）
                 TertiaryButton(
-                    title: L10n.isEnglish ? "Save & Quit" : "暂离保存",
+                    title: L10n.battleSaveQuit,
                     icon: "rectangle.portrait.and.arrow.right"
                 ) {
                     showPauseMenu = false
@@ -1446,32 +1436,30 @@ struct BattleView: View {
                     SoundManager.shared.stopBGM()
                     onBack()
                 }
-                .accessibilityLabel(L10n.isEnglish ? "Save & Quit" : "暂离保存")
+                .accessibilityLabel(L10n.battleSaveQuit)
 
                 // 放弃冒险（删档，需二次确认）
                 TertiaryButton(
-                    title: L10n.isEnglish ? "Abandon Run" : "放弃冒险",
+                    title: L10n.battleAbandonRun,
                     icon: "xmark.circle.fill",
                     color: Theme.danger.opacity(0.7)
                 ) {
                     showExitConfirm = true
                 }
-                .accessibilityLabel(L10n.isEnglish ? "Abandon Run" : "放弃冒险")
+                .accessibilityLabel(L10n.battleAbandonRun)
                 .alert(
-                    L10n.isEnglish ? "Abandon Run?" : "确认放弃？",
+                    L10n.battleAbandonTitle,
                     isPresented: $showExitConfirm
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
-                    Button(L10n.isEnglish ? "Abandon" : "放弃", role: .destructive) {
+                    Button(L10n.battleAbandon, role: .destructive) {
                         showPauseMenu = false
                         rogueRun.clearSave()
                         SoundManager.shared.stopBGM()
                         onBack()
                     }
                 } message: {
-                    Text(L10n.isEnglish
-                         ? "All progress in this run will be lost."
-                         : "本局所有进度将丢失，无法恢复。")
+                    Text(L10n.battleAbandonMessage)
                 }
             }
             .padding(Theme.spacingXL)

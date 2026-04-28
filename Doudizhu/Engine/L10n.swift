@@ -887,6 +887,56 @@ enum L10n {
         }
     }
 
+    // MARK: - 战斗界面 (BattleView)
+
+    static var battleCardTable: String { isEnglish ? "Card table" : "牌桌" }
+    static func battleLastPlayWarning(_ gap: Int) -> String { isEnglish ? "Last play! Need \(gap) more" : "最后一次出牌！还差 \(gap) 分" }
+    static var battleHintSingle: String { isEnglish ? "Play single cards" : "单张可以直接出" }
+    static var battleHintPair: String { isEnglish ? "Need a pair (same rank)" : "需要两张相同点数组成对子" }
+    static var battleHintTriple: String { isEnglish ? "Need three of a kind" : "需要三张相同点数" }
+    static var battleHintFour: String { isEnglish ? "Try 3+1, bomb, or extend to straight" : "试试三带一、炸弹，或凑顺子" }
+    static var battleHintFivePlus: String { isEnglish ? "Try a straight (5+ consecutive)" : "试试顺子（5张以上连续）" }
+    static var battleBonus: String { isEnglish ? "Bonus" : "加成" }
+    static var battlePenalty: String { isEnglish ? "Penalty" : "减益" }
+    static var battleEarned: String { isEnglish ? "Earned" : "得分" }
+    static var battleSaveQuit: String { isEnglish ? "Save & Quit" : "暂离保存" }
+    static var battleGap: String { isEnglish ? "Gap" : "差距" }
+    static var battleCardsPlayed: String { isEnglish ? "Cards Played" : "出牌数" }
+    static var battleBestHand: String { isEnglish ? "Best Hand" : "最佳一手" }
+    static var battleBestCombo: String { isEnglish ? "Best Combo" : "最高连击" }
+    static func battleLockedContent(_ n: Int) -> String { isEnglish ? "\(n) more floors · Rare Jokers · Endless mode" : "还有\(n)层关卡 · 稀有丑角 · 无尽模式" }
+    static var battleSeeMore: String { isEnglish ? "See More" : "了解更多" }
+    static var battleRestartRunTitle: String { isEnglish ? "Restart Run?" : "重新开始？" }
+    static var battleRestartRunMessage: String { isEnglish ? "Current run progress will be lost. Start a fresh run from Floor 1." : "当前冒险进度将丢失，从第1层重新开始。" }
+    static var battleBackToMenuTitle: String { isEnglish ? "Back to Menu?" : "返回主菜单？" }
+    static var battleSaveAndQuit: String { isEnglish ? "Save & Quit" : "保存并退出" }
+    static var battleQuitNoSave: String { isEnglish ? "Quit without saving" : "不保存退出" }
+    static var battleBackToMenuMessage: String { isEnglish ? "Save your run to retry later, or quit without saving." : "保存后可以下次继续重试，不保存将丢失本局进度。" }
+    static var battleFloorsCleared: String { isEnglish ? "Floors Cleared" : "通过层数" }
+    static var battleTotalCardsPlayed: String { isEnglish ? "Cards Played" : "出牌总数" }
+    static var battleJokers: String { isEnglish ? "Jokers" : "规则牌" }
+    static var battleGoldRemaining: String { isEnglish ? "Gold Remaining" : "剩余金币" }
+    static var battleVictoryTitle: String { isEnglish ? "Victory!" : "斗破乾坤" }
+    static func battleShareText(_ score: Int) -> String { isEnglish ? "I scored \(score) in Dou Po Qian Kun! 🏆" : "我在斗破乾坤中取得了 \(score) 分！🏆" }
+    static var battleShare: String { isEnglish ? "Share" : "分享战绩" }
+    static var battleSkip: String { isEnglish ? "Skip" : "跳过" }
+    static var battlePaused: String { isEnglish ? "Paused" : "已暂停" }
+    static var battleScore: String { isEnglish ? "Score" : "得分" }
+    static var battleGold: String { isEnglish ? "Gold" : "金币" }
+    static var battleResume: String { isEnglish ? "Resume" : "继续游戏" }
+    static var battleRetryFloorTitle: String { isEnglish ? "Retry Floor?" : "重试本关？" }
+    static var battleRetry: String { isEnglish ? "Retry" : "重试" }
+    static var battleRetryMessage: String { isEnglish ? "Your progress on this floor will be reset." : "本层进度将被重置。" }
+    static var battleSound: String { isEnglish ? "Sound" : "音效" }
+    static var battleMusic: String { isEnglish ? "Music" : "音乐" }
+    static var battleHaptics: String { isEnglish ? "Haptics" : "震动" }
+    static var battleSortBySuit: String { isEnglish ? "Sort by Suit" : "按花色排列" }
+    static var battleSortByRank: String { isEnglish ? "Sort by Rank" : "按点数排列" }
+    static var battleAbandonRun: String { isEnglish ? "Abandon Run" : "放弃冒险" }
+    static var battleAbandonTitle: String { isEnglish ? "Abandon Run?" : "确认放弃？" }
+    static var battleAbandon: String { isEnglish ? "Abandon" : "放弃" }
+    static var battleAbandonMessage: String { isEnglish ? "All progress in this run will be lost." : "本局所有进度将丢失，无法恢复。" }
+
     // MARK: - 无障碍 (Accessibility)
 
     static var a11yPause: String { isEnglish ? "Pause" : "暂停" }
