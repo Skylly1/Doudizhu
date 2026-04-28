@@ -1,6 +1,9 @@
 import SwiftUI
 
 /// 首购成功庆典页面
+// REVENUE-TODO: [P1] 加入「分享到社交媒体」按钮 — 截图分享解锁成就可带来有机获客
+// REVENUE-TODO: [P2] 加入「评价引导」— 购买成功是请求App Store评价的最佳时机
+// REVENUE-TODO: [P2] 加入「推荐给朋友」— 分享链接+推荐奖励（口碑传播）
 struct PurchaseSuccessView: View {
     let onStart: () -> Void
     

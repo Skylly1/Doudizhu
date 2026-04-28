@@ -1,8 +1,12 @@
 import Foundation
 import StoreKit
+import Security
 
 /// 购买管理器 — StoreKit 2 真实 IAP 实现
 /// 买断制：免费试玩前6层 → 一次性购买解锁完整版
+// REVENUE-TODO: [P1] 加入服务端收据验证（server-side receipt validation），防止越狱/中间人攻击绕过本地验证
+// REVENUE-TODO: [P2] 加入「支持开发者」打赏入口（tip jar），非消耗品 $1.99/$4.99/$9.99
+// REVENUE-TODO: [P3] 加入季节通行证（Season Pass）订阅模式，解锁独占每日挑战奖励+卡背皮肤
 @MainActor
 final class PurchaseManager: ObservableObject {
     static let shared = PurchaseManager()
@@ -26,9 +30,16 @@ final class PurchaseManager: ObservableObject {
     private var productLoadRetryCount = 0
     private static let maxProductLoadRetries = 3
 
+    // REVENUE-FIX: 使用 Keychain 存储购买状态，防止 UserDefaults 被轻易篡改
+    private static let keychainService = "com.hongzeng.doudizhu.purchase"
+    private static let keychainAccount = "fullVersionEntitlement"
+
     private init() {
         // 从缓存快速恢复，后续通过 Transaction 验证
-        self.isFullVersion = UserDefaults.standard.bool(forKey: purchasedKey)
+        // 双重验证：UserDefaults + Keychain 一致时才信任缓存
+        let udValue = UserDefaults.standard.bool(forKey: purchasedKey)
+        let kcValue = Self.readKeychain()
+        self.isFullVersion = udValue && kcValue
         transactionListener = listenForTransactions()
         Task { await loadProduct() }
         Task { await verifyEntitlements() }
@@ -100,7 +111,7 @@ final class PurchaseManager: ObservableObject {
             case .pending:
                 // Ask to Buy / 家长审批：交易未完成，等待 Transaction.updates 回调
                 purchaseState = .pending
-                Analytics.shared.track(.iapFailed, params: ["error": "pending_approval"])
+                Analytics.shared.track(.iapPending, params: ["product": Self.fullVersionProductID])
                 return false
 
             @unknown default:
@@ -177,14 +188,49 @@ final class PurchaseManager: ObservableObject {
     private func unlock() {
         isFullVersion = true
         UserDefaults.standard.set(true, forKey: purchasedKey)
+        Self.writeKeychain(true)
     }
 
     /// 退款/撤销后锁定（由 Transaction 监听器调用）
     private func revoke() {
         isFullVersion = false
         UserDefaults.standard.set(false, forKey: purchasedKey)
+        Self.writeKeychain(false)
         purchaseState = .idle
+        Analytics.shared.track(.iapRevoked)
         CrashReporter.shared.log("Purchase revoked (refund detected)", level: .warning)
+    }
+
+    // MARK: - Keychain Helpers (防篡改存储)
+
+    private static func writeKeychain(_ value: Bool) {
+        let data = Data([value ? 1 : 0])
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: keychainAccount
+        ]
+        SecItemDelete(query as CFDictionary)
+        var addQuery = query
+        addQuery[kSecValueData as String] = data
+        addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        SecItemAdd(addQuery as CFDictionary, nil)
+    }
+
+    private static func readKeychain() -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: keychainAccount,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data, !data.isEmpty else {
+            return false
+        }
+        return data[0] == 1
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {

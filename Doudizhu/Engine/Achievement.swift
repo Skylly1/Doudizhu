@@ -1,6 +1,8 @@
 import Foundation
 
 // MARK: - 成就系统
+// REVENUE-TODO: [P2] 加入「成就展示柜」— 付费用户可在主页展示已解锁成就徽章（社交货币→口碑传播）
+// REVENUE-TODO: [P3] 部分高阶成就仅付费用户可解锁 — 激励免费用户升级
 
 struct Achievement: Identifiable, Codable, Hashable {
     let id: String

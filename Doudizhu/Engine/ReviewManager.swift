@@ -2,6 +2,8 @@ import StoreKit
 
 @MainActor
 enum ReviewManager {
+    // REVENUE-TODO: [P1] 付费用户首次通关后（不仅仅是第8次过关）立即请求评价 — 这是情感最高峰
+    // REVENUE-TODO: [P2] 加入 smart-timing：检测玩家是否刚打出高分/解锁成就后请求，转化率更高
     private static let winCountKey = "review_win_count"
     private static let hasRequestedKey = "review_has_requested"
     private static let paidReviewRequestedKey = "review_paid_requested"

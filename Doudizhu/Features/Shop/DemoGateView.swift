@@ -2,6 +2,11 @@ import SwiftUI
 
 /// 试玩结束 → 付费解锁引导页（转化优化版 v2）
 /// 优化：祝贺过渡、损失规避、首次免费体验、重复访客适配、SF Symbols
+// REVENUE-TODO: [P1] 加入倒计时限时优惠组件 — "首发特惠 48h 后恢复原价 ¥40"（需 Remote Config 配合）
+// REVENUE-TODO: [P1] 社交证明改用动态数据 — 从服务端拉取真实评价/购买人数，而非硬编码
+// REVENUE-TODO: [P2] 加入「内容预览视频」— 自动播放10秒后续关卡精彩片段（好奇心驱动）
+// REVENUE-TODO: [P2] 付费墙滚动深度追踪 — 用户滚到购买按钮时才算有效展示
+// REVENUE-TODO: [P3] 加入「解锁提醒」— 用户关闭付费墙后24h推送本地通知"你的冒险还在等你"
 struct DemoGateView: View {
     @ObservedObject var purchaseManager: PurchaseManager
     let onContinue: () -> Void
@@ -128,6 +133,7 @@ struct DemoGateView: View {
     }
 
     // MARK: - 社交证明
+    // REVENUE-TODO: [P1] 替换硬编码评价为动态数据 — "已有 X 位玩家解锁完整版" + 真实App Store评分
 
     private var socialProofSection: some View {
         VStack(spacing: 8) {
@@ -390,6 +396,9 @@ struct DemoGateView: View {
     }
 
     // MARK: - 购买区
+    // REVENUE-TODO: [P1] 加入原价删除线 "¥40" → "¥25" 的价格锚定效果
+    // REVENUE-TODO: [P1] "首发特惠"标签应配合倒计时，否则永久显示会失去紧迫感
+    // REVENUE-TODO: [P2] 回访用户(非首次)应展示不同CTA — "解锁你的进度" 替代 "限时价格"
 
     @State private var showPurchaseSuccess = false
 

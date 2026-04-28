@@ -57,10 +57,27 @@ enum AnalyticsEvent: String {
 
     // 成就 & 留存
     case achievementUnlocked = "achievement_unlocked"
+
+    // REVENUE-TODO: [P1] 新增以下事件完善漏斗
+    // case paywallScrollDepth = "paywall_scroll_depth"     // 付费墙滚动深度(%)
+    // case paywallButtonVisible = "paywall_button_visible"  // 购买按钮首次进入可视区
+    // case purchaseSuccessCTA = "purchase_success_cta"      // 购买成功页CTA点击
+    // case retentionD1 = "retention_d1"                     // D1留存
+    // case retentionD7 = "retention_d7"                     // D7留存
+    // case retentionD30 = "retention_d30"                   // D30留存
+
+    // 留存追踪
+    case appReturnVisit = "app_return_visit"
+    // 每日挑战完整追踪
+    case dailyChallengeComplete = "daily_challenge_complete"
+    case dailyChallengeFail = "daily_challenge_fail"
 }
 
 /// 轻量级 Analytics 引擎 — os_log + UserDefaults 持久化
 /// MVP 阶段零依赖；上线后可对接 Firebase/Amplitude
+// REVENUE-TODO: [P1] 接入 Firebase Analytics 或 Amplitude，获得真实的 DAU/MAU/D1/D7/D30 留存率
+// REVENUE-TODO: [P2] 加入 A/B 测试框架（Firebase Remote Config），测试付费墙文案/时机/价格
+// REVENUE-TODO: [P2] 计算并上报 ARPU = 总收入 / DAU，LTV = ARPU × 平均生命周期天数
 @MainActor final class Analytics {
     static let shared = Analytics()
 
@@ -74,6 +91,7 @@ enum AnalyticsEvent: String {
 
     private init() {
         incrementSessionCount()
+        trackReturnVisit()
     }
 
     // MARK: - Track
@@ -154,5 +172,23 @@ enum AnalyticsEvent: String {
         var counts = UserDefaults.standard.dictionary(forKey: eventsKey) as? [String: Int] ?? [:]
         counts[event.rawValue] = (counts[event.rawValue] ?? 0) + 1
         UserDefaults.standard.set(counts, forKey: eventsKey)
+    }
+
+    /// 追踪回访间隔（D1/D7/D30 留存的本地近似）
+    private func trackReturnVisit() {
+        let lastVisitKey = "analytics_last_visit"
+        let firstVisitKey = "analytics_first_visit"
+        let now = Date()
+        if UserDefaults.standard.object(forKey: firstVisitKey) == nil {
+            UserDefaults.standard.set(now, forKey: firstVisitKey)
+            track(.appFirstOpen)
+        }
+        if let lastVisit = UserDefaults.standard.object(forKey: lastVisitKey) as? Date {
+            let daysSince = Calendar.current.dateComponents([.day], from: lastVisit, to: now).day ?? 0
+            if daysSince >= 1 {
+                track(.appReturnVisit, params: ["days_since_last": "\(daysSince)"])
+            }
+        }
+        UserDefaults.standard.set(now, forKey: lastVisitKey)
     }
 }

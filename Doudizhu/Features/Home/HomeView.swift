@@ -167,6 +167,8 @@ struct BottomMistLayer: View {
 }
 
 struct HomeView: View {
+    // REVENUE-TODO: [P2] 免费用户主页底部加入「解锁完整版」横幅 — 显示进度条"你已体验40%内容"
+    // REVENUE-TODO: [P3] 加入「支持开发者」入口 — 设置页或关于页的打赏按钮
     let hasSavedGame: Bool
     let onNavigate: (AppScreen) -> Void
     let onContinue: () -> Void

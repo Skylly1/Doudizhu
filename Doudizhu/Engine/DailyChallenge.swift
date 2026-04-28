@@ -2,6 +2,8 @@ import Foundation
 
 /// Daily Challenge — a curated challenge that changes every day
 /// All players get the same seed → same floor sequence + shop items
+// REVENUE-TODO: [P2] 每日挑战排行榜 — 付费用户可查看全球排名，免费用户只能看到自己的分数
+// REVENUE-TODO: [P3] 每日挑战连续完成奖励 — 7天连签解锁独占皮肤（提升留存→间接提升转化）
 struct DailyChallenge {
     let date: Date
     let seed: UInt64
