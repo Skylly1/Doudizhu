@@ -1026,6 +1026,18 @@ enum HandSortMode: String, CaseIterable {
         ])
 
         DailyChallenge.markStarted()
+
+        // UF-04: 消费连续挑战 streak 奖励
+        let streakGold = DailyChallenge.consumeStreakGoldBonus()
+        if streakGold > 0 { gold += streakGold }
+        if DailyChallenge.consumeStreakFreeJoker() {
+            let owned = Set(activeJokers.map(\.effect))
+            let available = Joker.allJokers.filter { !owned.contains($0.effect) }
+            if let freeJoker = available.randomElement() {
+                activeJokers.append(freeJoker)
+            }
+        }
+
         startFloor()
         autoSave()  // 确保首次存档，防止用户退出后无存档可恢复
     }

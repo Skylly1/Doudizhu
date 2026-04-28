@@ -85,12 +85,11 @@ struct ContentView: View {
                                     navigate(to: .shop)
                                 }
                             } else {
-                                // 存档丢失（SwiftData 重建等），清除过期标记后重新开始
+                                // UF-05: 存档丢失 — 标记完成并清除存档，不重新开始
                                 DailyChallenge.markCompleted()
                                 SaveManager.shared.clearDailySaves()
-                                let challenge = DailyChallenge.today
-                                rogueRun.startDailyChallenge(challenge)
-                                navigate(to: .battle)
+                                // 返回首页，DailyChallengeView 刷新后将显示"已完成"
+                                goHome()
                             }
                         } : nil,
                         onBack: { goBack() }

@@ -40,6 +40,16 @@ final class GameSaveModel {
     // MARK: 每日挑战
     var isDailyChallenge: Bool
 
+    // MARK: BossState 持久化（UF-02）
+    var bossEscalationCount: Int
+    var bossDecayCount: Int
+    var bossSilencedJokerIndex: Int   // -1 表示 nil
+    var bossPhantomCardIds: [String]  // UUID 字符串数组
+    var bossBannedPatternRaw: String  // PatternType.rawValue 或 ""
+
+    // MARK: 额外出牌次数（UF-03）
+    var bonusPlays: Int
+
     /// 存档版本号 — 用于未来迁移
     var schemaVersion: Int
 
@@ -65,6 +75,12 @@ final class GameSaveModel {
         starterBuildId: String = "",
         phaseRaw: String = "selecting",
         isDailyChallenge: Bool = false,
+        bossEscalationCount: Int = 0,
+        bossDecayCount: Int = 0,
+        bossSilencedJokerIndex: Int = -1,
+        bossPhantomCardIds: [String] = [],
+        bossBannedPatternRaw: String = "",
+        bonusPlays: Int = 0,
         schemaVersion: Int = 1
     ) {
         self.runId = runId
@@ -88,6 +104,12 @@ final class GameSaveModel {
         self.starterBuildId = starterBuildId
         self.phaseRaw = phaseRaw
         self.isDailyChallenge = isDailyChallenge
+        self.bossEscalationCount = bossEscalationCount
+        self.bossDecayCount = bossDecayCount
+        self.bossSilencedJokerIndex = bossSilencedJokerIndex
+        self.bossPhantomCardIds = bossPhantomCardIds
+        self.bossBannedPatternRaw = bossBannedPatternRaw
+        self.bonusPlays = bonusPlays
         self.schemaVersion = schemaVersion
     }
 }
@@ -111,8 +133,17 @@ extension GameSaveModel {
         case .floorWin: phaseString = "floorWin"
         case .floorFail: phaseString = "floorFail"
         case .victory: phaseString = "victory"
-        default: phaseString = "selecting"
+        case .scoring: phaseString = "scoring"
+        case .specialEvent: phaseString = "selecting"
+        case .gameOver: phaseString = "selecting"
         }
+
+        // BossState 持久化（UF-02）
+        let bossEsc = run.bossState?.escalationCount ?? 0
+        let bossDec = run.bossState?.decayCount ?? 0
+        let bossSil = run.bossState?.silencedJokerIndex ?? -1
+        let bossPha = run.bossState?.phantomCardIds.map(\.uuidString) ?? []
+        let bossBan = run.bossState?.bannedPatternType?.rawValue ?? ""
 
         return GameSaveModel(
             runId: UUID().uuidString,
@@ -135,7 +166,13 @@ extension GameSaveModel {
             handSortModeRaw: run.handSortMode.rawValue,
             starterBuildId: buildId,
             phaseRaw: phaseString,
-            isDailyChallenge: run.dailyChallenge != nil
+            isDailyChallenge: run.dailyChallenge != nil,
+            bossEscalationCount: bossEsc,
+            bossDecayCount: bossDec,
+            bossSilencedJokerIndex: bossSil,
+            bossPhantomCardIds: bossPha,
+            bossBannedPatternRaw: bossBan,
+            bonusPlays: run.bonusPlays
         )
     }
 
@@ -155,6 +192,9 @@ extension GameSaveModel {
         run.ascensionLevel = ascensionLevel
         run.phoenixUsed = phoenixUsed
         run.handSortMode = HandSortMode(rawValue: handSortModeRaw) ?? .byRank
+
+        // UF-03: 恢复额外出牌次数
+        run.bonusPlays = bonusPlays
 
         run.handCards = (try? decoder.decode([Card].self, from: handCardsData)) ?? []
         run.drawPile = (try? decoder.decode([Card].self, from: drawPileData)) ?? []
@@ -191,6 +231,26 @@ extension GameSaveModel {
         case "victory":
             // 通关胜利 — 恢复为胜利阶段，让用户看到胜利弹窗
             run.phase = .victory
+        case "scoring":
+            // UF-06: scoring 阶段存档 — 当作计分已完成，恢复为选牌
+            let floors = run.dailyChallenge != nil ? FloorConfig.dailyChallengeFloors : FloorConfig.allFloors
+            guard currentFloorIndex >= 0, currentFloorIndex < floors.count else {
+                run.phase = .victory
+                return
+            }
+            let floorS = floors[currentFloorIndex]
+            if floorS.isBoss {
+                run.bossState = BossState(modifiers: floorS.bossModifiers)
+                restoreBossState(to: run)
+            }
+            // 直接判定过关/失败
+            if run.isFloorCleared {
+                run.phase = .floorWin
+            } else if run.playsRemaining <= 0 {
+                run.phase = .floorFail
+            } else {
+                run.phase = .selecting
+            }
         default:
             // "selecting" / "dealing" 等 — 恢复为选牌状态
             // 越界保护（防止关卡配置变更导致崩溃）
@@ -200,10 +260,11 @@ extension GameSaveModel {
                 run.phase = .victory
                 return
             }
-            // Boss 关需要重新初始化 BossState
+            // Boss 关需要重新初始化 BossState，并恢复存档字段（UF-02）
             let floor = floors[currentFloorIndex]
             if floor.isBoss {
                 run.bossState = BossState(modifiers: floor.bossModifiers)
+                restoreBossState(to: run)
             }
             run.phase = .selecting
 
@@ -220,6 +281,14 @@ extension GameSaveModel {
                 }
             }
         }
+    }
+
+    /// UF-02: 将存档中的 BossState 字段覆盖到已初始化的 bossState
+    @MainActor private func restoreBossState(to run: RogueRun) {
+        run.bossState?.escalationCount = bossEscalationCount
+        run.bossState?.decayCount = bossDecayCount
+        run.bossState?.silencedJokerIndex = bossSilencedJokerIndex >= 0 ? bossSilencedJokerIndex : nil
+        run.bossState?.phantomCardIds = Set(bossPhantomCardIds.compactMap { UUID(uuidString: $0) })
     }
 }
 
