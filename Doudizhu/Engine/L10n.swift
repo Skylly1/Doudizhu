@@ -617,7 +617,7 @@ enum L10n {
         "📌 Buy with gold in the shop\n" +
         "📌 Effects persist across floors\n" +
         "📌 Combine Jokers for powerful synergies!\n\n" +
-        "Example: 'Chain Plot' doubles combo bonus + 'First Strike' gives 2× first play = explosive opening") }
+        "Example: 'Chain Plot' doubles combo bonus + 'Thunderstrike' gives 2× first play = explosive opening") }
 
     static var helpBuffsTitle: String { localized("✨ 增益道具是什么？", en: "✨ What are Buffs?") }
     static var helpBuffsBody: String { localized(
@@ -889,85 +889,85 @@ enum L10n {
 
     // MARK: - 战斗界面 (BattleView)
 
-    static var battleCardTable: String { isEnglish ? "Card table" : "牌桌" }
-    static func battleLastPlayWarning(_ gap: Int) -> String { isEnglish ? "Last play! Need \(gap) more" : "最后一次出牌！还差 \(gap) 分" }
-    static var battleHintSingle: String { isEnglish ? "Play single cards" : "单张可以直接出" }
-    static var battleHintPair: String { isEnglish ? "Need a pair (same rank)" : "需要两张相同点数组成对子" }
-    static var battleHintTriple: String { isEnglish ? "Need three of a kind" : "需要三张相同点数" }
-    static var battleHintFour: String { isEnglish ? "Try 3+1, bomb, or extend to straight" : "试试三带一、炸弹，或凑顺子" }
-    static var battleHintFivePlus: String { isEnglish ? "Try a straight (5+ consecutive)" : "试试顺子（5张以上连续）" }
-    static var battleBonus: String { isEnglish ? "Bonus" : "加成" }
-    static var battlePenalty: String { isEnglish ? "Penalty" : "减益" }
-    static var battleEarned: String { isEnglish ? "Earned" : "得分" }
-    static var battleSaveQuit: String { isEnglish ? "Save & Quit" : "暂离保存" }
-    static var battleGap: String { isEnglish ? "Gap" : "差距" }
-    static var battleCardsPlayed: String { isEnglish ? "Cards Played" : "出牌数" }
-    static var battleBestHand: String { isEnglish ? "Best Hand" : "最佳一手" }
-    static var battleBestCombo: String { isEnglish ? "Best Combo" : "最高连击" }
-    static func battleLockedContent(_ n: Int) -> String { isEnglish ? "\(n) more floors · Rare Jokers · Endless mode" : "还有\(n)层关卡 · 稀有丑角 · 无尽模式" }
-    static var battleSeeMore: String { isEnglish ? "See More" : "了解更多" }
-    static var battleRestartRunTitle: String { isEnglish ? "Restart Run?" : "重新开始？" }
-    static var battleRestartRunMessage: String { isEnglish ? "Current run progress will be lost. Start a fresh run from Floor 1." : "当前冒险进度将丢失，从第1层重新开始。" }
-    static var battleBackToMenuTitle: String { isEnglish ? "Back to Menu?" : "返回主菜单？" }
-    static var battleSaveAndQuit: String { isEnglish ? "Save & Quit" : "保存并退出" }
-    static var battleQuitNoSave: String { isEnglish ? "Quit without saving" : "不保存退出" }
-    static var battleBackToMenuMessage: String { isEnglish ? "Save your run to retry later, or quit without saving." : "保存后可以下次继续重试，不保存将丢失本局进度。" }
-    static var battleFloorsCleared: String { isEnglish ? "Floors Cleared" : "通过层数" }
-    static var battleTotalCardsPlayed: String { isEnglish ? "Cards Played" : "出牌总数" }
-    static var battleJokers: String { isEnglish ? "Jokers" : "规则牌" }
-    static var battleGoldRemaining: String { isEnglish ? "Gold Remaining" : "剩余金币" }
-    static var battleVictoryTitle: String { isEnglish ? "Victory!" : "斗破乾坤" }
-    static func battleShareText(_ score: Int) -> String { isEnglish ? "I scored \(score) in Dou Po Qian Kun! 🏆" : "我在斗破乾坤中取得了 \(score) 分！🏆" }
-    static var battleShare: String { isEnglish ? "Share" : "分享战绩" }
-    static var battleSkip: String { isEnglish ? "Skip" : "跳过" }
-    static var battlePaused: String { isEnglish ? "Paused" : "已暂停" }
-    static var battleScore: String { isEnglish ? "Score" : "得分" }
-    static var battleGold: String { isEnglish ? "Gold" : "金币" }
-    static var battleResume: String { isEnglish ? "Resume" : "继续游戏" }
-    static var battleRetryFloorTitle: String { isEnglish ? "Retry Floor?" : "重试本关？" }
-    static var battleRetry: String { isEnglish ? "Retry" : "重试" }
-    static var battleRetryMessage: String { isEnglish ? "Your progress on this floor will be reset." : "本层进度将被重置。" }
-    static var battleSound: String { isEnglish ? "Sound" : "音效" }
-    static var battleMusic: String { isEnglish ? "Music" : "音乐" }
-    static var battleHaptics: String { isEnglish ? "Haptics" : "震动" }
-    static var battleSortBySuit: String { isEnglish ? "Sort by Suit" : "按花色排列" }
-    static var battleSortByRank: String { isEnglish ? "Sort by Rank" : "按点数排列" }
-    static var battleAbandonRun: String { isEnglish ? "Abandon Run" : "放弃冒险" }
-    static var battleAbandonTitle: String { isEnglish ? "Abandon Run?" : "确认放弃？" }
-    static var battleAbandon: String { isEnglish ? "Abandon" : "放弃" }
-    static var battleAbandonMessage: String { isEnglish ? "All progress in this run will be lost." : "本局所有进度将丢失，无法恢复。" }
+    static var battleCardTable: String { localized("牌桌", en: "Card table") }
+    static func battleLastPlayWarning(_ gap: Int) -> String { localized("最后一次出牌！还差 \(gap) 分", en: "Last play! Need \(gap) more") }
+    static var battleHintSingle: String { localized("单张可以直接出", en: "Play single cards") }
+    static var battleHintPair: String { localized("需要两张相同点数组成对子", en: "Need a pair (same rank)") }
+    static var battleHintTriple: String { localized("需要三张相同点数", en: "Need three of a kind") }
+    static var battleHintFour: String { localized("试试三带一、炸弹，或凑顺子", en: "Try 3+1, bomb, or extend to straight") }
+    static var battleHintFivePlus: String { localized("试试顺子（5张以上连续）", en: "Try a straight (5+ consecutive)") }
+    static var battleBonus: String { localized("加成", en: "Bonus") }
+    static var battlePenalty: String { localized("减益", en: "Penalty") }
+    static var battleEarned: String { localized("得分", en: "Earned") }
+    static var battleSaveQuit: String { localized("暂离保存", en: "Save & Quit") }
+    static var battleGap: String { localized("差距", en: "Gap") }
+    static var battleCardsPlayed: String { localized("出牌数", en: "Cards Played") }
+    static var battleBestHand: String { localized("最佳一手", en: "Best Hand") }
+    static var battleBestCombo: String { localized("最高连击", en: "Best Combo") }
+    static func battleLockedContent(_ n: Int) -> String { localized("还有\(n)层关卡 · 稀有规则牌 · 无尽模式", en: "\(n) more floors · Rare Jokers · Endless mode") }
+    static var battleSeeMore: String { localized("了解更多", en: "See More") }
+    static var battleRestartRunTitle: String { localized("重新开始？", en: "Restart Run?") }
+    static var battleRestartRunMessage: String { localized("当前冒险进度将丢失，从第1层重新开始。", en: "Current run progress will be lost. Start a fresh run from Floor 1.") }
+    static var battleBackToMenuTitle: String { localized("返回主菜单？", en: "Back to Menu?") }
+    static var battleSaveAndQuit: String { localized("保存并退出", en: "Save & Quit") }
+    static var battleQuitNoSave: String { localized("不保存退出", en: "Quit without saving") }
+    static var battleBackToMenuMessage: String { localized("保存后可以下次继续重试，不保存将丢失本局进度。", en: "Save your run to retry later, or quit without saving.") }
+    static var battleFloorsCleared: String { localized("通过层数", en: "Floors Cleared") }
+    static var battleTotalCardsPlayed: String { localized("出牌总数", en: "Cards Played") }
+    static var battleJokers: String { localized("规则牌", en: "Jokers") }
+    static var battleGoldRemaining: String { localized("剩余金币", en: "Gold Remaining") }
+    static var battleVictoryTitle: String { localized("斗破乾坤", en: "Victory!") }
+    static func battleShareText(_ score: Int) -> String { localized("我在斗破乾坤中取得了 \(score) 分！🏆", en: "I scored \(score) in Dou Po Qian Kun! 🏆") }
+    static var battleShare: String { localized("分享战绩", en: "Share") }
+    static var battleSkip: String { localized("跳过", en: "Skip") }
+    static var battlePaused: String { localized("已暂停", en: "Paused") }
+    static var battleScore: String { localized("得分", en: "Score") }
+    static var battleGold: String { localized("金币", en: "Gold") }
+    static var battleResume: String { localized("继续游戏", en: "Resume") }
+    static var battleRetryFloorTitle: String { localized("重试本关？", en: "Retry Floor?") }
+    static var battleRetry: String { localized("重试", en: "Retry") }
+    static var battleRetryMessage: String { localized("本层进度将被重置。", en: "Your progress on this floor will be reset.") }
+    static var battleSound: String { localized("音效", en: "Sound") }
+    static var battleMusic: String { localized("音乐", en: "Music") }
+    static var battleHaptics: String { localized("震动", en: "Haptics") }
+    static var battleSortBySuit: String { localized("按花色排列", en: "Sort by Suit") }
+    static var battleSortByRank: String { localized("按点数排列", en: "Sort by Rank") }
+    static var battleAbandonRun: String { localized("放弃冒险", en: "Abandon Run") }
+    static var battleAbandonTitle: String { localized("确认放弃？", en: "Abandon Run?") }
+    static var battleAbandon: String { localized("放弃", en: "Abandon") }
+    static var battleAbandonMessage: String { localized("本局所有进度将丢失，无法恢复。", en: "All progress in this run will be lost.") }
 
     // MARK: - 无障碍 (Accessibility)
 
-    static var a11yPause: String { isEnglish ? "Pause" : "暂停" }
-    static var a11yGold: String { isEnglish ? "Gold" : "金币" }
-    static var a11yPatternRef: String { isEnglish ? "Pattern Reference" : "牌型参考" }
-    static var a11yPlaysRemaining: String { isEnglish ? "Plays remaining" : "剩余出牌次数" }
-    static var a11yDiscardsRemaining: String { isEnglish ? "Discards remaining" : "剩余弃牌次数" }
-    static var a11yCurrentScore: String { isEnglish ? "Current score" : "当前分数" }
-    static var a11yTargetScore: String { isEnglish ? "Target score" : "目标分数" }
-    static var a11yDiscard: String { isEnglish ? "Discard" : "弃牌" }
-    static var a11yPlayCards: String { isEnglish ? "Play cards" : "出牌" }
-    static var a11yDailyChallenge: String { isEnglish ? "Daily Challenge" : "每日挑战" }
-    static var a11yDailyChallengeComplete: String { isEnglish ? "Daily Challenge completed" : "每日挑战已完成" }
-    static var a11yContinueAdventure: String { isEnglish ? "Continue adventure" : "继续冒险" }
-    static var a11yNewAdventure: String { isEnglish ? "New adventure" : "新的冒险" }
-    static var a11yStartAdventure: String { isEnglish ? "Start adventure" : "开始冒险" }
-    static var a11yQuickStart: String { isEnglish ? "Quick start" : "快速开始" }
-    static var a11yCardCollection: String { isEnglish ? "Card collection" : "卡牌收集" }
-    static var a11ySettings: String { isEnglish ? "Settings" : "设置" }
-    static var a11yTodayStats: String { isEnglish ? "Today's stats" : "今日数据" }
-    static var a11yHelpFaq: String { isEnglish ? "Help & FAQ" : "帮助与常见问题" }
-    static var a11yVolume: String { isEnglish ? "Volume" : "音量" }
-    static var a11yResetTutorial: String { isEnglish ? "Reset tutorial" : "重置新手引导" }
-    static var a11yRefreshShop: String { isEnglish ? "Refresh shop" : "刷新商店" }
-    static var a11yGotIt: String { isEnglish ? "Got it" : "我知道了" }
-    static var a11yUnlockFull: String { isEnglish ? "Unlock full version" : "解锁完整版" }
-    static var a11yFreePreview: String { isEnglish ? "Try one more floor free" : "免费体验下一层" }
-    static var a11yRestorePurchase: String { isEnglish ? "Restore purchase" : "恢复购买" }
-    static var a11yBackToMenu: String { isEnglish ? "Back to main menu" : "返回主菜单" }
-    static var a11yDepart: String { isEnglish ? "Depart" : "出发" }
-    static var a11yAchievementProgress: String { isEnglish ? "Achievement progress" : "成就进度" }
-    static func a11yBuyJoker(_ name: String) -> String { isEnglish ? "Buy \(name)" : "购买\(name)" }
-    static func a11yBuyBuff(_ name: String) -> String { isEnglish ? "Buy \(name)" : "购买\(name)" }
+    static var a11yPause: String { localized("暂停", en: "Pause") }
+    static var a11yGold: String { localized("金币", en: "Gold") }
+    static var a11yPatternRef: String { localized("牌型参考", en: "Pattern Reference") }
+    static var a11yPlaysRemaining: String { localized("剩余出牌次数", en: "Plays remaining") }
+    static var a11yDiscardsRemaining: String { localized("剩余弃牌次数", en: "Discards remaining") }
+    static var a11yCurrentScore: String { localized("当前分数", en: "Current score") }
+    static var a11yTargetScore: String { localized("目标分数", en: "Target score") }
+    static var a11yDiscard: String { localized("弃牌", en: "Discard") }
+    static var a11yPlayCards: String { localized("出牌", en: "Play cards") }
+    static var a11yDailyChallenge: String { localized("每日挑战", en: "Daily Challenge") }
+    static var a11yDailyChallengeComplete: String { localized("每日挑战已完成", en: "Daily Challenge completed") }
+    static var a11yContinueAdventure: String { localized("继续冒险", en: "Continue adventure") }
+    static var a11yNewAdventure: String { localized("新的冒险", en: "New adventure") }
+    static var a11yStartAdventure: String { localized("开始冒险", en: "Start adventure") }
+    static var a11yQuickStart: String { localized("快速开始", en: "Quick start") }
+    static var a11yCardCollection: String { localized("卡牌收集", en: "Card collection") }
+    static var a11ySettings: String { localized("设置", en: "Settings") }
+    static var a11yTodayStats: String { localized("今日数据", en: "Today's stats") }
+    static var a11yHelpFaq: String { localized("帮助与常见问题", en: "Help & FAQ") }
+    static var a11yVolume: String { localized("音量", en: "Volume") }
+    static var a11yResetTutorial: String { localized("重置新手引导", en: "Reset tutorial") }
+    static var a11yRefreshShop: String { localized("刷新商店", en: "Refresh shop") }
+    static var a11yGotIt: String { localized("我知道了", en: "Got it") }
+    static var a11yUnlockFull: String { localized("解锁完整版", en: "Unlock full version") }
+    static var a11yFreePreview: String { localized("免费体验下一层", en: "Try one more floor free") }
+    static var a11yRestorePurchase: String { localized("恢复购买", en: "Restore purchase") }
+    static var a11yBackToMenu: String { localized("返回主菜单", en: "Back to main menu") }
+    static var a11yDepart: String { localized("出发", en: "Depart") }
+    static var a11yAchievementProgress: String { localized("成就进度", en: "Achievement progress") }
+    static func a11yBuyJoker(_ name: String) -> String { localized("购买\(name)", en: "Buy \(name)") }
+    static func a11yBuyBuff(_ name: String) -> String { localized("购买\(name)", en: "Buy \(name)") }
 }
