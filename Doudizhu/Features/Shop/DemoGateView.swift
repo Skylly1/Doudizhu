@@ -67,7 +67,7 @@ struct DemoGateView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 18) {
-                    Spacer().frame(height: 60)  // 安全区域 + 额外间距（适配刘海屏/灵动岛）
+                    Spacer().frame(height: 16)  // 顶部间距（安全区由 ScrollView 自动处理）
 
                     // === 祝贺过渡（缓解付费墙突兀感）===
                     congratsHeader

@@ -58,7 +58,9 @@ struct PatternGuideView: View {
                 Spacer(minLength: Theme.spacingXL)
             }
             .padding(.top, Theme.spacingMD)
+            .frame(maxWidth: 600)
         }
+        .frame(maxWidth: .infinity)
         .gameBackground()
     }
 

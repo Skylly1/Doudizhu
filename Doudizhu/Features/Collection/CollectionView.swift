@@ -19,7 +19,7 @@ struct CollectionView: View {
                         tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
                         tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
                     }
-                    .frame(minWidth: min(UIScreen.main.bounds.width - Theme.spacingMD * 2, 600))
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)

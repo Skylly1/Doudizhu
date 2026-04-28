@@ -68,7 +68,9 @@ struct AchievementView: View {
             }
             .padding(.top, Theme.spacingMD)
             .padding(.bottom, Theme.spacingXL)
+            .frame(maxWidth: 600)
         }
+        .frame(maxWidth: .infinity)
         .gameBackground()
 
         ContextualHintOverlay(manager: ContextualHintManager.shared)

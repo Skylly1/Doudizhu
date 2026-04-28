@@ -69,7 +69,9 @@ struct StatsView: View {
                 .padding(.horizontal, Theme.spacingMD)
             }
             .padding(.bottom, Theme.spacingXXL)
+            .frame(maxWidth: 600)
         }
+        .frame(maxWidth: .infinity)
         .gameBackground()
     }
 

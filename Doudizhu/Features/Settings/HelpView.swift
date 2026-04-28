@@ -102,7 +102,9 @@ struct HelpView: View {
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.vertical, Theme.spacingMD)
             }
+            .frame(maxWidth: 600)
         }
+        .frame(maxWidth: .infinity)
         .gameBackground()
     }
 

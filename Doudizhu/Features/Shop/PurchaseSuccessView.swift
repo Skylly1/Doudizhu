@@ -130,7 +130,7 @@ struct PurchaseSuccessView: View {
                 .accessibilityLabel(L10n.isEnglish ? "Begin Adventure" : "开始冒险")
                 .accessibilityHint(L10n.isEnglish ? "Start your full adventure" : "开始完整版冒险之旅")
                 .padding(.horizontal, 32)
-                .padding(.bottom, 40)
+                .padding(.bottom, 20)
             }
             .frame(maxWidth: 500)
         }
