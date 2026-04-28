@@ -426,10 +426,7 @@ struct DemoGateView: View {
 
     // MARK: - 购买区
 
-    /// 原价展示（价格锚定）— 让现价显得超值
-    private var originalPriceText: String {
-        L10n.isEnglish ? "$9.99" : "¥40"
-    }
+    /// 真实价格来自 StoreKit — 不使用虚假锚定价
 
     @State private var showPurchaseSuccess = false
 
@@ -454,22 +451,23 @@ struct DemoGateView: View {
                 )
             }
 
-            // 价格锚定 + 倒计时限时优惠
             VStack(spacing: 6) {
-                // 倒计时或限时标签
+                // 限时首发标签
                 if isLaunchOfferActive {
                     HStack(spacing: 4) {
                         Image(systemName: "timer")
                             .font(.caption2)
+                        Text(L10n.isEnglish ? "Launch offer: " : "首发优惠：")
+                            .font(.caption.bold())
                         Text(countdownText)
                             .font(.caption.monospacedDigit().bold())
                     }
                     .foregroundColor(.black)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
                     .background(Capsule().fill(Theme.gold))
                 } else {
-                    Text(L10n.isEnglish ? "Special Price" : "限时优惠")
+                    Text(L10n.isEnglish ? "Best Value" : "超值买断")
                         .font(.caption.bold())
                         .foregroundColor(.black)
                         .padding(.horizontal, 8)
@@ -477,27 +475,18 @@ struct DemoGateView: View {
                         .background(Capsule().fill(Theme.gold))
                 }
 
-                // 价格行
+                // 真实价格
                 HStack(spacing: 6) {
-                    Text(originalPriceText)
-                        .font(.caption.bold())
-                        .strikethrough(true, color: Theme.flame)
-                        .foregroundColor(Theme.textDisabled)
-
-                    Image(systemName: "arrow.right")
-                        .font(.caption2)
-                        .foregroundColor(Theme.gold.opacity(0.6))
-
                     Text(purchaseManager.formattedPrice)
-                        .font(.caption.bold())
+                        .font(.title3.bold())
                         .foregroundColor(Theme.gold)
 
-                    Text(L10n.isEnglish ? "37% OFF" : "省37%")
-                        .font(Theme.fontSmallBold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(Theme.flame))
+                    Text(L10n.isEnglish ? "one-time" : "一次性买断")
+                        .font(.caption.bold())
+                        .foregroundColor(Theme.textSecondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule().stroke(Theme.gold.opacity(0.3)))
                 }
 
                 if !isFirstView {
@@ -507,17 +496,13 @@ struct DemoGateView: View {
                 }
             }
 
-            // 回访用户紧迫感提示
+            // 回访用户提示
             if !isFirstView && isLaunchOfferActive {
-                HStack(spacing: 4) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.caption2)
-                    Text(L10n.isEnglish
-                         ? "Launch price ends soon — won't return"
-                         : "首发价即将结束，不再恢复")
-                        .font(.caption)
-                }
-                .foregroundColor(Theme.flame)
+                Text(L10n.isEnglish
+                     ? "🎉 Launch celebration pricing still available"
+                     : "🎉 首发庆祝价仍然有效")
+                    .font(.caption)
+                    .foregroundColor(Theme.gold.opacity(0.8))
             }
 
             // 主购买按钮
@@ -644,8 +629,8 @@ struct DemoGateView: View {
             // 回访用户加强文案
             if !isFirstView {
                 Text(L10n.isEnglish
-                     ? "💡 Launch price — one-time purchase. No ads, no subscriptions."
-                     : "💡 首发限时价 — 一次购买，永久拥有。无广告、无订阅。")
+                     ? "💡 One-time purchase. No ads, no subscriptions, yours forever."
+                     : "💡 一次购买，永久拥有。无广告、无订阅。")
                     .font(.caption)
                     .foregroundColor(Theme.gold.opacity(0.8))
                     .multilineTextAlignment(.center)
