@@ -327,7 +327,7 @@ class CardNode: SKSpriteNode {
         topLabel.zPosition = 3
         addChild(topLabel)
 
-        // "王"字
+        // "王"字（左上角副标识）
         let kingLabel = SKLabelNode(text: "王")
         kingLabel.fontName = serifFont
         kingLabel.fontSize = w * 0.26
@@ -338,25 +338,54 @@ class CardNode: SKSpriteNode {
         kingLabel.zPosition = 3
         addChild(kingLabel)
 
-        // 中央大字 — 纯中文"王"取代 emoji
+        // 多层径向光晕 — 王牌气场
+        let glowOuter = SKShapeNode(circleOfRadius: w * 0.38)
+        glowOuter.fillColor = color.withAlphaComponent(0.03)
+        glowOuter.strokeColor = color.withAlphaComponent(0.05)
+        glowOuter.lineWidth = 0.5
+        glowOuter.position = CGPoint(x: 0, y: -h * 0.03)
+        glowOuter.zPosition = 1
+        addChild(glowOuter)
+
+        let glowMiddle = SKShapeNode(circleOfRadius: w * 0.30)
+        glowMiddle.fillColor = color.withAlphaComponent(0.06)
+        glowMiddle.strokeColor = color.withAlphaComponent(0.08)
+        glowMiddle.lineWidth = 0.6
+        glowMiddle.position = CGPoint(x: 0, y: -h * 0.03)
+        glowMiddle.zPosition = 1
+        glowMiddle.glowWidth = 3
+        addChild(glowMiddle)
+
+        let glowInner = SKShapeNode(circleOfRadius: w * 0.20)
+        glowInner.fillColor = color.withAlphaComponent(0.10)
+        glowInner.strokeColor = color.withAlphaComponent(0.14)
+        glowInner.lineWidth = 0.8
+        glowInner.position = CGPoint(x: 0, y: -h * 0.03)
+        glowInner.zPosition = 1
+        glowInner.glowWidth = 2
+        addChild(glowInner)
+
+        // 中央大字阴影 — 立体投射效果
+        let centerShadow = SKLabelNode(text: "王")
+        centerShadow.fontName = serifFont
+        centerShadow.fontSize = w * 0.58
+        centerShadow.fontColor = SKColor(white: 0, alpha: 0.15)
+        centerShadow.horizontalAlignmentMode = .center
+        centerShadow.verticalAlignmentMode = .center
+        centerShadow.position = CGPoint(x: 1.5, y: -h * 0.03 - 1.5)
+        centerShadow.zPosition = 1.8
+        addChild(centerShadow)
+
+        // 中央大字 — 更大更醒目的"王"
         let centerChar = SKLabelNode(text: "王")
         centerChar.fontName = serifFont
-        centerChar.fontSize = w * 0.50
-        centerChar.fontColor = color.withAlphaComponent(0.85)
+        centerChar.fontSize = w * 0.58
+        centerChar.fontColor = color
         centerChar.horizontalAlignmentMode = .center
         centerChar.verticalAlignmentMode = .center
         centerChar.position = CGPoint(x: 0, y: -h * 0.03)
         centerChar.zPosition = 2
         addChild(centerChar)
-
-        // 中央装饰光晕
-        let glow = SKShapeNode(circleOfRadius: w * 0.26)
-        glow.fillColor = color.withAlphaComponent(0.06)
-        glow.strokeColor = color.withAlphaComponent(0.10)
-        glow.lineWidth = 0.5
-        glow.position = CGPoint(x: 0, y: -h * 0.03)
-        glow.zPosition = 1
-        addChild(glow)
 
         // 外环装饰（大王/小王区别感强化）
         let outerRing = SKShapeNode(circleOfRadius: w * 0.32)
@@ -379,6 +408,33 @@ class CardNode: SKSpriteNode {
         bottomLabel.xScale = -1
         bottomLabel.yScale = -1
         addChild(bottomLabel)
+
+        // 四角装饰纹（回纹 L 型角标 — 王牌同样尊享）
+        if w >= 50 {
+            let cornerSize: CGFloat = 5
+            let cornerAlpha: CGFloat = 0.18
+            let corners: [(CGFloat, CGFloat, CGFloat, CGFloat)] = [
+                (-w / 2 + 5, -h / 2 + 5, 1, 1),
+                (w / 2 - 5, -h / 2 + 5, -1, 1),
+                (-w / 2 + 5, h / 2 - 5, 1, -1),
+                (w / 2 - 5, h / 2 - 5, -1, -1),
+            ]
+            for (cx, cy, sx, sy) in corners {
+                let lPath = CGMutablePath()
+                lPath.move(to: CGPoint(x: 0, y: cornerSize))
+                lPath.addLine(to: .zero)
+                lPath.addLine(to: CGPoint(x: cornerSize, y: 0))
+                let lNode = SKShapeNode(path: lPath)
+                lNode.strokeColor = color.withAlphaComponent(cornerAlpha)
+                lNode.lineWidth = 0.6
+                lNode.lineCap = .round
+                lNode.position = CGPoint(x: cx, y: cy)
+                lNode.xScale = sx
+                lNode.yScale = sy
+                lNode.zPosition = 1
+                addChild(lNode)
+            }
+        }
     }
 
     // MARK: - 选中状态
