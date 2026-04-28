@@ -129,8 +129,10 @@ struct ContentView: View {
                         SoundManager.shared.startBGM(mode: .shop)
                     }
                     .swipeBack {
-                        rogueRun.leaveShop()
-                        goBack()
+                        // Save+quit instead of advancing floor on accidental swipe-back
+                        SaveManager.shared.save(run: rogueRun, buildId: "")
+                        SoundManager.shared.stopBGM()
+                        goHome()
                     }
                 case .demoGate:
                     DemoGateView(

@@ -397,7 +397,7 @@ enum SpecialEventGenerator {
             title: L10n.isEnglish ? "Ancient Tomb" : "古墓探险",
             description: L10n.isEnglish
                 ? "You discover the entrance to a forgotten tomb. Danger and treasure await..."
-                : "你发现了一座被遗忘古墓的入口，危险与宝藏并存……",
+                : "你发现了一座被遗忘的古墓的入口，危险与宝藏并存……",
             icon: "building.columns.fill",
             choices: [
                 EventChoice(
@@ -565,9 +565,9 @@ enum SpecialEventGenerator {
                 ),
                 EventChoice(
                     label: L10n.isEnglish ? "Toss a coin" : "打赏铜板",
-                    description: L10n.isEnglish ? "+30 gold (good karma)" : "+30金币（好人有好报）",
+                    description: L10n.isEnglish ? "-10 gold, +1 play (inspired!)" : "-10金币，+1出牌（琴声鼓舞！）",
                     icon: "dollarsign.circle.fill",
-                    effect: .gainGold(30)
+                    effect: .healPlays(1, goldCost: 10)
                 ),
             ]
         )

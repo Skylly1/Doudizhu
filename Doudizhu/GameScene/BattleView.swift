@@ -1035,6 +1035,7 @@ struct BattleView: View {
                     battleScene?.refreshHand()
                 }
                 .frame(maxWidth: 280)
+                .accessibilityLabel(L10n.playAgain)
 
                 // Ascension 升级提示
                 if rogueRun.ascensionLevel < 10 {
@@ -1061,6 +1062,7 @@ struct BattleView: View {
                         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                     }
                     .buttonStyle(GameButtonStyle())
+                    .accessibilityLabel(L10n.ascensionChallenge(rogueRun.ascensionLevel + 1))
                 }
 
                 // Share button
@@ -1095,6 +1097,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(L10n.isEnglish ? "Share" : "分享战绩")
 
                 SecondaryButton(title: L10n.backToMenu, icon: "house") {
                     SoundManager.shared.stopBGM()
@@ -1421,6 +1424,9 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(rogueRun.handSortMode == .byRank
+                    ? (L10n.isEnglish ? "Sort by Suit" : "按花色排列")
+                    : (L10n.isEnglish ? "Sort by Rank" : "按点数排列"))
 
                 // 游戏指南
                 Button {
@@ -1446,6 +1452,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(L10n.gameGuide)
 
                 // 帮助与FAQ
                 Button {
@@ -1470,6 +1477,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(L10n.helpAndFaq)
 
                 // 暂离保存（保留存档回主菜单）
                 Button {
@@ -1497,6 +1505,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(L10n.isEnglish ? "Save & Quit" : "暂离保存")
 
                 // 放弃冒险（删档，需二次确认）
                 Button {
@@ -1520,6 +1529,7 @@ struct BattleView: View {
                     .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .buttonStyle(GameButtonStyle())
+                .accessibilityLabel(L10n.isEnglish ? "Abandon Run" : "放弃冒险")
                 .alert(
                     L10n.isEnglish ? "Abandon Run?" : "确认放弃？",
                     isPresented: $showExitConfirm
