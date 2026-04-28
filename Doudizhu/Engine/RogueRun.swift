@@ -723,7 +723,6 @@ enum HandSortMode: String, CaseIterable {
         stats.totalCardsPlayed += 1  // 计数一次出牌（非单张卡牌数）
         if combo > stats.highestCombo { stats.highestCombo = combo }
         if earned > stats.highestSingleScore { stats.highestSingleScore = earned }
-        stats.save()
 
         // 行为埋点
         Analytics.shared.track(.cardPlay, params: [
@@ -735,8 +734,6 @@ enum HandSortMode: String, CaseIterable {
         if combo >= 3 {
             Analytics.shared.track(.comboAchieved, params: ["combo": "\(combo)"])
         }
-
-        autoSave()
 
         return result
     }

@@ -4,7 +4,7 @@ struct FloatingParticles: View {
     let count: Int = 30
 
     var body: some View {
-        TimelineView(.animation) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0/30)) { timeline in
             Canvas { context, size in
                 let time = timeline.date.timeIntervalSinceReferenceDate
                 for i in 0..<count {

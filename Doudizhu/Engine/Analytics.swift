@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 #if canImport(FirebaseAnalytics)
 import FirebaseAnalytics
 #endif
@@ -90,7 +91,15 @@ enum AnalyticsEvent: String {
 
     private var events: [(event: String, params: [String: String], timestamp: Date)] = []
 
+    // PERF-06: In-memory cache to avoid disk I/O on every event
+    private var eventCounts: [String: Int] = [:]
+    private var unflushedCount = 0
+
     private init() {
+        eventCounts = UserDefaults.standard.dictionary(forKey: eventsKey) as? [String: Int] ?? [:]
+        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.flushEventCounts() }
+        }
         incrementSessionCount()
         trackReturnVisit()
     }
@@ -131,8 +140,7 @@ enum AnalyticsEvent: String {
     }
 
     func totalEventCount(for event: AnalyticsEvent) -> Int {
-        let counts = UserDefaults.standard.dictionary(forKey: eventsKey) as? [String: Int] ?? [:]
-        return counts[event.rawValue] ?? 0
+        return eventCounts[event.rawValue] ?? 0
     }
 
     var funnelSummary: String {
@@ -170,9 +178,17 @@ enum AnalyticsEvent: String {
     }
 
     private func persistEventCount(_ event: AnalyticsEvent) {
-        var counts = UserDefaults.standard.dictionary(forKey: eventsKey) as? [String: Int] ?? [:]
-        counts[event.rawValue] = (counts[event.rawValue] ?? 0) + 1
-        UserDefaults.standard.set(counts, forKey: eventsKey)
+        eventCounts[event.rawValue] = (eventCounts[event.rawValue] ?? 0) + 1
+        unflushedCount += 1
+        if unflushedCount >= 10 {
+            flushEventCounts()
+        }
+    }
+
+    func flushEventCounts() {
+        guard unflushedCount > 0 else { return }
+        UserDefaults.standard.set(eventCounts, forKey: eventsKey)
+        unflushedCount = 0
     }
 
     /// 追踪回访间隔（D1/D7/D30 留存的本地近似）
