@@ -68,10 +68,10 @@ final class SoundManager {
     // MARK: - Engine Setup
 
     private func setupEngine() {
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             standardFormatWithSampleRate: sampleRate,
             channels: 1
-        )!
+        ) else { return }
         engine.attach(playerNode)
         engine.connect(playerNode, to: engine.mainMixerNode, format: format)
         engine.mainMixerNode.outputVolume = UserDefaults.standard.float(forKey: Self.volumeKey)
@@ -124,15 +124,15 @@ final class SoundManager {
 
     private func scheduleBuffer(_ samples: [Float]) {
         guard !samples.isEmpty else { return }
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             standardFormatWithSampleRate: sampleRate,
             channels: 1
-        )!
+        ) else { return }
         let frameCount = AVAudioFrameCount(samples.count)
         guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else { return }
         buffer.frameLength = frameCount
 
-        let channelData = buffer.floatChannelData![0]
+        guard let channelData = buffer.floatChannelData?[0] else { return }
         for i in 0..<samples.count {
             channelData[i] = samples[i]
         }

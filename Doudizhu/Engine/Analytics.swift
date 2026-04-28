@@ -48,9 +48,12 @@ enum AnalyticsEvent: String {
     case iapCompleted = "iap_completed"
     case iapFailed = "iap_failed"
     case iapRestored = "iap_restored"
+    case iapPending = "iap_pending"
+    case iapRevoked = "iap_revoked"
     case paywallShown = "paywall_shown"
     case paywallConverted = "paywall_converted"
     case paywallDismissed = "paywall_dismissed"
+    case paywallFreePeek = "paywall_free_peek"
 
     // 成就 & 留存
     case achievementUnlocked = "achievement_unlocked"

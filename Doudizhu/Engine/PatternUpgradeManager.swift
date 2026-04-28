@@ -3,7 +3,8 @@ import Foundation
 // MARK: - 牌型升级系统（Meta Progression）
 
 /// 管理每种牌型的永久升级等级，提供额外 chips/mult 加成
-final class PatternUpgradeManager: ObservableObject, @unchecked Sendable {
+@MainActor
+final class PatternUpgradeManager: ObservableObject {
     static let shared = PatternUpgradeManager()
 
     /// 每种牌型的升级等级（0 = 未升级）

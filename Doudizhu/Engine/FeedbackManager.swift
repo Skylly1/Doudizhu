@@ -37,8 +37,9 @@ final class FeedbackManager {
     func explosion() {
         heavyImpact.impactOccurred(intensity: 1.0)
         // 短延迟后再一次，模拟"爆炸"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [self] in
-            heavyImpact.impactOccurred(intensity: 0.8)
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 80_000_000)
+            self?.heavyImpact.impactOccurred(intensity: 0.8)
         }
     }
 
@@ -76,8 +77,9 @@ final class FeedbackManager {
     /// 通关
     func victory() {
         notification.notificationOccurred(.success)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
-            notification.notificationOccurred(.success)
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            self?.notification.notificationOccurred(.success)
         }
     }
 }

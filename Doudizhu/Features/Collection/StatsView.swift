@@ -14,6 +14,7 @@ struct StatsView: View {
                     Text(L10n.isEnglish ? "Player Statistics" : "玩家统计")
                         .font(Theme.fontHeading)
                         .foregroundStyle(Theme.goldGradient)
+                        .accessibilityAddTraits(.isHeader)
                 }
                 .padding(.top, Theme.spacingLG)
 
@@ -88,6 +89,9 @@ struct StatsView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(title)
+        .accessibilityValue(value)
     }
 }
 

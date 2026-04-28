@@ -129,12 +129,14 @@ struct HelpView: View {
                     Text(title)
                         .font(.headline)
                         .foregroundColor(Theme.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
 
                     Spacer()
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption)
                         .foregroundColor(Theme.textTertiary)
+                        .accessibilityHidden(true)
                 }
                 .padding(Theme.spacingMD)
             }

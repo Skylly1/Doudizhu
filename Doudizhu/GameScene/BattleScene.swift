@@ -17,6 +17,13 @@ class BattleScene: SKScene {
     private let baseCardHeight: CGFloat = 99
     private let cardOverlap: CGFloat = 32
 
+    override func willMove(from view: SKView) {
+        removeAllActions()
+        removeAllChildren()
+        cardNodes.removeAll()
+        selectedCards.removeAll()
+    }
+
     override func didMove(to view: SKView) {
         // 暖棕底色 — 大幅提亮，OLED 可见
         backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.11, alpha: 1.0)

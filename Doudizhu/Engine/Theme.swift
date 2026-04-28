@@ -63,6 +63,7 @@ enum Theme {
     // MARK: 字体
 
     /// 大标题 — 游戏名（书法衬线）
+    // UX-TODO: Font sizes are hardcoded — consider @ScaledMetric for Dynamic Type support
     static let fontTitle = Font.system(size: 44, weight: .black, design: .serif)
     /// 页面标题（书法衬线）
     static let fontHeading = Font.system(size: 28, weight: .bold, design: .serif)
@@ -344,6 +345,8 @@ struct GameNavBar: View {
                                 .fill(.ultraThinMaterial)
                         )
                 }
+                .accessibilityLabel(L10n.back)
+                .accessibilityHint(L10n.isEnglish ? "Go back to previous screen" : "返回上一页")
             }
 
             Spacer()
@@ -351,6 +354,7 @@ struct GameNavBar: View {
             Text(title)
                 .font(.headline)
                 .foregroundColor(Theme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer()
 

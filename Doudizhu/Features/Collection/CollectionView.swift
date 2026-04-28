@@ -20,6 +20,8 @@ struct CollectionView: View {
                 }
                 .padding(.horizontal, Theme.spacingMD)
                 .padding(.top, Theme.spacingSM)
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel(L10n.isEnglish ? "Collection tabs" : "收藏标签页")
 
                 TabView(selection: $selectedTab) {
                     jokerCollection.tag(0)

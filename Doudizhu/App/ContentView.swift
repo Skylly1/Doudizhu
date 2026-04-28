@@ -134,6 +134,10 @@ struct ContentView: View {
                     DemoGateView(
                         purchaseManager: purchaseManager,
                         onContinue: {
+                            // 首购奖励：仅购买后首次继续时应用
+                            if purchaseManager.isFullVersion {
+                                rogueRun.applyFirstPurchaseBonus()
+                            }
                             rogueRun.advanceToNextFloor()
                             goBack()
                         },

@@ -161,11 +161,21 @@ extension GameSaveModel {
         run.activeJokers = (try? decoder.decode([Joker].self, from: activeJokersData)) ?? []
         run.activeBuffs = (try? decoder.decode([Buff].self, from: activeBuffsData)) ?? []
 
+        // 解码失败警告 — 帮助诊断存档损坏
+        if !handCardsData.isEmpty && run.handCards.isEmpty {
+            CrashReporter.shared.log("restore: handCards decode failed (\(handCardsData.count) bytes)", level: .warning)
+        }
+        if !activeJokersData.isEmpty && run.activeJokers.isEmpty {
+            CrashReporter.shared.log("restore: activeJokers decode failed (\(activeJokersData.count) bytes)", level: .warning)
+        }
+
         // 每日挑战恢复
         run.dailyChallenge = isDailyChallenge ? DailyChallenge.today : nil
 
         run.playHistory = []
         run.lastPlayResult = nil
+
+        CrashReporter.shared.addBreadcrumb("Restoring save: floor=\(currentFloorIndex) phase=\(phaseRaw)")
 
         // 根据保存时的阶段智能恢复
         switch phaseRaw {
@@ -227,7 +237,10 @@ final class SaveManager {
 
     /// 保存当前游戏状态（按槽位隔离：主线 vs 每日挑战）
     func save(run: RogueRun, buildId: String) {
-        guard let context = modelContext else { return }
+        guard let context = modelContext else {
+            CrashReporter.shared.log("SaveManager: modelContext not configured, skipping save", level: .warning)
+            return
+        }
         let isDaily = run.dailyChallenge != nil
         // 只删除同槽位旧存档
         let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
@@ -236,7 +249,11 @@ final class SaveManager {
         }
         let save = GameSaveModel.snapshot(from: run, buildId: buildId)
         context.insert(save)
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            CrashReporter.shared.log("SaveManager: failed to persist save — \(error.localizedDescription)", level: .error)
+        }
     }
 
     /// 检查是否有主线存档
@@ -278,7 +295,11 @@ final class SaveManager {
         for old in all where !old.isDailyChallenge {
             context.delete(old)
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            CrashReporter.shared.log("SaveManager: clearSaves failed — \(error.localizedDescription)", level: .error)
+        }
     }
 
     /// 删除每日挑战存档
@@ -288,7 +309,11 @@ final class SaveManager {
         for old in all where old.isDailyChallenge {
             context.delete(old)
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            CrashReporter.shared.log("SaveManager: clearDailySaves failed — \(error.localizedDescription)", level: .error)
+        }
     }
 
     /// 删除所有存档（重置用）
@@ -296,6 +321,10 @@ final class SaveManager {
         guard let context = modelContext else { return }
         let all = (try? context.fetch(FetchDescriptor<GameSaveModel>())) ?? []
         for old in all { context.delete(old) }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            CrashReporter.shared.log("SaveManager: clearAllSaves failed — \(error.localizedDescription)", level: .error)
+        }
     }
 }

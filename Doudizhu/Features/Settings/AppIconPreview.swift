@@ -1,6 +1,8 @@
 import SwiftUI
 
 // MARK: - 金色渐变常量
+// UX-TODO: These local constants duplicate Theme.gold* values for Icon rendering isolation.
+// Consider refactoring if Theme tokens change.
 private let goldGradient = LinearGradient(
     colors: [
         Color(red: 0.95, green: 0.82, blue: 0.42),

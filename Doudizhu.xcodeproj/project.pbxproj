@@ -18,11 +18,8 @@
 		33AD595D0C5DDCC7388AA140 /* GestureGuideOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */; };
 		33E59A5D4B0C45D2CDA65245 /* EngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A35051E677B9E4564DB749 /* EngineTests.swift */; };
 		36328BC68873189A9D6DF6CB /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
-		3CB47F3929E2C270DC6D7224 /* CardPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F3A76D4A4AB699BA4B449F /* CardPattern.swift */; };
-		3F5024CCEFAF757B674DCE9F /* L10nStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */; };
 		3FAE3C1D2D4F2580E3C05F7F /* GameSaveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D6C54990C380453D910DE /* GameSaveModel.swift */; };
 		446DD01D4220769F7DCFB9A1 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
-		47978C704CD59B2A5FF4DF21 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF923141EB84CEE723619A6 /* Card.swift */; };
 		4BF8E0B52AC2757A0EA6FF29 /* CardNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B75669125C466EC3ED7729 /* CardNode.swift */; };
 		4C7E3B89F18BCA0B77490A1B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378DC5F776349B16C1FA4FA8 /* Localizable.strings */; };
 		56D8B15F48FA802FEA747865 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781A117C670FF3910C3321E7 /* PurchaseManager.swift */; };
@@ -67,6 +64,16 @@
 		F53FE7A0EEAEF69EA90D3BE0 /* PatternUpgradeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2E1F17FA0C2CECF94570A6 /* PatternUpgradeManager.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B6A9AF39FBA81A0DD8C94381 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2E7D72DE5E87B86676177E83 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 879330810470EF14EED3843A;
+			remoteInfo = Doudizhu;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		02B7561C354AAEBCFCF1A20E /* 斗破乾坤.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "斗破乾坤.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		071990CD18A7AE4833D35611 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -89,6 +96,7 @@
 		4E768DAC1C33BB92B5E01DC5 /* PurchaseSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseSuccessView.swift; sourceTree = "<group>"; };
 		5016652485B0AE2298F2F3D9 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		503671FB8722B52479CCC332 /* GestureGuideOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureGuideOverlay.swift; sourceTree = "<group>"; };
+		59D9F7172060F67AF945B156 /* Doudizhu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Doudizhu.entitlements; sourceTree = "<group>"; };
 		60D933644042A8A7F300A933 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		6A332EF35C3E665D1867B1A1 /* StarterBuild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarterBuild.swift; sourceTree = "<group>"; };
 		6ED88E607C3BDA32ED8E9F0D /* floors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = floors.json; sourceTree = "<group>"; };
@@ -109,7 +117,6 @@
 		AEAF5F539604B2D2015544B2 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B1A35051E677B9E4564DB749 /* EngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineTests.swift; sourceTree = "<group>"; };
 		B1FB06006D744656FBD92B31 /* DoudizhuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoudizhuApp.swift; sourceTree = "<group>"; };
-		B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10nStub.swift; sourceTree = "<group>"; };
 		BB5221E2C3524AE4B44A8FF9 /* BattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BattleView.swift; sourceTree = "<group>"; };
 		BF312B11526B28C5120B2348 /* DoudizhuTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DoudizhuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF62D06D635A1BDDFA6F2D58 /* Joker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joker.swift; sourceTree = "<group>"; };
@@ -166,7 +173,6 @@
 			isa = PBXGroup;
 			children = (
 				B1A35051E677B9E4564DB749 /* EngineTests.swift */,
-				B26560C2E7A11C92FE05B9F9 /* L10nStub.swift */,
 			);
 			path = DoudizhuTests;
 			sourceTree = "<group>";
@@ -237,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				C5A519A3433C95966762B382 /* Configuration.storekit */,
+				59D9F7172060F67AF945B156 /* Doudizhu.entitlements */,
 				7F12FCD5790B7C0ADB412F10 /* GoogleService-Info.plist */,
 				47CAB337B7203CA7328A7552 /* PrivacyInfo.xcprivacy */,
 				0118E91545791F4FFCF83239 /* AI */,
@@ -364,6 +371,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				076DBEF2E8576B43BDB61161 /* PBXTargetDependency */,
 			);
 			name = DoudizhuTests;
 			packageProductDependencies = (
@@ -532,14 +540,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				47978C704CD59B2A5FF4DF21 /* Card.swift in Sources */,
-				3CB47F3929E2C270DC6D7224 /* CardPattern.swift in Sources */,
 				33E59A5D4B0C45D2CDA65245 /* EngineTests.swift in Sources */,
-				3F5024CCEFAF757B674DCE9F /* L10nStub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		076DBEF2E8576B43BDB61161 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 879330810470EF14EED3843A /* Doudizhu */;
+			targetProxy = B6A9AF39FBA81A0DD8C94381 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		378DC5F776349B16C1FA4FA8 /* Localizable.strings */ = {
@@ -565,8 +578,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Doudizhu/Doudizhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = Q43DRF894U;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -581,8 +597,13 @@
 				PRODUCT_MODULE_NAME = Doudizhu;
 				PRODUCT_NAME = "斗破乾坤";
 				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -656,8 +677,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Doudizhu/Doudizhu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = Q43DRF894U;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -672,7 +695,9 @@
 				PRODUCT_MODULE_NAME = Doudizhu;
 				PRODUCT_NAME = "斗破乾坤";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -690,7 +715,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.DoudizhuTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Doudizhu.app/Doudizhu";
 			};
 			name = Debug;
 		};
@@ -765,7 +790,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.hongzeng.DoudizhuTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Doudizhu.app/Doudizhu";
 			};
 			name = Release;
 		};

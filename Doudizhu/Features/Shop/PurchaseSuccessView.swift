@@ -85,6 +85,8 @@ struct PurchaseSuccessView: View {
                     )
                     .shadow(color: Theme.gold.opacity(0.4), radius: 12, y: 4)
                 }
+                .accessibilityLabel(L10n.isEnglish ? "Begin Adventure" : "开始冒险")
+                .accessibilityHint(L10n.isEnglish ? "Start your full adventure" : "开始完整版冒险之旅")
                 .padding(.horizontal, 32)
                 .padding(.bottom, 40)
             }

@@ -175,6 +175,11 @@ struct PatternRecognizer {
         guard let tripleRank = groups.first(where: { $0.value.count == 3 })?.key else {
             return nil
         }
+        // Validate wing: tripleWithPair requires the wing to be an actual pair
+        if wingSize == 2 {
+            let wingCards = cards.filter { $0.rank != tripleRank }
+            guard wingCards.count == 2, wingCards[0].rank == wingCards[1].rank else { return nil }
+        }
         let type: PatternType = wingSize == 1 ? .tripleWithOne : .tripleWithPair
         return CardPattern(type: type, cards: cards, mainRank: tripleRank)
     }
@@ -213,6 +218,9 @@ struct PatternRecognizer {
             .keys.sorted()
 
         guard triples.count >= 2 else { return nil }
+
+        // 飞机的连续三条不能包含2和王（与顺子/连对规则一致）
+        guard triples.allSatisfy({ $0.rawValue <= Rank.ace.rawValue }) else { return nil }
 
         // 检查三条是否连续
         for i in 1..<triples.count {

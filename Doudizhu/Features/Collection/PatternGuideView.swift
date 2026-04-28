@@ -69,6 +69,7 @@ struct PatternGuideView: View {
             Text(title)
                 .font(Theme.fontSection)
                 .foregroundColor(Theme.gold)
+                .accessibilityAddTraits(.isHeader)
             Spacer()
         }
         .padding(.horizontal, Theme.spacingMD)
@@ -99,6 +100,9 @@ struct PatternGuideView: View {
                 .fill(Theme.bgCard)
         )
         .padding(.horizontal, Theme.spacingMD)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(name)，\(score)")
+        .accessibilityHint(tip)
     }
 
     private func tipCard(_ title: String, _ text: String) -> some View {

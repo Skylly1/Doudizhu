@@ -17,6 +17,7 @@ struct AchievementView: View {
                     Text(L10n.achievementsUnlocked)
                         .font(Theme.fontCaption)
                         .foregroundColor(Theme.textTertiary)
+                        .accessibilityAddTraits(.isHeader)
 
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {

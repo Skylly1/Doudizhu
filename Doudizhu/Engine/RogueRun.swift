@@ -202,7 +202,16 @@ enum HandSortMode: String, CaseIterable {
     }
 
     var currentFloor: FloorConfig {
-        FloorConfig.allFloors[currentFloorIndex]
+        guard currentFloorIndex >= 0,
+              currentFloorIndex < FloorConfig.allFloors.count else {
+            CrashReporter.shared.log(
+                "currentFloorIndex \(currentFloorIndex) out of bounds (0..<\(FloorConfig.allFloors.count))",
+                level: .error)
+            return FloorConfig.allFloors.last ?? FloorConfig(
+                floor: 1, name: "???", targetScore: 100,
+                maxPlays: 3, maxDiscards: 1, description: "", isShop: false)
+        }
+        return FloorConfig.allFloors[currentFloorIndex]
     }
 
     var floorProgress: Double {
@@ -263,7 +272,7 @@ enum HandSortMode: String, CaseIterable {
         
         // Ascension 调整
         if ascensionLevel >= 1 {
-            // A1+: 目标分数+15%（通过减少容错实现）
+            // A1+: 目标分数+8%/级（由 effectiveTargetScore 计算）
         }
         if ascensionLevel >= 3 {
             // A3+: 出牌次数-1
@@ -325,8 +334,14 @@ enum HandSortMode: String, CaseIterable {
                         let randomMod = BossModifier.allCases.randomElement() ?? .scoreCap
                         bossState = BossState(modifiers: [randomMod])
                     }
-                default:
-                    break
+                case .bossRush:
+                    // Boss rush: every non-shop floor gets a random boss modifier
+                    if !floor.isShop && bossState == nil {
+                        let randomMod = BossModifier.allCases.randomElement() ?? .escalating
+                        bossState = BossState(modifiers: [randomMod])
+                    }
+                case .noBombs, .halfGold, .doubleScore, .allOrNothing, .goldRush:
+                    break  // Handled elsewhere (playCards / startDailyChallenge)
                 }
             }
         }
@@ -446,6 +461,7 @@ enum HandSortMode: String, CaseIterable {
         if hasJoker(.gambler) {
             let roll = Double.random(in: -0.30...0.40)
             mult *= (1.0 + roll)
+            // BALANCE: Expected value is +5% — consider narrowing range to -0.20...0.30 to reduce frustration
         }
         if hasJoker(.dragon) && combo == 5 { mult += 2.0 }  // 神龙摆尾: combo 6→5 门槛降低 (buff)
         if hasJoker(.tideTurner) && effectiveTargetScore > 0 && floorScore < effectiveTargetScore * 4 / 10 { mult += 0.8 }  // 逆转乾坤: 30%→40%门槛+0.5→+0.8 (buff)
@@ -455,8 +471,8 @@ enum HandSortMode: String, CaseIterable {
         if hasJoker(.fortuneWheel) { mult += Double(activeJokers.count) * 0.5 }
         if hasJoker(.cosmicShift) {
             let tempChips = chips
-            chips = mult * 10.0
-            mult = tempChips / 10.0
+            chips = max(1.0, mult * 10.0)
+            mult = max(0.1, tempChips / 10.0)
         }
 
         // 第五批 Joker effects
@@ -488,6 +504,7 @@ enum HandSortMode: String, CaseIterable {
         if hasJoker(.perfectHand) && cards.count == 5 {
             let suits = Set(cards.compactMap { $0.suit })
             if suits.count == 1 { mult *= 4.0 }
+            // BALANCE: ×4 mult for same-suit 5-card is extremely strong with straightFlush (×3) — cap combined at ×8?
         }
         if hasJoker(.doubleDown) && lastPatternType == pattern.type { mult += 0.5 }
         if hasJoker(.jokerStacker) { chips += Double(activeJokers.count) * 10.0 }
@@ -495,6 +512,7 @@ enum HandSortMode: String, CaseIterable {
         if hasJoker(.mirrorImage) && pattern.type == .pair { chips *= 2.0 }
         if hasJoker(.chainLightning) && combo >= 4 { mult += 0.6 }
         if hasJoker(.zenMaster) && discardsRemaining == currentFloor.maxDiscards { mult += 2.0 }
+        // BALANCE: zenMaster (+2.0 mult) is very strong since noDiscards floors auto-trigger it; consider checking that maxDiscards > 0
 
         // 更新状态追踪
         usedPatternTypes.insert(pattern.type)
@@ -503,9 +521,9 @@ enum HandSortMode: String, CaseIterable {
         justDiscarded = false
 
         // Calculate final score
-        let finalChips = Int(chips)
-        let finalMult = mult
-        var earned = Int(chips * mult)
+        let finalChips = max(0, Int(chips))
+        let finalMult = max(0.0, mult)
+        var earned = max(0, Int(chips * mult))
 
         // === Boss 修改器 ===
         if var boss = bossState {
@@ -596,9 +614,10 @@ enum HandSortMode: String, CaseIterable {
         let playedIds = Set(cards.map(\.id))
         handCards.removeAll { playedIds.contains($0.id) }
 
-        // Engine Joker: Infinite Loop — if hand is empty, refill from draw pile
+        // Engine Joker: Infinite Loop — if hand is empty, refill from draw pile (once per play)
         if hasJoker(.infiniteLoop) && handCards.isEmpty && !drawPile.isEmpty {
-            let refillCount = min(10, drawPile.count)
+            let baseHandSize = hasJoker(.bloodPact) ? 9 : 10
+            let refillCount = min(baseHandSize, drawPile.count)
             handCards = Array(drawPile.prefix(refillCount))
             drawPile.removeFirst(refillCount)
             sortHand()
@@ -979,9 +998,11 @@ enum HandSortMode: String, CaseIterable {
         lastPlayResult = nil
         lastScoreEarned = 0
         playHistory = []
-        let deal = Deck.dealRoguelike(handSize: 10)
-        handCards = deal.hand
-        drawPile = deal.drawPile
+        lastPatternWasBomb = false
+        justDiscarded = false
+        usedPatternTypes = []
+        lastPatternType = nil
+        recyclerChipBonus = 0
         startFloor()
     }
 
@@ -1107,8 +1128,9 @@ enum HandSortMode: String, CaseIterable {
                 PlayerStats.shared.totalGoldEarned += cost
             }
         case .gainRandomBuff:
-            let pick = Buff.allBuffs.randomElement()!
-            activeBuffs.append(pick)
+            if let pick = Buff.allBuffs.randomElement() {
+                activeBuffs.append(pick)
+            }
         case .healPlays(let count, let goldCost):
             if goldCost > 0 {
                 gold = max(0, gold - goldCost)

@@ -80,6 +80,9 @@ struct GestureGuideOverlay: View {
                                     .fill(Theme.goldGradient)
                             )
                     }
+                    .accessibilityLabel(step < steps.count - 1
+                                        ? (L10n.isEnglish ? "Next step" : "下一步")
+                                        : (L10n.isEnglish ? "Start game" : "开始游戏"))
                     .padding(.horizontal, 48)
                     
                     if step < steps.count - 1 {
@@ -90,6 +93,8 @@ struct GestureGuideOverlay: View {
                                 .font(.subheadline)
                                 .foregroundColor(Theme.textTertiary)
                         }
+                        .accessibilityLabel(L10n.isEnglish ? "Skip tutorial" : "跳过引导")
+                        .accessibilityHint(L10n.isEnglish ? "Skip the gesture guide" : "跳过手势引导直接开始")
                     }
                 }
                 

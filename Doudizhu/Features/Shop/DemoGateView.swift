@@ -93,6 +93,12 @@ struct DemoGateView: View {
                 pulseButton = true
             }
         }
+        .fullScreenCover(isPresented: $showPurchaseSuccess) {
+            PurchaseSuccessView {
+                showPurchaseSuccess = false
+                onContinue()
+            }
+        }
     }
 
     // MARK: - 祝贺过渡
@@ -385,8 +391,29 @@ struct DemoGateView: View {
 
     // MARK: - 购买区
 
+    @State private var showPurchaseSuccess = false
+
     private var purchaseSection: some View {
         VStack(spacing: 12) {
+            // 待审批提示
+            if purchaseManager.purchaseState == .pending {
+                HStack(spacing: 8) {
+                    Image(systemName: "clock.badge.checkmark")
+                        .foregroundColor(Theme.gold)
+                    Text(purchaseManager.pendingMessage)
+                        .font(.caption)
+                        .foregroundColor(Theme.textSecondary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .fill(Theme.gold.opacity(0.08))
+                        .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
+                            .stroke(Theme.gold.opacity(0.2)))
+                )
+            }
+
             // 价格锚定（首发限时标签）
             if isFirstView {
                 HStack(spacing: 6) {
@@ -412,13 +439,20 @@ struct DemoGateView: View {
                             "price": purchaseManager.formattedPrice,
                             "view_count": "\(paywallViewCount)"
                         ])
-                        onContinue()
+                        showPurchaseSuccess = true
                     }
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "crown.fill")
-                    Text(L10n.unlockFullPrice(purchaseManager.formattedPrice))
+                    if purchaseManager.purchaseState == .purchasing {
+                        ProgressView()
+                            .tint(.black)
+                    } else {
+                        Image(systemName: "crown.fill")
+                    }
+                    Text(purchaseManager.purchaseState == .purchasing
+                         ? (L10n.isEnglish ? "Processing..." : "处理中...")
+                         : L10n.unlockFullPrice(purchaseManager.formattedPrice))
                 }
                 .font(.headline)
                 .foregroundColor(.black)
@@ -435,13 +469,21 @@ struct DemoGateView: View {
             .accessibilityLabel("解锁完整版")
             .accessibilityHint("购买完整版游戏，价格\(purchaseManager.formattedPrice)")
 
+            // 购买失败提示
+            if case .failed(let msg) = purchaseManager.purchaseState {
+                Text(msg)
+                    .font(.caption)
+                    .foregroundColor(Theme.flame)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+            }
+
             // 免费体验一层（仅首次展示且未使用过）
             if !freePeekUsed && isFirstView {
                 Button {
                     freePeekUsed = true
-                    Analytics.shared.track(.paywallDismissed, params: [
-                        "floor_reached": "\(floorsCleared)",
-                        "action": "free_peek"
+                    Analytics.shared.track(.paywallFreePeek, params: [
+                        "floor_reached": "\(floorsCleared)"
                     ])
                     onContinue()
                 } label: {

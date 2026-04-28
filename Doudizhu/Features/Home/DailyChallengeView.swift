@@ -71,6 +71,9 @@ struct DailyChallengeView: View {
                 .fill(Theme.bgCard)
                 .stroke(Theme.border)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L10n.isEnglish ? "Daily Challenge" : "每日挑战")
+        .accessibilityValue(completed ? L10n.dailyChallengeCompleted : (inProgress ? (L10n.isEnglish ? "In Progress" : "进行中") : dateString))
     }
 
     private var modifiersSection: some View {
@@ -78,6 +81,7 @@ struct DailyChallengeView: View {
             Text(L10n.todayModifiers)
                 .font(Theme.fontSection)
                 .foregroundColor(Theme.textPrimary)
+                .accessibilityAddTraits(.isHeader)
 
             ForEach(challenge.modifiers, id: \.rawValue) { modifier in
                 HStack(spacing: 12) {
@@ -176,6 +180,7 @@ struct DailyChallengeView: View {
                 ) { }
                 .disabled(true)
             } else if inProgress, let onResume {
+                // UX-TODO: "Resume Challenge" / "继续挑战" should be added to L10n for proper 8-language support
                 PrimaryButton(title: L10n.isEnglish ? "Resume Challenge" : "继续挑战", icon: "play.fill") {
                     onResume()
                 }
@@ -201,6 +206,8 @@ struct DailyChallengeView: View {
         return hasDouble ? "×2.0" : "×1.0"
     }
 
+    // UX-TODO: Move all modifier descriptions to L10n for full 8-language support
+    // Currently only zh/en — ja/ko/fr/de/es/pt will show English fallback
     private func modifierDescription(_ modifier: DailyChallengeModifier) -> String {
         switch modifier {
         case .noBombs: return L10n.dailyChallengeNoBombs

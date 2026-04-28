@@ -167,6 +167,7 @@ struct TutorialOverlay: View {
                     Text(step.title)
                         .font(Theme.fontHeading)
                         .foregroundColor(Theme.gold)
+                        .accessibilityAddTraits(.isHeader)
 
                     Text(step.message)
                         .font(Theme.fontBody)

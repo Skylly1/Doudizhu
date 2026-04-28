@@ -41,11 +41,13 @@ struct BattleView: View {
     var body: some View {
         ZStack {
             // SpriteKit 牌桌
+            // UX-TODO: SpriteKit scene is not accessible to VoiceOver — consider adding an accessibilityRepresentation overlay for card state
             if let scene = battleScene {
                 SpriteView(scene: scene)
                     .ignoresSafeArea()
+                    .accessibilityLabel(L10n.isEnglish ? "Card table" : "牌桌")
             } else {
-                Color(red: 0.22, green: 0.16, blue: 0.11).ignoresSafeArea()
+                Theme.bgPrimary.ignoresSafeArea()
             }
 
             // SwiftUI 覆盖层

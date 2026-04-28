@@ -42,6 +42,9 @@ targets:
     resources:
       - path: Doudizhu/Resources
       - path: Doudizhu/Data/Configs
+      - path: Doudizhu/PrivacyInfo.xcprivacy
+    entitlements:
+      path: Doudizhu/Doudizhu.entitlements
     settings:
       base:
         GENERATE_INFOPLIST_FILE: true
@@ -56,6 +59,20 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_EMIT_LOC_STRINGS: true
+        CODE_SIGN_ENTITLEMENTS: Doudizhu/Doudizhu.entitlements
+      configs:
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: -O
+          SWIFT_COMPILATION_MODE: wholemodule
+          DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: ""
+          GCC_PREPROCESSOR_DEFINITIONS: ""
+          VALIDATE_PRODUCT: true
+          STRIP_INSTALLED_PRODUCT: true
+        Debug:
+          SWIFT_OPTIMIZATION_LEVEL: -Onone
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          GCC_PREPROCESSOR_DEFINITIONS: "DEBUG=1"
     dependencies:
       - package: firebase-ios-sdk
         product: FirebaseAnalytics
@@ -77,10 +94,11 @@ targets:
     platform: iOS
     sources:
       - path: DoudizhuTests
-      - path: Doudizhu/Engine/Card.swift
-      - path: Doudizhu/Engine/CardPattern.swift
-    dependencies: []
+        excludes:
+          - "**/.DS_Store"
+          - "L10nStub.swift"
+    dependencies:
+      - target: Doudizhu
     settings:
       base:
         GENERATE_INFOPLIST_FILE: true
-        TEST_HOST: ""

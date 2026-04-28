@@ -179,6 +179,7 @@ struct ContextualHintOverlay: View {
                         .font(.title3.bold())
                         .foregroundColor(Theme.textPrimary)
                         .multilineTextAlignment(.center)
+                        .accessibilityAddTraits(.isHeader)
 
                     Text(hint.message)
                         .font(Theme.fontBody)
@@ -197,6 +198,7 @@ struct ContextualHintOverlay: View {
                             .padding(.vertical, 12)
                             .background(Capsule().fill(hint.accentColor))
                     }
+                    .accessibilityLabel(L10n.isEnglish ? "Dismiss hint" : "关闭提示")
                 }
                 .padding(Theme.spacingXL)
                 .frame(maxWidth: 320)

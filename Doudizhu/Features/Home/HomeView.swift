@@ -261,10 +261,12 @@ struct HomeView: View {
             // 浮动粒子
             FloatingParticles()
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             // 底部卡牌扇形装饰
             CardFanDecor()
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             // 主内容
             VStack(spacing: 0) {
@@ -295,11 +297,13 @@ struct HomeView: View {
                             .foregroundStyle(Theme.goldGradient)
                     }
                     .shadow(color: Theme.gold.opacity(0.4), radius: 16)
+                    .accessibilityHidden(true)
 
                     Text(L10n.appName)
                         .font(Theme.responsiveTitle())
                         .foregroundStyle(Theme.goldGradient)
                         .shadow(color: Theme.gold.opacity(0.4), radius: 10, y: 0)
+                        .accessibilityAddTraits(.isHeader)
 
                     Text(L10n.appSubtitle)
                         .font(Theme.subtitleFont)

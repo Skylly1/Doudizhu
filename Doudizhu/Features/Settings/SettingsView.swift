@@ -317,6 +317,7 @@ struct SettingsView: View {
                 .font(Theme.fontCaption)
                 .foregroundColor(Theme.textTertiary)
                 .padding(.leading, 4)
+                .accessibilityAddTraits(.isHeader)
 
             VStack(spacing: 0) {
                 content()
@@ -360,14 +361,14 @@ struct SettingsView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .foregroundColor(.red.opacity(0.9))
+                        .foregroundColor(Theme.danger)
                     Text(subtitle)
                         .font(Theme.fontCaption)
                         .foregroundColor(Theme.textTertiary)
                 }
                 Spacer()
                 Image(systemName: icon)
-                    .foregroundColor(.red.opacity(0.6))
+                    .foregroundColor(Theme.danger.opacity(0.6))
             }
             .padding(.vertical, 4)
         }
