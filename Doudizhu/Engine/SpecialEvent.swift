@@ -41,6 +41,16 @@ enum SpecialEventType: String {
     case blacksmith = "blacksmith"
     case banditAmbush = "bandit_ambush"
     case sacredSpring = "sacred_spring"
+    case gamblingDen = "gambling_den"
+    case apothecary = "apothecary"
+    case windfall = "windfall"
+    case tombRaid = "tomb_raid"
+    case teaHouseIntel = "tea_house_intel"
+    case escortAgency = "escort_agency"
+    case injuredHero = "injured_hero"
+    case celestialLibrary = "celestial_library"
+    case wanderingMusician = "wandering_musician"
+    case thunderstorm = "thunderstorm"
 }
 
 // MARK: - Event Generator
@@ -65,6 +75,16 @@ enum SpecialEventGenerator {
             blacksmith(),
             banditAmbush(gold: gold),
             sacredSpring(),
+            gamblingDen(gold: gold),
+            apothecary(gold: gold),
+            windfall(),
+            tombRaid(gold: gold),
+            teaHouseIntel(),
+            escortAgency(gold: gold),
+            injuredHero(gold: gold),
+            celestialLibrary(),
+            wanderingMusician(),
+            thunderstorm(gold: gold),
         ]
     }
 
@@ -272,6 +292,308 @@ enum SpecialEventGenerator {
                     description: L10n.isEnglish ? "Get a Buff" : "获得增益",
                     icon: "flask.fill",
                     effect: .gainRandomBuff
+                ),
+            ]
+        )
+    }
+
+    // MARK: - New Event Definitions
+
+    private static func gamblingDen(gold: Int) -> SpecialEvent {
+        SpecialEvent(
+            type: .gamblingDen,
+            title: L10n.isEnglish ? "Gambling Den" : "赌坊",
+            description: L10n.isEnglish
+                ? "A lively gambling house beckons. Feeling lucky?"
+                : "热闹的赌坊传来骰子声，你手痒了吗？",
+            icon: "dice.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Bet big (-50 gold)" : "豪赌 (-50金币)",
+                    description: L10n.isEnglish ? "50% win +100g / lose all bet" : "50%赢+100金 / 输掉赌注",
+                    icon: "flame.fill",
+                    effect: gold >= 50
+                        ? (Bool.random() ? .gainGold(100) : .loseGold(50))
+                        : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Bet small (-20 gold)" : "小赌 (-20金币)",
+                    description: L10n.isEnglish ? "50% win +40g / lose bet" : "50%赢+40金 / 输掉赌注",
+                    icon: "dollarsign.circle",
+                    effect: gold >= 20
+                        ? (Bool.random() ? .gainGold(40) : .loseGold(20))
+                        : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Watch only" : "只看不赌",
+                    description: L10n.isEnglish ? "Nothing happens" : "无事发生",
+                    icon: "eye.fill",
+                    effect: .nothing
+                ),
+            ]
+        )
+    }
+
+    private static func apothecary(gold: Int) -> SpecialEvent {
+        SpecialEvent(
+            type: .apothecary,
+            title: L10n.isEnglish ? "Apothecary" : "药铺",
+            description: L10n.isEnglish
+                ? "Shelves of exotic herbs and tonics. The apothecary smiles warmly."
+                : "药架上摆满了奇珍异草，老药师笑脸相迎。",
+            icon: "leaf.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Tonic (-40 gold)" : "买补药 (-40金币)",
+                    description: L10n.isEnglish ? "+2 plays next floor" : "下层多2次出牌",
+                    icon: "cross.vial.fill",
+                    effect: gold >= 40 ? .healPlays(2, goldCost: 40) : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Cheap tea (-15 gold)" : "买凉茶 (-15金币)",
+                    description: L10n.isEnglish ? "+1 play next floor" : "下层多1次出牌",
+                    icon: "cup.and.saucer.fill",
+                    effect: gold >= 15 ? .healPlays(1, goldCost: 15) : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Just browsing" : "随便看看",
+                    description: L10n.isEnglish ? "Nothing happens" : "无事发生",
+                    icon: "figure.walk",
+                    effect: .nothing
+                ),
+            ]
+        )
+    }
+
+    private static func windfall() -> SpecialEvent {
+        let amount = [30, 50, 80].randomElement()!
+        return SpecialEvent(
+            type: .windfall,
+            title: L10n.isEnglish ? "Windfall" : "天降横财",
+            description: L10n.isEnglish
+                ? "A gust of wind blows a silk pouch to your feet!"
+                : "一阵狂风吹来一个绸缎钱袋，落在你脚边！",
+            icon: "wind",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Keep it (+\(amount)g)" : "收下 (+\(amount)金)",
+                    description: L10n.isEnglish ? "Finders keepers" : "天予不取，反受其咎",
+                    icon: "banknote.fill",
+                    effect: .gainGold(amount)
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Share the luck" : "积德行善",
+                    description: L10n.isEnglish ? "Get a Buff instead" : "获得一个增益",
+                    icon: "hands.sparkles.fill",
+                    effect: .gainRandomBuff
+                ),
+            ]
+        )
+    }
+
+    private static func tombRaid(gold: Int) -> SpecialEvent {
+        SpecialEvent(
+            type: .tombRaid,
+            title: L10n.isEnglish ? "Ancient Tomb" : "古墓探险",
+            description: L10n.isEnglish
+                ? "You discover the entrance to a forgotten tomb. Danger and treasure await..."
+                : "你发现了一座被遗忘古墓的入口，危险与宝藏并存……",
+            icon: "building.columns.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Venture deep" : "深入探索",
+                    description: L10n.isEnglish ? "40% Joker / 60% lose 40g" : "40%获规则牌 / 60%失去40金",
+                    icon: "flashlight.on.fill",
+                    effect: Int.random(in: 0..<5) < 2
+                        ? .gainRandomJoker
+                        : .loseGold(min(40, gold))
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Loot entrance" : "搜刮入口",
+                    description: L10n.isEnglish ? "+25 gold (safe)" : "+25金币（安全）",
+                    icon: "hand.point.down.fill",
+                    effect: .gainGold(25)
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Walk away" : "转身离开",
+                    description: L10n.isEnglish ? "Nothing happens" : "无事发生",
+                    icon: "figure.walk",
+                    effect: .nothing
+                ),
+            ]
+        )
+    }
+
+    private static func teaHouseIntel() -> SpecialEvent {
+        SpecialEvent(
+            type: .teaHouseIntel,
+            title: L10n.isEnglish ? "Tea House" : "茶馆情报",
+            description: L10n.isEnglish
+                ? "Travelers share rumors over fragrant tea. Useful information, if you listen..."
+                : "茶馆里南来北往的旅客交换着消息，细心聆听或许有用……",
+            icon: "bubble.left.and.bubble.right.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Gather intel" : "打听消息",
+                    description: L10n.isEnglish ? "Skip next shop (save gold)" : "跳过下一个商店（省钱）",
+                    icon: "ear.fill",
+                    effect: .skipNextShop
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Share stories" : "交流江湖事",
+                    description: L10n.isEnglish ? "Get a Buff" : "获得一个增益",
+                    icon: "text.bubble.fill",
+                    effect: .gainRandomBuff
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Enjoy the tea" : "品茶休憩",
+                    description: L10n.isEnglish ? "+1 play next floor" : "下层多1次出牌",
+                    icon: "cup.and.saucer.fill",
+                    effect: .healPlays(1)
+                ),
+            ]
+        )
+    }
+
+    private static func escortAgency(gold: Int) -> SpecialEvent {
+        SpecialEvent(
+            type: .escortAgency,
+            title: L10n.isEnglish ? "Escort Agency" : "镖局",
+            description: L10n.isEnglish
+                ? "The escort chief offers protection and rare goods—for the right price."
+                : "镖头拍着胸脯：要保镖还是要货，开个价！",
+            icon: "shield.lefthalf.filled",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Buy goods (-70 gold)" : "买镖货 (-70金币)",
+                    description: L10n.isEnglish ? "Get a Joker" : "获得一张规则牌",
+                    icon: "shippingbox.fill",
+                    effect: gold >= 70 ? .buyRandomJoker(cost: 70) : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Hire escort (-30 gold)" : "雇镖师 (-30金币)",
+                    description: L10n.isEnglish ? "Get a Buff" : "获得一个增益",
+                    icon: "person.badge.shield.checkmark.fill",
+                    effect: gold >= 30 ? .gainRandomBuff : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Pass by" : "路过而已",
+                    description: L10n.isEnglish ? "Nothing happens" : "无事发生",
+                    icon: "figure.walk",
+                    effect: .nothing
+                ),
+            ]
+        )
+    }
+
+    private static func injuredHero(gold: Int) -> SpecialEvent {
+        SpecialEvent(
+            type: .injuredHero,
+            title: L10n.isEnglish ? "Injured Hero" : "落难侠客",
+            description: L10n.isEnglish
+                ? "A wounded warrior lies by the road. They beg for aid..."
+                : "路边一位受伤的侠客向你求助……",
+            icon: "figure.fall",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Give gold (-40)" : "赠金相助 (-40金)",
+                    description: L10n.isEnglish ? "Gratitude: free Joker" : "侠客感恩，赠你规则牌",
+                    icon: "heart.fill",
+                    effect: gold >= 40 ? .gainRandomJoker : .nothing
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Share medicine" : "分享草药",
+                    description: L10n.isEnglish ? "They teach you a trick (+Buff)" : "侠客传授一招（+增益）",
+                    icon: "cross.case.fill",
+                    effect: .gainRandomBuff
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Ignore" : "视而不见",
+                    description: L10n.isEnglish ? "Bad karma... -20 gold" : "因果报应……-20金币",
+                    icon: "figure.walk",
+                    effect: .loseGold(min(20, gold))
+                ),
+            ]
+        )
+    }
+
+    private static func celestialLibrary() -> SpecialEvent {
+        SpecialEvent(
+            type: .celestialLibrary,
+            title: L10n.isEnglish ? "Celestial Library" : "天机阁",
+            description: L10n.isEnglish
+                ? "A hidden pavilion of ancient scrolls. Knowledge of the heavens awaits."
+                : "隐秘的天机阁中藏有上古秘籍，天道奥秘尽在其中。",
+            icon: "book.closed.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Study scrolls" : "研读秘籍",
+                    description: L10n.isEnglish ? "Upgrade a Joker" : "升级一张规则牌",
+                    icon: "scroll.fill",
+                    effect: .upgradeRandomJoker
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Meditate" : "闭关参悟",
+                    description: L10n.isEnglish ? "Get a Buff" : "获得一个增益",
+                    icon: "sparkles",
+                    effect: .gainRandomBuff
+                ),
+            ]
+        )
+    }
+
+    private static func wanderingMusician() -> SpecialEvent {
+        SpecialEvent(
+            type: .wanderingMusician,
+            title: L10n.isEnglish ? "Wandering Musician" : "流浪琴师",
+            description: L10n.isEnglish
+                ? "Haunting melodies drift through the air. The musician offers to play for you."
+                : "悠扬的琴声随风飘来，琴师愿为你奏一曲。",
+            icon: "music.note",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Listen" : "聆听一曲",
+                    description: L10n.isEnglish ? "+2 plays next floor" : "下层多2次出牌",
+                    icon: "ear.fill",
+                    effect: .healPlays(2)
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Jam together" : "合奏一番",
+                    description: L10n.isEnglish ? "Get a Buff" : "获得一个增益",
+                    icon: "music.quarternote.3",
+                    effect: .gainRandomBuff
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Toss a coin" : "打赏铜板",
+                    description: L10n.isEnglish ? "+30 gold (good karma)" : "+30金币（好人有好报）",
+                    icon: "dollarsign.circle.fill",
+                    effect: .gainGold(30)
+                ),
+            ]
+        )
+    }
+
+    private static func thunderstorm(gold: Int) -> SpecialEvent {
+        let loss = min(30, gold / 3)
+        return SpecialEvent(
+            type: .thunderstorm,
+            title: L10n.isEnglish ? "Thunderstorm!" : "雷暴来袭！",
+            description: L10n.isEnglish
+                ? "Dark clouds gather and lightning splits the sky. You must act fast!"
+                : "乌云密布，电闪雷鸣，你必须赶紧行动！",
+            icon: "cloud.bolt.fill",
+            choices: [
+                EventChoice(
+                    label: L10n.isEnglish ? "Brave the storm" : "冒雨前行",
+                    description: L10n.isEnglish ? "50% find shelter +Buff / get struck -\(loss)g" : "50%找到庇护+增益 / 被雷劈-\(loss)金",
+                    icon: "bolt.fill",
+                    effect: Bool.random() ? .gainRandomBuff : .loseGold(loss)
+                ),
+                EventChoice(
+                    label: L10n.isEnglish ? "Take cover (-\(loss) gold)" : "寻找避难所 (-\(loss)金币)",
+                    description: L10n.isEnglish ? "Wait it out safely" : "安全等待风暴过去",
+                    icon: "house.fill",
+                    effect: .loseGold(loss)
                 ),
             ]
         )
