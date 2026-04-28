@@ -154,45 +154,21 @@ struct DemoGateView: View {
         .opacity(congratsOpacity)
     }
 
-    // MARK: - 社交证明（动态数据）
-
-    /// 已购买人数（本地跟踪 — 上线后接服务端）
-    private var purchaseCountEstimate: Int {
-        // 基于App首次安装天数估算 + 付费墙转化次数作为种子数
-        let installDate = UserDefaults.standard.object(forKey: "has_opened_before_date") as? Date ?? Date()
-        let daysSinceInstall = max(1, Calendar.current.dateComponents([.day], from: installDate, to: Date()).day ?? 1)
-        let basePurchasers = 2680 // 初始种子数（发布后真实数据替换）
-        return basePurchasers + daysSinceInstall * 12
-    }
-
     private var socialProofSection: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 2) {
-                ForEach(0..<5) { _ in
-                    Image(systemName: "star.fill")
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(L10n.isEnglish
+                    ? ["All 20 floor levels", "30+ Joker rule cards", "Unlimited plays per run", "One purchase, yours forever"]
+                    : ["全部 20 层关卡", "30+ 丑角规则牌", "无限出牌次数", "一次购买，永久拥有"],
+                    id: \.self) { feature in
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundColor(Theme.gold)
+                    Text(feature)
+                        .font(.caption.bold())
+                        .foregroundColor(Theme.textSecondary)
                 }
-                Text("4.8")
-                    .font(.caption.bold())
-                    .foregroundColor(Theme.gold)
-                    .padding(.leading, 4)
             }
-
-            Text(L10n.isEnglish
-                 ? "\(purchaseCountEstimate.formatted())+ players unlocked the full adventure"
-                 : "已有 \(purchaseCountEstimate.formatted()) 位玩家解锁完整冒险")
-                .font(.caption.bold())
-                .foregroundColor(Theme.textSecondary)
-                .multilineTextAlignment(.center)
-
-            Text(L10n.isEnglish
-                 ? "\"Best card game since Balatro!\" — player review"
-                 : "\"自 Balatro 以来最好的卡牌游戏！\" — 玩家好评")
-                .font(.caption)
-                .foregroundColor(Theme.textTertiary)
-                .multilineTextAlignment(.center)
-                .italic()
         }
         .padding(.vertical, 10)
         .opacity(showContent ? 1 : 0)
