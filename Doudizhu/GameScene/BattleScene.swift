@@ -614,10 +614,16 @@ class BattleScene: SKScene {
         emitter.particleColorBlendFactor = 1.0
         let circleSize = CGSize(width: 8, height: 8)
         UIGraphicsBeginImageContextWithOptions(circleSize, false, 0)
-        let ctx = UIGraphicsGetCurrentContext()!
+        guard let ctx = UIGraphicsGetCurrentContext() else {
+            UIGraphicsEndImageContext()
+            return emitter
+        }
         ctx.setFillColor(UIColor.white.cgColor)
         ctx.fillEllipse(in: CGRect(origin: .zero, size: circleSize))
-        let image = UIGraphicsGetImageFromCurrentImageContext()!
+        guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
+            UIGraphicsEndImageContext()
+            return emitter
+        }
         UIGraphicsEndImageContext()
         emitter.particleTexture = SKTexture(image: image)
         return emitter

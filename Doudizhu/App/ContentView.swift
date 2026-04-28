@@ -149,6 +149,10 @@ struct ContentView: View {
                                 goHome()
                             }
                         },
+                        onFreePeek: {
+                            rogueRun.advanceToNextFloor()
+                            goBack()
+                        },
                         onBack: {
                             // 从付费墙退出时自动保存进度
                             SaveManager.shared.save(run: rogueRun, buildId: "")

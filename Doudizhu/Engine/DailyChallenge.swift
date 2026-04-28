@@ -14,7 +14,10 @@ struct DailyChallenge {
     static var today: DailyChallenge {
         let cal = Calendar.current
         let comps = cal.dateComponents([.year, .month, .day], from: Date())
-        let seed = UInt64(comps.year! * 10000 + comps.month! * 100 + comps.day!)
+        let y = comps.year ?? 2024
+        let m = comps.month ?? 1
+        let d = comps.day ?? 1
+        let seed = UInt64(y * 10000 + m * 100 + d)
 
         // Rotate modifiers based on day of week + week parity
         let dayOfWeek = cal.component(.weekday, from: Date())
@@ -208,7 +211,7 @@ struct DailyChallenge {
     private static var yesterdayString: String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: Calendar.current.date(byAdding: .day, value: -1, to: Date())!)
+        return f.string(from: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date())
     }
 }
 

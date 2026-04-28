@@ -6,6 +6,7 @@ import SwiftUI
 struct DemoGateView: View {
     @ObservedObject var purchaseManager: PurchaseManager
     let onContinue: () -> Void
+    let onFreePeek: () -> Void
     let onBack: () -> Void
     var equippedJokers: [Joker] = []
     var equippedBuffs: [Buff] = []
@@ -575,7 +576,7 @@ struct DemoGateView: View {
                     Analytics.shared.track(.paywallFreePeek, params: [
                         "floor_reached": "\(floorsCleared)"
                     ])
-                    onContinue()
+                    onFreePeek()
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "gift.fill")
