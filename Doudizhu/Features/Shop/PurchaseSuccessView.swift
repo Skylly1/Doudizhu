@@ -1,13 +1,11 @@
 import SwiftUI
 
-/// 首购成功庆典页面
-// REVENUE-TODO: [P1] 加入「分享到社交媒体」按钮 — 截图分享解锁成就可带来有机获客
-// REVENUE-TODO: [P2] 加入「评价引导」— 购买成功是请求App Store评价的最佳时机
-// REVENUE-TODO: [P2] 加入「推荐给朋友」— 分享链接+推荐奖励（口碑传播）
+/// 首购成功庆典页面 — 转化关键时刻：分享+评价+口碑
 struct PurchaseSuccessView: View {
     let onStart: () -> Void
     
     @State private var showRewards = false
+    @State private var showActions = false
     @State private var celebrationScale: CGFloat = 0.5
     @State private var celebrationOpacity: Double = 0
     
@@ -68,9 +66,46 @@ struct PurchaseSuccessView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 
-                Spacer()
+                // 社交分享 + 评价引导（购买高峰时刻）
+                if showActions {
+                    VStack(spacing: 10) {
+                        // 分享按钮 — 有机获客
+                        ShareLink(item: L10n.isEnglish
+                                  ? "I just unlocked the full version of 斗破乾坤! A brilliant Doudizhu × Roguelike card game 🃏🔥"
+                                  : "我刚解锁了「斗破乾坤」完整版！斗地主×Roguelike卡牌构筑，超好玩 🃏🔥") {
+                            HStack(spacing: 6) {
+                                Image(systemName: "square.and.arrow.up")
+                                Text(L10n.isEnglish ? "Share with Friends" : "分享给朋友")
+                            }
+                            .font(.subheadline.bold())
+                            .foregroundColor(Theme.cyan)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(
+                                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .fill(Theme.cyan.opacity(0.12))
+                                    .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                        .stroke(Theme.cyan.opacity(0.3)))
+                            )
+                        }
+
+                        // 评价引导 — 购买成功是最佳时机
+                        Button {
+                            ReviewManager.shared.requestReviewNow()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "star.bubble.fill")
+                                Text(L10n.isEnglish ? "Rate Us ⭐️" : "给个好评 ⭐️")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(Theme.gold.opacity(0.9))
+                        }
+                    }
+                    .padding(.horizontal, 32)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                }
                 
-                // 开始按钮
+                Spacer()
                 Button {
                     onStart()
                 } label: {
@@ -101,6 +136,9 @@ struct PurchaseSuccessView: View {
             }
             withAnimation(.spring(response: 0.5).delay(0.5)) {
                 showRewards = true
+            }
+            withAnimation(.easeOut(duration: 0.4).delay(1.0)) {
+                showActions = true
             }
         }
     }

@@ -396,9 +396,12 @@ struct DemoGateView: View {
     }
 
     // MARK: - 购买区
-    // REVENUE-TODO: [P1] 加入原价删除线 "¥40" → "¥25" 的价格锚定效果
-    // REVENUE-TODO: [P1] "首发特惠"标签应配合倒计时，否则永久显示会失去紧迫感
-    // REVENUE-TODO: [P2] 回访用户(非首次)应展示不同CTA — "解锁你的进度" 替代 "限时价格"
+    // REVENUE-TODO: [P1] "首发特惠"标签可配合倒计时（需 Remote Config）
+
+    /// 原价展示（价格锚定）— 让现价显得超值
+    private var originalPriceText: String {
+        L10n.isEnglish ? "$9.99" : "¥40"
+    }
 
     @State private var showPurchaseSuccess = false
 
@@ -423,19 +426,33 @@ struct DemoGateView: View {
                 )
             }
 
-            // 价格锚定（首发限时标签）
-            if isFirstView {
-                HStack(spacing: 6) {
-                    Text(L10n.isEnglish ? "Launch Special" : "首发特惠")
-                        .font(.caption.bold())
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Capsule().fill(Theme.gold))
-                    
-                    Text(L10n.isEnglish ? "Limited-time price" : "限时价格")
+            // 价格锚定 + 首发/回访差异化
+            HStack(spacing: 6) {
+                Text(L10n.isEnglish ? "Launch Special" : "首发特惠")
+                    .font(.caption.bold())
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Theme.gold))
+
+                // 原价删除线（锚定效果）
+                Text(originalPriceText)
+                    .font(.caption.bold())
+                    .strikethrough(true, color: Theme.flame)
+                    .foregroundColor(Theme.textDisabled)
+
+                Image(systemName: "arrow.right")
+                    .font(.caption2)
+                    .foregroundColor(Theme.gold.opacity(0.6))
+
+                Text(purchaseManager.formattedPrice)
+                    .font(.caption.bold())
+                    .foregroundColor(Theme.gold)
+
+                if !isFirstView {
+                    Text(L10n.isEnglish ? "Your progress awaits" : "你的进度还在")
                         .font(.caption)
-                        .foregroundColor(Theme.gold.opacity(0.8))
+                        .foregroundColor(Theme.textTertiary)
                 }
             }
 

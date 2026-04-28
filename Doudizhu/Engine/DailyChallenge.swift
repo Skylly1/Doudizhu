@@ -3,7 +3,6 @@ import Foundation
 /// Daily Challenge — a curated challenge that changes every day
 /// All players get the same seed → same floor sequence + shop items
 // REVENUE-TODO: [P2] 每日挑战排行榜 — 付费用户可查看全球排名，免费用户只能看到自己的分数
-// REVENUE-TODO: [P3] 每日挑战连续完成奖励 — 7天连签解锁独占皮肤（提升留存→间接提升转化）
 struct DailyChallenge {
     let date: Date
     let seed: UInt64
@@ -65,6 +64,7 @@ struct DailyChallenge {
     /// Record that today's challenge was completed (won, failed, or abandoned)
     static func markCompleted() {
         UserDefaults.standard.set(todayString, forKey: "dailyChallengeCompleted")
+        updateStreak()
     }
 
     /// Record that today's challenge was attempted (legacy, calls markStarted)
@@ -89,6 +89,47 @@ struct DailyChallenge {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         return f.string(from: Date())
+    }
+
+    // MARK: - 连续挑战 Streak（留存核心机制）
+
+    private static let streakCountKey = "dailyStreak_count"
+    private static let streakLastDateKey = "dailyStreak_lastDate"
+
+    /// 当前连续完成天数
+    static var currentStreak: Int {
+        guard let lastDate = UserDefaults.standard.string(forKey: streakLastDateKey) else { return 0 }
+        let today = todayString
+        if lastDate == today {
+            return UserDefaults.standard.integer(forKey: streakCountKey)
+        }
+        if lastDate == yesterdayString {
+            return UserDefaults.standard.integer(forKey: streakCountKey)
+        }
+        return 0 // streak broken
+    }
+
+    /// 完成今日挑战时更新 streak
+    static func updateStreak() {
+        let today = todayString
+        let lastDate = UserDefaults.standard.string(forKey: streakLastDateKey) ?? ""
+        guard lastDate != today else { return } // 今天已更新
+
+        var streak = UserDefaults.standard.integer(forKey: streakCountKey)
+        if lastDate == yesterdayString {
+            streak += 1
+        } else {
+            streak = 1 // 重新开始
+        }
+
+        UserDefaults.standard.set(streak, forKey: streakCountKey)
+        UserDefaults.standard.set(today, forKey: streakLastDateKey)
+    }
+
+    private static var yesterdayString: String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: Calendar.current.date(byAdding: .day, value: -1, to: Date())!)
     }
 }
 

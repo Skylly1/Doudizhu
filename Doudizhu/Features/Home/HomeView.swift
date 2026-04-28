@@ -167,7 +167,6 @@ struct BottomMistLayer: View {
 }
 
 struct HomeView: View {
-    // REVENUE-TODO: [P2] 免费用户主页底部加入「解锁完整版」横幅 — 显示进度条"你已体验40%内容"
     // REVENUE-TODO: [P3] 加入「支持开发者」入口 — 设置页或关于页的打赏按钮
     let hasSavedGame: Bool
     let onNavigate: (AppScreen) -> Void
@@ -420,7 +419,14 @@ struct HomeView: View {
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 8)
+
+                // 免费用户 — 升级提示横幅
+                if !PurchaseManager.shared.isFullVersion {
+                    upgradePromptBanner
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 8)
+                }
 
                 // 版本号
                 Text("v1.0")
@@ -464,6 +470,52 @@ struct HomeView: View {
                  ? "You have an adventure in progress. Starting a new run will overwrite your saved progress."
                  : "你有一个进行中的冒险。开始新冒险将覆盖已保存的进度。")
         }
+    }
+
+    // MARK: - 升级提示横幅（免费用户可见）
+    private var upgradePromptBanner: some View {
+        let totalFloors = FloorConfig.allFloors.count
+        let demoPercent = Int(Double(PurchaseManager.demoMaxFloor) / Double(totalFloors) * 100)
+
+        return Button {
+            onNavigate(.shop)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "lock.open.fill")
+                    .font(.caption)
+                    .foregroundColor(Theme.gold)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.isEnglish
+                         ? "You've explored \(demoPercent)% — unlock the full adventure"
+                         : "已探索\(demoPercent)% — 解锁完整冒险")
+                        .font(.caption2.bold())
+                        .foregroundColor(Theme.textPrimary)
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Theme.bgInset)
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Theme.goldGradient)
+                                .frame(width: geo.size.width * CGFloat(demoPercent) / 100.0)
+                        }
+                    }
+                    .frame(height: 4)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+                    .foregroundColor(Theme.gold.opacity(0.6))
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.radiusMD)
+                    .fill(Theme.gold.opacity(0.06))
+                    .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
+                        .stroke(Theme.gold.opacity(0.15)))
+            )
+        }
+        .accessibilityLabel(L10n.isEnglish ? "Unlock full version" : "解锁完整版")
     }
 }
 

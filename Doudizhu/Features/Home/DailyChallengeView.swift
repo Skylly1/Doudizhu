@@ -23,6 +23,11 @@ struct DailyChallengeView: View {
                         // Date card
                         dateCard
 
+                        // 连续挑战 streak
+                        if DailyChallenge.currentStreak > 0 {
+                            streakBadge
+                        }
+
                         // Modifiers section
                         modifiersSection
 
@@ -74,6 +79,38 @@ struct DailyChallengeView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(L10n.isEnglish ? "Daily Challenge" : "每日挑战")
         .accessibilityValue(completed ? L10n.dailyChallengeCompleted : (inProgress ? (L10n.isEnglish ? "In Progress" : "进行中") : dateString))
+    }
+
+    private var streakBadge: some View {
+        let streak = DailyChallenge.currentStreak
+        return HStack(spacing: 8) {
+            Image(systemName: "flame.fill")
+                .font(.title3)
+                .foregroundColor(streak >= 7 ? Theme.gold : Theme.flame)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(L10n.isEnglish ? "\(streak)-Day Streak!" : "连续\(streak)天挑战！")
+                    .font(.subheadline.bold())
+                    .foregroundColor(streak >= 7 ? Theme.gold : Theme.flame)
+                Text(L10n.isEnglish ? "Keep it going — don't break the chain!" : "继续保持，不要断链！")
+                    .font(.caption)
+                    .foregroundColor(Theme.textTertiary)
+            }
+            Spacer()
+            // 7天里程碑图标
+            if streak >= 7 {
+                Image(systemName: "star.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(Theme.gold)
+            }
+        }
+        .padding(Theme.spacingMD)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                .fill(streak >= 7 ? Theme.gold.opacity(0.08) : Theme.flame.opacity(0.08))
+                .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
+                    .stroke(streak >= 7 ? Theme.gold.opacity(0.2) : Theme.flame.opacity(0.2)))
+        )
+        .accessibilityLabel(L10n.isEnglish ? "\(streak) day streak" : "连续\(streak)天")
     }
 
     private var modifiersSection: some View {
