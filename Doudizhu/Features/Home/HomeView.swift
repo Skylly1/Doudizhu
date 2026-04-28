@@ -50,8 +50,8 @@ struct CardFanDecor: View {
             let w = geo.size.width
             let h = geo.size.height
             let centerX = w / 2
-            // 将卡牌推到更底部，避免遮挡按钮区域
-            let baseY = h * 0.92
+            // 将卡牌放在按钮区和底部信息之间
+            let baseY = h * 0.85
             let scale = Theme.screenScale
             let cardW: CGFloat = 48 * scale
             let cardH: CGFloat = 68 * scale
@@ -122,6 +122,7 @@ struct CardFanDecor: View {
             }
         }
         .allowsHitTesting(false)
+        .opacity(0.7)
         .onAppear { appeared = true }
     }
 }
