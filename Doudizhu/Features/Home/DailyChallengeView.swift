@@ -56,7 +56,7 @@ struct DailyChallengeView: View {
     private var dateCard: some View {
         HStack {
             Image(systemName: "calendar")
-                .font(.system(size: 32))
+                .font(Theme.fontIconMedium)
                 .foregroundColor(Theme.gold)
 
             VStack(alignment: .leading, spacing: 4) {

@@ -103,7 +103,7 @@ struct MapView: View {
                             .font(.caption.bold())
                             .foregroundColor(chapterCleared ? ch.color : Theme.textSecondary)
                         Text(ch.range)
-                            .font(.system(size: 10).monospacedDigit())
+                            .font(Theme.fontSmallMono)
                             .foregroundColor(Theme.textTertiary)
                     }
                 }
@@ -300,7 +300,7 @@ private struct FloorNode: View {
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Theme.gold.opacity(0.15))
-                            .cornerRadius(4)
+                            .cornerRadius(Theme.radiusXS)
                     }
 
                     if floor.isBoss && !floor.isShop {

@@ -340,10 +340,10 @@ struct BattleView: View {
                 ForEach(Array(rogueRun.playHistory.enumerated()), id: \.offset) { idx, play in
                     VStack(spacing: 1) {
                         Text(play.pattern.type.displayName)
-                            .font(.system(size: 9, weight: .bold))
+                            .font(Theme.fontMicroBold)
                             .foregroundColor(Theme.cyan)
                         Text("+\(play.score)")
-                            .font(.system(size: 10, weight: .semibold).monospacedDigit())
+                            .font(Theme.fontSmallMono)
                             .foregroundColor(Theme.gold)
                     }
                     .padding(.horizontal, 6)
@@ -614,7 +614,7 @@ struct BattleView: View {
                     if !rogueRun.activeJokers.isEmpty {
                         let jokerNames = rogueRun.activeJokers.prefix(3).map { "🃏 " + $0.name }.joined(separator: " · ")
                         Text(jokerNames)
-                            .font(.system(size: 10))
+                            .font(Theme.fontSmall)
                             .foregroundColor(Theme.gold.opacity(0.6))
                     }
                 }
@@ -920,7 +920,7 @@ struct BattleView: View {
                                 Text(L10n.isEnglish
                                      ? "\(lockedFloors) more floors · Rare Jokers · Endless mode"
                                      : "还有\(lockedFloors)层关卡 · 稀有丑角 · 无尽模式")
-                                    .font(.system(size: 10))
+                                    .font(Theme.fontSmall)
                                     .foregroundColor(Theme.textSecondary)
                             }
                             Spacer()
@@ -1113,7 +1113,7 @@ struct BattleView: View {
         overlayBase {
             VStack(spacing: Theme.spacingLG) {
                 Image(systemName: event.icon)
-                    .font(.system(size: 44))
+                    .font(Theme.fontStatNumber)
                     .foregroundStyle(Theme.goldGradient)
                     .shadow(color: Theme.gold.opacity(0.4), radius: 8)
 

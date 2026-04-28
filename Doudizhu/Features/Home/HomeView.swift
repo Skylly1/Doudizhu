@@ -280,7 +280,7 @@ struct HomeView: View {
                             .rotationEffect(.degrees(45))
 
                         Text("斗")
-                            .font(.system(size: 48, weight: .black, design: .serif))
+                            .font(Theme.fontTitle)
                             .foregroundStyle(Theme.goldGradient)
                     }
                     .shadow(color: Theme.gold.opacity(0.4), radius: 16)
@@ -419,7 +419,7 @@ struct HomeView: View {
                     .frame(maxWidth: 500)
                     .padding(.bottom, 12)
                 Text("v1.0")
-                    .font(.system(size: 9))
+                    .font(Theme.fontMicro)
                     .foregroundColor(Theme.textDisabled.opacity(0.5))
                     .padding(.bottom, 6)
             }
@@ -484,7 +484,7 @@ struct HomeView: View {
                     Text(L10n.isEnglish
                          ? "More builds · More strategies · Endless fun"
                          : "更多流派 · 更多策略 · 无限乐趣")
-                        .font(.system(size: 9))
+                        .font(Theme.fontMicro)
                         .foregroundColor(Theme.textSecondary)
                 }
                 Spacer()
@@ -543,14 +543,14 @@ private struct TodayStatsBanner: View {
         VStack(spacing: 2) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 10))
+                    .font(Theme.fontSmall)
                     .foregroundColor(color)
                 Text(value)
                     .font(.caption.bold().monospacedDigit())
                     .foregroundColor(Theme.textPrimary)
             }
             Text(label)
-                .font(.system(size: 9))
+                .font(Theme.fontMicro)
                 .foregroundColor(Theme.textTertiary)
         }
         .frame(maxWidth: .infinity)

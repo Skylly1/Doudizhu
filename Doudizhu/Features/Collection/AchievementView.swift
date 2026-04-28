@@ -40,7 +40,7 @@ struct AchievementView: View {
                     // Empty state
                     VStack(spacing: Theme.spacingMD) {
                         Image(systemName: "trophy.fill")
-                            .font(.system(size: 44))
+                            .font(Theme.fontStatNumber)
                             .foregroundColor(Theme.textTertiary)
                         Text(L10n.emptyAchievements)
                             .font(Theme.fontBody)
@@ -102,7 +102,7 @@ struct AchievementView: View {
                     .fill(unlocked ? accentColor.opacity(0.15) : Theme.bgInset)
                     .frame(width: 42, height: 42)
                 Image(systemName: ach.icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(Theme.fontSection)
                     .foregroundColor(unlocked ? accentColor : Theme.textDisabled)
             }
 

@@ -22,7 +22,7 @@ struct StatsView: View {
                     // Empty state for new users
                     VStack(spacing: Theme.spacingMD) {
                         Image(systemName: "target")
-                            .font(.system(size: 44))
+                            .font(Theme.fontStatNumber)
                             .foregroundColor(Theme.textTertiary)
                         Text(L10n.emptyStats)
                             .font(Theme.fontBody)

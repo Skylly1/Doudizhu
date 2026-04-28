@@ -145,7 +145,7 @@ struct DemoGateView: View {
     private var congratsHeader: some View {
         VStack(spacing: 8) {
             Image(systemName: "trophy.circle.fill")
-                .font(.system(size: 48))
+                .font(Theme.fontIconLarge)
                 .foregroundStyle(Theme.goldGradient)
                 .shadow(color: Theme.gold.opacity(0.4), radius: 12)
 
@@ -233,7 +233,7 @@ struct DemoGateView: View {
                 .font(.title3)
                 .foregroundColor(color)
             Text(value)
-                .font(.system(size: 11, weight: .semibold))
+                .font(Theme.fontSmallBold)
                 .foregroundColor(Theme.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -390,9 +390,9 @@ struct DemoGateView: View {
                 }
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: Theme.radiusXS)
                             .fill(Theme.bgInset)
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: Theme.radiusXS)
                             .fill(Theme.goldGradient)
                             .frame(width: geo.size.width * CGFloat(unlockedPercent) / 100.0)
                     }
@@ -493,7 +493,7 @@ struct DemoGateView: View {
                         .foregroundColor(Theme.gold)
 
                     Text(L10n.isEnglish ? "37% OFF" : "省37%")
-                        .font(.system(size: 10, weight: .heavy))
+                        .font(Theme.fontSmallBold)
                         .foregroundColor(.white)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)

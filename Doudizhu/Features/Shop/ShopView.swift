@@ -184,7 +184,7 @@ struct ShopView: View {
                 if shopItems.isEmpty && jokerItems.isEmpty {
                     VStack(spacing: Theme.spacingMD) {
                         Image(systemName: "bag.fill")
-                            .font(.system(size: 42))
+                            .font(Theme.fontIconLarge)
                             .foregroundStyle(Theme.gold.opacity(0.4))
                         Text(L10n.shopRestocking)
                             .font(Theme.fontBody)
@@ -300,7 +300,7 @@ struct ShopView: View {
                 Spacer()
 
                 Text(L10n.isEnglish ? "37%OFF" : "省37%")
-                    .font(.system(size: 9, weight: .heavy))
+                    .font(Theme.fontMicroBold)
                     .foregroundColor(.white)
                     .padding(.horizontal, 4)
                     .padding(.vertical, 2)

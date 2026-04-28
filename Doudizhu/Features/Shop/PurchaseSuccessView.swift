@@ -20,7 +20,7 @@ struct PurchaseSuccessView: View {
                 // 庆典标题
                 VStack(spacing: 12) {
                     Image(systemName: "crown.fill")
-                        .font(.system(size: 56))
+                        .font(Theme.fontIconXL)
                         .foregroundStyle(Theme.goldGradient)
                         .shadow(color: Theme.gold.opacity(0.5), radius: 20)
                     

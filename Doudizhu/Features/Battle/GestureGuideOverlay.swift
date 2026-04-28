@@ -30,7 +30,7 @@ struct GestureGuideOverlay: View {
                         .frame(width: 160, height: 160)
                     
                     Image(systemName: steps[step].icon)
-                        .font(.system(size: 64))
+                        .font(Theme.fontIconXXL)
                         .foregroundStyle(Theme.goldGradient)
                         .offset(x: animateHand ? (step == 0 ? 30 : 0) : (step == 0 ? -30 : 0),
                                 y: animateHand ? (step == 1 ? -30 : 0) : 0)
@@ -44,7 +44,7 @@ struct GestureGuideOverlay: View {
                         .foregroundStyle(Theme.goldGradient)
                     
                     Text(steps[step].gesture)
-                        .font(.system(size: 28))
+                        .font(Theme.fontSubtitleLarge)
                         .foregroundColor(Theme.textTertiary)
                     
                     Text(L10n.isEnglish ? steps[step].descEn : steps[step].desc)

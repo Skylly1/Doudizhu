@@ -75,6 +75,28 @@ enum Theme {
     static let fontCaption = Font.system(size: 12, weight: .regular)
     /// 数字
     static let fontMono = Font.system(size: 15, weight: .medium, design: .monospaced)
+    /// 微型文字（9pt — 徽章、标签）
+    static let fontMicro = Font.system(size: 9, weight: .regular)
+    /// 微型文字加粗
+    static let fontMicroBold = Font.system(size: 9, weight: .bold)
+    /// 小号文字（10pt — 说明、辅助）
+    static let fontSmall = Font.system(size: 10, weight: .regular)
+    /// 小号文字加粗
+    static let fontSmallBold = Font.system(size: 10, weight: .semibold)
+    /// 小号文字等宽（10pt — 数字显示）
+    static let fontSmallMono = Font.system(size: 10, weight: .semibold, design: .monospaced)
+    /// 大图标尺寸（48pt — 弹窗、页面大图标）
+    static let fontIconLarge = Font.system(size: 48)
+    /// 超大图标（56pt — 成功/失败动画）
+    static let fontIconXL = Font.system(size: 56)
+    /// 装饰图标（64pt — 教程手势）
+    static let fontIconXXL = Font.system(size: 64)
+    /// 大标题数字（44pt — 统计数字）
+    static let fontStatNumber = Font.system(size: 44, weight: .black, design: .monospaced)
+    /// 中号图标（32pt — 日历、列表图标）
+    static let fontIconMedium = Font.system(size: 32)
+    /// 中号标题（28pt — 构筑选择、教程）
+    static let fontSubtitleLarge = Font.system(size: 28, weight: .bold, design: .serif)
 
     // MARK: 中国书法风格字体
 
@@ -107,6 +129,8 @@ enum Theme {
     static let radiusSM: CGFloat = 8
     static let radiusMD: CGFloat = 14
     static let radiusLG: CGFloat = 20
+    /// 极小圆角（4pt — 进度条、徽章）
+    static let radiusXS: CGFloat = 4
 
     // MARK: 便捷视图修饰器
 

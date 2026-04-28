@@ -52,7 +52,7 @@ private struct BuildCard: View {
         Button(action: onSelect) {
             VStack(spacing: 6) {
                 Text(build.icon)
-                    .font(.system(size: 28))
+                    .font(Theme.fontSubtitleLarge)
 
                 Text(build.name)
                     .font(.subheadline.bold())
