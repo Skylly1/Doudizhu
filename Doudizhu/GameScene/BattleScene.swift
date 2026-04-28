@@ -100,6 +100,29 @@ class BattleScene: SKScene {
             corner.zPosition = -10
             addChild(corner)
         }
+
+        // Subtle felt texture — concentric dashed ellipses
+        let feltCenter = CGPoint(x: size.width / 2, y: size.height * 0.54)
+        let feltScales: [(w: CGFloat, h: CGFloat, alpha: CGFloat)] = [
+            (0.60, 0.24, 0.06),
+            (0.48, 0.19, 0.07),
+            (0.34, 0.13, 0.05)
+        ]
+        for spec in feltScales {
+            let ellipseW = size.width * spec.w
+            let ellipseH = size.height * spec.h
+            let feltPath = CGMutablePath()
+            feltPath.addEllipse(in: CGRect(x: -ellipseW / 2, y: -ellipseH / 2,
+                                           width: ellipseW, height: ellipseH))
+            let feltRing = SKShapeNode(path: feltPath.copy(dashingWithPhase: 0,
+                                                           lengths: [4, 6]))
+            feltRing.strokeColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: spec.alpha)
+            feltRing.lineWidth = 0.5
+            feltRing.fillColor = .clear
+            feltRing.position = feltCenter
+            feltRing.zPosition = -9
+            addChild(feltRing)
+        }
     }
 
     /// 排列手牌 — 扇形布局，动态缩放卡牌尺寸
@@ -553,6 +576,51 @@ class BattleScene: SKScene {
 
             playedAreaNode.addChild(miniCard)
         }
+
+        // Gold sparkle particle burst
+        let emitter = createPlayParticleEffect()
+        let isPowerful = pattern.type == .bomb || pattern.type == .rocket
+                      || pattern.type == .plane || pattern.type == .planeWithWings
+        if isPowerful {
+            emitter.particleBirthRate = 80
+            emitter.numParticlesToEmit = 50
+            emitter.particleSpeed = 90
+            emitter.particleSpeedRange = 50
+        }
+        emitter.position = .zero
+        emitter.zPosition = 100
+        playedAreaNode.addChild(emitter)
+        emitter.run(SKAction.sequence([
+            .wait(forDuration: 1.0),
+            .removeFromParent()
+        ]))
+    }
+
+    private func createPlayParticleEffect() -> SKEmitterNode {
+        let emitter = SKEmitterNode()
+        emitter.particleBirthRate = 40
+        emitter.numParticlesToEmit = 25
+        emitter.particleLifetime = 0.6
+        emitter.particleLifetimeRange = 0.3
+        emitter.particleSpeed = 60
+        emitter.particleSpeedRange = 30
+        emitter.emissionAngleRange = .pi * 2
+        emitter.particleScale = 0.04
+        emitter.particleScaleRange = 0.02
+        emitter.particleScaleSpeed = -0.03
+        emitter.particleAlpha = 0.8
+        emitter.particleAlphaSpeed = -1.0
+        emitter.particleColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1.0)
+        emitter.particleColorBlendFactor = 1.0
+        let circleSize = CGSize(width: 8, height: 8)
+        UIGraphicsBeginImageContextWithOptions(circleSize, false, 0)
+        let ctx = UIGraphicsGetCurrentContext()!
+        ctx.setFillColor(UIColor.white.cgColor)
+        ctx.fillEllipse(in: CGRect(origin: .zero, size: circleSize))
+        let image = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        emitter.particleTexture = SKTexture(image: image)
+        return emitter
     }
 
     private func showScorePopup(_ result: PlayResult) {
