@@ -72,7 +72,6 @@ struct StatsView: View {
             .frame(maxWidth: 600)
         }
         .frame(maxWidth: .infinity)
-        .gameBackground()
     }
 
     private func statCard(systemIcon: String, title: String, value: String) -> some View {

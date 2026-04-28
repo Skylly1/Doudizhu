@@ -463,14 +463,14 @@ struct DemoGateView: View {
                         Text(countdownText)
                             .font(.caption.monospacedDigit().bold())
                     }
-                    .foregroundColor(.black)
+                    .foregroundColor(Theme.textOnGold)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(Capsule().fill(Theme.gold))
                 } else {
                     Text(L10n.isEnglish ? "Best Value" : "超值买断")
                         .font(.caption.bold())
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textOnGold)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Capsule().fill(Theme.gold))
@@ -537,7 +537,7 @@ struct DemoGateView: View {
                                : "继续你的冒险 — \(purchaseManager.formattedPrice)"))
                 }
                 .font(.headline)
-                .foregroundColor(.black)
+                .foregroundColor(Theme.textOnGold)
                 .frame(maxWidth: .infinity)
                 .frame(minHeight: 54)
                 .background(
@@ -604,6 +604,8 @@ struct DemoGateView: View {
             }
             .font(Theme.fontCaption)
             .foregroundColor(Theme.textDisabled)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
             .accessibilityLabel(L10n.a11yRestorePurchase)
             .accessibilityHint("恢复之前的购买记录")
 
@@ -622,6 +624,8 @@ struct DemoGateView: View {
                 }
                 .font(.caption.bold())
                 .foregroundColor(Theme.textTertiary)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
                 .accessibilityLabel(L10n.a11yBackToMenu)
                 .accessibilityHint("不购买，返回主菜单")
             }

@@ -191,12 +191,14 @@ struct TutorialOverlay: View {
                         }
                         .font(.subheadline)
                         .foregroundColor(Theme.textDisabled)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
 
                         Button(manager.isLastStepInPhase ? L10n.startGame : L10n.nextStep) {
                             manager.advance()
                         }
                         .font(.headline)
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textOnGold)
                         .padding(.horizontal, Theme.spacingLG)
                         .padding(.vertical, 10)
                         .background(Capsule().fill(Theme.gold))

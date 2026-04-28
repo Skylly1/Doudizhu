@@ -289,6 +289,9 @@ extension GameSaveModel {
         run.bossState?.decayCount = bossDecayCount
         run.bossState?.silencedJokerIndex = bossSilencedJokerIndex >= 0 ? bossSilencedJokerIndex : nil
         run.bossState?.phantomCardIds = Set(bossPhantomCardIds.compactMap { UUID(uuidString: $0) })
+        if !bossBannedPatternRaw.isEmpty {
+            run.bossState?.bannedPatternType = PatternType(rawValue: bossBannedPatternRaw)
+        }
     }
 }
 

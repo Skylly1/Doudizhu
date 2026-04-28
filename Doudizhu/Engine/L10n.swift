@@ -44,11 +44,11 @@ enum L10n {
     static var adventurePath: String { localized("冒险之路", en: "Adventure Path") }
     static var mapSubtitle: String { localized("穿越 15 层牌局", en: "Cross 15 floors of card battles") }
     static var depart: String { localized("出发", en: "Depart") }
-    static func playsLabel(_ n: Int) -> String { localized("\(n)次出牌", en: "\(n) Plays") }
-    static func discardsLabel(_ n: Int) -> String { localized("\(n)次换牌", en: "\(n) Swaps") }
+    static func playsLabel(_ n: Int) -> String { localized("\(n)次出牌", en: n == 1 ? "1 Play" : "\(n) Plays") }
+    static func discardsLabel(_ n: Int) -> String { localized("\(n)次换牌", en: n == 1 ? "1 Swap" : "\(n) Swaps") }
     static var mapHighestProgress: String { localized("最高进度", en: "Highest") }
     static func mapHighestFloor(_ n: Int) -> String { localized("最高第\(n)层", en: "Floor \(n)") }
-    static func mapTotalRuns(_ n: Int) -> String { localized("\(n)次冒险", en: "\(n) Runs") }
+    static func mapTotalRuns(_ n: Int) -> String { localized("\(n)次冒险", en: n == 1 ? "1 Run" : "\(n) Runs") }
     static func mapHighestScore(_ n: Int) -> String { localized("最高分\(n)", en: "Best \(n)") }
 
     // MARK: - 战斗
@@ -324,8 +324,8 @@ enum L10n {
     static var statsTab: String { localized("统计", en: "Stats", ja: "統計", ko: "통계", fr: "Stats", de: "Statistiken", es: "Estadísticas", pt: "Estatísticas") }
     static var patternGuide: String { localized("牌型参考", en: "Pattern Guide", ja: "役ガイド", ko: "패턴 가이드", fr: "Guide", de: "Muster-Guide", es: "Guía", pt: "Guia") }
     static var achievementsUnlocked: String { localized("已解锁成就", en: "Achievements Unlocked") }
-    static func jokerCount(_ n: Int) -> String { localized("共 \(n) 张规则牌", en: "\(n) Jokers Total") }
-    static func buffCount(_ n: Int) -> String { localized("共 \(n) 种增益道具", en: "\(n) Buffs Total") }
+    static func jokerCount(_ n: Int) -> String { localized("共 \(n) 张规则牌", en: n == 1 ? "1 Joker Total" : "\(n) Jokers Total") }
+    static func buffCount(_ n: Int) -> String { localized("共 \(n) 种增益道具", en: n == 1 ? "1 Buff Total" : "\(n) Buffs Total") }
 
     // MARK: - 设置
     static var settingsSound: String { localized("音效", en: "Sound", ja: "サウンド", ko: "사운드", fr: "Son", de: "Sound", es: "Sonido", pt: "Som") }
@@ -363,7 +363,7 @@ enum L10n {
 
     // 付费墙 — 情感锚点
     static var demoGateTrialSummary: String { localized("你的试玩成绩", en: "Your Trial Stats") }
-    static func demoGateFloorsCleared(_ n: Int) -> String { localized("闯过 \(n) 层", en: "\(n) Floors Cleared") }
+    static func demoGateFloorsCleared(_ n: Int) -> String { localized("闯过 \(n) 层", en: n == 1 ? "1 Floor Cleared" : "\(n) Floors Cleared") }
     static func demoGateBestScore(_ n: Int) -> String { localized("最高得分 \(n)", en: "Best Score: \(n)") }
     static func demoGateBestCombo(_ n: Int) -> String { localized("最长连击 ×\(n)", en: "Best Combo: ×\(n)") }
     static var demoGateWhatsNext: String { localized("接下来的冒险", en: "What's Next") }

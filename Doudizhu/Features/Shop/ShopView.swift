@@ -351,7 +351,7 @@ struct ShopView: View {
                 } label: {
                     Text(L10n.shopIntroGotIt)
                         .font(.headline)
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textOnGold)
                         .padding(.horizontal, Theme.spacingXL)
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))
@@ -420,7 +420,7 @@ struct ShopView: View {
                 } label: {
                     Text(L10n.shopIntroGotIt)
                         .font(.headline)
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textOnGold)
                         .padding(.horizontal, Theme.spacingXL)
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))

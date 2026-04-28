@@ -16,6 +16,7 @@ enum Theme {
         colors: [goldLight, gold, goldDark],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
+    static let textOnGold: Color = Color(red: 0.10, green: 0.08, blue: 0.05) // near-black, semantic
 
     /// 翡翠青系 — 规则牌、选中态、信息
     static let cyan = Color(red: 0.0, green: 0.65, blue: 0.58)
@@ -236,7 +237,7 @@ struct PrimaryButton: View {
                 Text(title)
                     .font(.body.weight(.bold))
             }
-            .foregroundColor(.black)
+            .foregroundColor(Theme.textOnGold)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 52)
             .background(

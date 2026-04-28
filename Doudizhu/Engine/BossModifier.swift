@@ -85,7 +85,7 @@ enum BossModifier: String, CaseIterable, Codable {
 /// 某一局Boss关的活跃修改器状态
 struct BossState {
     let modifiers: [BossModifier]
-    let bannedPatternType: PatternType?
+    var bannedPatternType: PatternType?
     var escalationCount: Int = 0           // 已出牌次数（用于escalating计算）
     var decayCount: Int = 0                // 已出牌次数（用于scoringDecay计算）
     var silencedJokerIndex: Int?           // 被封印的规则牌索引（用于jokerSilence）

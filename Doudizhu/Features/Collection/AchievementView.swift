@@ -71,7 +71,6 @@ struct AchievementView: View {
             .frame(maxWidth: 600)
         }
         .frame(maxWidth: .infinity)
-        .gameBackground()
 
         ContextualHintOverlay(manager: ContextualHintManager.shared)
         }

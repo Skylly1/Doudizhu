@@ -152,10 +152,10 @@ struct DailyChallenge {
     }
 
     static let streakRewards: [StreakReward] = [
-        StreakReward(milestone: 3, icon: "💰", name: "三日奖金", description: L10n.isEnglish ? "+50 Gold next run" : "下次冒险+50金币"),
-        StreakReward(milestone: 7, icon: "🃏", name: "周挑战规则牌", description: L10n.isEnglish ? "Free random Joker" : "免费随机规则牌"),
-        StreakReward(milestone: 14, icon: "⚡", name: "双周增益", description: L10n.isEnglish ? "Rare Buff next run" : "下次冒险稀有增益"),
-        StreakReward(milestone: 30, icon: "👑", name: "月度传奇", description: L10n.isEnglish ? "Legendary Badge" : "传奇徽章"),
+        StreakReward(milestone: 3, icon: "💰", name: L10n.isEnglish ? "3-Day Gold" : "三日奖金", description: L10n.isEnglish ? "+50 Gold next run" : "下次冒险+50金币"),
+        StreakReward(milestone: 7, icon: "🃏", name: L10n.isEnglish ? "Weekly Joker" : "周挑战规则牌", description: L10n.isEnglish ? "Free random Joker" : "免费随机规则牌"),
+        StreakReward(milestone: 14, icon: "⚡", name: L10n.isEnglish ? "Biweekly Buff" : "双周增益", description: L10n.isEnglish ? "Rare Buff next run" : "下次冒险稀有增益"),
+        StreakReward(milestone: 30, icon: "👑", name: L10n.isEnglish ? "Monthly Legend" : "月度传奇", description: L10n.isEnglish ? "Legendary Badge" : "传奇徽章"),
     ]
 
     /// 下一个未领取的里程碑奖励

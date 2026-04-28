@@ -118,7 +118,7 @@ struct PurchaseSuccessView: View {
                         Text(L10n.isEnglish ? "Begin Adventure" : "开始冒险")
                     }
                     .font(.headline)
-                    .foregroundColor(.black)
+                    .foregroundColor(Theme.textOnGold)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
                     .background(

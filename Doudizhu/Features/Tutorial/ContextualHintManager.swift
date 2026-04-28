@@ -193,7 +193,7 @@ struct ContextualHintOverlay: View {
                     } label: {
                         Text(L10n.isEnglish ? "Got it!" : "知道了！")
                             .font(.headline)
-                            .foregroundColor(.black)
+                            .foregroundColor(Theme.textOnGold)
                             .padding(.horizontal, Theme.spacingXL)
                             .padding(.vertical, 12)
                             .background(Capsule().fill(hint.accentColor))
