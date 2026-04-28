@@ -50,11 +50,11 @@ struct CardFanDecor: View {
             let w = geo.size.width
             let h = geo.size.height
             let centerX = w / 2
-            // 将卡牌放在按钮区和底部信息之间
-            let baseY = h * 0.85
             let scale = Theme.screenScale
             let cardW: CGFloat = 48 * scale
             let cardH: CGFloat = 68 * scale
+            // 锚定到屏幕最底部，卡牌半露出作为装饰
+            let baseY = h + cardH * 0.15
 
             // 5 张扇形排列的卡牌
             let cards: [(rank: String, suit: String, color: Color, angle: Double, offsetX: CGFloat)] = [
