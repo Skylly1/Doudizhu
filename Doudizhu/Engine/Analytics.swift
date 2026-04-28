@@ -58,13 +58,13 @@ enum AnalyticsEvent: String {
     // 成就 & 留存
     case achievementUnlocked = "achievement_unlocked"
 
-    // REVENUE-TODO: [P1] 新增以下事件完善漏斗
-    // case paywallScrollDepth = "paywall_scroll_depth"     // 付费墙滚动深度(%)
-    // case paywallButtonVisible = "paywall_button_visible"  // 购买按钮首次进入可视区
-    // case purchaseSuccessCTA = "purchase_success_cta"      // 购买成功页CTA点击
-    // case retentionD1 = "retention_d1"                     // D1留存
-    // case retentionD7 = "retention_d7"                     // D7留存
-    // case retentionD30 = "retention_d30"                   // D30留存
+    // 漏斗补全事件
+    case paywallScrollDepth = "paywall_scroll_depth"       // 付费墙滚动深度(%)
+    case paywallButtonVisible = "paywall_button_visible"    // 购买按钮首次进入可视区
+    case purchaseSuccessCTA = "purchase_success_cta"        // 购买成功页CTA点击(share/review)
+    case retentionD1 = "retention_d1"                       // D1留存
+    case retentionD7 = "retention_d7"                       // D7留存
+    case retentionD30 = "retention_d30"                     // D30留存
 
     // 留存追踪
     case appReturnVisit = "app_return_visit"
@@ -73,9 +73,8 @@ enum AnalyticsEvent: String {
     case dailyChallengeFail = "daily_challenge_fail"
 }
 
-/// 轻量级 Analytics 引擎 — os_log + UserDefaults 持久化
-/// MVP 阶段零依赖；上线后可对接 Firebase/Amplitude
-// REVENUE-TODO: [P1] 接入 Firebase Analytics 或 Amplitude，获得真实的 DAU/MAU/D1/D7/D30 留存率
+/// 轻量级 Analytics 引擎 — os_log + UserDefaults + Firebase Analytics 双通道
+/// Firebase 已集成：canImport(FirebaseAnalytics) 自动转发所有事件
 // REVENUE-TODO: [P2] 加入 A/B 测试框架（Firebase Remote Config），测试付费墙文案/时机/价格
 // REVENUE-TODO: [P2] 计算并上报 ARPU = 总收入 / DAU，LTV = ARPU × 平均生命周期天数
 @MainActor final class Analytics {
@@ -181,6 +180,8 @@ enum AnalyticsEvent: String {
         let now = Date()
         if UserDefaults.standard.object(forKey: firstVisitKey) == nil {
             UserDefaults.standard.set(now, forKey: firstVisitKey)
+            // 同时记录安装日期供社交证明使用
+            UserDefaults.standard.set(now, forKey: "has_opened_before_date")
             track(.appFirstOpen)
         }
         if let lastVisit = UserDefaults.standard.object(forKey: lastVisitKey) as? Date {
@@ -190,5 +191,17 @@ enum AnalyticsEvent: String {
             }
         }
         UserDefaults.standard.set(now, forKey: lastVisitKey)
+
+        // 留存里程碑（每个里程碑只触发一次）
+        if let firstVisit = UserDefaults.standard.object(forKey: firstVisitKey) as? Date {
+            let daysSinceInstall = Calendar.current.dateComponents([.day], from: firstVisit, to: now).day ?? 0
+            let retentionKey = "retention_milestone_"
+            for (day, event) in [(1, AnalyticsEvent.retentionD1), (7, .retentionD7), (30, .retentionD30)] {
+                if daysSinceInstall >= day && !UserDefaults.standard.bool(forKey: retentionKey + "\(day)") {
+                    UserDefaults.standard.set(true, forKey: retentionKey + "\(day)")
+                    track(event, params: ["days_since_install": "\(daysSinceInstall)"])
+                }
+            }
+        }
     }
 }
