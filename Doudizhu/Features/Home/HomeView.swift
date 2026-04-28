@@ -216,7 +216,7 @@ struct HomeView: View {
             .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
         }
         .disabled(completed)
-        .accessibilityLabel(completed ? "每日挑战已完成" : "每日挑战")
+        .accessibilityLabel(completed ? L10n.a11yDailyChallengeComplete : L10n.a11yDailyChallenge)
         .accessibilityHint(completed ? "今日挑战已完成" : "开始今日限定挑战")
     }
 
@@ -341,7 +341,7 @@ struct HomeView: View {
                             onContinue()
                         }
                         .padding(.horizontal, 40)
-                        .accessibilityLabel("继续冒险")
+                        .accessibilityLabel(L10n.a11yContinueAdventure)
                         .accessibilityHint("继续上次保存的冒险进度")
                         .offset(y: showButtons[0] ? 0 : 30)
                         .opacity(showButtons[0] ? 1.0 : 0)
@@ -359,7 +359,7 @@ struct HomeView: View {
                         }
                     }
                     .padding(.horizontal, 40)
-                    .accessibilityLabel(hasSavedGame ? "新的冒险" : "开始冒险")
+                    .accessibilityLabel(hasSavedGame ? L10n.a11yNewAdventure : L10n.a11yStartAdventure)
                     .accessibilityHint("开始新的一局游戏")
                     .offset(y: showButtons[1] ? 0 : 30)
                     .opacity(showButtons[1] ? 1.0 : 0)
@@ -374,7 +374,7 @@ struct HomeView: View {
                                 onNavigate(.buildSelect)
                             }
                         }
-                        .accessibilityLabel("快速开始")
+                        .accessibilityLabel(L10n.a11yQuickStart)
                         .accessibilityHint("跳过地图直接开始游戏")
                         dailyChallengeButton
                     }
@@ -386,12 +386,12 @@ struct HomeView: View {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)
                         }
-                        .accessibilityLabel("卡牌收集")
+                        .accessibilityLabel(L10n.a11yCardCollection)
                         .accessibilityHint("查看卡牌图鉴和成就")
                         SecondaryButton(title: L10n.settings, icon: "gearshape.fill") {
                             onNavigate(.settings)
                         }
-                        .accessibilityLabel("设置")
+                        .accessibilityLabel(L10n.a11ySettings)
                         .accessibilityHint("打开游戏设置")
                     }
                     .padding(.horizontal, 40)
@@ -532,7 +532,7 @@ private struct TodayStatsBanner: View {
         )
         .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("今日数据")
+        .accessibilityLabel(L10n.a11yTodayStats)
     }
 
     private var divider: some View {

@@ -29,7 +29,7 @@ struct ShopView: View {
                                 .foregroundColor(Theme.gold)
                         }
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("金币")
+                        .accessibilityLabel(L10n.a11yGold)
                         .accessibilityValue("\(rogueRun.gold)")
                     )
                 )
@@ -64,7 +64,7 @@ struct ShopView: View {
                     )
                 }
                 .disabled(rogueRun.gold < refreshCost)
-                .accessibilityLabel("刷新商店")
+                .accessibilityLabel(L10n.a11yRefreshShop)
                 .accessibilityHint("花费\(refreshCost)金币刷新商品")
 
                 // 规则牌区
@@ -356,7 +356,7 @@ struct ShopView: View {
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))
                 }
-                .accessibilityLabel("我知道了")
+                .accessibilityLabel(L10n.a11yGotIt)
                 .accessibilityHint("关闭商店介绍")
             }
             .padding(Theme.spacingXL)
@@ -425,7 +425,7 @@ struct ShopView: View {
                         .padding(.vertical, 12)
                         .background(Capsule().fill(Theme.gold))
                 }
-                .accessibilityLabel("我知道了")
+                .accessibilityLabel(L10n.a11yGotIt)
                 .accessibilityHint("关闭规则牌介绍")
             }
             .padding(Theme.spacingXL)
@@ -546,7 +546,7 @@ struct JokerShopRow: View {
                 )
             }
             .disabled(!canAfford || slotsFull)
-            .accessibilityLabel("购买\(item.joker.name)")
+            .accessibilityLabel(L10n.a11yBuyJoker(item.joker.name))
             .accessibilityHint("花费\(item.cost)金币购买此规则牌")
         }
         .padding(Theme.spacingMD)
@@ -604,7 +604,7 @@ struct ShopItemRow: View {
                 )
             }
             .disabled(!canAfford)
-            .accessibilityLabel("购买\(item.buff.name)")
+            .accessibilityLabel(L10n.a11yBuyBuff(item.buff.name))
             .accessibilityHint("花费\(item.cost)金币购买此增益")
         }
         .padding(Theme.spacingMD)

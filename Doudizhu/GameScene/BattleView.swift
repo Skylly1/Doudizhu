@@ -269,7 +269,7 @@ struct BattleView: View {
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
-            .accessibilityLabel("暂停")
+            .accessibilityLabel(L10n.a11yPause)
             .accessibilityHint("打开暂停菜单")
 
             // 关卡名 + 目标分，合并为一行
@@ -303,7 +303,7 @@ struct BattleView: View {
                     .foregroundColor(Theme.gold)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("金币")
+            .accessibilityLabel(L10n.a11yGold)
             .accessibilityValue("\(rogueRun.gold)")
 
             // 牌型参考按钮
@@ -316,7 +316,7 @@ struct BattleView: View {
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
-            .accessibilityLabel("牌型参考")
+            .accessibilityLabel(L10n.a11yPatternRef)
             .accessibilityHint("查看所有牌型说明")
             .sheet(isPresented: $showPatternGuide) {
                 PatternGuideView()
@@ -477,13 +477,13 @@ struct BattleView: View {
                 Label("\(rogueRun.playsRemaining)", systemImage: "suit.spade.fill")
                     .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.playsRemaining <= 1 ? Theme.danger : Theme.cyan)
-                    .accessibilityLabel("剩余出牌次数")
+                    .accessibilityLabel(L10n.a11yPlaysRemaining)
                     .accessibilityValue("\(rogueRun.playsRemaining)")
 
                 Label("\(rogueRun.discardsRemaining)", systemImage: "arrow.2.squarepath")
                     .font(.subheadline.bold().monospacedDigit())
                     .foregroundColor(rogueRun.discardsRemaining == 0 ? Theme.textDisabled : Theme.success)
-                    .accessibilityLabel("剩余弃牌次数")
+                    .accessibilityLabel(L10n.a11yDiscardsRemaining)
                     .accessibilityValue("\(rogueRun.discardsRemaining)")
 
                 // Inline progress bar
@@ -507,12 +507,12 @@ struct BattleView: View {
                 Text("\(rogueRun.floorScore)")
                     .font(.headline.bold().monospacedDigit())
                     .foregroundColor(Theme.textPrimary)
-                    .accessibilityLabel("当前分数")
+                    .accessibilityLabel(L10n.a11yCurrentScore)
                     .accessibilityValue("\(rogueRun.floorScore)")
                 Text("/ \(rogueRun.effectiveTargetScore)")
                     .font(.caption2.monospacedDigit())
                     .foregroundColor(Theme.textTertiary)
-                    .accessibilityLabel("目标分数")
+                    .accessibilityLabel(L10n.a11yTargetScore)
                     .accessibilityValue("\(rogueRun.effectiveTargetScore)")
 
                 // Combo inline
@@ -688,7 +688,7 @@ struct BattleView: View {
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
-            .accessibilityLabel("弃牌")
+            .accessibilityLabel(L10n.a11yDiscard)
             .accessibilityHint("弃掉选中的牌并抽新牌")
             .accessibilityValue("剩余\(rogueRun.discardsRemaining)次")
 
@@ -726,7 +726,7 @@ struct BattleView: View {
                 .contentShape(Rectangle())
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
-            .accessibilityLabel("出牌")
+            .accessibilityLabel(L10n.a11yPlayCards)
             .accessibilityHint("打出选中的牌型得分")
             .accessibilityValue("剩余\(rogueRun.playsRemaining)次")
             }

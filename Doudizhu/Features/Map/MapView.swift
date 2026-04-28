@@ -71,7 +71,7 @@ struct MapView: View {
                 PrimaryButton(title: L10n.depart, icon: "figure.walk") {
                     onStart()
                 }
-                .accessibilityLabel("出发")
+                .accessibilityLabel(L10n.a11yDepart)
                 .accessibilityHint("开始冒险旅程")
                 .padding(.horizontal, Theme.spacingXL)
                 .padding(.bottom, Theme.spacingLG)

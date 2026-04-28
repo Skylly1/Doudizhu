@@ -49,7 +49,7 @@ struct SettingsView: View {
                                 }
                                 .padding(.vertical, 6)
                             }
-                            .accessibilityLabel("帮助与常见问题")
+                            .accessibilityLabel(L10n.a11yHelpFaq)
                             .accessibilityHint("查看游戏帮助和FAQ")
                         }
 
@@ -64,7 +64,7 @@ struct SettingsView: View {
                                 Slider(value: $soundVolume, in: 0...1, step: 0.05)
                                     .tint(Theme.gold)
                                     .disabled(!soundEnabled)
-                                    .accessibilityLabel("音量")
+                                    .accessibilityLabel(L10n.a11yVolume)
                                     .accessibilityValue("\(Int(soundVolume * 100))%")
                             }
                             .padding(.vertical, 2)
@@ -94,7 +94,7 @@ struct SettingsView: View {
                                 }
                                 .padding(.vertical, 6)
                             }
-                            .accessibilityLabel("重置新手引导")
+                            .accessibilityLabel(L10n.a11yResetTutorial)
                             .accessibilityHint("双击重新开始新手教程")
                             Divider().background(Theme.border)
                             Button {

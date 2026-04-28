@@ -547,7 +547,7 @@ struct DemoGateView: View {
                 .scaleEffect(pulseButton ? 1.02 : 1.0)
             }
             .disabled(purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading || purchaseManager.purchaseState == .pending)
-            .accessibilityLabel("解锁完整版")
+            .accessibilityLabel(L10n.a11yUnlockFull)
             .accessibilityHint("购买完整版游戏，价格\(purchaseManager.formattedPrice)")
 
             // 购买失败提示
@@ -593,7 +593,7 @@ struct DemoGateView: View {
                                 .stroke(Theme.cyan.opacity(0.3)))
                     )
                 }
-                .accessibilityLabel("免费体验下一层")
+                .accessibilityLabel(L10n.a11yFreePreview)
                 .accessibilityHint("免费体验一层，不需要付费")
             }
 
@@ -603,7 +603,7 @@ struct DemoGateView: View {
             }
             .font(Theme.fontCaption)
             .foregroundColor(Theme.textDisabled)
-            .accessibilityLabel("恢复购买")
+            .accessibilityLabel(L10n.a11yRestorePurchase)
             .accessibilityHint("恢复之前的购买记录")
 
             // 每日挑战免费提示 + 返回
@@ -621,7 +621,7 @@ struct DemoGateView: View {
                 }
                 .font(.caption.bold())
                 .foregroundColor(Theme.textTertiary)
-                .accessibilityLabel("返回主菜单")
+                .accessibilityLabel(L10n.a11yBackToMenu)
                 .accessibilityHint("不购买，返回主菜单")
             }
             .padding(.top, 4)

@@ -33,7 +33,7 @@ struct AchievementView: View {
                 }
                 .padding(.horizontal, Theme.spacingLG)
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("成就进度")
+                .accessibilityLabel(L10n.a11yAchievementProgress)
                 .accessibilityValue("\(prog.unlocked)已解锁，共\(prog.total)个")
 
                 if prog.unlocked == 0 {

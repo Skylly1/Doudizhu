@@ -886,4 +886,38 @@ enum L10n {
         case .pt: return pt ?? en
         }
     }
+
+    // MARK: - 无障碍 (Accessibility)
+
+    static var a11yPause: String { isEnglish ? "Pause" : "暂停" }
+    static var a11yGold: String { isEnglish ? "Gold" : "金币" }
+    static var a11yPatternRef: String { isEnglish ? "Pattern Reference" : "牌型参考" }
+    static var a11yPlaysRemaining: String { isEnglish ? "Plays remaining" : "剩余出牌次数" }
+    static var a11yDiscardsRemaining: String { isEnglish ? "Discards remaining" : "剩余弃牌次数" }
+    static var a11yCurrentScore: String { isEnglish ? "Current score" : "当前分数" }
+    static var a11yTargetScore: String { isEnglish ? "Target score" : "目标分数" }
+    static var a11yDiscard: String { isEnglish ? "Discard" : "弃牌" }
+    static var a11yPlayCards: String { isEnglish ? "Play cards" : "出牌" }
+    static var a11yDailyChallenge: String { isEnglish ? "Daily Challenge" : "每日挑战" }
+    static var a11yDailyChallengeComplete: String { isEnglish ? "Daily Challenge completed" : "每日挑战已完成" }
+    static var a11yContinueAdventure: String { isEnglish ? "Continue adventure" : "继续冒险" }
+    static var a11yNewAdventure: String { isEnglish ? "New adventure" : "新的冒险" }
+    static var a11yStartAdventure: String { isEnglish ? "Start adventure" : "开始冒险" }
+    static var a11yQuickStart: String { isEnglish ? "Quick start" : "快速开始" }
+    static var a11yCardCollection: String { isEnglish ? "Card collection" : "卡牌收集" }
+    static var a11ySettings: String { isEnglish ? "Settings" : "设置" }
+    static var a11yTodayStats: String { isEnglish ? "Today's stats" : "今日数据" }
+    static var a11yHelpFaq: String { isEnglish ? "Help & FAQ" : "帮助与常见问题" }
+    static var a11yVolume: String { isEnglish ? "Volume" : "音量" }
+    static var a11yResetTutorial: String { isEnglish ? "Reset tutorial" : "重置新手引导" }
+    static var a11yRefreshShop: String { isEnglish ? "Refresh shop" : "刷新商店" }
+    static var a11yGotIt: String { isEnglish ? "Got it" : "我知道了" }
+    static var a11yUnlockFull: String { isEnglish ? "Unlock full version" : "解锁完整版" }
+    static var a11yFreePreview: String { isEnglish ? "Try one more floor free" : "免费体验下一层" }
+    static var a11yRestorePurchase: String { isEnglish ? "Restore purchase" : "恢复购买" }
+    static var a11yBackToMenu: String { isEnglish ? "Back to main menu" : "返回主菜单" }
+    static var a11yDepart: String { isEnglish ? "Depart" : "出发" }
+    static var a11yAchievementProgress: String { isEnglish ? "Achievement progress" : "成就进度" }
+    static func a11yBuyJoker(_ name: String) -> String { isEnglish ? "Buy \(name)" : "购买\(name)" }
+    static func a11yBuyBuff(_ name: String) -> String { isEnglish ? "Buy \(name)" : "购买\(name)" }
 }
