@@ -257,7 +257,7 @@ struct HomeView: View {
 
             // 主内容
             VStack(spacing: 0) {
-                Spacer().frame(height: 8)  // 系统安全区域已自动处理刘海/灵动岛
+                Spacer().frame(height: Theme.isCompactScreen ? 10 : 16)  // 系统安全区域已自动处理刘海/灵动岛
 
                 // 标题区 — 印章式 Logo
                 VStack(spacing: 12) {
@@ -309,7 +309,7 @@ struct HomeView: View {
                 .scaleEffect(titleScale)
                 .opacity(titleOpacity)
 
-                Spacer().frame(height: Theme.isCompactScreen ? 12 : 20)
+                Spacer().frame(height: Theme.isCompactScreen ? 18 : 28)
 
                 // Ascension 等级展示
                 let highestAsc = UserDefaults.standard.integer(forKey: "highestAscensionCleared")
@@ -328,8 +328,7 @@ struct HomeView: View {
                 }
 
                 // 菜单按钮
-                VStack(spacing: 10) {
-                    // 继续冒险（有存档时显示）
+                VStack(spacing: 14) {
                     if hasSavedGame {
                         PrimaryButton(
                             title: L10n.isEnglish ? "Continue" : "继续冒险",
@@ -366,7 +365,7 @@ struct HomeView: View {
                     .opacity(showButtons[1] ? 1.0 : 0)
 
                     // 快速开始 + 每日挑战 — 并排
-                    HStack(spacing: 10) {
+                    HStack(spacing: 12) {
                         SecondaryButton(title: L10n.quickStart, icon: "bolt.fill") {
                             if hasSavedGame {
                                 pendingNewRunScreen = .buildSelect
@@ -383,7 +382,7 @@ struct HomeView: View {
                     .offset(y: showButtons[2] ? 0 : 30)
                     .opacity(showButtons[2] ? 1.0 : 0)
 
-                    HStack(spacing: 10) {
+                    HStack(spacing: 12) {
                         SecondaryButton(title: L10n.cardCollection, icon: "rectangle.stack.fill") {
                             onNavigate(.collection)
                         }
@@ -402,22 +401,20 @@ struct HomeView: View {
 
                 // 内联卡牌扇形装饰 — 按钮与横幅之间
                 CardFanDecor()
-                    .frame(height: Theme.isCompactScreen ? 50 : 65)
+                    .frame(height: Theme.isCompactScreen ? 55 : 72)
                     .accessibilityHidden(true)
 
                 // 免费用户 — 升级提示横幅（菜单按钮下方，高可见度位置）
                 if !PurchaseManager.shared.isFullVersion {
                     upgradePromptBanner
                         .padding(.horizontal, 40)
-                        .padding(.bottom, 4)
+                        .padding(.bottom, 8)
                 }
 
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
-                    .padding(.bottom, 8)
-
-                // 版本号
+                    .padding(.bottom, 12)
                 Text("v1.0")
                     .font(.system(size: 9))
                     .foregroundColor(Theme.textDisabled.opacity(0.5))
