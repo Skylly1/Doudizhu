@@ -3,7 +3,6 @@ import SwiftUI
 /// 试玩结束 → 付费解锁引导页（转化优化版 v3）
 /// 优化：祝贺过渡、损失规避、首次免费体验、重复访客适配、倒计时限时优惠、动态社交证明
 // REVENUE-TODO: [P2] 加入「内容预览视频」— 自动播放10秒后续关卡精彩片段（好奇心驱动）
-// REVENUE-TODO: [P2] 付费墙滚动深度追踪 — 用户滚到购买按钮时才算有效展示
 // REVENUE-TODO: [P3] 加入「解锁提醒」— 用户关闭付费墙后24h推送本地通知"你的冒险还在等你"
 struct DemoGateView: View {
     @ObservedObject var purchaseManager: PurchaseManager
@@ -34,6 +33,7 @@ struct DemoGateView: View {
     @State private var pulseButton = false
     @State private var congratsScale: CGFloat = 0.6
     @State private var congratsOpacity: Double = 0
+    @State private var hasSentScrollEvent = false
 
     // MARK: - 倒计时限时优惠
     /// 首次打开付费墙时记录时间戳，48h内显示倒计时
@@ -90,6 +90,17 @@ struct DemoGateView: View {
                     featuresSection
 
                     // === 购买区 ===
+                    GeometryReader { _ in
+                        Color.clear
+                            .onAppear {
+                                if !hasSentScrollEvent {
+                                    hasSentScrollEvent = true
+                                    Analytics.shared.track(.paywallScrolledToPurchase, params: ["source": "demo_gate"])
+                                }
+                            }
+                    }
+                    .frame(height: 1)
+
                     purchaseSection
 
                     Spacer().frame(height: 16)

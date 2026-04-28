@@ -61,6 +61,7 @@ enum AnalyticsEvent: String {
     // 漏斗补全事件
     case paywallScrollDepth = "paywall_scroll_depth"       // 付费墙滚动深度(%)
     case paywallButtonVisible = "paywall_button_visible"    // 购买按钮首次进入可视区
+    case paywallScrolledToPurchase = "paywall_scrolled_to_purchase" // 用户滚动到购买按钮区域
     case purchaseSuccessCTA = "purchase_success_cta"        // 购买成功页CTA点击(share/review)
     case retentionD1 = "retention_d1"                       // D1留存
     case retentionD7 = "retention_d7"                       // D7留存
