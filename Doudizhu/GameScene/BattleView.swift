@@ -88,7 +88,7 @@ struct BattleView: View {
                     .padding(.bottom, 8)
             }
             .padding(.bottom, 0)
-            .ignoresSafeArea(edges: .bottom)
+            .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 0) }
 
             // 过关/失败弹窗
             if rogueRun.phase == .floorWin {
@@ -169,7 +169,7 @@ struct BattleView: View {
 
                     Spacer()
                 }
-                .padding(.top, 60)
+                .padding(.top, 0)  // 使用系统安全区域（自动适配刘海屏/灵动岛）
                 .onAppear {
                     SoundManager.shared.play(.achievementUnlock)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {

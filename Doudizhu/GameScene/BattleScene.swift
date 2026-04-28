@@ -13,9 +13,9 @@ class BattleScene: SKScene {
     let selectionChanged = PassthroughSubject<Void, Never>()
 
     // 布局常量（基准值，实际会根据手牌数动态缩放）
-    private let baseCardWidth: CGFloat = 66
-    private let baseCardHeight: CGFloat = 99
-    private let cardOverlap: CGFloat = 32
+    private let baseCardWidth: CGFloat = 72
+    private let baseCardHeight: CGFloat = 104
+    private let cardOverlap: CGFloat = 34
 
     override func willMove(from view: SKView) {
         removeAllActions()
@@ -132,9 +132,9 @@ class BattleScene: SKScene {
         let bottomReserve = size.height * 0.22
         let baseY = bottomReserve + cardHeight / 2 + 8
 
-        // 扇形弧度参数 — 温和弧度
-        let maxAngle: CGFloat = count > 5 ? 0.022 : 0.012
-        let arcHeight: CGFloat = count > 5 ? 6 : 3
+        // 扇形弧度参数 — 更动感的弧线
+        let maxAngle: CGFloat = count > 5 ? 0.032 : 0.018
+        let arcHeight: CGFloat = count > 5 ? 12 : 5
 
         for (index, card) in cards.enumerated() {
             let node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))

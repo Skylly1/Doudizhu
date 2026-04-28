@@ -58,19 +58,26 @@ class CardNode: SKSpriteNode {
         let w = size.width
         let h = size.height
 
-        // 柔和阴影
+        // 多层柔和阴影 — 真实卡牌深度
+        let shadowOuter = SKShapeNode(rectOf: CGSize(width: w + 2, height: h + 2), cornerRadius: 7)
+        shadowOuter.fillColor = SKColor(white: 0, alpha: 0.10)
+        shadowOuter.strokeColor = .clear
+        shadowOuter.position = CGPoint(x: 2, y: -4)
+        shadowOuter.zPosition = -3
+        addChild(shadowOuter)
+
         let shadow = SKShapeNode(rectOf: CGSize(width: w, height: h), cornerRadius: 6)
-        shadow.fillColor = SKColor(white: 0, alpha: 0.22)
+        shadow.fillColor = SKColor(white: 0, alpha: 0.25)
         shadow.strokeColor = .clear
         shadow.position = CGPoint(x: 1, y: -2)
         shadow.zPosition = -2
         addChild(shadow)
 
-        // 卡牌主体 — 暖白底
+        // 卡牌主体 — 暖白底，微渐变质感
         let bg = SKShapeNode(rectOf: size, cornerRadius: 6)
         bg.fillColor = SKColor(red: 0.97, green: 0.95, blue: 0.91, alpha: 1.0)
-        bg.strokeColor = SKColor(red: 0.65, green: 0.58, blue: 0.45, alpha: 0.45)
-        bg.lineWidth = 0.8
+        bg.strokeColor = SKColor(red: 0.58, green: 0.50, blue: 0.38, alpha: 0.55)
+        bg.lineWidth = 1.0
         bg.zPosition = -1
         addChild(bg)
 
@@ -83,23 +90,51 @@ class CardNode: SKSpriteNode {
             addChild(tint)
         }
 
-        // 内边框 — 双线效果
+        // 卡牌底部厚度线 — 3D纸牌质感
+        let thickPath = CGMutablePath()
+        thickPath.move(to: CGPoint(x: -w / 2 + 6, y: -h / 2 + 0.5))
+        thickPath.addLine(to: CGPoint(x: w / 2 - 6, y: -h / 2 + 0.5))
+        let thickLine = SKShapeNode(path: thickPath)
+        thickLine.strokeColor = SKColor(red: 0.82, green: 0.76, blue: 0.66, alpha: 0.5)
+        thickLine.lineWidth = 1.5
+        thickLine.zPosition = 0
+        addChild(thickLine)
+
+        // 内边框 — 双线装饰
         let innerBorder = SKShapeNode(rectOf: CGSize(width: w - 6, height: h - 6), cornerRadius: 4)
         innerBorder.fillColor = .clear
-        innerBorder.strokeColor = SKColor(red: 0.72, green: 0.65, blue: 0.52, alpha: 0.15)
-        innerBorder.lineWidth = 0.5
+        innerBorder.strokeColor = SKColor(red: 0.72, green: 0.65, blue: 0.52, alpha: 0.22)
+        innerBorder.lineWidth = 0.6
         innerBorder.zPosition = 0
         addChild(innerBorder)
 
-        // 顶部高光边 — 纸牌质感
+        // 第二层内边框（精致双线效果）
+        let innerBorder2 = SKShapeNode(rectOf: CGSize(width: w - 10, height: h - 10), cornerRadius: 3)
+        innerBorder2.fillColor = .clear
+        innerBorder2.strokeColor = SKColor(red: 0.72, green: 0.65, blue: 0.52, alpha: 0.10)
+        innerBorder2.lineWidth = 0.4
+        innerBorder2.zPosition = 0
+        addChild(innerBorder2)
+
+        // 顶部高光边 — 光泽质感
         let hlPath = CGMutablePath()
         hlPath.move(to: CGPoint(x: -w / 2 + 5, y: h / 2 - 0.5))
         hlPath.addLine(to: CGPoint(x: w / 2 - 5, y: h / 2 - 0.5))
         let topHighlight = SKShapeNode(path: hlPath)
-        topHighlight.strokeColor = SKColor(white: 1, alpha: 0.25)
-        topHighlight.lineWidth = 0.5
+        topHighlight.strokeColor = SKColor(white: 1, alpha: 0.40)
+        topHighlight.lineWidth = 1.0
         topHighlight.zPosition = 0
         addChild(topHighlight)
+
+        // 第二层高光（柔和渐变效果）
+        let hl2Path = CGMutablePath()
+        hl2Path.move(to: CGPoint(x: -w / 2 + 8, y: h / 2 - 2))
+        hl2Path.addLine(to: CGPoint(x: w / 2 - 8, y: h / 2 - 2))
+        let topHighlight2 = SKShapeNode(path: hl2Path)
+        topHighlight2.strokeColor = SKColor(white: 1, alpha: 0.15)
+        topHighlight2.lineWidth = 0.5
+        topHighlight2.zPosition = 0
+        addChild(topHighlight2)
 
         // Joker 特殊处理
         if isJoker {
@@ -134,17 +169,17 @@ class CardNode: SKSpriteNode {
         topSuit.zPosition = 2
         addChild(topSuit)
 
-        // 中央大花色 — 视觉锚点
+        // 中央大花色 — 视觉锚点（加深可见度）
         let centerSuit = SKLabelNode(text: suitText)
-        centerSuit.fontSize = w * 0.50
-        centerSuit.fontColor = color.withAlphaComponent(0.18)
+        centerSuit.fontSize = w * 0.55
+        centerSuit.fontColor = color.withAlphaComponent(0.30)
         centerSuit.horizontalAlignmentMode = .center
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: -h * 0.03)
         centerSuit.zPosition = 1
         addChild(centerSuit)
 
-        // JQK 人脸牌 — 中央加书法标记
+        // JQK 人脸牌 — 中央加书法标记（增强可见度）
         if isFaceCard {
             let faceChar: String
             switch card.rank {
@@ -153,35 +188,48 @@ class CardNode: SKSpriteNode {
             case .king:  faceChar = "帅"
             default:     faceChar = ""
             }
+
+            // 装饰背景框
+            let faceBg = SKShapeNode(rectOf: CGSize(width: w * 0.50, height: w * 0.38), cornerRadius: 3)
+            faceBg.fillColor = color.withAlphaComponent(0.04)
+            faceBg.strokeColor = color.withAlphaComponent(0.10)
+            faceBg.lineWidth = 0.5
+            faceBg.position = CGPoint(x: 0, y: h * 0.08)
+            faceBg.zPosition = 1
+            addChild(faceBg)
+
             let faceLabel = SKLabelNode(text: faceChar)
             faceLabel.fontName = serifFont
-            faceLabel.fontSize = w * 0.28
-            faceLabel.fontColor = color.withAlphaComponent(0.10)
+            faceLabel.fontSize = w * 0.34
+            faceLabel.fontColor = color.withAlphaComponent(0.40)
             faceLabel.horizontalAlignmentMode = .center
             faceLabel.verticalAlignmentMode = .center
-            faceLabel.position = CGPoint(x: 0, y: h * 0.12)
-            faceLabel.zPosition = 1
+            faceLabel.position = CGPoint(x: 0, y: h * 0.08)
+            faceLabel.zPosition = 1.5
             addChild(faceLabel)
 
-            // 人脸牌底部装饰线
-            let decPath = CGMutablePath()
-            decPath.move(to: CGPoint(x: -w * 0.22, y: -h * 0.18))
-            decPath.addLine(to: CGPoint(x: w * 0.22, y: -h * 0.18))
-            let decLine = SKShapeNode(path: decPath)
-            decLine.strokeColor = color.withAlphaComponent(0.08)
-            decLine.lineWidth = 0.5
-            decLine.zPosition = 1
-            addChild(decLine)
+            // 上下装饰线
+            for yOff: CGFloat in [-0.08, 0.24] {
+                let decPath = CGMutablePath()
+                decPath.move(to: CGPoint(x: -w * 0.26, y: h * yOff))
+                decPath.addLine(to: CGPoint(x: w * 0.26, y: h * yOff))
+                let decLine = SKShapeNode(path: decPath)
+                decLine.strokeColor = color.withAlphaComponent(0.12)
+                decLine.lineWidth = 0.6
+                decLine.zPosition = 1
+                addChild(decLine)
+            }
         }
 
-        // 特殊高亮：A 和 2（斗地主特殊牌）
+        // 特殊高亮：A 和 2（斗地主特殊牌 — 可见光晕）
         if card.rank == .ace || card.rank == .two {
-            let glow = SKShapeNode(circleOfRadius: w * 0.18)
-            glow.fillColor = color.withAlphaComponent(0.04)
-            glow.strokeColor = color.withAlphaComponent(0.06)
-            glow.lineWidth = 0.5
+            let glow = SKShapeNode(circleOfRadius: w * 0.20)
+            glow.fillColor = color.withAlphaComponent(0.08)
+            glow.strokeColor = color.withAlphaComponent(0.12)
+            glow.lineWidth = 0.6
             glow.position = CGPoint(x: 0, y: -h * 0.03)
             glow.zPosition = 0.5
+            glow.glowWidth = 2
             addChild(glow)
         }
 
@@ -210,20 +258,30 @@ class CardNode: SKSpriteNode {
         bottomSuit.yScale = -1
         addChild(bottomSuit)
 
-        // 角落装饰纹（仅大尺寸卡牌）
+        // 四角装饰纹（回纹 L 型角标，仅大尺寸卡牌）
         if w >= 50 {
-            let dotRadius: CGFloat = 1.2
-            let dotPositions: [CGPoint] = [
-                CGPoint(x: -w / 2 + 8, y: -h / 2 + 8),
-                CGPoint(x: w / 2 - 8, y: h / 2 - 8),
+            let cornerSize: CGFloat = 5
+            let cornerAlpha: CGFloat = 0.18
+            let corners: [(CGFloat, CGFloat, CGFloat, CGFloat)] = [
+                (-w / 2 + 5, -h / 2 + 5, 1, 1),
+                (w / 2 - 5, -h / 2 + 5, -1, 1),
+                (-w / 2 + 5, h / 2 - 5, 1, -1),
+                (w / 2 - 5, h / 2 - 5, -1, -1),
             ]
-            for pos in dotPositions {
-                let dot = SKShapeNode(circleOfRadius: dotRadius)
-                dot.fillColor = color.withAlphaComponent(0.12)
-                dot.strokeColor = .clear
-                dot.position = pos
-                dot.zPosition = 1
-                addChild(dot)
+            for (cx, cy, sx, sy) in corners {
+                let lPath = CGMutablePath()
+                lPath.move(to: CGPoint(x: 0, y: cornerSize))
+                lPath.addLine(to: .zero)
+                lPath.addLine(to: CGPoint(x: cornerSize, y: 0))
+                let lNode = SKShapeNode(path: lPath)
+                lNode.strokeColor = color.withAlphaComponent(cornerAlpha)
+                lNode.lineWidth = 0.6
+                lNode.lineCap = .round
+                lNode.position = CGPoint(x: cx, y: cy)
+                lNode.xScale = sx
+                lNode.yScale = sy
+                lNode.zPosition = 1
+                addChild(lNode)
             }
         }
     }

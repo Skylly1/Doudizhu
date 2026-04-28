@@ -257,7 +257,7 @@ struct HomeView: View {
 
             // 主内容
             VStack(spacing: 0) {
-                Spacer().frame(height: Theme.isCompactScreen ? 30 : 44)
+                Spacer().frame(height: 8)  // 系统安全区域已自动处理刘海/灵动岛
 
                 // 标题区 — 印章式 Logo
                 VStack(spacing: 12) {

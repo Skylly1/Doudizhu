@@ -15,26 +15,27 @@ struct ShopView: View {
 
     var body: some View {
         ZStack {
+            VStack(spacing: 0) {
+                // 标题 + 返回（固定顶部，不随滚动）
+                GameNavBar(
+                    title: L10n.shop,
+                    onBack: onQuit,
+                    trailing: AnyView(
+                        HStack(spacing: 6) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .foregroundColor(Theme.gold)
+                            Text("\(rogueRun.gold)")
+                                .font(.title3.bold().monospacedDigit())
+                                .foregroundColor(Theme.gold)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("金币")
+                        .accessibilityValue("\(rogueRun.gold)")
+                    )
+                )
+
             ScrollView {
                 VStack(spacing: Theme.spacingLG) {
-                    // 标题 + 返回
-                    GameNavBar(
-                        title: L10n.shop,
-                        onBack: onQuit,
-                        trailing: AnyView(
-                            HStack(spacing: 6) {
-                                Image(systemName: "dollarsign.circle.fill")
-                                    .foregroundColor(Theme.gold)
-                                Text("\(rogueRun.gold)")
-                                    .font(.title3.bold().monospacedDigit())
-                                    .foregroundColor(Theme.gold)
-                            }
-                            .accessibilityElement(children: .combine)
-                            .accessibilityLabel("金币")
-                            .accessibilityValue("\(rogueRun.gold)")
-                        )
-                    )
-                    .padding(.top, Theme.spacingSM)
 
                 // 刷新按钮（刷新费用随关卡递增：基础10，每层+2，上限25）
                 let refreshCost = min(25, 10 + rogueRun.currentFloorIndex * 2)
@@ -243,7 +244,8 @@ struct ShopView: View {
                 .padding(.horizontal, Theme.spacingXXL)
                 .padding(.bottom, Theme.spacingXL)
             }
-        }
+            } // end ScrollView
+            } // end outer VStack
 
         // 首次商店引导弹窗
         if showShopIntro {
