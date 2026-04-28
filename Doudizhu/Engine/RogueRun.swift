@@ -11,7 +11,6 @@ enum GamePhase: Equatable {
     case shopping             // 商店
     case specialEvent(SpecialEvent) // 特殊事件
     case victory              // 通关
-    case gameOver             // 死亡
 
     static func == (lhs: GamePhase, rhs: GamePhase) -> Bool {
         switch (lhs, rhs) {
@@ -20,8 +19,7 @@ enum GamePhase: Equatable {
              (.floorWin, .floorWin),
              (.floorFail, .floorFail),
              (.shopping, .shopping),
-             (.victory, .victory),
-             (.gameOver, .gameOver):
+             (.victory, .victory):
             return true
         case (.scoring, .scoring):
             return true
@@ -338,6 +336,8 @@ enum HandSortMode: String, CaseIterable {
 
         // Daily challenge modifier adjustments
         if let dc = dailyChallenge {
+            // Seeded RNG for deterministic boss modifier selection in daily challenges
+            var modRng = SeededRandomNumberGenerator(seed: dc.seed &+ UInt64(currentFloorIndex) &+ 0xB055)
             for mod in dc.modifiers {
                 switch mod {
                 case .extraPlays:
@@ -353,13 +353,13 @@ enum HandSortMode: String, CaseIterable {
                 case .mirrorMatch:
                     // 每层都有Boss修改器
                     if bossState == nil {
-                        let randomMod = BossModifier.allCases.randomElement() ?? .scoreCap
+                        let randomMod = BossModifier.allCases.randomElement(using: &modRng) ?? .scoreCap
                         bossState = BossState(modifiers: [randomMod])
                     }
                 case .bossRush:
                     // Boss rush: every non-shop floor gets a random boss modifier
                     if !floor.isShop && bossState == nil {
-                        let randomMod = BossModifier.allCases.randomElement() ?? .escalating
+                        let randomMod = BossModifier.allCases.randomElement(using: &modRng) ?? .escalating
                         bossState = BossState(modifiers: [randomMod])
                     }
                 case .noBombs, .halfGold, .doubleScore, .allOrNothing, .goldRush:

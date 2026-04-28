@@ -135,7 +135,6 @@ extension GameSaveModel {
         case .victory: phaseString = "victory"
         case .scoring: phaseString = "scoring"
         case .specialEvent: phaseString = "selecting"
-        case .gameOver: phaseString = "selecting"
         }
 
         // BossState 持久化（UF-02）
