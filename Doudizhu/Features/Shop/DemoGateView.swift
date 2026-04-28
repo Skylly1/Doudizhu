@@ -503,11 +503,32 @@ struct DemoGateView: View {
                     .font(.caption.bold())
                     .foregroundColor(Theme.gold)
 
+                // 折扣百分比标签
+                Text(L10n.isEnglish ? "37% OFF" : "省37%")
+                    .font(.system(size: 10, weight: .heavy))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Theme.flame))
+
                 if !isFirstView {
                     Text(L10n.isEnglish ? "Your progress awaits" : "你的进度还在")
                         .font(.caption)
                         .foregroundColor(Theme.textTertiary)
                 }
+            }
+
+            // 回访用户紧迫感提示
+            if !isFirstView && isLaunchOfferActive {
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.caption2)
+                    Text(L10n.isEnglish
+                         ? "Launch price ends soon — won't return"
+                         : "首发价即将结束，不再恢复")
+                        .font(.caption)
+                }
+                .foregroundColor(Theme.flame)
             }
 
             // 主购买按钮
@@ -532,7 +553,11 @@ struct DemoGateView: View {
                     }
                     Text(purchaseManager.purchaseState == .purchasing
                          ? (L10n.isEnglish ? "Processing..." : "处理中...")
-                         : L10n.unlockFullPrice(purchaseManager.formattedPrice))
+                         : isFirstView
+                            ? L10n.unlockFullPrice(purchaseManager.formattedPrice)
+                            : (L10n.isEnglish
+                               ? "Continue Your Adventure — \(purchaseManager.formattedPrice)"
+                               : "继续你的冒险 — \(purchaseManager.formattedPrice)"))
                 }
                 .font(.headline)
                 .foregroundColor(.black)

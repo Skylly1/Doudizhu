@@ -88,9 +88,13 @@ struct PurchaseSuccessView: View {
                                         .stroke(Theme.cyan.opacity(0.3)))
                             )
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            Analytics.shared.track(.purchaseSuccessCTA, params: ["action": "share"])
+                        })
 
                         // 评价引导 — 购买成功是最佳时机
                         Button {
+                            Analytics.shared.track(.purchaseSuccessCTA, params: ["action": "rate"])
                             ReviewManager.shared.requestReviewNow()
                         } label: {
                             HStack(spacing: 6) {

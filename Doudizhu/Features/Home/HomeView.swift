@@ -478,6 +478,7 @@ struct HomeView: View {
         let demoPercent = Int(Double(PurchaseManager.demoMaxFloor) / Double(totalFloors) * 100)
 
         return Button {
+            Analytics.shared.track(.paywallShown, params: ["source": "home_banner"])
             onNavigate(.demoGate)
         } label: {
             HStack(spacing: 8) {
@@ -501,7 +502,12 @@ struct HomeView: View {
                     }
                     .frame(height: 4)
                 }
-                Spacer()
+                Text(L10n.isEnglish ? "37%OFF" : "省37%")
+                    .font(.system(size: 9, weight: .heavy))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Theme.flame))
                 Image(systemName: "chevron.right")
                     .font(.caption2)
                     .foregroundColor(Theme.gold.opacity(0.6))
