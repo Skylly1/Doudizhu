@@ -169,6 +169,7 @@ struct HomeView: View {
     @State private var sealGlow = false
     @State private var showNewRunConfirm = false
     @State private var pendingNewRunScreen: AppScreen? = nil
+    @State private var hasAnimated = false
 
     private var dailyChallengeButton: some View {
         let daily = DailyChallenge.today
@@ -425,6 +426,8 @@ struct HomeView: View {
             }
         }
         .onAppear {
+            guard !hasAnimated else { return }
+            hasAnimated = true
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                 titleScale = 1.0
                 titleOpacity = 1.0

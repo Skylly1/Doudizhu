@@ -30,9 +30,8 @@ struct BattleView: View {
     @AppStorage("musicEnabled") private var musicEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
 
-    private var shouldShowGestureGuide: Bool {
-        !UserDefaults.standard.bool(forKey: "gestureGuideCompleted")
-    }
+    @AppStorage("gestureGuideCompleted") private var gestureGuideCompleted = false
+    private var shouldShowGestureGuide: Bool { !gestureGuideCompleted }
 
     init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void, onUpgrade: (() -> Void)? = nil) {
         self.rogueRun = rogueRun
