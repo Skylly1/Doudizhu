@@ -64,6 +64,7 @@ enum AnalyticsEvent: String {
     case purchaseSuccessCTA = "purchase_success_cta"        // 购买成功页CTA点击(share/review)
     case retentionD1 = "retention_d1"                       // D1留存
     case retentionD7 = "retention_d7"                       // D7留存
+    case shareApp = "share_app"                             // 分享应用
     case retentionD30 = "retention_d30"                     // D30留存
 
     // 留存追踪

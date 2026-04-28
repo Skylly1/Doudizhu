@@ -192,6 +192,55 @@ struct SettingsView: View {
                                 .font(Theme.fontCaption)
                                 .foregroundColor(Theme.textTertiary)
                         }
+
+                        // Share
+                        settingSection(L10n.isEnglish ? "Spread the Word" : "分享给好友") {
+                            Button {
+                                shareApp()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "square.and.arrow.up.fill")
+                                        .foregroundColor(Theme.cyan)
+                                    Text(L10n.isEnglish ? "Share with Friends" : "推荐给朋友")
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Theme.textTertiary)
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+
+                        // Rate & Privacy
+                        settingSection(L10n.isEnglish ? "Support Us" : "支持我们") {
+                            Button {
+                                ReviewManager.shared.requestReviewNow()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(Theme.gold)
+                                    Text(L10n.isEnglish ? "Rate on App Store" : "App Store 评分")
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Theme.textTertiary)
+                                }
+                                .padding(.vertical, 6)
+                            }
+                            Divider().background(Theme.border)
+                            Link(destination: URL(string: "https://skylly1.github.io/doudizhu-privacy")!) {
+                                HStack {
+                                    Image(systemName: "hand.raised.fill")
+                                        .foregroundColor(Theme.textSecondary)
+                                    Text(L10n.isEnglish ? "Privacy Policy" : "隐私政策")
+                                        .foregroundColor(Theme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "arrow.up.right.square")
+                                        .foregroundColor(Theme.textTertiary)
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
                     }
                     .padding(.horizontal, Theme.spacingMD)
                     .padding(.top, Theme.spacingMD)
@@ -286,6 +335,26 @@ struct SettingsView: View {
                 Text("")
             }
         }
+    }
+
+    // MARK: - Share
+
+    private func shareApp() {
+        let text = L10n.isEnglish
+            ? "I'm playing this awesome Doudizhu Roguelike card game! 🃏"
+            : "我在玩一款超好玩的斗地主Roguelike卡牌游戏！🃏"
+        // Replace with actual App Store URL after launch
+        let url = URL(string: "https://apps.apple.com/app/id000000000")!
+        let items: [Any] = [text, url]
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let root = windowScene.windows.first?.rootViewController {
+            // iPad support
+            ac.popoverPresentationController?.sourceView = root.view
+            ac.popoverPresentationController?.sourceRect = CGRect(x: root.view.bounds.midX, y: root.view.bounds.midY, width: 0, height: 0)
+            root.present(ac, animated: true)
+        }
+        Analytics.shared.track(.shareApp, params: ["source": "settings"])
     }
 
     // MARK: - 重置操作
