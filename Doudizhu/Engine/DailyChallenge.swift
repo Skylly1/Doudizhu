@@ -124,6 +124,84 @@ struct DailyChallenge {
 
         UserDefaults.standard.set(streak, forKey: streakCountKey)
         UserDefaults.standard.set(today, forKey: streakLastDateKey)
+
+        // 连续挑战成就
+        Task { @MainActor in
+            if streak >= 3 { AchievementTracker.shared.tryUnlock("daily_streak_3") }
+            if streak >= 7 { AchievementTracker.shared.tryUnlock("daily_streak_7") }
+            if streak >= 30 { AchievementTracker.shared.tryUnlock("daily_streak_30") }
+        }
+
+        // 连续挑战里程碑奖励（每个里程碑仅领一次）
+        grantStreakReward(streak)
+    }
+
+    // MARK: - Streak 里程碑奖励
+
+    /// 里程碑: 3天+50金, 7天+随机规则牌, 14天+稀有Buff, 30天+传奇徽章
+    struct StreakReward {
+        let milestone: Int
+        let icon: String
+        let name: String
+        let description: String
+    }
+
+    static let streakRewards: [StreakReward] = [
+        StreakReward(milestone: 3, icon: "💰", name: "三日奖金", description: L10n.isEnglish ? "+50 Gold next run" : "下次冒险+50金币"),
+        StreakReward(milestone: 7, icon: "🃏", name: "周挑战规则牌", description: L10n.isEnglish ? "Free random Joker" : "免费随机规则牌"),
+        StreakReward(milestone: 14, icon: "⚡", name: "双周增益", description: L10n.isEnglish ? "Rare Buff next run" : "下次冒险稀有增益"),
+        StreakReward(milestone: 30, icon: "👑", name: "月度传奇", description: L10n.isEnglish ? "Legendary Badge" : "传奇徽章"),
+    ]
+
+    /// 下一个未领取的里程碑奖励
+    static var nextMilestone: StreakReward? {
+        streakRewards.first { $0.milestone > currentStreak }
+    }
+
+    /// 发放里程碑奖励
+    private static func grantStreakReward(_ streak: Int) {
+        for reward in streakRewards {
+            let claimedKey = "streak_reward_\(reward.milestone)_claimed"
+            if streak >= reward.milestone && !UserDefaults.standard.bool(forKey: claimedKey) {
+                UserDefaults.standard.set(true, forKey: claimedKey)
+                switch reward.milestone {
+                case 3:
+                    // +50金币存入下次冒险奖池
+                    let bonus = UserDefaults.standard.integer(forKey: "streak_gold_bonus")
+                    UserDefaults.standard.set(bonus + 50, forKey: "streak_gold_bonus")
+                case 7:
+                    // 标记下次冒险领取免费规则牌
+                    UserDefaults.standard.set(true, forKey: "streak_free_joker")
+                case 14:
+                    // 标记下次冒险领取稀有增益
+                    UserDefaults.standard.set(true, forKey: "streak_free_buff")
+                case 30:
+                    // 传奇徽章（永久标记）
+                    UserDefaults.standard.set(true, forKey: "streak_legendary_badge")
+                default: break
+                }
+                Task { @MainActor in
+                    Analytics.shared.track(.dailyChallengeComplete, params: [
+                        "streak_milestone": "\(reward.milestone)",
+                        "reward": reward.name
+                    ])
+                }
+            }
+        }
+    }
+
+    /// 消耗连续挑战金币奖励（冒险开始时调用）
+    static func consumeStreakGoldBonus() -> Int {
+        let bonus = UserDefaults.standard.integer(forKey: "streak_gold_bonus")
+        if bonus > 0 { UserDefaults.standard.set(0, forKey: "streak_gold_bonus") }
+        return bonus
+    }
+
+    /// 消耗连续挑战免费规则牌标记
+    static func consumeStreakFreeJoker() -> Bool {
+        let has = UserDefaults.standard.bool(forKey: "streak_free_joker")
+        if has { UserDefaults.standard.set(false, forKey: "streak_free_joker") }
+        return has
     }
 
     private static var yesterdayString: String {

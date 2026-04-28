@@ -416,17 +416,17 @@ struct HomeView: View {
 
                 Spacer()
 
+                // 免费用户 — 升级提示横幅（菜单按钮下方，高可见度位置）
+                if !PurchaseManager.shared.isFullVersion {
+                    upgradePromptBanner
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 4)
+                }
+
                 // 今日数据概览
                 TodayStatsBanner()
                     .padding(.horizontal, 40)
                     .padding(.bottom, 8)
-
-                // 免费用户 — 升级提示横幅
-                if !PurchaseManager.shared.isFullVersion {
-                    upgradePromptBanner
-                        .padding(.horizontal, 40)
-                        .padding(.bottom, 8)
-                }
 
                 // 版本号
                 Text("v1.0")

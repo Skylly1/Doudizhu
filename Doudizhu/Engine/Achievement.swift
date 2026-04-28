@@ -38,7 +38,7 @@ extension Achievement {
         // 冒险
         Achievement(id: "first_win",       name: "初出茅庐",   description: "首次通关第1层",       icon: "leaf.fill", requirement: 1, category: .progress),
         Achievement(id: "mid_run",         name: "渐入佳境",   description: "到达第5层",           icon: "bolt.shield.fill", requirement: 5, category: .progress),
-        Achievement(id: "full_clear",      name: "斗破乾坤",   description: "首次通关全部8层",      icon: "trophy.fill", requirement: 8, category: .progress),
+        Achievement(id: "full_clear",      name: "斗破乾坤",   description: "首次通关全部关卡",      icon: "trophy.fill", requirement: 15, category: .progress),
         Achievement(id: "games_10",        name: "常客",       description: "累计游戏10局",         icon: "gamecontroller.fill", requirement: 10, category: .progress),
         Achievement(id: "games_50",        name: "老牌手",     description: "累计游戏50局",         icon: "suit.spade.fill", requirement: 50, category: .progress),
 
@@ -59,6 +59,28 @@ extension Achievement {
         Achievement(id: "no_discard_win",  name: "完美牌局",   description: "不换牌通过一层",       icon: "sparkles", requirement: 1, category: .style),
         Achievement(id: "gold_300",        name: "富甲一方",   description: "持有300+金币",         icon: "dollarsign.circle.fill", requirement: 300, category: .style),
         Achievement(id: "wins_5",          name: "常胜将军",   description: "累计通关5次",           icon: "crown.fill", requirement: 5, category: .style),
+
+        // 挑战等级
+        Achievement(id: "ascension_1",     name: "初入挑战",   description: "达到挑战等级1",         icon: "arrow.up.circle.fill", requirement: 1, category: .progress),
+        Achievement(id: "ascension_5",     name: "挑战强者",   description: "达到挑战等级5",         icon: "arrow.up.forward.circle.fill", requirement: 5, category: .progress),
+        Achievement(id: "ascension_10",    name: "绝世高手",   description: "达到挑战等级10",        icon: "seal.fill", requirement: 10, category: .progress),
+
+        // 每日挑战
+        Achievement(id: "daily_streak_3",  name: "三日不辍",   description: "每日挑战连续3天",       icon: "flame.fill", requirement: 3, category: .mastery),
+        Achievement(id: "daily_streak_7",  name: "周周坚持",   description: "每日挑战连续7天",       icon: "flame.circle.fill", requirement: 7, category: .mastery),
+        Achievement(id: "daily_streak_30", name: "月度传奇",   description: "每日挑战连续30天",      icon: "calendar.badge.checkmark", requirement: 30, category: .mastery),
+
+        // 构筑精通
+        Achievement(id: "builds_3",        name: "多面手",     description: "使用3种不同构筑通关",    icon: "square.stack.3d.up.fill", requirement: 3, category: .style),
+        Achievement(id: "builds_9",        name: "全能大师",   description: "使用所有9种构筑通关",    icon: "star.circle.fill", requirement: 9, category: .style),
+
+        // 牌型精通
+        Achievement(id: "straights_20",    name: "顺子达人",   description: "累计打出20次顺子",      icon: "arrow.right.circle.fill", requirement: 20, category: .mastery),
+        Achievement(id: "bombs_50",        name: "炸弹狂魔",   description: "累计使用50次炸弹",      icon: "circle.circle.fill", requirement: 50, category: .mastery),
+
+        // 得分里程碑
+        Achievement(id: "score_10000",     name: "万分俱乐部", description: "单局累计10000分",       icon: "star.square.fill", requirement: 10000, category: .scoring),
+        Achievement(id: "single_1000",     name: "毁天灭地",   description: "单次出牌得分≥1000",     icon: "wand.and.stars", requirement: 1000, category: .scoring),
     ]
 
     /// 成就分类对应的图标颜色

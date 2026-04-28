@@ -102,7 +102,8 @@ struct ContentView: View {
                             SoundManager.shared.stopBGM()
                             goHome()
                         },
-                        onShop: { navigate(to: .shop) }
+                        onShop: { navigate(to: .shop) },
+                        onUpgrade: { navigate(to: .demoGate) }
                     )
                     .onChange(of: rogueRun.phase) { _, newPhase in
                         if newPhase == .shopping {

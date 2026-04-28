@@ -625,12 +625,15 @@ enum HandSortMode: String, CaseIterable {
         let tracker = AchievementTracker.shared
         if earned >= 200 { tracker.tryUnlock("single_200") }
         if earned >= 500 { tracker.tryUnlock("single_500") }
+        if earned >= 1000 { tracker.tryUnlock("single_1000") }
         if totalScore >= 500 { tracker.tryUnlock("score_500") }
         if totalScore >= 2000 { tracker.tryUnlock("score_2000") }
         if totalScore >= 5000 { tracker.tryUnlock("score_5000") }
+        if totalScore >= 10000 { tracker.tryUnlock("score_10000") }
         if combo >= 5 { tracker.tryUnlock("combo_5") }
-        if pattern.type == .bomb { tracker.tryUnlock("bombs_10") }  // 简化：首次炸弹即解锁
+        if pattern.type == .bomb { tracker.tryUnlock("bombs_10"); tracker.tryUnlock("bombs_50") }
         if pattern.type == .rocket { tracker.tryUnlock("rockets_5") }
+        if pattern.type == .straight || pattern.type == .pairStraight { tracker.tryUnlock("straights_20") }
         if activeJokers.count >= 5 { tracker.tryUnlock("jokers_collect_5") }
         if gold >= 300 { tracker.tryUnlock("gold_300") }
 
@@ -888,6 +891,8 @@ enum HandSortMode: String, CaseIterable {
             if ascensionLevel >= 1 { AchievementTracker.shared.tryUnlock("ascension_1") }
             if ascensionLevel >= 5 { AchievementTracker.shared.tryUnlock("ascension_5") }
             if ascensionLevel >= 10 { AchievementTracker.shared.tryUnlock("ascension_10") }
+            // 构筑精通追踪
+            trackBuildWin(currentBuildId)
             // PlayerStats: record win and play time
             PlayerStats.shared.totalWins += 1
             if let start = runStartTime {
@@ -1227,6 +1232,20 @@ struct PlayResult: Equatable {
 
     static func == (lhs: PlayResult, rhs: PlayResult) -> Bool {
         lhs.score == rhs.score && lhs.totalScore == rhs.totalScore && lhs.combo == rhs.combo
+    }
+}
+
+// MARK: - 构筑精通追踪
+
+extension RogueRun {
+    /// 记录用某个构筑通关，解锁构筑相关成就
+    private func trackBuildWin(_ buildId: String) {
+        let key = "build_wins_set"
+        var wins = Set(UserDefaults.standard.stringArray(forKey: key) ?? [])
+        wins.insert(buildId)
+        UserDefaults.standard.set(Array(wins), forKey: key)
+        if wins.count >= 3 { AchievementTracker.shared.tryUnlock("builds_3") }
+        if wins.count >= 9 { AchievementTracker.shared.tryUnlock("builds_9") }
     }
 }
 

@@ -83,24 +83,49 @@ struct DailyChallengeView: View {
 
     private var streakBadge: some View {
         let streak = DailyChallenge.currentStreak
-        return HStack(spacing: 8) {
-            Image(systemName: "flame.fill")
-                .font(.title3)
-                .foregroundColor(streak >= 7 ? Theme.gold : Theme.flame)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(L10n.isEnglish ? "\(streak)-Day Streak!" : "连续\(streak)天挑战！")
-                    .font(.subheadline.bold())
+        return VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "flame.fill")
+                    .font(.title3)
                     .foregroundColor(streak >= 7 ? Theme.gold : Theme.flame)
-                Text(L10n.isEnglish ? "Keep it going — don't break the chain!" : "继续保持，不要断链！")
-                    .font(.caption)
-                    .foregroundColor(Theme.textTertiary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(L10n.isEnglish ? "\(streak)-Day Streak!" : "连续\(streak)天挑战！")
+                        .font(.subheadline.bold())
+                        .foregroundColor(streak >= 7 ? Theme.gold : Theme.flame)
+                    Text(L10n.isEnglish ? "Keep it going — don't break the chain!" : "继续保持，不要断链！")
+                        .font(.caption)
+                        .foregroundColor(Theme.textTertiary)
+                }
+                Spacer()
+                if streak >= 7 {
+                    Image(systemName: "star.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(Theme.gold)
+                }
             }
-            Spacer()
-            // 7天里程碑图标
-            if streak >= 7 {
-                Image(systemName: "star.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(Theme.gold)
+
+            // 下一个里程碑奖励预告
+            if let next = DailyChallenge.nextMilestone {
+                HStack(spacing: 6) {
+                    Text(next.icon)
+                        .font(.caption)
+                    Text(L10n.isEnglish
+                         ? "Day \(next.milestone): \(next.description)"
+                         : "第\(next.milestone)天: \(next.description)")
+                        .font(.caption2)
+                        .foregroundColor(Theme.gold)
+                    Spacer()
+                    // 进度条
+                    let progress = min(Double(streak) / Double(next.milestone), 1.0)
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Theme.bgInset)
+                            .frame(width: 50, height: 4)
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Theme.goldGradient)
+                            .frame(width: 50 * progress, height: 4)
+                    }
+                }
             }
         }
         .padding(Theme.spacingMD)

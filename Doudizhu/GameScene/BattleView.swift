@@ -6,6 +6,7 @@ struct BattleView: View {
     let onBack: () -> Void
     @ObservedObject var rogueRun: RogueRun
     let onShop: () -> Void
+    var onUpgrade: (() -> Void)?
     @State private var battleScene: BattleScene?
     @State private var showPatternGuide = false
     @StateObject private var achievementTracker = AchievementTracker.shared
@@ -32,10 +33,11 @@ struct BattleView: View {
         !UserDefaults.standard.bool(forKey: "gestureGuideCompleted")
     }
 
-    init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void) {
+    init(rogueRun: RogueRun, onBack: @escaping () -> Void, onShop: @escaping () -> Void, onUpgrade: (() -> Void)? = nil) {
         self.rogueRun = rogueRun
         self.onBack = onBack
         self.onShop = onShop
+        self.onUpgrade = onUpgrade
     }
 
     var body: some View {
@@ -886,6 +888,40 @@ struct BattleView: View {
                     RoundedRectangle(cornerRadius: Theme.radiusSM)
                         .fill(.ultraThinMaterial)
                 )
+
+                // 免费用户在高层失败 → 软付费提示（情感高点）
+                if !PurchaseManager.shared.isFullVersion && rogueRun.currentFloorIndex >= 4, let onUpgrade = onUpgrade {
+                    Button {
+                        onUpgrade()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "crown.fill")
+                                .foregroundColor(Theme.gold)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(L10n.isEnglish
+                                     ? "You were SO close! Unlock full adventure"
+                                     : "就差一点！解锁完整冒险继续挑战")
+                                    .font(.caption.bold())
+                                    .foregroundColor(Theme.textPrimary)
+                                Text(L10n.isEnglish ? "37% OFF — Launch Price" : "首发价 省37%")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(Theme.gold)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundColor(Theme.gold.opacity(0.6))
+                        }
+                        .padding(10)
+                        .background(
+                            RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                .fill(Theme.gold.opacity(0.08))
+                                .overlay(RoundedRectangle(cornerRadius: Theme.radiusMD)
+                                    .stroke(Theme.gold.opacity(0.2)))
+                        )
+                    }
+                    .frame(width: 280)
+                }
 
                 // 重试本关按钮
                 PrimaryButton(title: L10n.retryFloor, icon: "arrow.counterclockwise") {

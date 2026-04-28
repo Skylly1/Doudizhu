@@ -266,31 +266,35 @@ struct ShopView: View {
     // MARK: - 锁定规则牌预览
 
     private var lockedJokerTeaser: some View {
-        HStack(spacing: 12) {
-            // 半透明锁定图标
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Theme.bgInset)
-                    .frame(width: 44, height: 44)
-                Image(systemName: "lock.fill")
-                    .font(.title3)
-                    .foregroundColor(Theme.gold.opacity(0.5))
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Theme.bgInset)
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "lock.fill")
+                        .font(.title3)
+                        .foregroundColor(Theme.gold.opacity(0.5))
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L10n.isEnglish ? "Premium Jokers" : "高级规则牌")
+                        .font(.subheadline.bold())
+                        .foregroundColor(Theme.gold)
+                    Text(L10n.isEnglish ? "Unlock 60 unique Jokers & 3 more shops" : "完整版解锁 60 张规则牌 + 3 个商店")
+                        .font(.caption)
+                        .foregroundColor(Theme.textTertiary)
+                }
+
+                Spacer()
+
+                Text(L10n.isEnglish ? "37%OFF" : "省37%")
+                    .font(.system(size: 9, weight: .heavy))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(Theme.flame))
             }
-            
-            VStack(alignment: .leading, spacing: 3) {
-                Text(L10n.isEnglish ? "Premium Jokers" : "高级规则牌")
-                    .font(.subheadline.bold())
-                    .foregroundColor(Theme.gold)
-                Text(L10n.isEnglish ? "Unlock 50+ unique Jokers in full version" : "完整版解锁 50+ 独特规则牌")
-                    .font(.caption)
-                    .foregroundColor(Theme.textTertiary)
-            }
-            
-            Spacer()
-            
-            Image(systemName: "crown.fill")
-                .font(.caption)
-                .foregroundColor(Theme.gold.opacity(0.6))
         }
         .padding(12)
         .background(
