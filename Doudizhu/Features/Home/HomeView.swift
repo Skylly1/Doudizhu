@@ -41,7 +41,7 @@ struct FloatingParticles: View {
     }
 }
 
-/// 底部扑克牌扇形展示动画 — 大气的入口视觉
+/// 扑克牌扇形装饰 — 内联布局，固定高度
 struct CardFanDecor: View {
     @State private var appeared = false
 
@@ -51,18 +51,16 @@ struct CardFanDecor: View {
             let h = geo.size.height
             let centerX = w / 2
             let scale = Theme.screenScale
-            let cardW: CGFloat = 48 * scale
-            let cardH: CGFloat = 68 * scale
-            // 卡牌位于按钮区和底部横幅之间，填充视觉空隙
-            let baseY = h * 0.73
+            let cardW: CGFloat = 38 * scale
+            let cardH: CGFloat = 54 * scale
+            let baseY = h / 2  // 在容器中垂直居中
 
-            // 5 张扇形排列的卡牌
             let cards: [(rank: String, suit: String, color: Color, angle: Double, offsetX: CGFloat)] = [
-                ("A", "♠", Color(red: 0.15, green: 0.12, blue: 0.10), -18, -80),
-                ("K", "♥", Color(red: 0.72, green: 0.08, blue: 0.08), -9, -40),
+                ("A", "♠", Color(red: 0.15, green: 0.12, blue: 0.10), -16, -64 * scale),
+                ("K", "♥", Color(red: 0.72, green: 0.08, blue: 0.08), -8, -32 * scale),
                 ("Q", "♠", Color(red: 0.15, green: 0.12, blue: 0.10), 0, 0),
-                ("J", "♦", Color(red: 0.72, green: 0.08, blue: 0.08), 9, 40),
-                ("10", "♣", Color(red: 0.15, green: 0.12, blue: 0.10), 18, 80),
+                ("J", "♦", Color(red: 0.72, green: 0.08, blue: 0.08), 8, 32 * scale),
+                ("10", "♣", Color(red: 0.15, green: 0.12, blue: 0.10), 16, 64 * scale),
             ]
 
             ZStack {
@@ -71,58 +69,48 @@ struct CardFanDecor: View {
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.10),
+                                Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.08),
                                 Color.clear
                             ],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 120
+                            endRadius: 100
                         )
                     )
-                    .frame(width: 280, height: 80)
-                    .position(x: centerX, y: baseY + 20)
+                    .frame(width: 220, height: 60)
+                    .position(x: centerX, y: baseY + 10)
 
                 ForEach(Array(cards.enumerated()), id: \.offset) { index, card in
-                    // 单张卡牌
                     ZStack {
-                        // 牌面
-                        RoundedRectangle(cornerRadius: 5)
+                        RoundedRectangle(cornerRadius: 4)
                             .fill(Color(red: 0.95, green: 0.92, blue: 0.86))
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color(red: 0.72, green: 0.62, blue: 0.48).opacity(0.5), lineWidth: 0.8)
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color(red: 0.72, green: 0.62, blue: 0.48).opacity(0.4), lineWidth: 0.6)
 
-                        // 内框
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(Color(red: 0.72, green: 0.55, blue: 0.35).opacity(0.15), lineWidth: 0.4)
-                            .padding(3)
-
-                        VStack(spacing: 1) {
+                        VStack(spacing: 0) {
                             Text(card.rank)
-                                .font(.system(size: 16, weight: .bold, design: .serif))
+                                .font(.system(size: 13 * scale, weight: .bold, design: .serif))
                                 .foregroundColor(card.color)
                             Text(card.suit)
-                                .font(.system(size: 12))
+                                .font(.system(size: 9 * scale))
                                 .foregroundColor(card.color)
                         }
                     }
                     .frame(width: cardW, height: cardH)
-                    .shadow(color: .black.opacity(0.4), radius: 4, y: 3)
+                    .shadow(color: .black.opacity(0.3), radius: 3, y: 2)
                     .rotationEffect(.degrees(card.angle))
-                    .position(
-                        x: centerX + card.offsetX,
-                        y: baseY
-                    )
+                    .position(x: centerX + card.offsetX, y: baseY)
                     .opacity(appeared ? 1.0 : 0.0)
-                    .offset(y: appeared ? 0 : 30)
+                    .offset(y: appeared ? 0 : 20)
                     .animation(
-                        .spring(response: 0.6, dampingFraction: 0.7).delay(0.8 + Double(index) * 0.08),
+                        .spring(response: 0.5, dampingFraction: 0.7).delay(0.8 + Double(index) * 0.06),
                         value: appeared
                     )
                 }
             }
         }
         .allowsHitTesting(false)
-        .opacity(0.55)
+        .opacity(0.5)
         .onAppear { appeared = true }
     }
 }
@@ -264,11 +252,6 @@ struct HomeView: View {
 
             // 浮动粒子
             FloatingParticles()
-                .ignoresSafeArea()
-                .accessibilityHidden(true)
-
-            // 底部卡牌扇形装饰
-            CardFanDecor()
                 .ignoresSafeArea()
                 .accessibilityHidden(true)
 
@@ -417,8 +400,10 @@ struct HomeView: View {
                     .opacity(showButtons[3] ? 1.0 : 0)
                 }
 
-                Spacer(minLength: 16)
-                    .frame(maxHeight: Theme.isCompactScreen ? 40 : 70)
+                // 内联卡牌扇形装饰 — 按钮与横幅之间
+                CardFanDecor()
+                    .frame(height: Theme.isCompactScreen ? 50 : 65)
+                    .accessibilityHidden(true)
 
                 // 免费用户 — 升级提示横幅（菜单按钮下方，高可见度位置）
                 if !PurchaseManager.shared.isFullVersion {
