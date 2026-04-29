@@ -123,6 +123,8 @@ struct ContentView: View {
                         SaveManager.shared.save(run: rogueRun, buildId: "")
                         SoundManager.shared.stopBGM()
                         goHome()
+                    }, onUpgrade: {
+                        navigate(to: .demoGate)
                     })
                     .onAppear {
                         SoundManager.shared.startBGM(mode: .shop)

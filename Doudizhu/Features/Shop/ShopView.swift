@@ -5,6 +5,7 @@ struct ShopView: View {
     @ObservedObject var rogueRun: RogueRun
     let onLeave: () -> Void
     var onQuit: (() -> Void)? = nil
+    var onUpgrade: (() -> Void)? = nil
 
     @State private var shopItems: [ShopItem] = []
     @State private var jokerItems: [JokerShopItem] = []
@@ -113,8 +114,16 @@ struct ShopView: View {
 
                 // 锁定的高级规则牌预览（仅试玩用户可见）
                 if !PurchaseManager.shared.isFullVersion {
-                    lockedJokerTeaser
-                        .padding(.horizontal, Theme.spacingLG)
+                    Button {
+                        if let onUpgrade {
+                            Analytics.shared.track(.paywallShown, params: ["source": "shop_locked_teaser"])
+                            onUpgrade()
+                        }
+                    } label: {
+                        lockedJokerTeaser
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, Theme.spacingLG)
                 }
 
                 // 增益道具区

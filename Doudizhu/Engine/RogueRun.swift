@@ -1199,6 +1199,7 @@ enum HandSortMode: String, CaseIterable {
 
     /// 应用特殊事件选择
     func applyEventChoice(_ choice: EventChoice) {
+        var hadEffect = true
         switch choice.effect {
         case .gainGold(let amount):
             gold += amount
@@ -1216,7 +1217,7 @@ enum HandSortMode: String, CaseIterable {
                 PlayerStats.shared.totalGoldEarned += 30
             }
         case .buyRandomJoker(let cost):
-            guard gold >= cost else { break }
+            guard gold >= cost else { hadEffect = false; break }
             gold -= cost
             let owned2 = Set(activeJokers.map(\.effect))
             let available2 = Joker.allJokers.filter { !owned2.contains($0.effect) }
@@ -1238,17 +1239,23 @@ enum HandSortMode: String, CaseIterable {
             bonusPlays += count
         case .upgradeRandomJoker(let goldCost):
             if goldCost > 0 {
-                guard gold >= goldCost else { break }
+                guard gold >= goldCost else { hadEffect = false; break }
                 gold -= goldCost
             }
             gold += 30  // 简化补偿
         case .skipNextShop:
             break
         case .nothing:
-            break
+            hadEffect = false
         }
         PlayerStats.shared.save()  // 持久化事件中的金币变动
-        phase = .floorWin
+        // 有实际效果的选择 → 直接推进下一层（跳过"继续"弹框，体验更流畅）
+        // 无事发生 / 金币不足 → 走正常 floorWin 流程
+        if hadEffect {
+            advanceToNextFloor()
+        } else {
+            phase = .floorWin
+        }
     }
 
     /// 跳过特殊事件（无选项时的安全出口）
