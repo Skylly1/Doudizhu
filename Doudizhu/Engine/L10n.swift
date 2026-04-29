@@ -342,7 +342,9 @@ enum L10n {
     static var resetTutorial: String { localized("重置教程", en: "Reset Tutorial") }
     static var settingsLanguage: String { localized("语言", en: "Language") }
     static var settingsLanguageHint: String { localized("跟随系统语言设置", en: "Follows system language") }
-    static var settingsCurrentLang: String { localized("当前：中文", en: "Current: English") }
+    static var settingsCurrentLang: String {
+        localized("当前：中文", en: "Current: English", ja: "現在：日本語", ko: "현재: 한국어", fr: "Actuel : Français", de: "Aktuell: Deutsch", es: "Actual: Español", pt: "Atual: Português")
+    }
 
     // MARK: - 首页
     static func highestAscLabel(_ n: Int) -> String { localized("最高挑战: A\(n)", en: "Highest: A\(n)") }
@@ -865,7 +867,7 @@ enum L10n {
 
     // MARK: - 本地化引擎
 
-    private static func localized(
+    static func localized(
         _ zh: String,
         en: String,
         ja: String? = nil,

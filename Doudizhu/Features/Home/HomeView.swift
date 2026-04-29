@@ -218,7 +218,7 @@ struct HomeView: View {
         }
         .disabled(completed)
         .accessibilityLabel(completed ? L10n.a11yDailyChallengeComplete : L10n.a11yDailyChallenge)
-        .accessibilityHint(completed ? "今日挑战已完成" : "开始今日限定挑战")
+        .accessibilityHint(completed ? L10n.localized("今日挑战已完成", en: "Today's challenge completed") : L10n.localized("开始今日限定挑战", en: "Start today's daily challenge"))
     }
 
     var body: some View {
@@ -343,7 +343,7 @@ struct HomeView: View {
                         }
                         .padding(.horizontal, 40)
                         .accessibilityLabel(L10n.a11yContinueAdventure)
-                        .accessibilityHint("继续上次保存的冒险进度")
+                        .accessibilityHint(L10n.localized("继续上次保存的冒险进度", en: "Continue your saved adventure"))
                         .offset(y: showButtons[0] ? 0 : 30)
                         .opacity(showButtons[0] ? 1.0 : 0)
                     }
@@ -361,7 +361,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, 40)
                     .accessibilityLabel(hasSavedGame ? L10n.a11yNewAdventure : L10n.a11yStartAdventure)
-                    .accessibilityHint("开始新的一局游戏")
+                    .accessibilityHint(L10n.localized("开始新的一局游戏", en: "Start a new game"))
                     .offset(y: showButtons[1] ? 0 : 30)
                     .opacity(showButtons[1] ? 1.0 : 0)
 
@@ -376,7 +376,7 @@ struct HomeView: View {
                             }
                         }
                         .accessibilityLabel(L10n.a11yQuickStart)
-                        .accessibilityHint("跳过地图直接开始游戏")
+                        .accessibilityHint(L10n.localized("跳过地图直接开始游戏", en: "Skip map and start game directly"))
                         dailyChallengeButton
                     }
                     .padding(.horizontal, 40)
@@ -388,12 +388,12 @@ struct HomeView: View {
                             onNavigate(.collection)
                         }
                         .accessibilityLabel(L10n.a11yCardCollection)
-                        .accessibilityHint("查看卡牌图鉴和成就")
+                        .accessibilityHint(L10n.localized("查看卡牌图鉴和成就", en: "View card collection and achievements"))
                         SecondaryButton(title: L10n.settings, icon: "gearshape.fill") {
                             onNavigate(.settings)
                         }
                         .accessibilityLabel(L10n.a11ySettings)
-                        .accessibilityHint("打开游戏设置")
+                        .accessibilityHint(L10n.localized("打开游戏设置", en: "Open game settings"))
                     }
                     .padding(.horizontal, 40)
                     .offset(y: showButtons[3] ? 0 : 30)

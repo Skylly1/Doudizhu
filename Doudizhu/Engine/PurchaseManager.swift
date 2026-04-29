@@ -172,7 +172,7 @@ final class PurchaseManager: ObservableObject {
 
     /// 格式化价格 — fallback 必须与 App Store Connect 定价一致
     var formattedPrice: String {
-        product?.displayPrice ?? (L10n.isEnglish ? "$4.99" : "¥25")
+        product?.displayPrice ?? "—"
     }
 
     /// 待审批购买的用户提示文案

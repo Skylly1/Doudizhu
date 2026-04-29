@@ -281,7 +281,7 @@ struct BattleView: View {
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
             .accessibilityLabel(L10n.a11yPause)
-            .accessibilityHint("打开暂停菜单")
+            .accessibilityHint(L10n.localized("打开暂停菜单", en: "Open pause menu"))
 
             // 关卡名 + 目标分，合并为一行
             HStack(spacing: 4) {
@@ -328,7 +328,7 @@ struct BattleView: View {
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
             .accessibilityLabel(L10n.a11yPatternRef)
-            .accessibilityHint("查看所有牌型说明")
+            .accessibilityHint(L10n.localized("查看所有牌型说明", en: "View all hand type descriptions"))
             .sheet(isPresented: $showPatternGuide) {
                 PatternGuideView()
             }
@@ -694,7 +694,7 @@ struct BattleView: View {
             }
             .disabled(rogueRun.discardsRemaining <= 0 || rogueRun.phase != .selecting)
             .accessibilityLabel(L10n.a11yDiscard)
-            .accessibilityHint("弃掉选中的牌并抽新牌")
+            .accessibilityHint(L10n.localized("弃掉选中的牌并抽新牌", en: "Discard selected cards and draw new ones"))
             .accessibilityValue("剩余\(rogueRun.discardsRemaining)次")
 
             // 出牌按钮
@@ -732,7 +732,7 @@ struct BattleView: View {
             }
             .disabled(rogueRun.playsRemaining <= 0 || rogueRun.phase != .selecting)
             .accessibilityLabel(L10n.a11yPlayCards)
-            .accessibilityHint("打出选中的牌型得分")
+            .accessibilityHint(L10n.localized("打出选中的牌型得分", en: "Play selected cards to score"))
             .accessibilityValue("剩余\(rogueRun.playsRemaining)次")
             }
             .padding(.horizontal, Theme.spacingMD)

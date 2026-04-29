@@ -549,7 +549,7 @@ struct DemoGateView: View {
             }
             .disabled(purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading || purchaseManager.purchaseState == .pending)
             .accessibilityLabel(L10n.a11yUnlockFull)
-            .accessibilityHint("购买完整版游戏，价格\(purchaseManager.formattedPrice)")
+            .accessibilityHint(L10n.localized("购买完整版游戏，价格\(purchaseManager.formattedPrice)", en: "Purchase full version for \(purchaseManager.formattedPrice)"))
 
             // 购买失败提示
             if case .failed(let msg) = purchaseManager.purchaseState {
@@ -595,7 +595,7 @@ struct DemoGateView: View {
                     )
                 }
                 .accessibilityLabel(L10n.a11yFreePreview)
-                .accessibilityHint("免费体验一层，不需要付费")
+                .accessibilityHint(L10n.localized("免费体验一层，不需要付费", en: "Try one floor for free, no purchase needed"))
             }
 
             // 恢复购买
@@ -607,7 +607,7 @@ struct DemoGateView: View {
             .frame(minHeight: 44)
             .contentShape(Rectangle())
             .accessibilityLabel(L10n.a11yRestorePurchase)
-            .accessibilityHint("恢复之前的购买记录")
+            .accessibilityHint(L10n.localized("恢复之前的购买记录", en: "Restore previous purchases"))
 
             // 每日挑战免费提示 + 返回
             HStack(spacing: 16) {
@@ -627,7 +627,7 @@ struct DemoGateView: View {
                 .frame(minHeight: 44)
                 .contentShape(Rectangle())
                 .accessibilityLabel(L10n.a11yBackToMenu)
-                .accessibilityHint("不购买，返回主菜单")
+                .accessibilityHint(L10n.localized("不购买，返回主菜单", en: "Skip purchase, return to main menu"))
             }
             .padding(.top, 4)
 

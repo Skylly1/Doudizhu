@@ -22,10 +22,8 @@ enum LocalNotificationManager {
 
         // 24h reminder
         let content24 = UNMutableNotificationContent()
-        content24.title = L10n.isEnglish ? "Your adventure awaits!" : "你的冒险还在等你！"
-        content24.body = L10n.isEnglish
-            ? "Your deck is ready — continue your Roguelike run! 🃏"
-            : "你的牌组已就绪 — 继续闯关吧！🃏"
+        content24.title = L10n.localized("你的冒险还在等你！", en: "Your adventure awaits!")
+        content24.body = L10n.localized("你的牌组已就绪 — 继续闯关吧！🃏", en: "Your deck is ready — continue your Roguelike run! 🃏")
         content24.sound = .default
 
         let trigger24 = UNTimeIntervalNotificationTrigger(timeInterval: 24 * 3600, repeats: false)
@@ -34,10 +32,8 @@ enum LocalNotificationManager {
 
         // 72h reminder (different message)
         let content72 = UNMutableNotificationContent()
-        content72.title = L10n.isEnglish ? "New daily challenge available!" : "今日挑战已更新！"
-        content72.body = L10n.isEnglish
-            ? "A new challenge is waiting — can you beat yesterday's score? 🏆"
-            : "新的挑战等你来战 — 能超越昨天的记录吗？🏆"
+        content72.title = L10n.localized("今日挑战已更新！", en: "New daily challenge available!")
+        content72.body = L10n.localized("新的挑战等你来战 — 能超越昨天的记录吗？🏆", en: "A new challenge is waiting — can you beat yesterday's score? 🏆")
         content72.sound = .default
 
         let trigger72 = UNTimeIntervalNotificationTrigger(timeInterval: 72 * 3600, repeats: false)
@@ -57,10 +53,8 @@ enum LocalNotificationManager {
         center.removePendingNotificationRequests(withIdentifiers: ["daily_challenge"])
 
         let content = UNMutableNotificationContent()
-        content.title = L10n.isEnglish ? "Daily Challenge Ready!" : "每日挑战已就绪！"
-        content.body = L10n.isEnglish
-            ? "Don't break your streak — today's challenge is waiting! 🔥"
-            : "别断了连胜记录 — 今天的挑战等你来！🔥"
+        content.title = L10n.localized("每日挑战已就绪！", en: "Daily Challenge Ready!")
+        content.body = L10n.localized("别断了连胜记录 — 今天的挑战等你来！🔥", en: "Don't break your streak — today's challenge is waiting! 🔥")
         content.sound = .default
 
         // Trigger at 10:00 AM local time every day

@@ -151,12 +151,14 @@ struct DailyChallenge {
         let description: String
     }
 
-    static let streakRewards: [StreakReward] = [
-        StreakReward(milestone: 3, icon: "💰", name: L10n.isEnglish ? "3-Day Gold" : "三日奖金", description: L10n.isEnglish ? "+50 Gold next run" : "下次冒险+50金币"),
-        StreakReward(milestone: 7, icon: "🃏", name: L10n.isEnglish ? "Weekly Joker" : "周挑战规则牌", description: L10n.isEnglish ? "Free random Joker" : "免费随机规则牌"),
-        StreakReward(milestone: 14, icon: "⚡", name: L10n.isEnglish ? "Biweekly Buff" : "双周增益", description: L10n.isEnglish ? "Rare Buff next run" : "下次冒险稀有增益"),
-        StreakReward(milestone: 30, icon: "👑", name: L10n.isEnglish ? "Monthly Legend" : "月度传奇", description: L10n.isEnglish ? "Legendary Badge" : "传奇徽章"),
-    ]
+    static var streakRewards: [StreakReward] {
+        [
+            StreakReward(milestone: 3, icon: "💰", name: L10n.localized("三日奖金", en: "3-Day Gold"), description: L10n.localized("下次冒险+50金币", en: "+50 Gold next run")),
+            StreakReward(milestone: 7, icon: "🃏", name: L10n.localized("周挑战规则牌", en: "Weekly Joker"), description: L10n.localized("免费随机规则牌", en: "Free random Joker")),
+            StreakReward(milestone: 14, icon: "⚡", name: L10n.localized("双周增益", en: "Biweekly Buff"), description: L10n.localized("下次冒险稀有增益", en: "Rare Buff next run")),
+            StreakReward(milestone: 30, icon: "👑", name: L10n.localized("月度传奇", en: "Monthly Legend"), description: L10n.localized("传奇徽章", en: "Legendary Badge")),
+        ]
+    }
 
     /// 下一个未领取的里程碑奖励
     static var nextMilestone: StreakReward? {

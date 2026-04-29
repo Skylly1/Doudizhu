@@ -160,14 +160,14 @@ struct IconExporterView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("App Icon 导出工具")
+            Text(L10n.localized("App Icon 导出工具", en: "App Icon Export Tool"))
                 .font(.title2.bold())
                 .foregroundColor(.white)
 
             AppIconPreview(size: 300)
                 .clipShape(RoundedRectangle(cornerRadius: 66))
 
-            Text("点击下方按钮，将 1024×1024 Icon 保存到相册")
+            Text(L10n.localized("点击下方按钮，将 1024×1024 Icon 保存到相册", en: "Tap below to save 1024×1024 icon to Photos"))
                 .font(.caption)
                 .foregroundColor(.gray)
 
@@ -178,14 +178,14 @@ struct IconExporterView: View {
                     switch exportState {
                     case .idle:
                         Image(systemName: "square.and.arrow.down")
-                        Text("导出到相册")
+                        Text(L10n.localized("导出到相册", en: "Export to Photos"))
                     case .exporting:
                         ProgressView()
                             .tint(.white)
-                        Text("导出中…")
+                        Text(L10n.localized("导出中…", en: "Exporting…"))
                     case .success:
                         Image(systemName: "checkmark.circle.fill")
-                        Text("已保存到相册 ✓")
+                        Text(L10n.localized("已保存到相册 ✓", en: "Saved to Photos ✓"))
                     case .failed(let msg):
                         Image(systemName: "xmark.circle.fill")
                         Text(msg)
@@ -203,7 +203,7 @@ struct IconExporterView: View {
             .disabled(isExporting)
             .padding(.horizontal, 40)
 
-            Text("保存后从相册获取图片，放入:\nAssets.xcassets/AppIcon.appiconset/AppIcon.png")
+            Text(L10n.localized("保存后从相册获取图片，放入:\nAssets.xcassets/AppIcon.appiconset/AppIcon.png", en: "After saving, get the image from Photos and place in:\nAssets.xcassets/AppIcon.appiconset/AppIcon.png"))
                 .font(.caption2)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -218,7 +218,7 @@ struct IconExporterView: View {
         let renderer = ImageRenderer(content: AppIconPreview(size: 1024))
         renderer.scale = 1.0
         guard let uiImage = renderer.uiImage else {
-            exportState = .failed("渲染失败")
+            exportState = .failed(L10n.localized("渲染失败", en: "Render failed"))
             return
         }
         UIImageWriteToSavedPhotosAlbum(uiImage, nil, nil, nil)

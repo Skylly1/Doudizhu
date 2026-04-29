@@ -47,7 +47,7 @@ final class ContextualHintManager: ObservableObject {
         var message: String {
             switch self {
             case .bossIntro(let names):
-                let mods = names.joined(separator: "、")
+                let mods = ListFormatter.localizedString(byJoining: names)
                 return L10n.isEnglish
                     ? "Boss floors have special rules: \(mods). Plan your strategy carefully!"
                     : "Boss 关有特殊规则：\(mods)。提前规划你的出牌策略！"
