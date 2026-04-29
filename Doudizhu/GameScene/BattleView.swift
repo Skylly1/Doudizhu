@@ -85,9 +85,9 @@ struct BattleView: View {
                 }
                 Spacer()
                 scoreTargetBar
-                    .padding(.bottom, 4)
+                    .padding(.bottom, 6)
                 actionButtons
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 12)
             }
             .padding(.bottom, 0)
             .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 0) }
@@ -382,7 +382,7 @@ struct BattleView: View {
     // MARK: - 分数进度条
 
     private var scoreTargetBar: some View {
-        VStack(spacing: 3) {
+        VStack(spacing: 6) {
             // Boss 修改器警告（compact inline）
             if let boss = rogueRun.bossState {
                 ScrollView(.horizontal, showsIndicators: false) {
