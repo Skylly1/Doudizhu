@@ -147,19 +147,19 @@ enum HandSortMode: String, CaseIterable {
     // 状态
     @Published var phase: GamePhase = .dealing
     @Published var currentFloorIndex: Int = 0
-    @Published var floorScore: Int = 0          // 本层得分
-    @Published var totalScore: Int = 0          // 总得分
-    @Published var playsRemaining: Int = 0      // 剩余出牌次数
+    var floorScore: Int = 0          // 本层得分
+    var totalScore: Int = 0          // 总得分
+    var playsRemaining: Int = 0      // 剩余出牌次数
     @Published var discardsRemaining: Int = 0   // 剩余弃牌次数
     @Published var gold: Int = 150              // 金币
     @Published var multiplier: Double = 1.0     // 全局倍率
     @Published var activeBuffs: [Buff] = []
     @Published var activeJokers: [Joker] = []    // 规则牌（最多5张）
     @Published var handCards: [Card] = []
-    @Published var lastPlayResult: PlayResult?
-    @Published var combo: Int = 0               // 连续出牌计数（连击加分）
-    @Published var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
-    @Published var playHistory: [PlayResult] = []   // 本层出牌记录
+    var lastPlayResult: PlayResult?
+    var combo: Int = 0               // 连续出牌计数（连击加分）
+    var lastScoreEarned: Int = 0      // 上次出牌得分（破甲用）
+    var playHistory: [PlayResult] = []   // 本层出牌记录
     @Published var ascensionLevel: Int = 0    // 挑战等级（0-10）
     @Published var handSortMode: HandSortMode = .byRank  // 手牌排序模式
     var bossState: BossState?                  // 当前Boss关状态（非Boss关为nil）
@@ -293,6 +293,9 @@ enum HandSortMode: String, CaseIterable {
             return
         }
         
+        // PERF-07: Batch property mutations — single objectWillChange before all state changes
+        objectWillChange.send()
+
         floorScore = 0
         playsRemaining = floor.maxPlays + bonusPlays
         bonusPlays = 0  // 消费后清零
@@ -449,6 +452,9 @@ enum HandSortMode: String, CaseIterable {
         // Daily challenge: allOrNothing — only bombs and rockets score
         let isAllOrNothing = dailyChallenge?.modifiers.contains(.allOrNothing) == true
         let isBombOrRocket = pattern.type == .bomb || pattern.type == .rocket
+
+        // PERF-07: Batch property mutations — single objectWillChange before all state changes
+        objectWillChange.send()
 
         // 消耗出牌次数
         playsRemaining -= 1
@@ -844,6 +850,9 @@ enum HandSortMode: String, CaseIterable {
             return false
         }
 
+        // PERF-07: Batch property mutations
+        objectWillChange.send()
+
         discardsRemaining -= 1
         // 冰封之心 Buff: 弃牌不打断连击
         let hasClubInDiscard = hasJoker(.clubShield) && cards.contains(where: { $0.suit == .club })
@@ -1129,6 +1138,9 @@ enum HandSortMode: String, CaseIterable {
         UserDefaults.standard.set(games, forKey: gamesKey)
         if games >= 10 { AchievementTracker.shared.tryUnlock("games_10") }
         if games >= 50 { AchievementTracker.shared.tryUnlock("games_50") }
+
+        // PERF-07: Batch property mutations — single objectWillChange before all state changes
+        objectWillChange.send()
 
         currentFloorIndex = 0
         totalScore = 0

@@ -127,11 +127,12 @@ class BattleScene: SKScene {
 
     /// 排列手牌 — 扇形布局，动态缩放卡牌尺寸
     func layoutHand() {
-        cardNodes.forEach { $0.removeFromParent() }
-        cardNodes.removeAll()
-        selectedCards.removeAll()
-
-        guard let cards = rogueRun?.handCards, !cards.isEmpty else { return }
+        guard let cards = rogueRun?.handCards, !cards.isEmpty else {
+            cardNodes.forEach { $0.removeFromParent() }
+            cardNodes.removeAll()
+            selectedCards.removeAll()
+            return
+        }
 
         let count = cards.count
 
@@ -159,56 +160,74 @@ class BattleScene: SKScene {
         let maxAngle: CGFloat = count > 5 ? 0.032 : 0.018
         let arcHeight: CGFloat = count > 5 ? 12 : 5
 
+        // PERF-02: Incremental update — only add/remove changed cards
+        let currentCardIds = Set(cards.map { $0.id })
+        let existingCardIds = Set(cardNodes.map { $0.card.id })
+
+        // Remove cards no longer in hand
+        cardNodes.removeAll { node in
+            if !currentCardIds.contains(node.card.id) {
+                node.removeFromParent()
+                return true
+            }
+            return false
+        }
+        selectedCards = selectedCards.filter { currentCardIds.contains($0) }
+
+        // Create map of existing nodes
+        var nodeMap: [UUID: CardNode] = [:]
+        for node in cardNodes { nodeMap[node.card.id] = node }
+
+        // Rebuild cardNodes array in correct order, creating new nodes as needed
+        var newCardNodes: [CardNode] = []
         for (index, card) in cards.enumerated() {
-            let node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))
+            let node: CardNode
+            let isNewNode: Bool
+            if let existing = nodeMap[card.id] {
+                node = existing
+                isNewNode = false
+            } else {
+                // New card — create with entrance animation
+                node = CardNode(card: card, size: CGSize(width: cardWidth, height: cardHeight))
+                node.alpha = 0
+                addChild(node)
+                isNewNode = true
+            }
 
+            // Calculate target position
             let progress = count > 1 ? CGFloat(index) / CGFloat(count - 1) : 0.5
-            let centered = progress - 0.5  // -0.5 到 0.5
-
-            // 扇形弧线 Y 偏移
-            let arcY = -arcHeight * (centered * centered * 4)  // 抛物线
+            let centered = progress - 0.5
+            let arcY = -arcHeight * (centered * centered * 4)
             let rotation = -centered * maxAngle * CGFloat(count)
+            let targetPos = CGPoint(x: startX + CGFloat(index) * overlap, y: baseY + arcY)
 
-            node.position = CGPoint(
-                x: startX + CGFloat(index) * overlap,
-                y: baseY + arcY
-            )
-            node.zRotation = rotation
+            // Animate to new position (slower for new cards, fast for repositioning)
+            let duration: TimeInterval = isNewNode ? 0.35 : 0.15
+            node.run(SKAction.group([
+                SKAction.move(to: targetPos, duration: duration),
+                SKAction.rotate(toAngle: rotation, duration: duration),
+                SKAction.fadeIn(withDuration: 0.2)
+            ]))
             node.zPosition = CGFloat(index)
 
-            // 入场动画
-            let finalPos = node.position
-            let finalRot = node.zRotation
-            node.position.y = -cardHeight
-            node.alpha = 0
-            node.zRotation = 0
+            newCardNodes.append(node)
+        }
+        cardNodes = newCardNodes
 
-            let delay = SKAction.wait(forDuration: Double(index) * 0.04)
-            let moveUp = SKAction.move(to: finalPos, duration: 0.35)
-            moveUp.timingMode = .easeOut
-            let fadeIn = SKAction.fadeIn(withDuration: 0.2)
-            let rotate = SKAction.rotate(toAngle: finalRot, duration: 0.35)
-            rotate.timingMode = .easeOut
-
-            node.run(SKAction.sequence([
-                delay,
-                SKAction.group([moveUp, fadeIn, rotate])
-            ]))
-
-            addChild(node)
-            cardNodes.append(node)
-
-            // phantomCards: 幻影牌半透明 + 问号标记
-            if let boss = rogueRun?.bossState, boss.phantomCardIds.contains(card.id) {
+        // phantomCards: 幻影牌半透明 + 问号标记
+        if let boss = rogueRun?.bossState {
+            for node in cardNodes where boss.phantomCardIds.contains(node.card.id) {
                 node.alpha = 0.5
-                let phantom = SKLabelNode(text: "?")
-                phantom.fontName = Theme.spriteKitSerifFontName
-                phantom.fontSize = cardWidth * 0.4
-                phantom.fontColor = SKColor(red: 0.82, green: 0.22, blue: 0.18, alpha: 0.8)
-                phantom.verticalAlignmentMode = .center
-                phantom.zPosition = 10
-                phantom.name = "phantomMark"
-                node.addChild(phantom)
+                if node.childNode(withName: "phantomMark") == nil {
+                    let phantom = SKLabelNode(text: "?")
+                    phantom.fontName = Theme.spriteKitSerifFontName
+                    phantom.fontSize = node.size.width * 0.4
+                    phantom.fontColor = SKColor(red: 0.82, green: 0.22, blue: 0.18, alpha: 0.8)
+                    phantom.verticalAlignmentMode = .center
+                    phantom.zPosition = 10
+                    phantom.name = "phantomMark"
+                    node.addChild(phantom)
+                }
             }
         }
     }
