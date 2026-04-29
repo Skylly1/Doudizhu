@@ -2,42 +2,50 @@ import SwiftUI
 
 struct FloatingParticles: View {
     let count: Int = 30
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0/30)) { timeline in
-            Canvas { context, size in
-                let time = timeline.date.timeIntervalSinceReferenceDate
-                for i in 0..<count {
-                    let seed = Double(i) * 137.5
-                    let x = (sin(seed + time * 0.25) * 0.5 + 0.5) * size.width
-                    let progress = fmod(seed * 0.01 + time * (0.015 + Double(i) * 0.0015), 1.0)
-                    let y = size.height * (1.0 - progress)
-                    let opacity = sin(progress * .pi) * 0.6
-                    // 混合大小：部分大颗粒（像萤火虫），部分小颗粒
-                    let isLarge = i % 4 == 0
-                    let radius: Double = isLarge ? (3.5 + sin(seed) * 2.0) : (1.8 + sin(seed) * 1.0)
-                    let glowRadius: Double = isLarge ? 6.0 : 0.0
+        if scenePhase == .active {
+            TimelineView(.animation(minimumInterval: 1.0/30)) { timeline in
+                particleCanvas(time: timeline.date.timeIntervalSinceReferenceDate)
+            }
+            .allowsHitTesting(false)
+        } else {
+            // Static frame when backgrounded — no animation cost
+            particleCanvas(time: Date().timeIntervalSinceReferenceDate)
+                .allowsHitTesting(false)
+        }
+    }
 
-                    // 大颗粒加辉光效果
-                    if isLarge && opacity > 0.2 {
-                        context.opacity = opacity * 0.3
-                        context.fill(
-                            Circle().path(in: CGRect(x: x - glowRadius, y: y - glowRadius,
-                                                      width: glowRadius * 2, height: glowRadius * 2)),
-                            with: .color(Color(red: 0.90, green: 0.75, blue: 0.35))
-                        )
-                    }
+    private func particleCanvas(time: Double) -> some View {
+        Canvas { context, size in
+            for i in 0..<count {
+                let seed = Double(i) * 137.5
+                let x = (sin(seed + time * 0.25) * 0.5 + 0.5) * size.width
+                let progress = fmod(seed * 0.01 + time * (0.015 + Double(i) * 0.0015), 1.0)
+                let y = size.height * (1.0 - progress)
+                let opacity = sin(progress * .pi) * 0.6
+                let isLarge = i % 4 == 0
+                let radius: Double = isLarge ? (3.5 + sin(seed) * 2.0) : (1.8 + sin(seed) * 1.0)
+                let glowRadius: Double = isLarge ? 6.0 : 0.0
 
-                    context.opacity = opacity
+                if isLarge && opacity > 0.2 {
+                    context.opacity = opacity * 0.3
                     context.fill(
-                        Circle().path(in: CGRect(x: x - radius, y: y - radius,
-                                                  width: radius * 2, height: radius * 2)),
-                        with: .color(Color(red: 0.85, green: 0.68, blue: 0.28))
+                        Circle().path(in: CGRect(x: x - glowRadius, y: y - glowRadius,
+                                                  width: glowRadius * 2, height: glowRadius * 2)),
+                        with: .color(Color(red: 0.90, green: 0.75, blue: 0.35))
                     )
                 }
+
+                context.opacity = opacity
+                context.fill(
+                    Circle().path(in: CGRect(x: x - radius, y: y - radius,
+                                              width: radius * 2, height: radius * 2)),
+                    with: .color(Color(red: 0.85, green: 0.68, blue: 0.28))
+                )
             }
         }
-        .allowsHitTesting(false)
     }
 }
 

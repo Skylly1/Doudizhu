@@ -483,8 +483,8 @@ final class SoundManager {
         let noteCount = Int.random(in: 6...9)
 
         for i in 0..<noteCount {
-            let freq = pentatonic.randomElement()!
-            let dur = noteDurations.randomElement()!
+            let freq = pentatonic.randomElement() ?? 440
+            let dur = noteDurations.randomElement() ?? 0.4
             let amp: Float = Float.random(in: 0.03...0.06)
 
             let note = envelope(
@@ -526,8 +526,8 @@ final class SoundManager {
         let noteCount = Int.random(in: 5...8)
 
         for i in 0..<noteCount {
-            let freq = darkScale.randomElement()!
-            let dur = noteDurations.randomElement()!
+            let freq = darkScale.randomElement() ?? 196
+            let dur = noteDurations.randomElement() ?? 0.5
             let amp: Float = Float.random(in: 0.04...0.08)
 
             let note = envelope(
@@ -576,8 +576,8 @@ final class SoundManager {
         let noteCount = Int.random(in: 7...10)
 
         for i in 0..<noteCount {
-            let freq = lightScale.randomElement()!
-            let dur = noteDurations.randomElement()!
+            let freq = lightScale.randomElement() ?? 660
+            let dur = noteDurations.randomElement() ?? 0.3
             let amp: Float = Float.random(in: 0.02...0.04)
 
             let note = envelope(

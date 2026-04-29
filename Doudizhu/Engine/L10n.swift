@@ -10,11 +10,11 @@ enum L10n {
         case zh, en, ja, ko, fr, de, es, pt
     }
 
-    /// 当前语言（跟随系统设置）
-    static var currentLanguage: Language {
+    /// 当前语言（跟随系统设置，启动时确定一次）
+    static let currentLanguage: Language = {
         guard let code = Locale.current.language.languageCode?.identifier else { return .en }
         return Language(rawValue: code) ?? .en
-    }
+    }()
 
     /// 非中文环境统一回退英文（兼容 inline 三元表达式）
     static var isEnglish: Bool { currentLanguage != .zh }

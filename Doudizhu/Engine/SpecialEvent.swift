@@ -366,7 +366,7 @@ enum SpecialEventGenerator {
     }
 
     private static func windfall() -> SpecialEvent {
-        let amount = [30, 50, 80].randomElement()!
+        let amount = [30, 50, 80].randomElement() ?? 50
         return SpecialEvent(
             type: .windfall,
             title: L10n.isEnglish ? "Windfall" : "天降横财",

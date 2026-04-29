@@ -879,7 +879,7 @@ class BattleScene: SKScene {
         ]
         for _ in 0..<count {
             let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
-            particle.fillColor = colors.randomElement()!
+            particle.fillColor = colors.randomElement() ?? .white
             particle.strokeColor = .clear
             particle.position = pos
             particle.zPosition = 150
@@ -950,7 +950,7 @@ class BattleScene: SKScene {
         // 洒落金色粒子
         for i in 0..<30 {
             let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
-            particle.fillColor = goldColors.randomElement()!
+            particle.fillColor = goldColors.randomElement() ?? .white
             particle.strokeColor = .clear
             particle.position = CGPoint(
                 x: CGFloat.random(in: 0...size.width),
@@ -1056,7 +1056,7 @@ class BattleScene: SKScene {
 
             for _ in 0..<20 {
                 let spark = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...4))
-                spark.fillColor = celebColors.randomElement()!
+                spark.fillColor = celebColors.randomElement() ?? .white
                 spark.strokeColor = .clear
                 spark.position = center
                 spark.zPosition = 200
@@ -1134,7 +1134,7 @@ class BattleScene: SKScene {
             guard let self else { return }
             for _ in 0..<25 {
                 let spark = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
-                spark.fillColor = celebColors.randomElement()!
+                spark.fillColor = celebColors.randomElement() ?? .white
                 spark.strokeColor = .clear
                 let cx = CGFloat.random(in: self.size.width * 0.15...self.size.width * 0.85)
                 let cy = CGFloat.random(in: self.size.height * 0.35...self.size.height * 0.75)

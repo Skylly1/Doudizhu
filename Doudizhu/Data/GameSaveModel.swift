@@ -50,6 +50,14 @@ final class GameSaveModel {
     // MARK: 额外出牌次数（UF-03）
     var bonusPlays: Int
 
+    // MARK: Joker 状态字段（UF-05）
+    var usedPatternTypesData: Data   // Set<PatternType> JSON
+    var lastPatternWasBomb: Bool
+    var justDiscarded: Bool
+    var lastPatternTypeRaw: String   // PatternType.rawValue 或 ""
+    var recyclerChipBonus: Int
+    var totalCardsPlayed: Int
+
     /// 存档版本号 — 用于未来迁移
     var schemaVersion: Int
 
@@ -81,6 +89,12 @@ final class GameSaveModel {
         bossPhantomCardIds: [String] = [],
         bossBannedPatternRaw: String = "",
         bonusPlays: Int = 0,
+        usedPatternTypesData: Data = Data(),
+        lastPatternWasBomb: Bool = false,
+        justDiscarded: Bool = false,
+        lastPatternTypeRaw: String = "",
+        recyclerChipBonus: Int = 0,
+        totalCardsPlayed: Int = 0,
         schemaVersion: Int = 1
     ) {
         self.runId = runId
@@ -110,6 +124,12 @@ final class GameSaveModel {
         self.bossPhantomCardIds = bossPhantomCardIds
         self.bossBannedPatternRaw = bossBannedPatternRaw
         self.bonusPlays = bonusPlays
+        self.usedPatternTypesData = usedPatternTypesData
+        self.lastPatternWasBomb = lastPatternWasBomb
+        self.justDiscarded = justDiscarded
+        self.lastPatternTypeRaw = lastPatternTypeRaw
+        self.recyclerChipBonus = recyclerChipBonus
+        self.totalCardsPlayed = totalCardsPlayed
         self.schemaVersion = schemaVersion
     }
 }
@@ -124,6 +144,7 @@ extension GameSaveModel {
         let drawData = (try? encoder.encode(run.drawPile)) ?? Data()
         let jokersData = (try? encoder.encode(run.activeJokers)) ?? Data()
         let buffsData = (try? encoder.encode(run.activeBuffs)) ?? Data()
+        let usedPatternsData = (try? encoder.encode(run.usedPatternTypes)) ?? Data()
 
         let phaseString: String
         switch run.phase {
@@ -134,7 +155,7 @@ extension GameSaveModel {
         case .floorFail: phaseString = "floorFail"
         case .victory: phaseString = "victory"
         case .scoring: phaseString = "scoring"
-        case .specialEvent: phaseString = "selecting"
+        case .specialEvent: phaseString = "specialEvent"
         }
 
         // BossState 持久化（UF-02）
@@ -171,7 +192,13 @@ extension GameSaveModel {
             bossSilencedJokerIndex: bossSil,
             bossPhantomCardIds: bossPha,
             bossBannedPatternRaw: bossBan,
-            bonusPlays: run.bonusPlays
+            bonusPlays: run.bonusPlays,
+            usedPatternTypesData: usedPatternsData,
+            lastPatternWasBomb: run.lastPatternWasBomb,
+            justDiscarded: run.justDiscarded,
+            lastPatternTypeRaw: run.lastPatternType?.rawValue ?? "",
+            recyclerChipBonus: run.recyclerChipBonus,
+            totalCardsPlayed: run.totalCardsPlayed
         )
     }
 
@@ -196,6 +223,14 @@ extension GameSaveModel {
 
         // UF-03: 恢复额外出牌次数
         run.bonusPlays = bonusPlays
+
+        // UF-05: 恢复 Joker 状态字段
+        run.lastPatternWasBomb = lastPatternWasBomb
+        run.justDiscarded = justDiscarded
+        run.lastPatternType = lastPatternTypeRaw.isEmpty ? nil : PatternType(rawValue: lastPatternTypeRaw)
+        run.recyclerChipBonus = recyclerChipBonus
+        run.totalCardsPlayed = totalCardsPlayed
+        run.usedPatternTypes = (try? decoder.decode(Set<PatternType>.self, from: usedPatternTypesData)) ?? []
 
         run.handCards = (try? decoder.decode([Card].self, from: handCardsData)) ?? []
         run.drawPile = (try? decoder.decode([Card].self, from: drawPileData)) ?? []
@@ -232,6 +267,9 @@ extension GameSaveModel {
         case "victory":
             // 通关胜利 — 恢复为胜利阶段，让用户看到胜利弹窗
             run.phase = .victory
+        case "specialEvent":
+            // UF-07: 特殊事件阶段 — 事件数据无法序列化，恢复为选牌（安全回退）
+            run.phase = .selecting
         case "scoring":
             // UF-06: scoring 阶段存档 — 当作计分已完成，恢复为选牌
             let floors = run.dailyChallenge != nil ? FloorConfig.dailyChallengeFloors : FloorConfig.allFloors

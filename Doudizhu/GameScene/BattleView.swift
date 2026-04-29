@@ -192,7 +192,9 @@ struct BattleView: View {
         }
         .onAppear {
             if battleScene == nil {
-                let scene = BattleScene(size: UIScreen.main.bounds.size)
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+                let size = windowScene?.screen.bounds.size ?? CGSize(width: 390, height: 844)
+                let scene = BattleScene(size: size)
                 scene.scaleMode = .resizeFill
                 scene.rogueRun = rogueRun
                 battleScene = scene
@@ -1020,8 +1022,8 @@ struct BattleView: View {
 
                 // 战绩统计
                 VStack(spacing: Theme.spacingSM) {
-                    statRow(L10n.battleFloorsCleared, value: "\(rogueRun.currentFloorIndex + 1)")
-                    statRow(L10n.battleTotalCardsPlayed, value: "\(rogueRun.playHistory.count)")
+                    statRow(L10n.battleFloorsCleared, value: "\(rogueRun.currentFloorIndex)")
+                    statRow(L10n.battleTotalCardsPlayed, value: "\(rogueRun.totalCardsPlayed)")
                     if let best = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
                         statRow(L10n.battleBestHand, value: "\(best.score)")
                     }
@@ -1076,7 +1078,7 @@ struct BattleView: View {
                     let image = ShareManager.generateShareImage(
                         title: L10n.battleVictoryTitle,
                         score: rogueRun.totalScore,
-                        floor: rogueRun.currentFloorIndex + 1,
+                        floor: rogueRun.currentFloorIndex,
                         jokerCount: rogueRun.activeJokers.count,
                         ascension: rogueRun.ascensionLevel
                     )

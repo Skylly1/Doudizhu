@@ -171,6 +171,7 @@ enum HandSortMode: String, CaseIterable {
     var bonusPlays: Int = 0                     // 下层额外出牌次数（特殊事件奖励）
     var isRestoring: Bool = false               // restore 中抑制 autoSave
     var lastPatternType: PatternType?           // 上一手牌型（加倍下注用）
+    var totalCardsPlayed: Int = 0              // 跨层累积出牌次数
     var recyclerChipBonus: Int = 0              // 回收大师累积筹码（弃牌时填充）
 
     /// Run start time for play-time tracking
@@ -259,11 +260,21 @@ enum HandSortMode: String, CaseIterable {
         return target
     }
 
+    // PERF-04: Cached active joker effects (invalidated on joker/boss changes)
+    private var _activeEffects: Set<JokerEffect>?
+    var activeJokerEffects: Set<JokerEffect> {
+        if let cached = _activeEffects { return cached }
+        let effects = Set(activeJokers.enumerated().compactMap { index, joker in
+            bossState?.silencedJokerIndex == index ? nil : joker.effect
+        })
+        _activeEffects = effects
+        return effects
+    }
+    func invalidateJokerCache() { _activeEffects = nil }
+
     /// 检查是否装备了某种效果的规则牌（排除被封印的）
     func hasJoker(_ effect: JokerEffect) -> Bool {
-        activeJokers.enumerated().contains { index, joker in
-            joker.effect == effect && bossState?.silencedJokerIndex != index
-        }
+        activeJokerEffects.contains(effect)
     }
 
     // MARK: - 流程控制
@@ -286,7 +297,7 @@ enum HandSortMode: String, CaseIterable {
         lastPlayResult = nil
         playHistory = []
         bossState = nil
-        lastPatternWasBomb = false
+        invalidateJokerCache()
         justDiscarded = false
         usedPatternTypes = []
         lastPatternType = nil
@@ -316,6 +327,7 @@ enum HandSortMode: String, CaseIterable {
         // Boss 关初始化
         if floor.isBoss {
             bossState = BossState(modifiers: floor.bossModifiers)
+            invalidateJokerCache()
             Analytics.shared.track(.bossEncounter, params: [
                 "floor": "\(floor.floor)",
                 "modifiers": floor.bossModifiers.map(\.rawValue).joined(separator: ",")
@@ -395,6 +407,7 @@ enum HandSortMode: String, CaseIterable {
             var b = boss
             b.silencedJokerIndex = Int.random(in: 0..<activeJokers.count)
             bossState = b
+            invalidateJokerCache()
         }
 
         // phantomCards: 随机2张手牌无法被选中
@@ -718,6 +731,7 @@ enum HandSortMode: String, CaseIterable {
         )
         lastPlayResult = result
         playHistory.append(result)
+        totalCardsPlayed += 1
         phase = .scoring(result)
 
         // PlayerStats tracking
@@ -944,6 +958,7 @@ enum HandSortMode: String, CaseIterable {
         bonusPlays = 0
         lastPatternType = nil
         recyclerChipBonus = 0
+        totalCardsPlayed = 0
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
@@ -987,6 +1002,7 @@ enum HandSortMode: String, CaseIterable {
         lastPatternType = nil
         bonusPlays = 0
         recyclerChipBonus = 0
+        totalCardsPlayed = 0
 
         // Apply daily challenge modifiers
         for modifier in challenge.modifiers {
@@ -1125,6 +1141,7 @@ enum HandSortMode: String, CaseIterable {
         bonusPlays = 0
         lastPatternType = nil
         recyclerChipBonus = 0
+        totalCardsPlayed = 0
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
@@ -1152,6 +1169,7 @@ enum HandSortMode: String, CaseIterable {
         guard activeJokers.count < Joker.maxSlots else { return false }
         gold -= cost
         activeJokers.append(joker)
+        invalidateJokerCache()
         Analytics.shared.track(.shopPurchase, params: ["type": "joker", "id": joker.effect.rawValue, "cost": "\(cost)"])
         return true
     }
@@ -1171,6 +1189,7 @@ enum HandSortMode: String, CaseIterable {
             let available = Joker.allJokers.filter { !owned.contains($0.effect) }
             if let pick = available.randomElement(), activeJokers.count < Joker.maxSlots {
                 activeJokers.append(pick)
+                invalidateJokerCache()
             } else {
                 gold += 30
                 PlayerStats.shared.totalGoldEarned += 30
@@ -1182,6 +1201,7 @@ enum HandSortMode: String, CaseIterable {
             let available2 = Joker.allJokers.filter { !owned2.contains($0.effect) }
             if let pick = available2.randomElement(), activeJokers.count < Joker.maxSlots {
                 activeJokers.append(pick)
+                invalidateJokerCache()
             } else {
                 gold += cost  // 无可用Joker，退还金币
                 PlayerStats.shared.totalGoldEarned += cost
@@ -1232,6 +1252,7 @@ enum HandSortMode: String, CaseIterable {
             }
             if let randomJoker = allJokers.randomElement() {
                 activeJokers.append(randomJoker)
+                invalidateJokerCache()
             }
         }
     }

@@ -56,20 +56,18 @@ final class PurchaseManager: ObservableObject {
         return floorIndex < Self.demoMaxFloor
     }
 
-    /// 加载产品信息（含自动重试）
+    /// 加载产品信息（含自动重试，非递归）
     func loadProduct() async {
-        do {
-            let products = try await Product.products(for: [Self.fullVersionProductID])
-            self.product = products.first
-            productLoadRetryCount = 0
-        } catch {
-            CrashReporter.shared.log("Failed to load products: \(error)", level: .error)
-            // 自动重试（指数退避，最多3次）
-            if productLoadRetryCount < Self.maxProductLoadRetries {
-                productLoadRetryCount += 1
-                let delay = UInt64(pow(2.0, Double(productLoadRetryCount))) * 1_000_000_000
+        for attempt in 1...Self.maxProductLoadRetries {
+            do {
+                let products = try await Product.products(for: [Self.fullVersionProductID])
+                self.product = products.first
+                productLoadRetryCount = 0
+                return
+            } catch {
+                CrashReporter.shared.log("Failed to load products (attempt \(attempt)): \(error)", level: .error)
+                let delay = UInt64(pow(2.0, Double(attempt))) * 1_000_000_000
                 try? await Task.sleep(nanoseconds: delay)
-                await loadProduct()
             }
         }
     }

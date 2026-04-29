@@ -71,6 +71,11 @@ struct DailyChallenge {
         Task { @MainActor in LocalNotificationManager.scheduleDailyReminder() }
     }
 
+    /// UF-06: Mark completed without updating streak (for corrupted save recovery)
+    static func markCompletedWithoutStreak() {
+        UserDefaults.standard.set(todayString, forKey: "dailyChallengeCompleted")
+    }
+
     /// Record that today's challenge was attempted (legacy, calls markStarted)
     static func markPlayed() {
         markStarted()

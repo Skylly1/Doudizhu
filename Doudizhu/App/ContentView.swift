@@ -85,8 +85,8 @@ struct ContentView: View {
                                     navigate(to: .shop)
                                 }
                             } else {
-                                // UF-05: 存档丢失 — 标记完成并清除存档，不重新开始
-                                DailyChallenge.markCompleted()
+                                // UF-06: 存档丢失 — 标记完成但不更新连胜（存档损坏不应算实际完成）
+                                DailyChallenge.markCompletedWithoutStreak()
                                 SaveManager.shared.clearDailySaves()
                                 // 返回首页，DailyChallengeView 刷新后将显示"已完成"
                                 goHome()
