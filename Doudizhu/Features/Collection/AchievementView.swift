@@ -111,9 +111,12 @@ struct AchievementView: View {
                 Text(ach.name)
                     .font(.subheadline.bold())
                     .foregroundColor(unlocked ? Theme.textPrimary : Theme.textDisabled)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
                 Text(ach.description)
                     .font(Theme.fontCaption)
                     .foregroundColor(unlocked ? Theme.textSecondary : Theme.textDisabled)
+                    .lineLimit(3)
                 if let label = jokerUnlockLabel {
                     Text(label)
                         .font(.caption2.bold())

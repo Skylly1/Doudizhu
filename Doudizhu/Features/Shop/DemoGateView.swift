@@ -66,7 +66,7 @@ struct DemoGateView: View {
             .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 18) {
+                VStack(spacing: Theme.spacingMD) {
                     Spacer().frame(height: 16)  // 顶部间距（安全区由 ScrollView 自动处理）
 
                     // === 祝贺过渡（缓解付费墙突兀感）===
@@ -105,7 +105,7 @@ struct DemoGateView: View {
 
                     Spacer().frame(height: 16)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, Theme.spacingLG)
                 .frame(maxWidth: 600)
                 .frame(maxWidth: .infinity)
             }
@@ -295,7 +295,7 @@ struct DemoGateView: View {
                 .foregroundColor(Theme.textTertiary)
                 .multilineTextAlignment(.leading)
         }
-        .padding(14)
+        .padding(Theme.spacingMD)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusLG)
                 .fill(Theme.flame.opacity(0.05))
@@ -335,7 +335,7 @@ struct DemoGateView: View {
                 )
             }
         }
-        .padding(14)
+        .padding(Theme.spacingMD)
         .background(
             RoundedRectangle(cornerRadius: Theme.radiusLG)
                 .fill(Theme.bgCard)
@@ -535,6 +535,8 @@ struct DemoGateView: View {
                             : (L10n.isEnglish
                                ? "Continue Your Adventure — \(purchaseManager.formattedPrice)"
                                : "继续你的冒险 — \(purchaseManager.formattedPrice)"))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 .font(.headline)
                 .foregroundColor(Theme.textOnGold)

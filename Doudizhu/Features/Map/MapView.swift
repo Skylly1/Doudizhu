@@ -11,10 +11,7 @@ struct MapView: View {
     private var highestFloor: Int { stats.highestFloor }
 
     var body: some View {
-        ZStack {
-            Theme.bgPrimary.ignoresSafeArea()
-
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 GameNavBar(title: L10n.adventurePath, onBack: onBack)
 
                 // Stats summary
@@ -76,7 +73,7 @@ struct MapView: View {
                 .padding(.horizontal, Theme.spacingXL)
                 .padding(.bottom, Theme.spacingLG)
             }
-        }
+            .gameBackground()
     }
 
     // MARK: - 章节概览

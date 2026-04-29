@@ -231,30 +231,6 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            // 渐变主背景 — 温暖国潮色
-            LinearGradient(
-                colors: [
-                    Color(red: 0.38, green: 0.26, blue: 0.16),
-                    Color(red: 0.26, green: 0.18, blue: 0.12),
-                    Color(red: 0.17, green: 0.12, blue: 0.09)
-                ],
-                startPoint: .top, endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            // 顶部金色光晕 — 温暖聚焦
-            RadialGradient(
-                colors: [
-                    Color(red: 0.90, green: 0.72, blue: 0.30).opacity(0.25),
-                    Color(red: 0.85, green: 0.68, blue: 0.28).opacity(0.08),
-                    Color.clear
-                ],
-                center: .init(x: 0.5, y: 0.12),
-                startRadius: 0,
-                endRadius: 320
-            )
-            .ignoresSafeArea()
-
             // 底部烟雾氛围
             BottomMistLayer()
                 .ignoresSafeArea()
@@ -433,6 +409,7 @@ struct HomeView: View {
                     .padding(.bottom, 6)
             }
         }
+        .gameBackground()
         .onAppear {
             guard !hasAnimated else { return }
             hasAnimated = true

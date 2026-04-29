@@ -34,7 +34,7 @@ struct CollectionView: View {
                     StatsView().tag(4)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(maxWidth: 700)
+                .frame(maxWidth: 600)
                 .frame(maxWidth: .infinity)
             }
         }
