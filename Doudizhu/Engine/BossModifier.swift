@@ -40,44 +40,42 @@ enum BossModifier: String, CaseIterable, Codable {
     }
     
     var name: String {
-        let isEn = L10n.isEnglish
         switch self {
-        case .bannedPattern: return isEn ? "Imperial Ban" : "官府禁令"
-        case .escalating:    return isEn ? "Royal Privilege" : "皇家特权"
-        case .scoringDecay:  return isEn ? "Double Suppression" : "双重压制"
-        case .timeLimit:     return isEn ? "Time Pressure" : "时不我待"
-        case .greedyTax:     return isEn ? "Greed Tax" : "贪婪税"
-        case .noDiscard:     return isEn ? "No Retreat" : "背水一战"
-        case .scoreCap:      return isEn ? "Score Cap" : "封顶令"
-        case .handShrink:    return isEn ? "Hand Shrink" : "缩手缩脚"
-        case .jokerSilence:  return isEn ? "Joker Silence" : "封印术"
-        case .blindDraw:     return isEn ? "Blind Draw" : "盲抽"
-        case .pairTax:       return isEn ? "Pair Tax" : "成双税"
-        case .comboBreaker:  return isEn ? "Combo Breaker" : "破连"
-        case .goldDrain:     return isEn ? "Gold Drain" : "漏金"
-        case .reverseOrder:  return isEn ? "Reverse Order" : "倒序乾坤"
-        case .phantomCards:  return isEn ? "Phantom Cards" : "幻影牌"
+        case .bannedPattern: return L10n.localized("官府禁令", en: "Imperial Ban", ja: "官府禁令", ko: "관부금령", fr: "Interdiction Impériale", de: "Kaiserliches Verbot", es: "Prohibición Imperial", pt: "Proibição Imperial")
+        case .escalating:    return L10n.localized("皇家特权", en: "Royal Privilege", ja: "皇家特権", ko: "황가특권", fr: "Privilège Royal", de: "Königliches Privileg", es: "Privilegio Real", pt: "Privilégio Real")
+        case .scoringDecay:  return L10n.localized("双重压制", en: "Double Suppression", ja: "二重抑圧", ko: "이중압제", fr: "Double Suppression", de: "Doppelte Unterdrückung", es: "Doble Supresión", pt: "Dupla Supressão")
+        case .timeLimit:     return L10n.localized("时不我待", en: "Time Pressure", ja: "時間制限", ko: "시간압박", fr: "Pression Temporelle", de: "Zeitdruck", es: "Presión de Tiempo", pt: "Pressão de Tempo")
+        case .greedyTax:     return L10n.localized("贪婪税", en: "Greed Tax", ja: "強欲税", ko: "탐욕세", fr: "Taxe de Cupidité", de: "Giersteuer", es: "Impuesto de Codicia", pt: "Taxa de Ganância")
+        case .noDiscard:     return L10n.localized("背水一战", en: "No Retreat", ja: "退路なし", ko: "배수진", fr: "Pas de Retraite", de: "Kein Rückzug", es: "Sin Retirada", pt: "Sem Recuo")
+        case .scoreCap:      return L10n.localized("封顶令", en: "Score Cap", ja: "上限令", ko: "점수상한", fr: "Plafond de Score", de: "Punkteobergrenze", es: "Límite de Puntos", pt: "Limite de Pontos")
+        case .handShrink:    return L10n.localized("缩手缩脚", en: "Hand Shrink", ja: "手札縮小", ko: "패줄임", fr: "Main Réduite", de: "Hand-Schrumpf", es: "Mano Reducida", pt: "Mão Reduzida")
+        case .jokerSilence:  return L10n.localized("封印术", en: "Joker Silence", ja: "封印術", ko: "봉인술", fr: "Silence du Joker", de: "Joker-Stille", es: "Silencio del Joker", pt: "Silêncio do Joker")
+        case .blindDraw:     return L10n.localized("盲抽", en: "Blind Draw", ja: "ブラインドドロー", ko: "블라인드 드로우", fr: "Tirage Aveugle", de: "Blindziehung", es: "Robo a Ciegas", pt: "Sorteio Cego")
+        case .pairTax:       return L10n.localized("成双税", en: "Pair Tax", ja: "ペア税", ko: "쌍세", fr: "Taxe de Paire", de: "Paarsteuer", es: "Impuesto de Par", pt: "Taxa de Par")
+        case .comboBreaker:  return L10n.localized("破连", en: "Combo Breaker", ja: "コンボブレイカー", ko: "콤보브레이커", fr: "Brise-Combo", de: "Kombobrecher", es: "Rompe-Combo", pt: "Quebra-Combo")
+        case .goldDrain:     return L10n.localized("漏金", en: "Gold Drain", ja: "ゴールド流出", ko: "골드유출", fr: "Drain d'Or", de: "Goldabfluss", es: "Fuga de Oro", pt: "Dreno de Ouro")
+        case .reverseOrder:  return L10n.localized("倒序乾坤", en: "Reverse Order", ja: "逆順", ko: "역순건곤", fr: "Ordre Inversé", de: "Umgekehrte Ordnung", es: "Orden Inverso", pt: "Ordem Inversa")
+        case .phantomCards:  return L10n.localized("幻影牌", en: "Phantom Cards", ja: "ファントムカード", ko: "환영패", fr: "Cartes Fantômes", de: "Phantomkarten", es: "Cartas Fantasma", pt: "Cartas Fantasma")
         }
     }
     
     var description: String {
-        let isEn = L10n.isEnglish
         switch self {
-        case .bannedPattern: return isEn ? "One random pattern type is banned" : "禁用一种随机牌型（顺子/炸弹/飞机三选一）"
-        case .escalating:    return isEn ? "Target score increases 5% after each play" : "目标分数每次出牌后增加5%"
-        case .scoringDecay:  return isEn ? "Each play scores 10% less than the previous" : "每次出牌后，下次出牌得分-10%"
-        case .timeLimit:     return isEn ? "1 fewer play than normal" : "出牌次数比正常少1次"
-        case .greedyTax:     return isEn ? "Each play costs 10 gold" : "每次出牌扣10金币"
-        case .noDiscard:     return isEn ? "Cannot swap cards this floor" : "本关无法换牌"
-        case .scoreCap:      return isEn ? "Single play score capped at 60% of target" : "单次出牌得分上限为目标分的60%"
-        case .handShrink:    return isEn ? "Hand size reduced by 2 cards" : "手牌减少2张（发8张）"
-        case .jokerSilence:  return isEn ? "One random Joker is silenced this floor" : "随机封印一张规则牌本关无效"
-        case .blindDraw:     return isEn ? "Cards are face-down until played" : "手牌面朝下，出牌后才翻开"
-        case .pairTax:       return isEn ? "Pairs score 50% less" : "对子得分减半"
-        case .comboBreaker:  return isEn ? "Combo multiplier is disabled" : "无法累积连击加成"
-        case .goldDrain:     return isEn ? "Lose 5 gold each turn" : "每回合自动扣5金币"
-        case .reverseOrder:  return isEn ? "Lower ranks score higher, higher ranks score lower" : "小牌得分更高，大牌得分降低"
-        case .phantomCards:  return isEn ? "2 random cards cannot be selected" : "随机2张手牌无法被选中"
+        case .bannedPattern: return L10n.localized("禁用一种随机牌型（顺子/炸弹/飞机三选一）", en: "One random pattern type is banned")
+        case .escalating:    return L10n.localized("目标分数每次出牌后增加5%", en: "Target score increases 5% after each play")
+        case .scoringDecay:  return L10n.localized("每次出牌后，下次出牌得分-10%", en: "Each play scores 10% less than the previous")
+        case .timeLimit:     return L10n.localized("出牌次数比正常少1次", en: "1 fewer play than normal")
+        case .greedyTax:     return L10n.localized("每次出牌扣10金币", en: "Each play costs 10 gold")
+        case .noDiscard:     return L10n.localized("本关无法换牌", en: "Cannot swap cards this floor")
+        case .scoreCap:      return L10n.localized("单次出牌得分上限为目标分的60%", en: "Single play score capped at 60% of target")
+        case .handShrink:    return L10n.localized("手牌减少2张（发8张）", en: "Hand size reduced by 2 cards")
+        case .jokerSilence:  return L10n.localized("随机封印一张规则牌本关无效", en: "One random Joker is silenced this floor")
+        case .blindDraw:     return L10n.localized("手牌面朝下，出牌后才翻开", en: "Cards are face-down until played")
+        case .pairTax:       return L10n.localized("对子得分减半", en: "Pairs score 50% less")
+        case .comboBreaker:  return L10n.localized("无法累积连击加成", en: "Combo multiplier is disabled")
+        case .goldDrain:     return L10n.localized("每回合自动扣5金币", en: "Lose 5 gold each turn")
+        case .reverseOrder:  return L10n.localized("小牌得分更高，大牌得分降低", en: "Lower ranks score higher, higher ranks score lower")
+        case .phantomCards:  return L10n.localized("随机2张手牌无法被选中", en: "2 random cards cannot be selected")
         }
     }
 }

@@ -699,7 +699,7 @@ enum HandSortMode: String, CaseIterable {
         let buffMult = activeBuffs.reduce(0.0) { $0 + $1.multBonus(pattern: pattern) }
         if buffChips > 0 || buffMult > 0 {
             breakdown.append(ScoreComponent(
-                label: L10n.isEnglish ? "Buff" : "增益",
+                label: L10n.localized("增益", en: "Buff", ja: "バフ", ko: "버프", fr: "Buff", de: "Buff", es: "Mejora", pt: "Bônus"),
                 value: Int(Double(buffChips) + buffMult * Double(pattern.baseChips)),
                 isMultiplier: false
             ))
@@ -709,7 +709,7 @@ enum HandSortMode: String, CaseIterable {
         let jokerContrib = earned - Int(Double(pattern.baseChips + buffChips) * (pattern.baseMult + buffMult) * multiplier)
         if jokerContrib > 0 && !activeJokers.isEmpty {
             breakdown.append(ScoreComponent(
-                label: L10n.isEnglish ? "Jokers ×\(activeJokers.count)" : "规则牌 ×\(activeJokers.count)",
+                label: L10n.localized("规则牌 ×\(activeJokers.count)", en: "Jokers ×\(activeJokers.count)", ja: "ジョーカー ×\(activeJokers.count)", ko: "조커 ×\(activeJokers.count)"),
                 value: jokerContrib,
                 isMultiplier: false
             ))
@@ -727,7 +727,7 @@ enum HandSortMode: String, CaseIterable {
 
         // 5. Total
         breakdown.append(ScoreComponent(
-            label: L10n.isEnglish ? "Total" : "总计",
+            label: L10n.localized("总计", en: "Total", ja: "合計", ko: "합계", fr: "Total", de: "Gesamt", es: "Total", pt: "Total"),
             value: earned,
             isMultiplier: false
         ))
