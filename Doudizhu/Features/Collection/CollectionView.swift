@@ -11,17 +11,14 @@ struct CollectionView: View {
                 GameNavBar(title: L10n.collection, onBack: onBack)
 
                 // Tab 切换
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 0) {
-                        tabButton(L10n.jokerSection, systemIcon: "suit.spade.fill", index: 0)
-                        tabButton(L10n.buffSection, systemIcon: "sparkles", index: 1)
-                        tabButton(L10n.patternTab, systemIcon: "book.fill", index: 2)
-                        tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
-                        tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
-                    }
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 0) {
+                    tabButton(L10n.jokerSection, systemIcon: "suit.spade.fill", index: 0)
+                    tabButton(L10n.buffSection, systemIcon: "sparkles", index: 1)
+                    tabButton(L10n.patternTab, systemIcon: "book.fill", index: 2)
+                    tabButton(L10n.achievements, systemIcon: "trophy.fill", index: 3)
+                    tabButton(L10n.statsTab, systemIcon: "chart.bar.fill", index: 4)
                 }
-                .padding(.horizontal, Theme.spacingMD)
+                .padding(.horizontal, Theme.spacingSM)
                 .padding(.top, Theme.spacingSM)
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel(L10n.isEnglish ? "Collection tabs" : "收藏标签页")
