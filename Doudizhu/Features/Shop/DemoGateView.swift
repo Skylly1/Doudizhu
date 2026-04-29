@@ -170,8 +170,8 @@ struct DemoGateView: View {
     private var socialProofSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             ForEach(L10n.isEnglish
-                    ? ["All \(FloorConfig.allFloors.count) floor levels", "\(Joker.allJokers.count)+ Joker rule cards", "Unlimited plays per run", "One purchase, yours forever"]
-                    : ["全部 \(FloorConfig.allFloors.count) 层关卡", "\(Joker.allJokers.count)+ 丑角规则牌", "无限出牌次数", "一次购买，永久拥有"],
+                    ? ["All \(FloorConfig.allFloors.count) floor levels", "\(Joker.allJokers.count)+ Jokers", "Unlimited plays per run", "One purchase, yours forever"]
+                    : ["全部 \(FloorConfig.allFloors.count) 层关卡", "\(Joker.allJokers.count)+ 规则牌", "无限出牌次数", "一次购买，永久拥有"],
                     id: \.self) { feature in
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")

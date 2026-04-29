@@ -635,7 +635,7 @@ class BattleScene: SKScene {
         let y = size.height * 0.52 + 100
 
         // chips × mult 微型标签（Balatro 风格核心展示）
-        let chipsMultText = "\(result.pattern.baseChips) × \(String(format: "%.1f", result.pattern.baseMult))"
+        let chipsMultText = "\(result.pattern.baseChips) × \(L10n.formatDecimal(result.pattern.baseMult))"
         let chipsMultLabel = SKLabelNode(text: chipsMultText)
         chipsMultLabel.fontName = "Helvetica"
         chipsMultLabel.fontSize = 16

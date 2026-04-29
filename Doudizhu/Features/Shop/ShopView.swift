@@ -695,8 +695,8 @@ struct PatternUpgradeRow: View {
 
             if level > 0 {
                 Text(L10n.isEnglish
-                     ? "Chips+\(level * PatternUpgradeManager.chipPerLevel)  Mult+\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))"
-                     : "筹码+\(level * PatternUpgradeManager.chipPerLevel)  倍率+\(String(format: "%.1f", Double(level) * PatternUpgradeManager.multPerLevel))")
+                     ? "Chips+\(level * PatternUpgradeManager.chipPerLevel)  Mult+\(L10n.formatDecimal(Double(level) * PatternUpgradeManager.multPerLevel))"
+                     : "筹码+\(level * PatternUpgradeManager.chipPerLevel)  倍率+\(L10n.formatDecimal(Double(level) * PatternUpgradeManager.multPerLevel))")
                     .font(.caption2)
                     .foregroundColor(Theme.textSecondary)
             }

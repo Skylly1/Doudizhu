@@ -311,8 +311,7 @@ struct BattleView: View {
                 Image(systemName: "dollarsign.circle.fill")
                     .font(.caption)
                     .foregroundColor(Theme.gold)
-                Text("\(rogueRun.gold)")
-                    .font(.subheadline.monospacedDigit())
+                Text("\(L10n.formatNumber(rogueRun.gold))")                    .font(.subheadline.monospacedDigit())
                     .foregroundColor(Theme.gold)
             }
             .accessibilityElement(children: .combine)
@@ -517,7 +516,7 @@ struct BattleView: View {
                 .frame(height: 14)
 
                 // Score
-                Text("\(rogueRun.floorScore)")
+                Text("\(L10n.formatNumber(rogueRun.floorScore))")
                     .font(.headline.bold().monospacedDigit())
                     .foregroundColor(Theme.textPrimary)
                     .accessibilityLabel(L10n.a11yCurrentScore)
@@ -765,7 +764,7 @@ struct BattleView: View {
                     Text("×")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
-                    Text(String(format: "%.1f", result.mult))
+                    Text(L10n.formatDecimal(result.mult))
                         .font(.caption.bold().monospacedDigit())
                         .foregroundColor(Theme.flame)
                         .padding(.horizontal, 6)
@@ -806,7 +805,7 @@ struct BattleView: View {
                         .font(.caption.bold())
                         .foregroundColor(Theme.textPrimary)
                     Spacer()
-                    Text("+\(result.score)")
+                    Text("+\(L10n.formatNumber(result.score))")
                         .font(.subheadline.bold().monospacedDigit())
                         .foregroundColor(Theme.gold)
                 }
@@ -841,8 +840,8 @@ struct BattleView: View {
                     .foregroundColor(Theme.textSecondary)
 
                 VStack(spacing: Theme.spacingSM) {
-                    statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
-                    statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
+                    statRow(L10n.floorScoreLabel, value: L10n.formatNumber(rogueRun.floorScore))
+                    statRow(L10n.totalScoreLabel, value: L10n.formatNumber(rogueRun.totalScore))
                     let baseGold = rogueRun.currentFloor.targetScore / 10
                     let overScore = max(0, rogueRun.floorScore - rogueRun.effectiveTargetScore)
                     let overBonus = min(baseGold, overScore / 20)
@@ -888,13 +887,13 @@ struct BattleView: View {
                     .foregroundColor(Theme.textSecondary)
 
                 VStack(spacing: Theme.spacingSM) {
-                    statRow(L10n.floorScoreLabel, value: "\(rogueRun.floorScore)")
-                    statRow(L10n.targetScoreLabel, value: "\(rogueRun.currentFloor.targetScore)")
+                    statRow(L10n.floorScoreLabel, value: L10n.formatNumber(rogueRun.floorScore))
+                    statRow(L10n.targetScoreLabel, value: L10n.formatNumber(rogueRun.currentFloor.targetScore))
                     let gap = rogueRun.effectiveTargetScore - rogueRun.floorScore
                     if gap > 0 {
                         statRow(L10n.battleGap, value: "-\(gap)")
                     }
-                    statRow(L10n.totalScoreLabel, value: "\(rogueRun.totalScore)")
+                    statRow(L10n.totalScoreLabel, value: L10n.formatNumber(rogueRun.totalScore))
                     statRow(L10n.battleCardsPlayed, value: "\(rogueRun.playHistory.count)")
                     if let bestPlay = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
                         statRow(L10n.battleBestHand, value: "\(bestPlay.score)")
@@ -1025,10 +1024,10 @@ struct BattleView: View {
                     statRow(L10n.battleFloorsCleared, value: "\(rogueRun.currentFloorIndex)")
                     statRow(L10n.battleTotalCardsPlayed, value: "\(rogueRun.totalCardsPlayed)")
                     if let best = rogueRun.playHistory.max(by: { $0.score < $1.score }) {
-                        statRow(L10n.battleBestHand, value: "\(best.score)")
+                        statRow(L10n.battleBestHand, value: L10n.formatNumber(best.score))
                     }
                     statRow(L10n.battleJokers, value: "\(rogueRun.activeJokers.count)")
-                    statRow(L10n.battleGoldRemaining, value: "\(rogueRun.gold)")
+                    statRow(L10n.battleGoldRemaining, value: L10n.formatNumber(rogueRun.gold))
                 }
                 .padding(Theme.spacingMD)
                 .background(
@@ -1207,7 +1206,7 @@ struct BattleView: View {
                     .font(.caption2)
                     .foregroundColor(Theme.textTertiary)
 
-                Text(String(format: "%.1f", pattern.baseMult))
+                Text(L10n.formatDecimal(pattern.baseMult))
                     .font(.caption.bold().monospacedDigit())
                     .foregroundColor(Theme.flame)
                     .padding(.horizontal, 5)

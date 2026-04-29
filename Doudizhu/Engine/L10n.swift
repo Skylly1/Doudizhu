@@ -865,6 +865,24 @@ enum L10n {
     static var achievementSingle1000Name: String { localized("毁天灭地", en: "Annihilation") }
     static var achievementSingle1000Desc: String { localized("单次出牌得分≥1000", en: "Score 1000+ in a single play") }
 
+    // MARK: - 数字格式化
+
+    /// 千分位格式化整数（如 12,345）
+    static func formatNumber(_ n: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: n)) ?? "\(n)"
+    }
+
+    /// 本地化小数格式（如 1.5 在德语环境显示为 1,5）
+    static func formatDecimal(_ value: Double, fractionDigits: Int = 1) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = fractionDigits
+        formatter.minimumFractionDigits = fractionDigits
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
+    }
+
     // MARK: - 本地化引擎
 
     static func localized(

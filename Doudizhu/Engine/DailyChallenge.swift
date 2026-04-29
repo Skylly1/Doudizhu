@@ -240,18 +240,18 @@ enum DailyChallengeModifier: String, CaseIterable {
 
     var name: String {
         switch self {
-        case .noBombs: return L10n.isEnglish ? "No Bombs" : "禁止炸弹"
-        case .halfGold: return L10n.isEnglish ? "Half Gold" : "金币减半"
-        case .extraPlays: return L10n.isEnglish ? "Extra Plays" : "额外出牌"
-        case .noDiscards: return L10n.isEnglish ? "No Discards" : "禁止换牌"
-        case .doubleScore: return L10n.isEnglish ? "Double Score" : "双倍得分"
-        case .speedRun: return L10n.isEnglish ? "Speed Run" : "极速挑战"
-        case .bossRush: return L10n.isEnglish ? "Boss Rush" : "Boss连战"
-        case .giantHand: return L10n.isEnglish ? "Giant Hand" : "巨人之手"
-        case .tinyDeck: return L10n.isEnglish ? "Tiny Deck" : "精简牌组"
-        case .allOrNothing: return L10n.isEnglish ? "All or Nothing" : "孤注一掷"
-        case .goldRush: return L10n.isEnglish ? "Gold Rush" : "淘金热"
-        case .mirrorMatch: return L10n.isEnglish ? "Mirror Match" : "镜像对决"
+        case .noBombs: return L10n.localized("禁止炸弹", en: "No Bombs")
+        case .halfGold: return L10n.localized("金币减半", en: "Half Gold")
+        case .extraPlays: return L10n.localized("额外出牌", en: "Extra Plays")
+        case .noDiscards: return L10n.localized("禁止换牌", en: "No Discards")
+        case .doubleScore: return L10n.localized("双倍得分", en: "Double Score")
+        case .speedRun: return L10n.localized("极速挑战", en: "Speed Run")
+        case .bossRush: return L10n.localized("Boss连战", en: "Boss Rush")
+        case .giantHand: return L10n.localized("巨人之手", en: "Giant Hand")
+        case .tinyDeck: return L10n.localized("精简牌组", en: "Tiny Deck")
+        case .allOrNothing: return L10n.localized("孤注一掷", en: "All or Nothing")
+        case .goldRush: return L10n.localized("淘金热", en: "Gold Rush")
+        case .mirrorMatch: return L10n.localized("镜像对决", en: "Mirror Match")
         }
     }
 

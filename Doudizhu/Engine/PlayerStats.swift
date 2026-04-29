@@ -80,12 +80,10 @@ import Foundation
     }
 
     var formattedPlayTime: String {
-        let hours = Int(totalPlayTime) / 3600
-        let minutes = (Int(totalPlayTime) % 3600) / 60
-        if hours > 0 {
-            return L10n.isEnglish ? "\(hours)h \(minutes)m" : "\(hours)小时\(minutes)分"
-        }
-        return L10n.isEnglish ? "\(minutes)m" : "\(minutes)分钟"
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: totalPlayTime) ?? "0m"
     }
 
     func save() {

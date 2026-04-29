@@ -295,17 +295,17 @@ struct DailyChallengeView: View {
     private func modifierDescription(_ modifier: DailyChallengeModifier) -> String {
         switch modifier {
         case .noBombs: return L10n.dailyChallengeNoBombs
-        case .halfGold: return L10n.isEnglish ? "Start with half the normal gold" : "起始金币减半"
-        case .extraPlays: return L10n.isEnglish ? "+2 extra plays per floor" : "每层额外 +2 次出牌"
+        case .halfGold: return L10n.localized("起始金币减半", en: "Start with half the normal gold")
+        case .extraPlays: return L10n.localized("每层额外 +2 次出牌", en: "+2 extra plays per floor")
         case .noDiscards: return L10n.dailyChallengeNoDiscards
-        case .doubleScore: return L10n.isEnglish ? "All scores are doubled" : "所有得分翻倍"
-        case .speedRun: return L10n.isEnglish ? "Max 3 plays per floor" : "每层最多 3 次出牌"
-        case .bossRush: return L10n.isEnglish ? "Every non-shop floor has a boss" : "每层非商店关卡都有Boss"
-        case .giantHand: return L10n.isEnglish ? "Hand size +5 cards" : "手牌数量 +5 张"
-        case .tinyDeck: return L10n.isEnglish ? "Deck reduced to 36 cards" : "牌堆缩减至 36 张"
-        case .allOrNothing: return L10n.isEnglish ? "Only bombs & rockets score" : "仅炸弹和火箭可得分"
-        case .goldRush: return L10n.isEnglish ? "×3 gold, but shop prices ×2" : "金币×3，商店价格×2"
-        case .mirrorMatch: return L10n.isEnglish ? "Boss modifiers on every floor" : "每层都有Boss修改器"
+        case .doubleScore: return L10n.localized("所有得分翻倍", en: "All scores are doubled")
+        case .speedRun: return L10n.localized("每层最多 3 次出牌", en: "Max 3 plays per floor")
+        case .bossRush: return L10n.localized("每层非商店关卡都有Boss", en: "Every non-shop floor has a boss")
+        case .giantHand: return L10n.localized("手牌数量 +5 张", en: "Hand size +5 cards")
+        case .tinyDeck: return L10n.localized("牌堆缩减至 36 张", en: "Deck reduced to 36 cards")
+        case .allOrNothing: return L10n.localized("仅炸弹和火箭可得分", en: "Only bombs & rockets score")
+        case .goldRush: return L10n.localized("金币×3，商店价格×2", en: "×3 gold, but shop prices ×2")
+        case .mirrorMatch: return L10n.localized("每层都有Boss修改器", en: "Boss modifiers on every floor")
         }
     }
 }
