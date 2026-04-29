@@ -25,6 +25,7 @@ struct BattleView: View {
     @State private var showPauseMenu = false
     @State private var showHelpSheet = false
     @State private var showGestureGuide = false
+    @State private var scoringTask: Task<Void, Never>?
     @ObservedObject private var hintManager = ContextualHintManager.shared
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("musicEnabled") private var musicEnabled = true
@@ -243,7 +244,10 @@ struct BattleView: View {
                 }
 
                 // 得分动画：延迟后切回选牌
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                scoringTask?.cancel()
+                scoringTask = Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1.0))
+                    guard !Task.isCancelled else { return }
                     rogueRun.onScoringComplete()
                     battleScene?.refreshHand()
                 }
@@ -715,7 +719,7 @@ struct BattleView: View {
                         .font(.caption)
                 }
                 .font(.body.weight(.semibold))
-                .foregroundColor(rogueRun.playsRemaining > 0 ? .black : Theme.textDisabled)
+                .foregroundColor(rogueRun.playsRemaining > 0 ? Theme.textOnGold : Theme.textDisabled)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
                 .background(
@@ -861,6 +865,7 @@ struct BattleView: View {
                     title: L10n.battleSaveQuit,
                     icon: "rectangle.portrait.and.arrow.right"
                 ) {
+                    scoringTask?.cancel()
                     SaveManager.shared.save(run: rogueRun, buildId: "")
                     SoundManager.shared.stopBGM()
                     onBack()
@@ -980,11 +985,13 @@ struct BattleView: View {
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
                     Button(L10n.battleSaveAndQuit, role: .none) {
+                        scoringTask?.cancel()
                         SaveManager.shared.save(run: rogueRun, buildId: "")
                         SoundManager.shared.stopBGM()
                         onBack()
                     }
                     Button(L10n.battleQuitNoSave, role: .destructive) {
+                        scoringTask?.cancel()
                         rogueRun.clearSave()
                         SoundManager.shared.stopBGM()
                         onBack()
@@ -1436,6 +1443,7 @@ struct BattleView: View {
                     title: L10n.battleSaveQuit,
                     icon: "rectangle.portrait.and.arrow.right"
                 ) {
+                    scoringTask?.cancel()
                     showPauseMenu = false
                     SaveManager.shared.save(run: rogueRun, buildId: "")
                     SoundManager.shared.stopBGM()
@@ -1458,6 +1466,7 @@ struct BattleView: View {
                 ) {
                     Button(L10n.cancel, role: .cancel) { }
                     Button(L10n.battleAbandon, role: .destructive) {
+                        scoringTask?.cancel()
                         showPauseMenu = false
                         rogueRun.clearSave()
                         SoundManager.shared.stopBGM()

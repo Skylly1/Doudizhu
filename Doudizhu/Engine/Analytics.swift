@@ -109,6 +109,7 @@ enum AnalyticsEvent: String {
     func track(_ event: AnalyticsEvent, params: [String: String] = [:]) {
         let entry = (event: event.rawValue, params: params, timestamp: Date())
         events.append(entry)
+        if events.count > 500 { events.removeFirst(events.count - 500) }
 
         let paramStr = params.isEmpty ? "" : " " + params.map { "\($0.key)=\($0.value)" }.joined(separator: " ")
         logger.info("📊 \(event.rawValue)\(paramStr)")
@@ -132,7 +133,7 @@ enum AnalyticsEvent: String {
     // MARK: - Metrics
 
     func eventCount(for event: AnalyticsEvent) -> Int {
-        events.filter { $0.event == event.rawValue }.count
+        eventCounts[event.rawValue] ?? 0
     }
 
     var totalSessions: Int {

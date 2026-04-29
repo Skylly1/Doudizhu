@@ -177,6 +177,8 @@ extension GameSaveModel {
 
     /// 将存档恢复到 RogueRun
     @MainActor func restore(to run: RogueRun) {
+        run.isRestoring = true
+        defer { run.isRestoring = false }
         let decoder = JSONDecoder()
 
         run.currentFloorIndex = currentFloorIndex

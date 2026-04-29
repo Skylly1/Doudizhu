@@ -169,6 +169,7 @@ enum HandSortMode: String, CaseIterable {
     var justDiscarded: Bool = false             // 上一操作是否为弃牌（化腐为奇用）
     var usedPatternTypes: Set<PatternType> = [] // 本层已使用的牌型（博采众长用）
     var bonusPlays: Int = 0                     // 下层额外出牌次数（特殊事件奖励）
+    var isRestoring: Bool = false               // restore 中抑制 autoSave
     var lastPatternType: PatternType?           // 上一手牌型（加倍下注用）
     var recyclerChipBonus: Int = 0              // 回收大师累积筹码（弃牌时填充）
 
@@ -185,6 +186,7 @@ enum HandSortMode: String, CaseIterable {
 
     /// 自动保存（每次出牌/弃牌后调用，按槽位隔离）
     private func autoSave() {
+        guard !isRestoring else { return }
         SaveManager.shared.save(run: self, buildId: currentBuildId)
     }
 
@@ -983,6 +985,7 @@ enum HandSortMode: String, CaseIterable {
         phoenixUsed = false
         dailyChallenge = challenge
         lastPatternType = nil
+        bonusPlays = 0
         recyclerChipBonus = 0
 
         // Apply daily challenge modifiers
@@ -1107,6 +1110,10 @@ enum HandSortMode: String, CaseIterable {
         currentFloorIndex = 0
         totalScore = 0
         gold = 150
+        // Ascension 7+: 起始金币-30（与 startWithBuild 一致）
+        if ascensionLevel >= 7 {
+            gold = max(50, gold - 30)
+        }
         multiplier = 1.0
         activeBuffs = []
         activeJokers = []
