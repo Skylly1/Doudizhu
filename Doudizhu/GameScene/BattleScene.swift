@@ -893,37 +893,55 @@ class BattleScene: SKScene {
         ]))
     }
 
+    /// Pre-built emitter texture (1×1 white circle) — created once, reused
+    private static let particleTexture: SKTexture = {
+        let sz: CGFloat = 8
+        let node = SKShapeNode(circleOfRadius: sz / 2)
+        node.fillColor = .white
+        node.strokeColor = .clear
+        return SKView().texture(from: node)!
+    }()
+
     private func emitScoreParticles(at pos: CGPoint, count: Int = 12) {
-        // 新中式粒子色系：赤金 / 翡翠 / 朱砂 / 紫气
-        let colors: [SKColor] = [
-            SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1),
-            SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1),
-            SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1),
-            SKColor(red: 0.48, green: 0.18, blue: 0.74, alpha: 1)
-        ]
-        for _ in 0..<count {
-            let particle = SKShapeNode(circleOfRadius: CGFloat.random(in: 2...5))
-            particle.fillColor = colors.randomElement() ?? .white
-            particle.strokeColor = .clear
-            particle.position = pos
-            particle.zPosition = 150
-            addChild(particle)
+        // SKEmitterNode: GPU-accelerated, replaces per-particle SKShapeNode loop
+        let emitter = SKEmitterNode()
+        emitter.particleTexture = Self.particleTexture
+        emitter.position = pos
+        emitter.zPosition = 150
 
-            let angle = CGFloat.random(in: 0...(2 * .pi))
-            let dist = CGFloat.random(in: 40...120)
-            let dx = cos(angle) * dist
-            let dy = sin(angle) * dist
-            let dur = Double.random(in: 0.3...0.6)
+        // Burst: emit all at once then stop
+        emitter.numParticlesToEmit = count
+        emitter.particleBirthRate = CGFloat(count) / 0.05 // all in 50ms
 
-            particle.run(SKAction.sequence([
-                SKAction.group([
-                    .moveBy(x: dx, y: dy, duration: dur),
-                    .fadeOut(withDuration: dur),
-                    .scale(to: 0.1, duration: dur)
-                ]),
-                .removeFromParent()
-            ]))
-        }
+        // 新中式粒子色系
+        emitter.particleColor = SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1) // base gold
+        emitter.particleColorBlendFactor = 1.0
+        emitter.particleColorSequence = SKKeyframeSequence(
+            keyframeValues: [
+                SKColor(red: 0.83, green: 0.64, blue: 0.22, alpha: 1), // 赤金
+                SKColor(red: 0.0, green: 0.72, blue: 0.66, alpha: 1),  // 翡翠
+                SKColor(red: 0.79, green: 0.30, blue: 0.30, alpha: 1), // 朱砂
+                SKColor(red: 0.48, green: 0.18, blue: 0.74, alpha: 1), // 紫气
+            ],
+            times: [0, 0.33, 0.66, 1.0]
+        )
+
+        // Motion — radial burst
+        emitter.emissionAngleRange = .pi * 2
+        emitter.particleSpeed = 80
+        emitter.particleSpeedRange = 40
+
+        // Size & lifetime
+        emitter.particleScale = 0.4
+        emitter.particleScaleRange = 0.3
+        emitter.particleScaleSpeed = -0.5
+        emitter.particleLifetime = 0.5
+        emitter.particleLifetimeRange = 0.2
+        emitter.particleAlphaSpeed = -2.0
+
+        addChild(emitter)
+        // Auto-remove after particles die
+        emitter.run(.sequence([.wait(forDuration: 1.0), .removeFromParent()]))
     }
 
     private func shakeSelected() {
