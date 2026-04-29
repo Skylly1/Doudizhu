@@ -273,6 +273,7 @@ struct SecondaryButton: View {
             .foregroundColor(color)
             .padding(.horizontal, Theme.spacingMD)
             .padding(.vertical, 10)
+            .frame(minHeight: 44)
             .background(
                 Capsule()
                     .fill(.ultraThinMaterial)

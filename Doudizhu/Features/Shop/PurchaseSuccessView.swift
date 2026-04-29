@@ -14,7 +14,7 @@ struct PurchaseSuccessView: View {
             // 半透明背景
             Color.black.opacity(0.85).ignoresSafeArea()
             
-            VStack(spacing: 24) {
+            VStack(spacing: Theme.spacingLG) {
                 Spacer()
                 
                 // 庆典标题
@@ -55,14 +55,14 @@ struct PurchaseSuccessView: View {
                                  title: L10n.isEnglish ? "+1 Combo Start" : "+1 初始连击",
                                  desc: L10n.isEnglish ? "Start combos from 1" : "连击从1开始计算")
                     }
-                    .padding(16)
+                    .padding(Theme.spacingMD)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusLG)
                             .fill(Theme.bgCard)
                             .overlay(RoundedRectangle(cornerRadius: Theme.radiusLG)
                                 .stroke(Theme.gold.opacity(0.3)))
                     )
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, Theme.spacingLG)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 
@@ -103,9 +103,11 @@ struct PurchaseSuccessView: View {
                             }
                             .font(.subheadline)
                             .foregroundColor(Theme.gold.opacity(0.9))
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
                         }
                     }
-                    .padding(.horizontal, 32)
+                    .padding(.horizontal, Theme.spacingXL)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
                 
@@ -129,8 +131,8 @@ struct PurchaseSuccessView: View {
                 }
                 .accessibilityLabel(L10n.isEnglish ? "Begin Adventure" : "开始冒险")
                 .accessibilityHint(L10n.isEnglish ? "Start your full adventure" : "开始完整版冒险之旅")
-                .padding(.horizontal, 32)
-                .padding(.bottom, 20)
+                .padding(.horizontal, Theme.spacingXL)
+                .padding(.bottom, Theme.spacingLG)
             }
             .frame(maxWidth: 500)
         }

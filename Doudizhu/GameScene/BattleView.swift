@@ -558,11 +558,11 @@ struct BattleView: View {
     private var progressColor: LinearGradient {
         let progress = rogueRun.floorProgress
         if progress >= 1.0 {
-            return LinearGradient(colors: [.green, .mint], startPoint: .leading, endPoint: .trailing)
+            return LinearGradient(colors: [Theme.success, Theme.success.opacity(0.7)], startPoint: .leading, endPoint: .trailing)
         } else if progress >= 0.6 {
-            return LinearGradient(colors: [.yellow, .orange], startPoint: .leading, endPoint: .trailing)
+            return LinearGradient(colors: [Theme.gold, Theme.flame], startPoint: .leading, endPoint: .trailing)
         } else {
-            return LinearGradient(colors: [.red, .orange], startPoint: .leading, endPoint: .trailing)
+            return LinearGradient(colors: [Theme.danger, Theme.flame], startPoint: .leading, endPoint: .trailing)
         }
     }
 
@@ -960,8 +960,8 @@ struct BattleView: View {
                         showRestartConfirm = true
                     }
                     .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 220, height: 50)
+                    .foregroundColor(Theme.textPrimary)
+                    .frame(maxWidth: 280, minHeight: 50)
                     .background(RoundedRectangle(cornerRadius: Theme.radiusMD).fill(Theme.danger))
                     .buttonStyle(GameButtonStyle())
                     .alert(
@@ -1057,7 +1057,7 @@ struct BattleView: View {
                             }
                             .font(.headline)
                             .foregroundColor(Theme.flame)
-                            .frame(width: 220, height: 46)
+                            .frame(maxWidth: 280, minHeight: 46)
                             .background(
                                 RoundedRectangle(cornerRadius: Theme.radiusMD)
                                     .fill(.ultraThinMaterial)
@@ -1091,7 +1091,7 @@ struct BattleView: View {
                     }
                     .font(.subheadline.bold())
                     .foregroundColor(Theme.cyan)
-                    .frame(width: 220, height: 44)
+                    .frame(maxWidth: 280, minHeight: 44)
                     .background(
                         RoundedRectangle(cornerRadius: Theme.radiusMD)
                             .fill(.ultraThinMaterial)

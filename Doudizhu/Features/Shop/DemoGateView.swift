@@ -522,7 +522,7 @@ struct DemoGateView: View {
                 HStack(spacing: 8) {
                     if purchaseManager.purchaseState == .purchasing || purchaseManager.purchaseState == .loading {
                         ProgressView()
-                            .tint(.black)
+                            .tint(Theme.textOnGold)
                     } else {
                         Image(systemName: "crown.fill")
                     }

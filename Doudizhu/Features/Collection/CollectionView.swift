@@ -62,6 +62,7 @@ struct CollectionView: View {
                     .frame(height: 2)
             }
             .frame(maxWidth: .infinity)
+            .frame(minHeight: 44)
         }
         .accessibilityLabel(title)
         .accessibilityHint(L10n.isEnglish ? "Switch to \(title) tab" : "切换到\(title)标签页")

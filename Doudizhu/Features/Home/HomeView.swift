@@ -349,7 +349,7 @@ struct HomeView: View {
                         ) {
                             onContinue()
                         }
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Theme.spacingXL)
                         .accessibilityLabel(L10n.a11yContinueAdventure)
                         .accessibilityHint(L10n.localized("继续上次保存的冒险进度", en: "Continue your saved adventure"))
                         .offset(y: showButtons[0] ? 0 : 30)
@@ -367,7 +367,7 @@ struct HomeView: View {
                             onNavigate(.map)
                         }
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, Theme.spacingXL)
                     .accessibilityLabel(hasSavedGame ? L10n.a11yNewAdventure : L10n.a11yStartAdventure)
                     .accessibilityHint(L10n.localized("开始新的一局游戏", en: "Start a new game"))
                     .offset(y: showButtons[1] ? 0 : 30)
@@ -387,7 +387,7 @@ struct HomeView: View {
                         .accessibilityHint(L10n.localized("跳过地图直接开始游戏", en: "Skip map and start game directly"))
                         dailyChallengeButton
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, Theme.spacingXL)
                     .offset(y: showButtons[2] ? 0 : 30)
                     .opacity(showButtons[2] ? 1.0 : 0)
 
@@ -403,7 +403,7 @@ struct HomeView: View {
                         .accessibilityLabel(L10n.a11ySettings)
                         .accessibilityHint(L10n.localized("打开游戏设置", en: "Open game settings"))
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, Theme.spacingXL)
                     .offset(y: showButtons[3] ? 0 : 30)
                     .opacity(showButtons[3] ? 1.0 : 0)
                 }
@@ -417,14 +417,14 @@ struct HomeView: View {
                 // 免费用户 — 升级提示横幅（菜单按钮下方，高可见度位置）
                 if !PurchaseManager.shared.isFullVersion {
                     upgradePromptBanner
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Theme.spacingXL)
                         .frame(maxWidth: 500)
                         .padding(.bottom, 8)
                 }
 
                 // 今日数据概览
                 TodayStatsBanner()
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, Theme.spacingXL)
                     .frame(maxWidth: 500)
                     .padding(.bottom, 12)
                 Text("v1.0")

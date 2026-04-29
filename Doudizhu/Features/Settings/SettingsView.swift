@@ -48,6 +48,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                             .accessibilityLabel(L10n.a11yHelpFaq)
                             .accessibilityHint("查看游戏帮助和FAQ")
@@ -93,6 +94,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                             .accessibilityLabel(L10n.a11yResetTutorial)
                             .accessibilityHint("双击重新开始新手教程")
@@ -175,6 +177,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                         }
                         #endif
@@ -208,6 +211,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                         }
 
@@ -226,6 +230,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                             Divider().background(Theme.border)
                             Link(destination: URL(string: "https://skylly1.github.io/doudizhu-privacy")!) {
@@ -239,6 +244,7 @@ struct SettingsView: View {
                                         .foregroundColor(Theme.textTertiary)
                                 }
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                             }
                         }
                     }
