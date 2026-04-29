@@ -849,8 +849,8 @@ class BattleScene: SKScene {
             .moveBy(x: -dx, y: -dy, duration: t),
             .moveBy(x: 0, y: 0, duration: t * 0.5),
         ])
-        let cam = childNode(withName: "//") ?? self
-        cam.run(shake)
+        // R2-PERF-09: shake all direct children instead of broken "//" selector
+        children.forEach { $0.run(shake) }
     }
 
     private func screenFlash(color: SKColor) {

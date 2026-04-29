@@ -13,6 +13,7 @@ struct BattleView: View {
     /// Bumped by BattleScene.selectionChanged to force SwiftUI re-evaluation
     @State private var selectionVersion = 0
     @State private var cachedSelectedPattern: CardPattern? = nil
+    @State private var cachedSelectedCount: Int = 0
     @State private var showNoSelectionHint = false
     /// Progressive hint system
     @State private var contextHint: String? = nil
@@ -263,8 +264,10 @@ struct BattleView: View {
             // PERF-05: recognize pattern only when selection changes, not every render
             if let scene = battleScene {
                 let selected = scene.getSelectedCards()
+                cachedSelectedCount = selected.count
                 cachedSelectedPattern = selected.isEmpty ? nil : PatternRecognizer.recognize(selected)
             } else {
+                cachedSelectedCount = 0
                 cachedSelectedPattern = nil
             }
         }
@@ -625,8 +628,9 @@ struct BattleView: View {
                     }
                 }
                 .transition(.scale.combined(with: .opacity))
-            } else if let selected = battleScene?.getSelectedCards(), !selected.isEmpty {
-                let count = selected.count
+            } else if cachedSelectedCount > 0 {
+                // R2-PERF-10: use cached count instead of calling into SpriteKit from body
+                let count = cachedSelectedCount
                 let hint: String = {
                     switch count {
                     case 1: return L10n.battleHintSingle
@@ -638,9 +642,9 @@ struct BattleView: View {
                     }
                 }()
                 HStack(spacing: 4) {
-                    Image(systemName: selected.count >= 3 ? "xmark.circle.fill" : "lightbulb.fill")
+                    Image(systemName: count >= 3 ? "xmark.circle.fill" : "lightbulb.fill")
                         .font(.caption2)
-                        .foregroundColor(selected.count >= 3 ? Theme.danger : Theme.gold)
+                        .foregroundColor(count >= 3 ? Theme.danger : Theme.gold)
                     Text(hint)
                 }
                     .font(Theme.fontCaption)
@@ -773,7 +777,8 @@ struct BattleView: View {
                     Text("=")
                         .font(.caption2)
                         .foregroundColor(Theme.textSecondary)
-                    Text("\(Int(Double(result.chips) * result.mult))")
+                    // R2-UF-08: show actual result.score (includes boss modifications)
+                    Text("\(result.score)")
                         .font(.caption.monospacedDigit())
                         .foregroundColor(Theme.textSecondary)
                 }

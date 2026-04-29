@@ -247,7 +247,9 @@ enum HandSortMode: String, CaseIterable {
     }
     
     /// 考虑Ascension和Boss修改器后的实际目标分数
+    private var _cachedTargetScore: Int?
     var effectiveTargetScore: Int {
+        if let cached = _cachedTargetScore { return cached }
         var target = currentFloor.targetScore
         // Ascension 加成
         if ascensionLevel >= 1 {
@@ -257,8 +259,10 @@ enum HandSortMode: String, CaseIterable {
         if let boss = bossState, boss.hasEscalating {
             target = Int(Double(target) * (1.0 + Double(boss.escalationCount) * 0.05))
         }
+        _cachedTargetScore = target
         return target
     }
+    func invalidateTargetScoreCache() { _cachedTargetScore = nil }
 
     // PERF-04: Cached active joker effects (invalidated on joker/boss changes)
     private var _activeEffects: Set<JokerEffect>?
@@ -298,6 +302,7 @@ enum HandSortMode: String, CaseIterable {
         playHistory = []
         bossState = nil
         invalidateJokerCache()
+        invalidateTargetScoreCache()
         justDiscarded = false
         usedPatternTypes = []
         lastPatternType = nil
@@ -328,6 +333,7 @@ enum HandSortMode: String, CaseIterable {
         if floor.isBoss {
             bossState = BossState(modifiers: floor.bossModifiers)
             invalidateJokerCache()
+            invalidateTargetScoreCache()
             Analytics.shared.track(.bossEncounter, params: [
                 "floor": "\(floor.floor)",
                 "modifiers": floor.bossModifiers.map(\.rawValue).joined(separator: ",")
@@ -580,6 +586,7 @@ enum HandSortMode: String, CaseIterable {
             
             // escalating: 每次出牌后目标+5%（在onScoringComplete中不需要，因为target是固定的，但我们记录）
             boss.escalationCount += 1
+            invalidateTargetScoreCache()
             
             // greedyTax: 每次出牌扣10金币
             if boss.hasGreedyTax {
@@ -1142,6 +1149,8 @@ enum HandSortMode: String, CaseIterable {
         lastPatternType = nil
         recyclerChipBonus = 0
         totalCardsPlayed = 0
+        currentBuildId = ""  // R2-UF-09: clear stale build ID on restart
+        _cachedTargetScore = nil
 
         // PlayerStats: end previous run timer & start new run
         if let start = runStartTime {
