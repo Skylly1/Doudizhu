@@ -18,7 +18,10 @@ import os.log
     private let maxBreadcrumbs = 50
 
     private init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            logFile = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("crash_log.txt")
+            return
+        }
         logFile = docs.appendingPathComponent("crash_log.txt")
         rotateIfNeeded()
     }

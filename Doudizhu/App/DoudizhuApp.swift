@@ -47,8 +47,15 @@ struct DoudizhuApp: App {
         CrashReporter.shared.log("SwiftData schema migration failed — backing up old data", level: .warning)
 
         let fm = FileManager.default
-        let appSupportDir = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let backupDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fallbackDir = URL(fileURLWithPath: NSTemporaryDirectory())
+        guard let appSupportDir = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            // Cannot locate Application Support — use in-memory fallback
+            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+            do { return try ModelContainer(for: GameSaveModel.self, configurations: config) }
+            catch { fatalError("Cannot create ModelContainer: \(error)") }
+        }
+        let docsDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first ?? fallbackDir
+        let backupDir = docsDir
             .appendingPathComponent("SaveBackup", isDirectory: true)
         try? fm.createDirectory(at: backupDir, withIntermediateDirectories: true)
 
@@ -74,8 +81,11 @@ struct DoudizhuApp: App {
 
         CrashReporter.shared.log("ModelContainer still fails — using in-memory fallback", level: .error)
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        // swiftlint:disable:next force_try
-        return try! ModelContainer(for: GameSaveModel.self, configurations: config)
+        do {
+            return try ModelContainer(for: GameSaveModel.self, configurations: config)
+        } catch {
+            fatalError("Cannot create ModelContainer: \(error)")
+        }
     }
 
     var body: some Scene {

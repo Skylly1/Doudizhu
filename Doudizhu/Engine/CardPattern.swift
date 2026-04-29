@@ -155,10 +155,12 @@ struct PatternRecognizer {
     // MARK: - Private
 
     private static func isAllSameRank(_ cards: [Card]) -> Bool {
-        cards.allSatisfy { $0.rank == cards[0].rank }
+        guard let first = cards.first else { return true }
+        return cards.allSatisfy { $0.rank == first.rank }
     }
 
     private static func recognizePairOrRocket(_ cards: [Card]) -> CardPattern? {
+        guard cards.count >= 2 else { return nil }
         // 火箭
         if cards[0].rank == .jokerBlack && cards[1].rank == .jokerRed {
             return CardPattern(type: .rocket, cards: cards, mainRank: .jokerRed)
@@ -194,7 +196,8 @@ struct PatternRecognizer {
                 return nil
             }
         }
-        return CardPattern(type: .straight, cards: cards, mainRank: cards.last!.rank)
+        guard let lastCard = cards.last else { return nil }
+        return CardPattern(type: .straight, cards: cards, mainRank: lastCard.rank)
     }
 
     private static func recognizePairStraight(_ cards: [Card]) -> CardPattern? {
@@ -209,7 +212,8 @@ struct PatternRecognizer {
                 return nil
             }
         }
-        return CardPattern(type: .pairStraight, cards: cards, mainRank: pairs.last![0].rank)
+        guard let lastPair = pairs.last else { return nil }
+        return CardPattern(type: .pairStraight, cards: cards, mainRank: lastPair[0].rank)
     }
 
     private static func recognizePlane(_ cards: [Card]) -> CardPattern? {
@@ -232,12 +236,14 @@ struct PatternRecognizer {
         let tripleCount = triples.count
         let wingCount = cards.count - tripleCount * 3
 
+        guard let lastTriple = triples.last else { return nil }
+
         if wingCount == 0 {
-            return CardPattern(type: .plane, cards: cards, mainRank: triples.last!)
+            return CardPattern(type: .plane, cards: cards, mainRank: lastTriple)
         } else if wingCount == tripleCount {
-            return CardPattern(type: .planeWithWings, cards: cards, mainRank: triples.last!)
+            return CardPattern(type: .planeWithWings, cards: cards, mainRank: lastTriple)
         } else if wingCount == tripleCount * 2 {
-            return CardPattern(type: .planeWithWings, cards: cards, mainRank: triples.last!)
+            return CardPattern(type: .planeWithWings, cards: cards, mainRank: lastTriple)
         }
 
         return nil
