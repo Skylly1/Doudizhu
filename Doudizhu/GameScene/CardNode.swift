@@ -1,60 +1,90 @@
 import SpriteKit
 
 /// 单张卡牌的 SpriteKit 节点 — 国潮扑克风格
+/// 使用纹理缓存：每种牌面只渲染一次，复用 SKTexture，大幅降低 GPU 绘制调用
 class CardNode: SKSpriteNode {
     let card: Card
     private var isSelected = false
     private let selectedOffset: CGFloat = 20
 
+    // MARK: - 纹理缓存（54种牌 × 少量尺寸 ≈ 100-160 条目）
+    private static var textureCache: [String: SKTexture] = [:]
+
+    private static func cacheKey(card: Card, width: Int) -> String {
+        "\(card.rank.rawValue)_\(card.suit?.rawValue ?? "joker")_\(width)"
+    }
+
+    static func clearCache() { textureCache.removeAll() }
+
     init(card: Card, size: CGSize) {
         self.card = card
-        let texture = SKTexture()
-        super.init(texture: texture, color: .clear, size: size)
-
+        let key = Self.cacheKey(card: card, width: Int(size.width))
+        let tex: SKTexture
+        if let cached = Self.textureCache[key] {
+            tex = cached
+        } else {
+            tex = Self.renderTexture(for: card, size: size)
+            Self.textureCache[key] = tex
+        }
+        super.init(texture: tex, color: .clear, size: size)
         self.name = "card_\(card.id)"
         isUserInteractionEnabled = false
-        drawCard()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) not implemented")
     }
 
-    private var isRed: Bool {
+    // MARK: - 静态辅助（纹理渲染用）
+
+    private static func isRed(_ card: Card) -> Bool {
         card.suit == .heart || card.suit == .diamond || card.rank == .jokerRed
     }
 
-    private var isJoker: Bool {
+    private static func isJoker(_ card: Card) -> Bool {
         card.rank == .jokerBlack || card.rank == .jokerRed
     }
 
-    private var isFaceCard: Bool {
+    private static func isFaceCard(_ card: Card) -> Bool {
         card.rank == .jack || card.rank == .queen || card.rank == .king
     }
 
-    private var cardColor: SKColor {
-        if isJoker {
+    private static func cardColor(_ card: Card) -> SKColor {
+        if isJoker(card) {
             return card.rank == .jokerRed
-                ? SKColor(red: 0.82, green: 0.58, blue: 0.14, alpha: 1)  // 赤金
-                : SKColor(red: 0.12, green: 0.52, blue: 0.46, alpha: 1)  // 翡翠
+                ? SKColor(red: 0.82, green: 0.58, blue: 0.14, alpha: 1)
+                : SKColor(red: 0.12, green: 0.52, blue: 0.46, alpha: 1)
         }
-        return isRed
-            ? SKColor(red: 0.80, green: 0.12, blue: 0.12, alpha: 1)      // 朱砂红
-            : SKColor(red: 0.14, green: 0.12, blue: 0.10, alpha: 1)      // 墨黑
+        return isRed(card)
+            ? SKColor(red: 0.80, green: 0.12, blue: 0.12, alpha: 1)
+            : SKColor(red: 0.14, green: 0.12, blue: 0.10, alpha: 1)
     }
 
-    /// 花色对应的淡彩底色（微妙区分四种花色）
-    private var suitTint: SKColor {
+    private static func suitTint(_ card: Card) -> SKColor {
         guard let suit = card.suit else { return .clear }
         switch suit {
-        case .heart:   return SKColor(red: 0.98, green: 0.94, blue: 0.92, alpha: 1.0) // 暖粉
-        case .diamond: return SKColor(red: 0.98, green: 0.96, blue: 0.90, alpha: 1.0) // 暖黄
-        case .spade:   return SKColor(red: 0.94, green: 0.94, blue: 0.96, alpha: 1.0) // 冷灰蓝
-        case .club:    return SKColor(red: 0.93, green: 0.95, blue: 0.93, alpha: 1.0) // 淡青
+        case .heart:   return SKColor(red: 0.98, green: 0.94, blue: 0.92, alpha: 1.0)
+        case .diamond: return SKColor(red: 0.98, green: 0.96, blue: 0.90, alpha: 1.0)
+        case .spade:   return SKColor(red: 0.94, green: 0.94, blue: 0.96, alpha: 1.0)
+        case .club:    return SKColor(red: 0.93, green: 0.95, blue: 0.93, alpha: 1.0)
         }
     }
 
-    private func drawCard() {
+    // MARK: - 纹理渲染（离屏绘制 → SKTexture）
+
+    private static func renderTexture(for card: Card, size: CGSize) -> SKTexture {
+        let container = SKNode()
+        if isJoker(card) {
+            renderJokerCard(card: card, size: size, into: container)
+        } else {
+            renderNormalCard(card: card, size: size, into: container)
+        }
+        let textureView = SKView()
+        let crop = CGRect(x: -size.width / 2, y: -size.height / 2, width: size.width, height: size.height)
+        return textureView.texture(from: container, crop: crop) ?? SKTexture()
+    }
+
+    private static func renderNormalCard(card: Card, size: CGSize, into parent: SKNode) {
         let w = size.width
         let h = size.height
 
@@ -68,7 +98,7 @@ class CardNode: SKSpriteNode {
             shadowOuter.strokeColor = .clear
             shadowOuter.position = CGPoint(x: 2, y: -4)
             shadowOuter.zPosition = -3
-            addChild(shadowOuter)
+            parent.addChild(shadowOuter)
         }
 
         let shadow = SKShapeNode(rectOf: CGSize(width: w, height: h), cornerRadius: 6)
@@ -76,7 +106,7 @@ class CardNode: SKSpriteNode {
         shadow.strokeColor = .clear
         shadow.position = CGPoint(x: 1, y: -2)
         shadow.zPosition = -2
-        addChild(shadow)
+        parent.addChild(shadow)
 
         // 卡牌主体 — 暖白底，微渐变质感
         let bg = SKShapeNode(rectOf: size, cornerRadius: 6)
@@ -84,15 +114,15 @@ class CardNode: SKSpriteNode {
         bg.strokeColor = SKColor(red: 0.58, green: 0.50, blue: 0.38, alpha: 0.55)
         bg.lineWidth = 1.0
         bg.zPosition = -1
-        addChild(bg)
+        parent.addChild(bg)
 
         // 花色底色（微妙的花色区分 — 只在普通牌上）
-        if !isJoker {
+        if !isJoker(card) {
             let tint = SKShapeNode(rectOf: CGSize(width: w - 2, height: h - 2), cornerRadius: 5)
-            tint.fillColor = suitTint
+            tint.fillColor = suitTint(card)
             tint.strokeColor = .clear
             tint.zPosition = -0.5
-            addChild(tint)
+            parent.addChild(tint)
         }
 
         // 卡牌底部厚度线 — 3D纸牌质感
@@ -104,7 +134,7 @@ class CardNode: SKSpriteNode {
             thickLine.strokeColor = SKColor(red: 0.82, green: 0.76, blue: 0.66, alpha: 0.5)
             thickLine.lineWidth = 1.5
             thickLine.zPosition = 0
-            addChild(thickLine)
+            parent.addChild(thickLine)
         }
 
         // 内边框 — 双线装饰
@@ -113,7 +143,7 @@ class CardNode: SKSpriteNode {
         innerBorder.strokeColor = SKColor(red: 0.72, green: 0.65, blue: 0.52, alpha: 0.22)
         innerBorder.lineWidth = 0.6
         innerBorder.zPosition = 0
-        addChild(innerBorder)
+        parent.addChild(innerBorder)
 
         // 第二层内边框（精致双线效果）
         if isDetailedMode {
@@ -122,7 +152,7 @@ class CardNode: SKSpriteNode {
             innerBorder2.strokeColor = SKColor(red: 0.72, green: 0.65, blue: 0.52, alpha: 0.10)
             innerBorder2.lineWidth = 0.4
             innerBorder2.zPosition = 0
-            addChild(innerBorder2)
+            parent.addChild(innerBorder2)
         }
 
         // 顶部高光边 — 光泽质感
@@ -133,7 +163,7 @@ class CardNode: SKSpriteNode {
         topHighlight.strokeColor = SKColor(white: 1, alpha: 0.40)
         topHighlight.lineWidth = 1.0
         topHighlight.zPosition = 0
-        addChild(topHighlight)
+        parent.addChild(topHighlight)
 
         // 第二层高光（柔和渐变效果）
         if isDetailedMode {
@@ -144,18 +174,18 @@ class CardNode: SKSpriteNode {
             topHighlight2.strokeColor = SKColor(white: 1, alpha: 0.15)
             topHighlight2.lineWidth = 0.5
             topHighlight2.zPosition = 0
-            addChild(topHighlight2)
+            parent.addChild(topHighlight2)
         }
 
         // Joker 特殊处理
-        if isJoker {
-            drawJokerCard()
-            return
+        if isJoker(card) {
+            return  // handled by renderTexture dispatch
         }
 
         let rankText = card.rank.displayName
         let suitText = card.suit?.rawValue ?? ""
-        let color = cardColor
+        let isFace = isFaceCard(card)
+        let color = cardColor(card)
         let serifFont = Theme.spriteKitSerifFontName
         let margin: CGFloat = max(3, w * 0.07)
 
@@ -168,7 +198,7 @@ class CardNode: SKSpriteNode {
         topRank.verticalAlignmentMode = .top
         topRank.position = CGPoint(x: -w / 2 + margin, y: h / 2 - margin)
         topRank.zPosition = 2
-        addChild(topRank)
+        parent.addChild(topRank)
 
         // 左上角：花色
         let topSuit = SKLabelNode(text: suitText)
@@ -178,7 +208,7 @@ class CardNode: SKSpriteNode {
         topSuit.verticalAlignmentMode = .top
         topSuit.position = CGPoint(x: -w / 2 + margin, y: h / 2 - margin - w * 0.35)
         topSuit.zPosition = 2
-        addChild(topSuit)
+        parent.addChild(topSuit)
 
         // 中央大花色 — 视觉锚点（加深可见度）
         let centerSuit = SKLabelNode(text: suitText)
@@ -188,10 +218,10 @@ class CardNode: SKSpriteNode {
         centerSuit.verticalAlignmentMode = .center
         centerSuit.position = CGPoint(x: 0, y: -h * 0.03)
         centerSuit.zPosition = 1
-        addChild(centerSuit)
+        parent.addChild(centerSuit)
 
         // JQK 人脸牌 — 中央加书法标记（增强可见度）
-        if isFaceCard {
+        if isFace {
             let faceChar: String
             switch card.rank {
             case .jack:  faceChar = "将"
@@ -207,7 +237,7 @@ class CardNode: SKSpriteNode {
             faceBg.lineWidth = 0.5
             faceBg.position = CGPoint(x: 0, y: h * 0.08)
             faceBg.zPosition = 1
-            addChild(faceBg)
+            parent.addChild(faceBg)
 
             let faceLabel = SKLabelNode(text: faceChar)
             faceLabel.fontName = serifFont
@@ -217,7 +247,7 @@ class CardNode: SKSpriteNode {
             faceLabel.verticalAlignmentMode = .center
             faceLabel.position = CGPoint(x: 0, y: h * 0.08)
             faceLabel.zPosition = 1.5
-            addChild(faceLabel)
+            parent.addChild(faceLabel)
 
             // 上下装饰线
             for yOff: CGFloat in [-0.08, 0.24] {
@@ -228,7 +258,7 @@ class CardNode: SKSpriteNode {
                 decLine.strokeColor = color.withAlphaComponent(0.12)
                 decLine.lineWidth = 0.6
                 decLine.zPosition = 1
-                addChild(decLine)
+                parent.addChild(decLine)
             }
         }
 
@@ -241,7 +271,7 @@ class CardNode: SKSpriteNode {
             glow.position = CGPoint(x: 0, y: -h * 0.03)
             glow.zPosition = 0.5
             glow.glowWidth = 2
-            addChild(glow)
+            parent.addChild(glow)
         }
 
         // 右下角：点数（倒置镜像）
@@ -255,7 +285,7 @@ class CardNode: SKSpriteNode {
         bottomRank.zPosition = 2
         bottomRank.xScale = -1
         bottomRank.yScale = -1
-        addChild(bottomRank)
+        parent.addChild(bottomRank)
 
         // 右下角：花色（倒置）
         let bottomSuit = SKLabelNode(text: suitText)
@@ -267,7 +297,7 @@ class CardNode: SKSpriteNode {
         bottomSuit.zPosition = 2
         bottomSuit.xScale = -1
         bottomSuit.yScale = -1
-        addChild(bottomSuit)
+        parent.addChild(bottomSuit)
 
         // 四角装饰纹（回纹 L 型角标，仅大尺寸卡牌）
         if w >= 50 {
@@ -292,14 +322,14 @@ class CardNode: SKSpriteNode {
                 lNode.xScale = sx
                 lNode.yScale = sy
                 lNode.zPosition = 1
-                addChild(lNode)
+                parent.addChild(lNode)
             }
         }
     }
 
-    private func drawJokerCard() {
+    private static func renderJokerCard(card: Card, size: CGSize, into parent: SKNode) {
         let isRedJoker = card.rank == .jokerRed
-        let color = cardColor
+        let color = cardColor(card)
         let serifFont = Theme.spriteKitSerifFontName
         let w = size.width
         let h = size.height
@@ -312,7 +342,7 @@ class CardNode: SKSpriteNode {
             : SKColor(red: 0.90, green: 0.94, blue: 0.93, alpha: 1.0)
         tintOverlay.strokeColor = .clear
         tintOverlay.zPosition = 0
-        addChild(tintOverlay)
+        parent.addChild(tintOverlay)
 
         // 对角装饰纹路（王牌尊贵感）
         if w >= 40 {
@@ -324,7 +354,7 @@ class CardNode: SKSpriteNode {
             diag.lineWidth = w * 0.6
             diag.lineCap = .round
             diag.zPosition = 0.5
-            addChild(diag)
+            parent.addChild(diag)
         }
 
         // 左上角标识
@@ -336,7 +366,7 @@ class CardNode: SKSpriteNode {
         topLabel.verticalAlignmentMode = .top
         topLabel.position = CGPoint(x: -w / 2 + margin, y: h / 2 - margin)
         topLabel.zPosition = 3
-        addChild(topLabel)
+        parent.addChild(topLabel)
 
         // "王"字（左上角副标识）
         let kingLabel = SKLabelNode(text: "王")
@@ -347,7 +377,7 @@ class CardNode: SKSpriteNode {
         kingLabel.verticalAlignmentMode = .top
         kingLabel.position = CGPoint(x: -w / 2 + margin, y: h / 2 - margin - w * 0.35)
         kingLabel.zPosition = 3
-        addChild(kingLabel)
+        parent.addChild(kingLabel)
 
         // 多层径向光晕 — 王牌气场
         if w >= 50 {
@@ -357,7 +387,7 @@ class CardNode: SKSpriteNode {
             glowOuter.lineWidth = 0.5
             glowOuter.position = CGPoint(x: 0, y: -h * 0.03)
             glowOuter.zPosition = 1
-            addChild(glowOuter)
+            parent.addChild(glowOuter)
         }
 
         let glowMiddle = SKShapeNode(circleOfRadius: w * 0.30)
@@ -367,7 +397,7 @@ class CardNode: SKSpriteNode {
         glowMiddle.position = CGPoint(x: 0, y: -h * 0.03)
         glowMiddle.zPosition = 1
         glowMiddle.glowWidth = 3
-        addChild(glowMiddle)
+        parent.addChild(glowMiddle)
 
         let glowInner = SKShapeNode(circleOfRadius: w * 0.20)
         glowInner.fillColor = color.withAlphaComponent(0.10)
@@ -376,7 +406,7 @@ class CardNode: SKSpriteNode {
         glowInner.position = CGPoint(x: 0, y: -h * 0.03)
         glowInner.zPosition = 1
         glowInner.glowWidth = 2
-        addChild(glowInner)
+        parent.addChild(glowInner)
 
         // 中央大字阴影 — 立体投射效果
         let centerShadow = SKLabelNode(text: "王")
@@ -387,7 +417,7 @@ class CardNode: SKSpriteNode {
         centerShadow.verticalAlignmentMode = .center
         centerShadow.position = CGPoint(x: 1.5, y: -h * 0.03 - 1.5)
         centerShadow.zPosition = 1.8
-        addChild(centerShadow)
+        parent.addChild(centerShadow)
 
         // 中央大字 — 更大更醒目的"王"
         let centerChar = SKLabelNode(text: "王")
@@ -398,7 +428,7 @@ class CardNode: SKSpriteNode {
         centerChar.verticalAlignmentMode = .center
         centerChar.position = CGPoint(x: 0, y: -h * 0.03)
         centerChar.zPosition = 2
-        addChild(centerChar)
+        parent.addChild(centerChar)
 
         // 外环装饰（大王/小王区别感强化）
         if w >= 50 {
@@ -408,7 +438,7 @@ class CardNode: SKSpriteNode {
             outerRing.lineWidth = 0.8
             outerRing.position = CGPoint(x: 0, y: -h * 0.03)
             outerRing.zPosition = 1
-            addChild(outerRing)
+            parent.addChild(outerRing)
         }
 
         // 右下角倒置标记
@@ -422,7 +452,7 @@ class CardNode: SKSpriteNode {
         bottomLabel.zPosition = 3
         bottomLabel.xScale = -1
         bottomLabel.yScale = -1
-        addChild(bottomLabel)
+        parent.addChild(bottomLabel)
 
         // 四角装饰纹（回纹 L 型角标 — 王牌同样尊享）
         if w >= 50 {
@@ -447,7 +477,7 @@ class CardNode: SKSpriteNode {
                 lNode.xScale = sx
                 lNode.yScale = sy
                 lNode.zPosition = 1
-                addChild(lNode)
+                parent.addChild(lNode)
             }
         }
     }

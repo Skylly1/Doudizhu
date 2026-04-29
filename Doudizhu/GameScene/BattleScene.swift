@@ -28,6 +28,11 @@ class BattleScene: SKScene {
         // 暖棕底色 — 大幅提亮，OLED 可见
         backgroundColor = SKColor(red: 0.22, green: 0.16, blue: 0.11, alpha: 1.0)
 
+        // 内存警告时清除卡牌纹理缓存
+        NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: .main) { _ in
+            CardNode.clearCache()
+        }
+
         // 顶部暖光渐变层
         let bgGrad = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height * 0.5))
         bgGrad.fillColor = SKColor(red: 0.30, green: 0.22, blue: 0.15, alpha: 0.40)
